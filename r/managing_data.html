@@ -10,7 +10,6 @@
 
 
 
-<meta name="date" content="2024-07-23" />
 
 <title>Managing Data</title>
 
@@ -350,7 +349,6 @@ display: none;
 
 
 <h1 class="title toc-ignore">Managing Data</h1>
-<h4 class="date">2024-07-23</h4>
 
 </div>
 
@@ -384,9 +382,15 @@ Frames: merge(), leftjoin()</a></p></li>
 <h2>Importing Data: read_csv()</h2>
 <p>To import data, use the <strong>read_csv()</strong> function as
 follows:</p>
-<pre class="r"><code># df is the name of our dataframe. We can change this to anything we want.
-# within &quot;&quot;, add the URL of our csv file. You can also add a path from your local computer.
-df &lt;- read_csv(&quot;https://raw.githubusercontent.com/lse-me314/lse-me314.github.io/master/data/const-econ-vars.csv&quot;)</code></pre>
+<ul>
+<li><p>In the example below, <strong>df</strong> is the name of the
+dataframe. You can change this to whatever name you want it to
+be.</p></li>
+<li><p>Between the ““, add the csv file. This can be a local file on
+your computer, or a web url (make sure the web url ends in
+.csv).</p></li>
+</ul>
+<pre class="r"><code>df &lt;- read_csv(&quot;https://raw.githubusercontent.com/lse-me314/lse-me314.github.io/master/data/const-econ-vars.csv&quot;)</code></pre>
 <pre><code>## Rows: 533 Columns: 8
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -403,9 +407,16 @@ df &lt;- read_csv(&quot;https://raw.githubusercontent.com/lse-me314/lse-me314.gi
 functions:</p>
 <p><strong>head()</strong> shows the first 6 rows of the dataframe by
 default. We can tell it to show more/less if needed.</p>
-<pre class="r"><code># replace df with the name of the data frame you want to see
-# you can leave out the , 3 if you only want the default 6 rows. otherwise, you can specify.
-head(df, 3)</code></pre>
+<ul>
+<li><p>In the example below, <strong>df</strong> is the name of the
+dataframe. You can change this to whatever name you want it to
+be.</p></li>
+<li><p>You can delete the <strong>, 3</strong> part, if you only want
+the default 6 rows to display.</p></li>
+<li><p>You can change the <strong>3</strong> to any number, depending on
+how many rows you want to see.</p></li>
+</ul>
+<pre class="r"><code>head(df, 3)</code></pre>
 <pre><code>## # A tibble: 3 × 8
 ##   ONSConstID ConstituencyName HouseWageRatio UnempConstRate UnempConstRateChange
 ##   &lt;chr&gt;      &lt;chr&gt;                     &lt;dbl&gt;          &lt;dbl&gt;                &lt;dbl&gt;
@@ -415,10 +426,9 @@ head(df, 3)</code></pre>
 ## # ℹ 3 more variables: WageMedianConst &lt;dbl&gt;, social_mobility_score &lt;dbl&gt;,
 ## #   deprivation_index_score &lt;dbl&gt;</code></pre>
 <p><strong>tail()</strong> shows the last 6 rows of the dataframe by
-default. We can tell it to show more/less if needed.</p>
-<pre class="r"><code># replace df with the name of the data frame you want to see
-# you can leave out the , 3 if you only want the default 6 rows. otherwise, you can specify.
-tail(df, 3)</code></pre>
+default. We can tell it to show more/less if needed. Use the same syntax
+above as <strong>head()</strong>.</p>
+<pre class="r"><code>tail(df, 3)</code></pre>
 <pre><code>## # A tibble: 3 × 8
 ##   ONSConstID ConstituencyName HouseWageRatio UnempConstRate UnempConstRateChange
 ##   &lt;chr&gt;      &lt;chr&gt;                     &lt;dbl&gt;          &lt;dbl&gt;                &lt;dbl&gt;
@@ -445,13 +455,36 @@ glimpse(df)</code></pre>
 </div>
 <div id="selecting-and-filtering-data-select-filter" class="section level2">
 <h2>Selecting and Filtering Data: select(), filter()</h2>
+<p>Note: We will be using pipe operators (%&gt;%) from now on. This
+allows us to avoid restating the data frame.</p>
 <p><strong>select()</strong> selects the variables (columns) you want to
 include.</p>
+<ul>
+<li>Simply list columns within the (), separated by commas.</li>
+</ul>
 <p><strong>filter()</strong> allows you to input conditions for what
 observations (rows) you want to include</p>
-<pre class="r"><code># Let us select a subset of the data, and save it to a new dataframe: &quot;subset1_df&quot;
-# replace df with the name of the original data frame
-subset1_df &lt;- df %&gt;%
+<ul>
+<li><p>Conditions are statements that are either TRUE or FALSE. For
+example, Var1 &gt; 0 can be TRUE or FALSE, or Var2 == 0 can be TRUE or
+FALSE. The TRUE values are kept in the dataset.</p></li>
+<li><p>We can make multiple filter conditions by separating with commas.
+This will tell R to treat these conditions as an AND (meaning both have
+to be TRUE for a TRUE value to be produced).</p></li>
+<li><p>If you want multiple conditions of OR (meaning if 1 of multiple
+is TRUE, the output is TRUE), separate conditions with
+<strong>|</strong></p></li>
+</ul>
+<p>In the example below:</p>
+<ul>
+<li><p><strong>subset1_df</strong> is the new data frame we are storing
+the changes to. You can name this dataframe whatever you want to. It is
+good practice to store changes in new data frames, so we can go back to
+the old one if needed.</p></li>
+<li><p>As previously, <strong>df</strong> is the original dataframe, and
+you can alter this to whatever your data frame is called.</p></li>
+</ul>
+<pre class="r"><code>subset1_df &lt;- df %&gt;%
   select(ConstituencyName, social_mobility_score) %&gt;% #selecting these two columns
   filter(social_mobility_score &gt; 0) #only observations(rows) that meet this condition will be kept
 
@@ -464,9 +497,14 @@ glimpse(subset1_df)</code></pre>
 <p>We can use the negative sign to exclude columns/rows. This can be
 useful when we want to keep most of the columns/rows, so we can specify
 only the ones to leave out.</p>
-<pre class="r"><code># let us select a subset of the data, and save it to a new dataframe: &quot;subset2_df&quot;
-# replace df with the name of the original data frame
-subset2_df &lt;- df %&gt;%
+<ul>
+<li><p>In the example below, <strong>HouseWageRatio</strong> is being
+un-selected, or excluded. You can change this to whatever variable you
+want it to be.</p></li>
+<li><p>You can deselect multiple variables by separating them with
+commas. Remember to put a negative sign in front of each one.</p></li>
+</ul>
+<pre class="r"><code>subset2_df &lt;- df %&gt;%
   select(-HouseWageRatio) # selecting everything EXCEPT one variable
 
 # Look at the data, Notice how that variable is gone now
@@ -482,21 +520,23 @@ glimpse(subset2_df)</code></pre>
 ## $ deprivation_index_score &lt;dbl&gt; 14.264920, 17.265634, 9.642267, 20.806737, 10.…</code></pre>
 <p>Alternatively, we can use [x, ] to select rows, [, y] to select
 columns, and [x,y] to select columns and rows.</p>
-<pre class="r"><code># let us select a subset of the data, and save it to a new dataframe: &quot;subset3_df&quot;
-# replace df with the name of the original data frame
-subset3_df &lt;- df[,1:3] #only keeping columns 1 through 3
-
-# Look at the new data
+<ul>
+<li><p>Note: the sytax of <strong>1:3</strong> means all integers
+between 1 and 3, including 1 and 3. For example, 2:20 would be counting
+2, 3, 4, 5, …. 20.</p></li>
+<li><p>Similar to the select function, we can use negative signs before
+the numbers to deselect them.</p></li>
+</ul>
+<pre class="r"><code>#only keeping columns 1 through 3
+subset3_df &lt;- df[,1:3]
 glimpse(subset3_df)</code></pre>
 <pre><code>## Rows: 533
 ## Columns: 3
 ## $ ONSConstID       &lt;chr&gt; &quot;E14000530&quot;, &quot;E14000531&quot;, &quot;E14000532&quot;, &quot;E14000533&quot;, &quot;…
 ## $ ConstituencyName &lt;chr&gt; &quot;Aldershot&quot;, &quot;Aldridge-Brownhills&quot;, &quot;Altrincham and S…
 ## $ HouseWageRatio   &lt;dbl&gt; 9.778357, 6.866415, 8.154820, 5.593565, 12.608764, 5.…</code></pre>
-<pre class="r"><code># let us select a subset of the data, and save it to a new dataframe: &quot;subset4_df&quot;
-# replace df with the name of the original data frame
-subset4_df &lt;- df[1:100,] # only keeping first 100 rows
-
+<pre class="r"><code># only keeping first 100 rows
+subset4_df &lt;- df[1:100,]
 glimpse(subset4_df)</code></pre>
 <pre><code>## Rows: 100
 ## Columns: 8
@@ -508,10 +548,8 @@ glimpse(subset4_df)</code></pre>
 ## $ WageMedianConst         &lt;dbl&gt; 590, 560, 790, 520, 610, 510, 570, 440, 590, 5…
 ## $ social_mobility_score   &lt;dbl&gt; -24.946252, 12.111350, 103.846117, -37.111181,…
 ## $ deprivation_index_score &lt;dbl&gt; 14.264920, 17.265634, 9.642267, 20.806737, 10.…</code></pre>
-<pre class="r"><code># let us select a subset of the data, and save it to a new dataframe: &quot;subset5_df&quot;
-# replace df with the name of the original data frame
-subset5_df &lt;- df[1:100,-3] # only keeping first 100 rows, and keeping all columns except one
-
+<pre class="r"><code># only keeping first 100 rows, and keeping all columns except one
+subset5_df &lt;- df[1:100,-3]
 glimpse(subset5_df)</code></pre>
 <pre><code>## Rows: 100
 ## Columns: 7
@@ -528,8 +566,12 @@ glimpse(subset5_df)</code></pre>
 <h2>Rearranging/Sorting Data: arrange()</h2>
 <p><strong>arrange()</strong> allows us to sort data in
 alphabetical/ascending order.</p>
-<pre class="r"><code># replace &quot;WageMedianConst&quot; with whatever column you want to sort
-arranged_df &lt;- df %&gt;%
+<ul>
+<li>In the example below, you can replace
+<strong>WageMedianConst</strong> with whatever variable/column you want
+to sort by.</li>
+</ul>
+<pre class="r"><code>arranged_df &lt;- df %&gt;%
   arrange(WageMedianConst)
 
 # lets see if it worked
@@ -547,8 +589,7 @@ head(arranged_df)</code></pre>
 ## #   deprivation_index_score &lt;dbl&gt;</code></pre>
 <p>We can add <strong>desc()</strong> inside arrange to sort in
 descending order.</p>
-<pre class="r"><code># replace &quot;WageMedianConst&quot; with whatever column you want to sort
-arranged_df &lt;- df %&gt;%
+<pre class="r"><code>arranged_df &lt;- df %&gt;%
   arrange(desc(WageMedianConst))
 
 # lets see if it worked
@@ -571,9 +612,21 @@ head(arranged_df)</code></pre>
 <p><strong>mutate()</strong> adds columns/variables to the dataframe.
 First, we include the new variable name, then we indicate how we
 calculate the new variable.</p>
-<pre class="r"><code># Let us add a few new columns, creating a new dataframe: &quot;new_df&quot;
-#replace newvariable with whatever name you want, and define the variable however you want.
-new_df &lt;- df %&gt;%
+<p>In the example below:</p>
+<ul>
+<li><p><strong>new_df</strong> is the new data frame object with the
+added columns. You can name this whatever you want.</p></li>
+<li><p><strong>df</strong> is the original data frame we are modifying.
+Replace with whatever your original data frame is called.</p></li>
+<li><p><strong>newvariable</strong> is the new variable/column we are
+adding. You can name this whatever you want.</p></li>
+<li><p>After the equal sign, is the condition of how to calculate this
+new variable. You can replace the <strong>UnempConstRate * 100</strong>
+by any formula you want.</p></li>
+<li><p>We can add multiple columns by separating each addition by
+commas.</p></li>
+</ul>
+<pre class="r"><code>new_df &lt;- df %&gt;%
   mutate(newvariable = UnempConstRate * 100, newvariable2 = NA) 
 
 # see the new variables at the bottom of the dataframe
@@ -595,9 +648,10 @@ glimpse(new_df)</code></pre>
 deletes the other columns. If you want to keep maybe 1 column from the
 old dataset, you can create a new variable, and set it equal to that old
 variable.</p>
-<pre class="r"><code># we create a new variable.
-# in the example below, we also copy over ConstituencyName from the old df to the new
-new1_df &lt;- df %&gt;%
+<p>Note that in the example below, we copy over
+<strong>ConstituencyName</strong> from the old data set, so that it
+isn’t deleted.</p>
+<pre class="r"><code>new1_df &lt;- df %&gt;%
   transmute(newvariable = HouseWageRatio + 5, ContituencyName = ConstituencyName)
 
 # notice the other vairables have been deleted, but ConstiutencyName carries over
@@ -612,16 +666,21 @@ glimpse(new1_df)</code></pre>
 <h2>Renaming Columns: colnames(), rename()</h2>
 <p>Each column in R can be named. We can see, and rename the columns as
 follows:</p>
-<pre class="r"><code># to see colnames, use the colnames() function
-colnames(df)</code></pre>
+<ul>
+<li><p>To see column names, use the <strong>colnames()</strong>
+function, with the data frame in question within the ().</p></li>
+<li><p>To change a specific column name, first use the
+<strong>colnames()</strong> function to determine the position-number of
+that name. Then, reference it within the <strong>[]</strong>, seen
+below.</p></li>
+</ul>
+<pre class="r"><code>colnames(df)</code></pre>
 <pre><code>## [1] &quot;ONSConstID&quot;              &quot;ConstituencyName&quot;       
 ## [3] &quot;HouseWageRatio&quot;          &quot;UnempConstRate&quot;         
 ## [5] &quot;UnempConstRateChange&quot;    &quot;WageMedianConst&quot;        
 ## [7] &quot;social_mobility_score&quot;   &quot;deprivation_index_score&quot;</code></pre>
 <pre class="r"><code># Lets change the ConstituencyName column to just Name.
 # We do this by noting, it is position 2 in the colnames() vector
-# Change &quot;2&quot; to the respective position for other columns
-# The name should be a string, surrounded by &quot;&quot;
 colnames(df)[2] &lt;- &quot;Name&quot;
 
 # lets check if the name has changed.
@@ -631,9 +690,19 @@ colnames(df)</code></pre>
 ## [5] &quot;UnempConstRateChange&quot;    &quot;WageMedianConst&quot;        
 ## [7] &quot;social_mobility_score&quot;   &quot;deprivation_index_score&quot;</code></pre>
 <p>We can also use the <strong>rename()</strong> function, which allows
-us to avoid the [] indexing mess, and just use the names. Note: the new
-column name comes before the old column name when using this
-function.</p>
+us to avoid the <strong>[]</strong> indexing mess, and just use the
+names. Note: the new column name comes before the old column name when
+using this function.</p>
+<ul>
+<li><p><strong>df</strong> is the data frame we are renaming. Change it
+to the object you are modifying.</p></li>
+<li><p><strong>newname1</strong> is our new name to our first variable
+we are changing. The old name is
+<strong>UnempConstRate</strong>.</p></li>
+<li><p><strong>newname2</strong> is our new name to our second variable
+that we are changing. The old name is
+<strong>ONSConstID</strong>.</p></li>
+</ul>
 <pre class="r"><code># let us rename UnempConstRate to newname1
 # let us also rename ONSConstID to newname2
 df &lt;- df %&gt;%
@@ -652,8 +721,8 @@ colnames(df)</code></pre>
 <p>Sometimes, we need to merge data frames. Lets take the following
 dataframes: x, and y. We want to merge them. We can do this with the
 <strong>merge()</strong> function</p>
-<pre class="r"><code># First, take two data frames: x and y
-print(x)</code></pre>
+<p>First, let us view the two data frames we are trying to combine:</p>
+<pre class="r"><code>print(x)</code></pre>
 <pre><code>##   id   names
 ## 1  1   Kevin
 ## 2  2   Elene
@@ -667,9 +736,12 @@ print(x)</code></pre>
 ## 3  3        9
 ## 4  4       10
 ## 5  5        9</code></pre>
-<pre class="r"><code>#We can merge them with the merge function
-# The merge() function will automatically merge by their common column: id
-merged_df &lt;- merge(x, y)
+<p>The <strong>merge()</strong> function will autmoatically merge the
+two datasets, based on the common column they have: <strong>ID</strong>.
+If you are trying to combine two datasets but their common column has
+slightly different names, it is best to rename the columns to be the
+same.</p>
+<pre class="r"><code>merged_df &lt;- merge(x, y)
 print(merged_df)</code></pre>
 <pre><code>##   id   names coolness
 ## 1  1   Kevin        4
@@ -687,7 +759,8 @@ above example, as the column “id” is already in alphabetical/ascending
 order. <strong>leftjoin()</strong> uses the same syntax, just replace
 merge with leftjoin</p>
 <hr />
-<p><a href="https://politicalscience.github.io">Handbook Hompage</a></p>
+<p><a href="https://politicalscience.github.io">Handbook
+Homepage</a></p>
 </div>
 
 

@@ -1,7 +1,6 @@
 ---
 title: "Managing Data"
 output: html_document
-date: "2024-07-23"
 ---
 
 ```{r setup, include=FALSE}
@@ -40,9 +39,11 @@ library(tidyverse)
 
 To import data, use the **read_csv()** function as follows:
 
+-   In the example below, **df** is the name of the dataframe. You can change this to whatever name you want it to be.
+
+-   Between the "", add the csv file. This can be a local file on your computer, or a web url (make sure the web url ends in .csv).
+
 ```{r}
-# df is the name of our dataframe. We can change this to anything we want.
-# within "", add the URL of our csv file. You can also add a path from your local computer.
 df <- read_csv("https://raw.githubusercontent.com/lse-me314/lse-me314.github.io/master/data/const-econ-vars.csv")
 ```
 
@@ -54,17 +55,19 @@ We can quickly explore our data frame with the following functions:
 
 **head()** shows the first 6 rows of the dataframe by default. We can tell it to show more/less if needed.
 
+-   In the example below, **df** is the name of the dataframe. You can change this to whatever name you want it to be.
+
+-   You can delete the **, 3** part, if you only want the default 6 rows to display.
+
+-   You can change the **3** to any number, depending on how many rows you want to see.
+
 ```{r}
-# replace df with the name of the data frame you want to see
-# you can leave out the , 3 if you only want the default 6 rows. otherwise, you can specify.
 head(df, 3)
 ```
 
-**tail()** shows the last 6 rows of the dataframe by default. We can tell it to show more/less if needed.
+**tail()** shows the last 6 rows of the dataframe by default. We can tell it to show more/less if needed. Use the same syntax above as **head()**.
 
 ```{r}
-# replace df with the name of the data frame you want to see
-# you can leave out the , 3 if you only want the default 6 rows. otherwise, you can specify.
 tail(df, 3)
 ```
 
@@ -79,13 +82,28 @@ glimpse(df)
 
 ## Selecting and Filtering Data: select(), filter() {#selecting-and-filtering-data-select-filter}
 
+Note: We will be using pipe operators (%\>%) from now on. This allows us to avoid restating the data frame.
+
 **select()** selects the variables (columns) you want to include.
+
+-   Simply list columns within the (), separated by commas.
 
 **filter()** allows you to input conditions for what observations (rows) you want to include
 
+-   Conditions are statements that are either TRUE or FALSE. For example, Var1 \> 0 can be TRUE or FALSE, or Var2 == 0 can be TRUE or FALSE. The TRUE values are kept in the dataset.
+
+-   We can make multiple filter conditions by separating with commas. This will tell R to treat these conditions as an AND (meaning both have to be TRUE for a TRUE value to be produced).
+
+-   If you want multiple conditions of OR (meaning if 1 of multiple is TRUE, the output is TRUE), separate conditions with **\|**
+
+In the example below:
+
+-   **subset1_df** is the new data frame we are storing the changes to. You can name this dataframe whatever you want to. It is good practice to store changes in new data frames, so we can go back to the old one if needed.
+
+-   As previously, **df** is the original dataframe, and you can alter this to whatever your data frame is called.
+
 ```{r}
-# Let us select a subset of the data, and save it to a new dataframe: "subset1_df"
-# replace df with the name of the original data frame
+
 subset1_df <- df %>%
   select(ConstituencyName, social_mobility_score) %>% #selecting these two columns
   filter(social_mobility_score > 0) #only observations(rows) that meet this condition will be kept
@@ -97,9 +115,11 @@ glimpse(subset1_df)
 
 We can use the negative sign to exclude columns/rows. This can be useful when we want to keep most of the columns/rows, so we can specify only the ones to leave out.
 
+-   In the example below, **HouseWageRatio** is being un-selected, or excluded. You can change this to whatever variable you want it to be.
+
+-   You can deselect multiple variables by separating them with commas. Remember to put a negative sign in front of each one.
+
 ```{r}
-# let us select a subset of the data, and save it to a new dataframe: "subset2_df"
-# replace df with the name of the original data frame
 subset2_df <- df %>%
   select(-HouseWageRatio) # selecting everything EXCEPT one variable
 
@@ -109,24 +129,21 @@ glimpse(subset2_df)
 
 Alternatively, we can use [x, ] to select rows, [, y] to select columns, and [x,y] to select columns and rows.
 
-```{r}
-# let us select a subset of the data, and save it to a new dataframe: "subset3_df"
-# replace df with the name of the original data frame
-subset3_df <- df[,1:3] #only keeping columns 1 through 3
+-   Note: the sytax of **1:3** means all integers between 1 and 3, including 1 and 3. For example, 2:20 would be counting 2, 3, 4, 5, .... 20.
 
-# Look at the new data
+-   Similar to the select function, we can use negative signs before the numbers to deselect them.
+
+```{r}
+#only keeping columns 1 through 3
+subset3_df <- df[,1:3]
 glimpse(subset3_df)
 
-# let us select a subset of the data, and save it to a new dataframe: "subset4_df"
-# replace df with the name of the original data frame
-subset4_df <- df[1:100,] # only keeping first 100 rows
-
+# only keeping first 100 rows
+subset4_df <- df[1:100,]
 glimpse(subset4_df)
 
-# let us select a subset of the data, and save it to a new dataframe: "subset5_df"
-# replace df with the name of the original data frame
-subset5_df <- df[1:100,-3] # only keeping first 100 rows, and keeping all columns except one
-
+# only keeping first 100 rows, and keeping all columns except one
+subset5_df <- df[1:100,-3]
 glimpse(subset5_df)
 ```
 
@@ -136,8 +153,9 @@ glimpse(subset5_df)
 
 **arrange()** allows us to sort data in alphabetical/ascending order.
 
+-   In the example below, you can replace **WageMedianConst** with whatever variable/column you want to sort by.
+
 ```{r}
-# replace "WageMedianConst" with whatever column you want to sort
 arranged_df <- df %>%
   arrange(WageMedianConst)
 
@@ -148,7 +166,6 @@ head(arranged_df)
 We can add **desc()** inside arrange to sort in descending order.
 
 ```{r}
-# replace "WageMedianConst" with whatever column you want to sort
 arranged_df <- df %>%
   arrange(desc(WageMedianConst))
 
@@ -162,9 +179,19 @@ head(arranged_df)
 
 **mutate()** adds columns/variables to the dataframe. First, we include the new variable name, then we indicate how we calculate the new variable.
 
+In the example below:
+
+-   **new_df** is the new data frame object with the added columns. You can name this whatever you want.
+
+-   **df** is the original data frame we are modifying. Replace with whatever your original data frame is called.
+
+-   **newvariable** is the new variable/column we are adding. You can name this whatever you want.
+
+-   After the equal sign, is the condition of how to calculate this new variable. You can replace the **UnempConstRate \* 100** by any formula you want.
+
+-   We can add multiple columns by separating each addition by commas.
+
 ```{r}
-# Let us add a few new columns, creating a new dataframe: "new_df"
-#replace newvariable with whatever name you want, and define the variable however you want.
 new_df <- df %>%
   mutate(newvariable = UnempConstRate * 100, newvariable2 = NA) 
 
@@ -174,9 +201,9 @@ glimpse(new_df)
 
 **transmute()** is a variation of **mutate()**. It adds the new column you want to add, but deletes the other columns. If you want to keep maybe 1 column from the old dataset, you can create a new variable, and set it equal to that old variable.
 
+Note that in the example below, we copy over **ConstituencyName** from the old data set, so that it isn't deleted.
+
 ```{r}
-# we create a new variable.
-# in the example below, we also copy over ConstituencyName from the old df to the new
 new1_df <- df %>%
   transmute(newvariable = HouseWageRatio + 5, ContituencyName = ConstituencyName)
 
@@ -190,21 +217,28 @@ glimpse(new1_df)
 
 Each column in R can be named. We can see, and rename the columns as follows:
 
+-   To see column names, use the **colnames()** function, with the data frame in question within the ().
+
+-   To change a specific column name, first use the **colnames()** function to determine the position-number of that name. Then, reference it within the **[]**, seen below.
+
 ```{r}
-# to see colnames, use the colnames() function
 colnames(df)
 
 # Lets change the ConstituencyName column to just Name.
 # We do this by noting, it is position 2 in the colnames() vector
-# Change "2" to the respective position for other columns
-# The name should be a string, surrounded by ""
 colnames(df)[2] <- "Name"
 
 # lets check if the name has changed.
 colnames(df)
 ```
 
-We can also use the **rename()** function, which allows us to avoid the [] indexing mess, and just use the names. Note: the new column name comes before the old column name when using this function.
+We can also use the **rename()** function, which allows us to avoid the **[]** indexing mess, and just use the names. Note: the new column name comes before the old column name when using this function.
+
+-   **df** is the data frame we are renaming. Change it to the object you are modifying.
+
+-   **newname1** is our new name to our first variable we are changing. The old name is **UnempConstRate**.
+
+-   **newname2** is our new name to our second variable that we are changing. The old name is **ONSConstID**.
 
 ```{r}
 # let us rename UnempConstRate to newname1
@@ -231,13 +265,16 @@ y <- data.frame(id, coolness)
 
 Sometimes, we need to merge data frames. Lets take the following dataframes: x, and y. We want to merge them. We can do this with the **merge()** function
 
+First, let us view the two data frames we are trying to combine:
+
 ```{r}
-# First, take two data frames: x and y
 print(x)
 print(y)
+```
 
-#We can merge them with the merge function
-# The merge() function will automatically merge by their common column: id
+The **merge()** function will autmoatically merge the two datasets, based on the common column they have: **ID**. If you are trying to combine two datasets but their common column has slightly different names, it is best to rename the columns to be the same.
+
+```{r}
 merged_df <- merge(x, y)
 print(merged_df)
 ```
@@ -246,4 +283,4 @@ print(merged_df)
 
 ------------------------------------------------------------------------
 
-[Handbook Hompage](https://politicalscience.github.io)
+[Handbook Homepage](https://politicalscience.github.io)
