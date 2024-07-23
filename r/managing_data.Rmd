@@ -1,0 +1,243 @@
+---
+title: "Managing Data"
+output: html_document
+date: "2024-07-23"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Table of Contents
+
+-   [Importing Data: read_csv()]
+
+-   [Understanding Our Data: head(), tail(), glimpse()]
+
+-   [Selecting and Filtering Data: select(), filter()]
+
+-   [Rearranging/Sorting Data: arrange()]
+
+-   [Adding Columns: mutate(), transmute()]
+
+-   [Renaming Columns: colnames(), rename()]
+
+-   [Merging Data Frames: merge(), leftjoin()]
+
+------------------------------------------------------------------------
+
+Remember to load tidyverse
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+------------------------------------------------------------------------
+
+## Importing Data: read_csv()
+
+To import data, use the **read_csv()** function as follows:
+
+```{r}
+# df is the name of our dataframe. We can change this to anything we want.
+# within "", add the URL of our csv file. You can also add a path from your local computer.
+df <- read_csv("https://raw.githubusercontent.com/lse-me314/lse-me314.github.io/master/data/const-econ-vars.csv")
+```
+
+------------------------------------------------------------------------
+
+## Understanding Our Data: head(), tail(), glimpse()
+
+We can quickly explore our data frame with the following functions:
+
+**head()** shows the first 6 rows of the dataframe by default. We can tell it to show more/less if needed.
+
+```{r}
+# replace df with the name of the data frame you want to see
+# you can leave out the , 3 if you only want the default 6 rows. otherwise, you can specify.
+head(df, 3)
+```
+
+**tail()** shows the last 6 rows of the dataframe by default. We can tell it to show more/less if needed.
+
+```{r}
+# replace df with the name of the data frame you want to see
+# you can leave out the , 3 if you only want the default 6 rows. otherwise, you can specify.
+tail(df, 3)
+```
+
+**glimpse()** gives us a short description of the dataframe and variables.
+
+```{r}
+# replace df with the name of the data frame you want to see
+glimpse(df)
+```
+
+------------------------------------------------------------------------
+
+## Selecting and Filtering Data: select(), filter()
+
+**select()** selects the variables (columns) you want to include.
+
+**filter()** allows you to input conditions for what observations (rows) you want to include
+
+```{r}
+# Let us select a subset of the data, and save it to a new dataframe: "subset1_df"
+# replace df with the name of the original data frame
+subset1_df <- df %>%
+  select(ConstituencyName, social_mobility_score) %>% #selecting these two columns
+  filter(social_mobility_score > 0) #only observations(rows) that meet this condition will be kept
+
+# let us take a look at this data. See it only has 2 variables and less rows.
+glimpse(subset1_df)
+  
+```
+
+We can use the negative sign to exclude columns/rows. This can be useful when we want to keep most of the columns/rows, so we can specify only the ones to leave out.
+
+```{r}
+# let us select a subset of the data, and save it to a new dataframe: "subset2_df"
+# replace df with the name of the original data frame
+subset2_df <- df %>%
+  select(-HouseWageRatio) # selecting everything EXCEPT one variable
+
+# Look at the data, Notice how that variable is gone now
+glimpse(subset2_df)
+```
+
+Alternatively, we can use [x, ] to select rows, [, y] to select columns, and [x,y] to select columns and rows.
+
+```{r}
+# let us select a subset of the data, and save it to a new dataframe: "subset3_df"
+# replace df with the name of the original data frame
+subset3_df <- df[,1:3] #only keeping columns 1 through 3
+
+# Look at the new data
+glimpse(subset3_df)
+
+# let us select a subset of the data, and save it to a new dataframe: "subset4_df"
+# replace df with the name of the original data frame
+subset4_df <- df[1:100,] # only keeping first 100 rows
+
+glimpse(subset4_df)
+
+# let us select a subset of the data, and save it to a new dataframe: "subset5_df"
+# replace df with the name of the original data frame
+subset5_df <- df[1:100,-3] # only keeping first 100 rows, and keeping all columns except one
+
+glimpse(subset5_df)
+```
+
+------------------------------------------------------------------------
+
+## Rearranging/Sorting Data: arrange()
+
+**arrange()** allows us to sort data in alphabetical/ascending order.
+
+```{r}
+# replace "WageMedianConst" with whatever column you want to sort
+arranged_df <- df %>%
+  arrange(WageMedianConst)
+
+# lets see if it worked
+head(arranged_df)
+```
+
+We can add **desc()** inside arrange to sort in descending order.
+
+```{r}
+# replace "WageMedianConst" with whatever column you want to sort
+arranged_df <- df %>%
+  arrange(desc(WageMedianConst))
+
+# lets see if it worked
+head(arranged_df)
+```
+
+------------------------------------------------------------------------
+
+## Adding Columns: mutate(), transmute()
+
+**mutate()** adds columns/variables to the dataframe. First, we include the new variable name, then we indicate how we calculate the new variable.
+
+```{r}
+# Let us add a few new columns, creating a new dataframe: "new_df"
+#replace newvariable with whatever name you want, and define the variable however you want.
+new_df <- df %>%
+  mutate(newvariable = UnempConstRate * 100, newvariable2 = NA) 
+
+# see the new variables at the bottom of the dataframe
+glimpse(new_df)
+```
+
+**transmute()** is a variation of **mutate()**. It adds the new column you want to add, but deletes the other columns. If you want to keep maybe 1 column from the old dataset, you can create a new variable, and set it equal to that old variable.
+
+```{r}
+# we create a new variable.
+# in the example below, we also copy over ConstituencyName from the old df to the new
+new1_df <- df %>%
+  transmute(newvariable = HouseWageRatio + 5, ContituencyName = ConstituencyName)
+
+# notice the other vairables have been deleted, but ConstiutencyName carries over
+glimpse(new1_df)
+```
+
+------------------------------------------------------------------------
+
+## Renaming Columns: colnames(), rename()
+
+Each column in R can be named. We can see, and rename the columns as follows:
+
+```{r}
+# to see colnames, use the colnames() function
+colnames(df)
+
+# Lets change the ConstituencyName column to just Name.
+# We do this by noting, it is position 2 in the colnames() vector
+# Change "2" to the respective position for other columns
+# The name should be a string, surrounded by ""
+colnames(df)[2] <- "Name"
+
+# lets check if the name has changed.
+colnames(df)
+```
+
+We can also use the **rename()** function, which allows us to avoid the [] indexing mess, and just use the names. Note: the new column name comes before the old column name when using this function.
+
+```{r}
+# let us rename UnempConstRate to newname1
+# let us also rename ONSConstID to newname2
+df <- df %>%
+  rename(newname1 = UnempConstRate, newname2 = ONSConstID)
+
+# lets check if the name has changed
+colnames(df)
+```
+
+------------------------------------------------------------------------
+
+## Merging Data Frames: merge(), leftjoin()
+
+```{r, echo = FALSE}
+id <- 1:5
+names <- c("Kevin", "Elene", "Janice", "Daphne", "Gayatri")
+coolness <- c(4, 10, 9, 10, 9)
+
+x <- data.frame(id, names)
+y <- data.frame(id, coolness)
+```
+
+Sometimes, we need to merge data frames. Lets take the following dataframes: x, and y. We want to merge them. We can do this with the **merge()** function
+
+```{r}
+# First, take two data frames: x and y
+print(x)
+print(y)
+
+#We can merge them with the merge function
+# The merge() function will automatically merge by their common column: id
+merged_df <- merge(x, y)
+print(merged_df)
+```
+
+**leftjoin()** works the same way. Leftjoin just keeps all rows of x, and adds y onto it. This can be useful in some situations, although most of the time, it is the same as merge. Another difference is that merge will sort the "common" column that was used to join alphabetically, while left join will mantain the "common" column order as in the x data set. However, this doesn't really matter for the above example, as the column "id" is already in alphabetical/ascending order. **leftjoin()** uses the same syntax, just replace merge with leftjoin
