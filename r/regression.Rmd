@@ -1,0 +1,227 @@
+---
+title: "Linear Regression"
+output: html_document
+date: "2024-08-20"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+[Handbook Homepage](https://politicalscience.github.io)
+
+## Table of Contents
+
+-   [Simple Linear Regression (OLS)]
+
+-   [Factor X Variables (Non-Continuous X Variables)]
+
+-   [Multivariate Linear Regression]
+
+-   [Linear Regression with Moderating/Interaction Effects]
+
+------------------------------------------------------------------------
+
+Remember to load tidyverse
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+Let us also load the dataset we will be using for these examples (feel free to load your own dataset)
+
+```{r, message = FALSE}
+df <- read_csv("voctaxdata.csv")
+```
+
+------------------------------------------------------------------------
+
+## Simple Linear Regression (OLS)
+
+A simple linear regression is a method to create a prediction of Y, given a value of X (**Y \~ X)**. We do this by training the model on a dataset with both X and Y, and the computer will use Ordinary Least Squares (OLS) methodology to find the relevant parameters to create a linear line of best fit. OLS is only used on continuous Y variables (not categorical Y variables).
+
+We conduct a simple linear regression (**Y \~ X**) in R as follows. Take note of the following:
+
+-   **linear_reg** is the variable I am saving my linear regression model to. You can name this anything you want to.
+
+-   **personaltax** is the Y variable (Dependent variable) I am using for the regression. This is what variable I am trying to predict. Replace this with the Y variable you intend on using.
+
+-   **econglobal** is the X variable (Independent Varibale) I am using for the regression. This is what variable I am using to make the prediction. Replace this with the X variable you intend on using.
+
+-   **df** is the name of my data frame that I am drawing these X and Y variables from. Replace this with the name of your dataframe.
+
+-   NOTE: In the formula section, Y always goes first (**Y \~ X)**.
+
+-   We need to use the **summary()** function to bring up the output of the OLS regression.
+
+```{r}
+linear_reg <- lm(personaltax ~ econglobal, data = df)
+
+#for output, use summary function
+summary(linear_reg)
+
+```
+
+The interpretation is as follows:
+
+-   **Intercept Estimate** is the estimated B0 (Y-Intercept) of the model. In other words, when the X variable (**econglobal** in this case) is equal to 0, there is a predicted -8.2389 value of Y (**personaltax** in this case).
+
+-   **econglobal Estimate** is the estimated B1 (Slope) of the model. This will be labled whatever your X variable is named. This indicates that for every increase of 1 in the X variable (**econglobal** in this case), there is a predicted 0.62268 increase in the Y variable (**personaltax** in this case).
+
+-   **Std. Error** are the standard errors of the estimates of B0 and B1. Multiply by 1.96, then add and subtract that product from the estimate, to create 95% confidence intervals.
+
+-   **Pr(\>\|t\|)** is the P value of the estimate. Basically, if it is less than 0.05, we can generally reject the null hypothesis, and conclude there is a significant relationship.
+
+We can also put this in graphical form with **ggplot** as follows. Take note of the following:
+
+-   **df** is the name of the dataframe containing our X and Y variables. Rename this to whatever your dataframe is called.
+
+-   Input the names of your X and Y variable where **econglobal** and **personaltax** are.
+
+```{r}
+df %>%
+  ggplot(aes(x = econglobal, y = personaltax)) +
+  geom_point() +
+  geom_smooth(method = "lm", color = "red")
+```
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+## Factor X Variables (Non-Continuous X Variables)
+
+What are Factor/Non-Continuous X Variables? These are variables that are generally categorical - as in that there are a limited number of categories, and these categories are un-rankable (one is not inherently better/higher than another). These behave differently from numerical continuous variables (ex. 2 \> 1, 3 \> 2, etc.).
+
+-   For example, take the variable **company**, which consists of the values {apple, microsoft, nvidia, meta, google}. There are a limited number of categories, and apple is not inherently higher/better than microsoft, nvidia, etc.
+
+-   Another example common in political science is countries. United States is not inherently a higher value than Canada, unlike 2 is always higher than 1.
+
+For these variables, we need to change how we do the regression. Why? Well, for a continuous numerical variable, the slope calculated from our OLS regression (B1) makes sense - for every increase of 1 in X, we expect a certain change in Y. However, we can't really say the same with categorical data.
+
+-   Ex. if we included **company** as a numerical variable, that would imply that going from apple to microsoft is taking 1 step up, with the slope representing the change in Y. But the slope makes no sense, especially if we apply it to going from microsoft to nvidia, also 1 step up.
+
+Instead, we need to include these as factor variables - essentially, each category is its own binary variable, with slope indicating the difference between in-category and out-category.
+
+**R AUTMOATICALLY DETECTS TEXT-STRING VARIABLES AS FACTOR VARIABLES**
+
+-   For example, if our variable is {United States, Canada, France}, R will automatically factor the variable into 2 binary variables.
+
+-   Thus, if our factor/categorical variables are all text-string type, we don't have to do any extra work.
+
+**HOWEVER, IF THE CATEGORICAL VARIABLE IS ENCODED AS NUMBERS, R DOESN'T KNOW IT IS CATEGORICAL. THUS, WE NEED TO TELL R THIS.**
+
+-   For example, maybe instead of {United States, Canada, France}, we have a variable {1, 2, 3}, where 1 = US, 2 = Canada, 3 = France. But since the variable is encoded in R as {1, 2, 3}, we have to tell R to treat it like a factor variable.
+
+We can tell R to do this with the **as.factor** function, and putting that variable we want to treat as a factor inside of it. See the following:
+
+-   **voc** is the categorical variable here. We want to treat it as a factor, so we put it in the **as.factor()** function within the regression
+
+```{r}
+factor_linear_reg <- lm(personaltax ~ as.factor(voc), data = df)
+
+#for output, use summary function
+summary(factor_linear_reg)
+```
+
+See how the variable has been treated as a factor - **voc** originally had 2 categories, so there is 1 factor: **voc1**, which shows the difference between 1 and 0.
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+## Multivariate Linear Regression
+
+Almost always in political science, we will need more than one X predictor variable. This is because very few phenomenon are caused by one variable only (**Y \~ X1 + X2 + X3...**). Thus, we need to control for other potential causes of Y in order to estimate the effect of our main X on Y.
+
+In R, we can do this quite simply by adding onto the Single Linear Regression format. Take note of the following:
+
+-   **multiple_reg** is the variable I am saving my linear regression model to. You can name this anything you want to.
+
+-   **personaltax** is the Y variable (Dependent variable) I am using for the regression. This is what variable I am trying to predict. Replace this with the Y variable you intend on using.
+
+-   **econglobal** is the X1 variable (Independent Variable) I am using for the regression. This is one of two variables I am using to make the prediction. Replace this with the X1 variable you intend on using.
+
+-   **socialexp** is the X2 variable (Independent Variable) I am using for the regression. This is one of two variables I am using to make the prediction. Replace this with the X2 variable you intend on using.
+
+-   **df** is the name of my data frame that I am drawing these X and Y variables from. Replace this with the name of your dataframe.
+
+-   To add more than 2 X independent variables, simply do **+ X3 + X4 ...**
+
+-   NOTE: In the formula section, Y always goes first (**Y \~ X1 + X2**).
+
+-   We need to use the **summary()** function to bring up the output of the OLS regression.
+
+```{r}
+multiple_reg <- lm(personaltax ~ econglobal + socialexp, data = df)
+
+#for output, use summary function
+summary(multiple_reg)
+
+```
+
+Interpretation is the same as Single Linear Regression, except that we have an extra variable. When interpreting one variable, always mention that the other variables are **being held constant**.
+
+If we want to use all the variables in our dataset, we can use a "trick" to simplify our multiple linear regression formula:
+
+-   NOTE: Please check that you genuinely want all variables in the data frame in your regression. Sometimes, variables (such as ID) make no sense to include. If you need to exclude any, you can use the **select()** function introduced in the Visualizing Data lesson.
+
+-   This specific example does not exclude any even though there are some variables that probably should be excluded - this is an example for demonstration of code only.
+
+-   Also note how R deals with the country variable as a factor variable automatically (see above section on Factor X variables)
+
+```{r}
+multiple_reg_2 <- lm(personaltax ~ ., data = df)
+summary(multiple_reg_2)
+```
+
+------------------------------------------------------------------------
+
+## Linear Regression with Moderating/Interaction Effects
+
+The Multiple Linear Regression we looked at before assumes that each variable has an independent effect (hence, why we put a + sign). That means, one variable's impact on Y does not affect another variable's impact on Y.
+
+However, this isn't always the case. There are plenty of times where one variable's value will impact the strength the the relationship between another variable and Y. For example, there is a relationship between high speeds and accident frequency in cars. However, this relationship because far more dangerous if the roads are slippery. So, the slippery roads is **moderating/interacting with** the effect between high speeds and accident frequency.
+
+We can implement moderating/interaction effects in R with the \* sign, where \* goes between the two X variables that affect each other (**Y \~ X1 \* X2 + X3 + X4...**). Take note of the following:
+
+-   **moderating_reg** is the variable I am saving my linear regression model to. You can name this anything you want to.
+
+-   **personaltax** is the Y variable (Dependent variable) I am using for the regression. This is what variable I am trying to predict. Replace this with the Y variable you intend on using.
+
+-   **econglobal** and **voc** are the two variables that are interacting/moderating each other. Replace these with the variable you intend on using.
+
+-   **gini** is an additional control variable, that is not interacting with any other variable. You can delete this if you have no other control variables/IVs you want to include. You can change this to the control/IV you want to include, and you can also add more by adding a plus sign (+).
+
+-   **df** is the name of my data frame that I am drawing these X and Y variables from. Replace this with the name of your dataframe.
+
+-   NOTE: In the formula section, Y always goes first (**Y \~ X1 \* X2**).
+
+-   We need to use the **summary()** function to bring up the output of the OLS regression.
+
+```{r}
+moderating_reg <- lm(personaltax ~ econglobal*as.factor(voc) + socialexp, data = df)
+
+#for output, use summary function
+summary(moderating_reg)
+```
+
+Interpretation of this is a little different:
+
+-   **Intercept** is the same as the other OLS models we have covered. Still means value of Y when all others are equal to 0.
+
+-   **econglobal** is the effect of X1 (**econglobal**) on Y (**personaltax**), when the other interacting variable X2 (**voc**) is equal to 0.
+
+-   **econglobal:as.factor(voc)1** is the moderating term. This shows the difference of the effect of X1 (**econglobal**) on Y between when **voc** is 0 and 1.
+
+-   Naturally then, we can deduce that **econglobal + econglobal:as.factor(voc)1** is the effect of X1 (**econglobal**) on Y (**personaltax**), when the other interacting variable X2 (**voc**) is equal to 1.
+
+-   **socialexp** is the same as other OLS models, a standard control assuming everything else is held constant.
+
+If the moderating term (**econglobal:as.factor(voc)1**) is statistically significant, then we can conclude that there is a significant interaction between the two interacting variables. If this isn't significant, then there is no interaction, and you probably don't need to include the interaction effect.
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+[Handbook Homepage](https://politicalscience.github.io)
