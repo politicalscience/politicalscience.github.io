@@ -1,0 +1,219 @@
+---
+title: "Logistic Regression"
+output: html_document
+date: "2024-08-22"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+[Handbook Homepage](https://politicalscience.github.io)
+
+## Table of Contents
+
+-   [Binomial Logistic Regression]
+
+-   [Odds Ratios and Relative Risk Ratios]
+
+-   [Multinomial Logistic Regression]
+
+-   [Ordinal Logistic Regression]
+
+------------------------------------------------------------------------
+
+Remember to load tidyverse
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+Let us also load the dataset we will be using for these examples (feel free to load your own dataset)
+
+```{r, message = FALSE}
+df <- read_csv("voctaxdata.csv")
+```
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+## Binomial Logistic Regression
+
+Logistic regression is used when we are trying to use X to predict a categorical/binary/factor Y variable.
+
+These are variables that are generally categorical - as in that there are a limited number of categories, and these categories are un-rankable (one is not inherently better/higher than another). These behave differently from numerical continuous variables (ex. 2 \> 1, 3 \> 2, etc.).
+
+-   For example, take the variable **company**, which consists of the values {apple, microsoft, nvidia, meta, google}. There are a limited number of categories, and apple is not inherently higher/better than microsoft, nvidia, etc.
+
+-   Another example common in political science is countries. United States is not inherently a higher value than Canada, unlike 2 is always higher than 1.
+
+Logistic Regression helps us predict the probability that an observation is in one Y category or another, based on the X variable values. This helps us analyse how changes in X affect the probability than an observation is in a certain category.
+
+Lets run simple binomial logistic regression with a Binary Y. For non-binary Y, see multinomial and ordinal logistic later in this lesson. Take note of the following:
+
+-   **logistic_reg** is the variable I am saving my regression model to. You can name this anything you want to.
+
+-   **voc** is the Y variable (Dependent variable) I am using for the regression. This is what variable I am trying to predict. Replace this with the Y variable you intend on using.
+
+-   **personaltax** is the X1 variable (Independent Varibale) I am using for the regression. This is what variable I am using to make the prediction. Replace this with the X variable you intend on using.
+
+-   **gini** is the X2 variable (Independent Varibale) I am using for the regression. This is what variable I am using to make the prediction. Replace this with the X variable you intend on using.
+
+-   **df** is the name of my data frame that I am drawing these X and Y variables from. Replace this with the name of your dataframe.
+
+-   NOTE: In the formula section, Y always goes first (**Y \~ X)**. Remember to use **family = binomial**, or else this regression will not work.
+
+-   To add more than 2 X independent variables, simply do **+ X3 + X4 ...**
+
+-   We need to use the **summary()** function to bring up the output of the OLS regression.
+
+```{r}
+
+logistic_reg <- glm(as.factor(voc) ~ personaltax + gini, data = df, family = binomial)
+
+# Use summary() function to see results
+summary(logistic_reg)
+```
+
+We can interpret the significance levels (stars) and **Pr(\>\|z\|)** as we normally do with linear regressions. Basically, if **Pr(\>\|z\|)** is less than 0.05, we can generally reject the null hypothesis, and conclude there is a significant relationship.
+
+We can also interpret the sign of the estimates. If the X variable coefficient estimate is positive, then there is a positive effect of X on Y, and if the coefficient estimate is negative, then there is a negative effect of X on Y.
+
+However, unlike linear regressions, we cannot directly interpret the estimated coefficients. These do not mean anything meaningful to us. To interpret, we need to calculate the **odds ratios** of the regression (see below).
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+## Odds Ratios and Relative Risk Ratios
+
+To interpret logistic regression coefficients, we need to calculate the odds ratios. We can do this with a few commands. Take note of the following:
+
+-   **odds_ratios** is the variable I am storing our calculated odds ratios in. You can rename this to whatever you want.
+
+-   **logsitic_reg** is the variable containing my logistic regression I ran in the previous section. Rename this to what your logistic regression model variable is named.
+
+```{r}
+odds_ratios <- exp(coef(logistic_reg))
+
+# print the variable
+print(odds_ratios)
+```
+
+How do we interpret these ratios?
+
+-   If the odds ratio is less than 1, the effect of X on Y is negative.
+
+-   If the odds ratio is greater than 1, the effect of X on Y is positive.
+
+-   If the odds ratio is equal to 1, there is no relationship.
+
+Interpreting magnitude of odds ratios:
+
+-   If we subtract 1 from the odds ratio, we get the "rate of change".
+
+-   For every one unit increase of X, the probability will change by the rate of change.
+
+-   Ex. If the odds ratio is 1.25, that means for each increase of 1 in X, we predict the probability of Y will increase by 0.25 or 25% (or simply, probability \* 1.25).
+
+-   Ex. If the odds ratio is 0.5, that means for each increase of 1 in X, we predict the probability of Y will decrease by 0.5 or 50% (or simply, probability \* 0.5)
+
+-   The significance P value of each is seen in the original logistic regression (don't use odds ratios).
+
+If we want to calculate the 95% confidence intervals of the odds ratio estimates, we can do the following code. Take note of the following:
+
+-   **or_interval** is the variable I am storing my odds ratio and confidence interval results in. You can name this whatever you want.
+
+-   **logistic_reg** is the variable containing my logistic regression I ran in the previous section. Rename this to what your logistic regression model variable is named.
+
+```{r}
+
+# cbind to create a table
+or_interval <- exp(cbind(OR = coef(logistic_reg), confint(logistic_reg)))
+
+# print the table
+print(or_interval)
+```
+
+The interpretation of these values is the same, but now, we have 95% confidence intervals!
+
+**Relative Risk Ratios** are the same thing as odds ratios, but are called that when applied to a multinomial logistic regression (see below).
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+## Multinomial Logistic Regression
+
+Multinomial logistic regression is used to predict a Y, which has more than 2 outcomes. We will need to instal the **VGAM** package
+
+```{r, message = FALSE}
+library(VGAM)
+```
+
+```{r, echo = FALSE}
+data(iris)
+df <- iris
+options(warn = -1)
+```
+
+Now, we can run a Multinomial logistic regression in the same syntax as the binomial logistic regression, but instead of **glm()**, use the **vglm()** function.
+
+We will run this regression on the Y variable Species, which has 3 distinct categories. The **vglm()** function will automatically set the last of these categories as the "reference category", so the probabilities are in comparisons to the reference category. Note the following:
+
+-   **multinomial_reg** is the variable I am saving my regression model to. You can name this anything you want to.
+
+-   **Species** is the Y variable (Dependent variable) I am using for the regression. This is what variable I am trying to predict. Replace this with the Y variable you intend on using.
+
+-   **Petal.Length** is the X1 variable (Independent Varibale) I am using for the regression. This is what variable I am using to make the prediction. Replace this with the X variable you intend on using.
+
+-   **Petal.Width** is the X2 variable (Independent Varibale) I am using for the regression. This is what variable I am using to make the prediction. Replace this with the X variable you intend on using.
+
+-   **df** is the name of my data frame that I am drawing these X and Y variables from. Replace this with the name of your dataframe.
+
+-   NOTE: In the formula section, Y always goes first (**Y \~ X)**. Remember to use **family = multinomial**, or else this regression will not work.
+
+-   To add more than 2 X independent variables, simply do **+ X3 + X4 ...**
+
+-   We need to use the **summary()** function to bring up the output of the OLS regression.
+
+```{r}
+
+multinomial_reg <- vglm(Species ~ Petal.Length + Petal.Width,
+                    data = df,
+                    family = multinomial)
+
+# Use summary() to see results
+summary(multinomial_reg)
+```
+
+```{r, echo = FALSE}
+options(warn = 0)
+```
+
+We can calculate the odds ratio for better interperation:
+
+```{r}
+# cbind to create a table
+or_interval <- exp(cbind(OR = coef(multinomial_reg), confint(multinomial_reg)))
+
+# print the table
+print(or_interval)
+```
+
+Remember, **vglm()** sets the last category as the reference category. Thus, the coefficients with **1** indicate the probability of being in category **1** compared to category **3**. The coefficients with **2** indicate the probability of being in category **2** compared to category **3**. The interpretations are the same as standard odds ratios.
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+## Ordinal Logistic Regression
+
+Coming Soon
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+[Handbook Homepage](https://politicalscience.github.io)

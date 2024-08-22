@@ -10,8 +10,9 @@
 
 
 
+<meta name="date" content="2024-08-22" />
 
-<title>Political Science Handbook</title>
+<title>Logistic Regression</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -348,199 +349,300 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Political Science Handbook</h1>
+<h1 class="title toc-ignore">Logistic Regression</h1>
+<h4 class="date">2024-08-22</h4>
 
 </div>
 
 
-<div id="handbook---quantitative-methods-in-r" class="section level3">
-<h3>Handbook - Quantitative Methods in R</h3>
-<p>This page is a handbook for quantitative methods in Political
-Science, using the R programming language, intended to help implement
-statistical/econometric methods in the free R language. In fact, this
-website was written with R-Markdown!</p>
-<p>What this handbook is NOT for:</p>
+<p><a href="https://politicalscience.github.io">Handbook
+Homepage</a></p>
+<div id="table-of-contents" class="section level2">
+<h2>Table of Contents</h2>
 <ul>
-<li><p>This handbook is NOT a course on statistics or quantitative
-methods. This handbook will not go into the mathematics, statistics, and
-probability theory behind these methods. This handbook is designed for
-researchers who have an understanding of statistics/econometrics, and
-want to apply those techniques in R. <a href="#resources-for-learning-statistics-and-r-programming">Resources
-for Learning Statistics and R-Programming</a>.</p></li>
-<li><p>This handbook is NOT a course on the R language. It assumes you
-know basics, such as how libraries work, the pipe operator, objects, and
-general syntax. <a href="#resources-for-learning-statistics-and-r-programming">Resources
-for Learning Statistics and R-Programming</a>.</p></li>
-</ul>
-<p><a href="#about-the-creator">About the Creator</a></p>
-<hr />
-</div>
-<div id="section-0-key-info" class="section level2">
-<h2>Section 0: Key Info</h2>
-<p>This handbook heavily relies on the tidyverse package. Things will
-not work without it. Install it in the following way:</p>
-<pre class="r"><code>install.packages(&quot;tidyverse&quot;)</code></pre>
-<p>There are other packages that will be used, but are only applicable
-to specific tools, so I will introduce them when necessary.</p>
-<hr />
-</div>
-<div id="section-1-data" class="section level2">
-<h2>Section 1: Data</h2>
-<p><a href="https://politicalscience.github.io/r/managing_data.html">Managing
-Data</a></p>
-<ul>
-<li>Import data, select, filter, arrange (sort), add columns, rename
-columns, merging datasets</li>
-</ul>
-<p><a href="https://politicalscience.github.io/r/visualizing_data.html">Visualizing
-Data</a></p>
-<ul>
-<li>Ggplot histograms, boxplots, and scatterplots with best fit, pairs()
-function &amp; correlations</li>
-</ul>
-<p>Long and Wide Data</p>
-<ul>
-<li>Pivot longer, pivot wider</li>
+<li><p><a href="#binomial-logistic-regression">Binomial Logistic
+Regression</a></p></li>
+<li><p><a href="#odds-ratios-and-relative-risk-ratios">Odds Ratios and
+Relative Risk Ratios</a></p></li>
+<li><p><a href="#multinomial-logistic-regression">Multinomial Logistic
+Regression</a></p></li>
+<li><p><a href="#ordinal-logistic-regression">Ordinal Logistic
+Regression</a></p></li>
 </ul>
 <hr />
-</div>
-<div id="section-2-standard-econometric-methods" class="section level2">
-<h2>Section 2: Standard Econometric Methods</h2>
-<p><a href="https://politicalscience.github.io/r/regression.html">Linear
-Regression &amp; Interaction/Moderating Effects</a></p>
-<ul>
-<li>Simple &amp; Multivariate Linear Regression, Interaction/Moderating
-Effect, Using Factor/Categorical Variables</li>
-</ul>
-<p>Outliers and Heteroskedasticity</p>
-<ul>
-<li>Outliers (Cooks Distance), Robust Standard Errors, Log
-Transformation</li>
-</ul>
-<p><a href="https://politicalscience.github.io/r/logistic.html">Logistic
-Regression</a></p>
-<ul>
-<li>Binomial Logistic Regression, Multinomial Logistic Regression,
-Ordinal Logistic Regression</li>
-</ul>
-<p>Poisson and Negative Binomial Regression</p>
-<ul>
-<li>Poisson, Negative Binomial Regression</li>
-</ul>
-<p>Quasi-Experimental Methods</p>
-<ul>
-<li>Regression Discontinuity, Differences-in-Differences</li>
-</ul>
+<p>Remember to load tidyverse</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<p>Let us also load the dataset we will be using for these examples
+(feel free to load your own dataset)</p>
+<pre class="r"><code>df &lt;- read_csv(&quot;voctaxdata.csv&quot;)</code></pre>
 <hr />
+<p><a href="#table-of-contents">Table of Contents</a></p>
 </div>
-<div id="section-3-data-science-methods" class="section level2">
-<h2>Section 3: Data Science Methods</h2>
-<p>Non-Linear Methods and GAMs</p>
+<div id="binomial-logistic-regression" class="section level2">
+<h2>Binomial Logistic Regression</h2>
+<p>Logistic regression is used when we are trying to use X to predict a
+categorical/binary/factor Y variable.</p>
+<p>These are variables that are generally categorical - as in that there
+are a limited number of categories, and these categories are un-rankable
+(one is not inherently better/higher than another). These behave
+differently from numerical continuous variables (ex. 2 &gt; 1, 3 &gt; 2,
+etc.).</p>
 <ul>
-<li>Polynomial Regressions, Step Functions, Splines, Local Linear
-Regression, Generalized Additive Models</li>
+<li><p>For example, take the variable <strong>company</strong>, which
+consists of the values {apple, microsoft, nvidia, meta, google}. There
+are a limited number of categories, and apple is not inherently
+higher/better than microsoft, nvidia, etc.</p></li>
+<li><p>Another example common in political science is countries. United
+States is not inherently a higher value than Canada, unlike 2 is always
+higher than 1.</p></li>
 </ul>
-<p>Tree-Based Methods</p>
+<p>Logistic Regression helps us predict the probability that an
+observation is in one Y category or another, based on the X variable
+values. This helps us analyse how changes in X affect the probability
+than an observation is in a certain category.</p>
+<p>Lets run simple binomial logistic regression with a Binary Y. For
+non-binary Y, see multinomial and ordinal logistic later in this lesson.
+Take note of the following:</p>
 <ul>
-<li>Bagging, Random Forest</li>
+<li><p><strong>logistic_reg</strong> is the variable I am saving my
+regression model to. You can name this anything you want to.</p></li>
+<li><p><strong>voc</strong> is the Y variable (Dependent variable) I am
+using for the regression. This is what variable I am trying to predict.
+Replace this with the Y variable you intend on using.</p></li>
+<li><p><strong>personaltax</strong> is the X1 variable (Independent
+Varibale) I am using for the regression. This is what variable I am
+using to make the prediction. Replace this with the X variable you
+intend on using.</p></li>
+<li><p><strong>gini</strong> is the X2 variable (Independent Varibale) I
+am using for the regression. This is what variable I am using to make
+the prediction. Replace this with the X variable you intend on
+using.</p></li>
+<li><p><strong>df</strong> is the name of my data frame that I am
+drawing these X and Y variables from. Replace this with the name of your
+dataframe.</p></li>
+<li><p>NOTE: In the formula section, Y always goes first (<strong>Y ~
+X)</strong>. Remember to use <strong>family = binomial</strong>, or else
+this regression will not work.</p></li>
+<li><p>To add more than 2 X independent variables, simply do <strong>+
+X3 + X4 …</strong></p></li>
+<li><p>We need to use the <strong>summary()</strong> function to bring
+up the output of the OLS regression.</p></li>
 </ul>
-<p>Evaluating Prediction Methods</p>
-<ul>
-<li>Training/testing sets, K-fold Cross Validation, Bootstrap
-sampling</li>
-</ul>
-<p>Classification Prediction</p>
-<ul>
-<li>Naive Bayes, Evaluation of Classification Models (Confusion Matrix,
-Sensitivity/Specificity)</li>
-</ul>
-<p>Regularization</p>
-<ul>
-<li>Ridge, Lasso, Tuning grid for Lambda</li>
-</ul>
-<p>Dimensional Reduction</p>
-<ul>
-<li>Principle Component Analysis</li>
-</ul>
-<p>Cluster Analysis</p>
-<ul>
-<li>K-Means Clustering, Hierarchical Clustering</li>
-</ul>
+<pre class="r"><code>logistic_reg &lt;- glm(as.factor(voc) ~ personaltax + gini, data = df, family = binomial)
+
+# Use summary() function to see results
+summary(logistic_reg)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = as.factor(voc) ~ personaltax + gini, family = binomial, 
+##     data = df)
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  50.4054     8.8483   5.697 1.22e-08 ***
+## personaltax  -0.0458     0.0280  -1.636    0.102    
+## gini         -1.5115     0.2506  -6.032 1.61e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 343.24  on 254  degrees of freedom
+## Residual deviance: 122.47  on 252  degrees of freedom
+## AIC: 128.47
+## 
+## Number of Fisher Scoring iterations: 7</code></pre>
+<p>We can interpret the significance levels (stars) and
+<strong>Pr(&gt;|z|)</strong> as we normally do with linear regressions.
+Basically, if <strong>Pr(&gt;|z|)</strong> is less than 0.05, we can
+generally reject the null hypothesis, and conclude there is a
+significant relationship.</p>
+<p>We can also interpret the sign of the estimates. If the X variable
+coefficient estimate is positive, then there is a positive effect of X
+on Y, and if the coefficient estimate is negative, then there is a
+negative effect of X on Y.</p>
+<p>However, unlike linear regressions, we cannot directly interpret the
+estimated coefficients. These do not mean anything meaningful to us. To
+interpret, we need to calculate the <strong>odds ratios</strong> of the
+regression (see below).</p>
 <hr />
+<p><a href="#table-of-contents">Table of Contents</a></p>
 </div>
-<div id="section-4-textual-methods" class="section level2">
-<h2>Section 4: Textual Methods</h2>
-<p>Feature Selection</p>
+<div id="odds-ratios-and-relative-risk-ratios" class="section level2">
+<h2>Odds Ratios and Relative Risk Ratios</h2>
+<p>To interpret logistic regression coefficients, we need to calculate
+the odds ratios. We can do this with a few commands. Take note of the
+following:</p>
 <ul>
-<li>Document Feature Matrix, Bag of Words, N-Grams, Trimming</li>
+<li><p><strong>odds_ratios</strong> is the variable I am storing our
+calculated odds ratios in. You can rename this to whatever you
+want.</p></li>
+<li><p><strong>logsitic_reg</strong> is the variable containing my
+logistic regression I ran in the previous section. Rename this to what
+your logistic regression model variable is named.</p></li>
 </ul>
-<p>Dictionary Methods</p>
-<p>Similarity Metrics</p>
-<p>Classification Methods for Text</p>
+<pre class="r"><code>odds_ratios &lt;- exp(coef(logistic_reg))
+
+# print the variable
+print(odds_ratios)</code></pre>
+<pre><code>##  (Intercept)  personaltax         gini 
+## 7.776664e+21 9.552285e-01 2.205778e-01</code></pre>
+<p>How do we interpret these ratios?</p>
 <ul>
-<li>Naive Bayes Classification for Text</li>
+<li><p>If the odds ratio is less than 1, the effect of X on Y is
+negative.</p></li>
+<li><p>If the odds ratio is greater than 1, the effect of X on Y is
+positive.</p></li>
+<li><p>If the odds ratio is equal to 1, there is no
+relationship.</p></li>
 </ul>
-<p>Topic Modelling</p>
+<p>Interpreting magnitude of odds ratios:</p>
 <ul>
-<li>Latent Dirichlet Allocation, Structural Topic Model</li>
+<li><p>If we subtract 1 from the odds ratio, we get the “rate of
+change”.</p></li>
+<li><p>For every one unit increase of X, the probability will change by
+the rate of change.</p></li>
+<li><p>Ex. If the odds ratio is 1.25, that means for each increase of 1
+in X, we predict the probability of Y will increase by 0.25 or 25% (or
+simply, probability * 1.25).</p></li>
+<li><p>Ex. If the odds ratio is 0.5, that means for each increase of 1
+in X, we predict the probability of Y will decrease by 0.5 or 50% (or
+simply, probability * 0.5)</p></li>
+<li><p>The significance P value of each is seen in the original logistic
+regression (don’t use odds ratios).</p></li>
 </ul>
+<p>If we want to calculate the 95% confidence intervals of the odds
+ratio estimates, we can do the following code. Take note of the
+following:</p>
+<ul>
+<li><p><strong>or_interval</strong> is the variable I am storing my odds
+ratio and confidence interval results in. You can name this whatever you
+want.</p></li>
+<li><p><strong>logistic_reg</strong> is the variable containing my
+logistic regression I ran in the previous section. Rename this to what
+your logistic regression model variable is named.</p></li>
+</ul>
+<pre class="r"><code># cbind to create a table
+or_interval &lt;- exp(cbind(OR = coef(logistic_reg), confint(logistic_reg)))</code></pre>
+<pre><code>## Waiting for profiling to be done...</code></pre>
+<pre class="r"><code># print the table
+print(or_interval)</code></pre>
+<pre><code>##                       OR        2.5 %       97.5 %
+## (Intercept) 7.776664e+21 1.847178e+15 2.614028e+30
+## personaltax 9.552285e-01 9.016633e-01 1.007093e+00
+## gini        2.205778e-01 1.262251e-01 3.390714e-01</code></pre>
+<p>The interpretation of these values is the same, but now, we have 95%
+confidence intervals!</p>
+<p><strong>Relative Risk Ratios</strong> are the same thing as odds
+ratios, but are called that when applied to a multinomial logistic
+regression (see below).</p>
 <hr />
+<p><a href="#table-of-contents">Table of Contents</a></p>
 </div>
-<div id="further-information" class="section level1">
-<h1>Further Information</h1>
-<div id="about-the-creator" class="section level4">
-<h4>About the Creator</h4>
-<p>This handbook was created by Kevin Lingfeng Li, in R-Markdown!</p>
+<div id="multinomial-logistic-regression" class="section level2">
+<h2>Multinomial Logistic Regression</h2>
+<p>Multinomial logistic regression is used to predict a Y, which has
+more than 2 outcomes. We will need to instal the <strong>VGAM</strong>
+package</p>
+<pre class="r"><code>library(VGAM)</code></pre>
+<p>Now, we can run a Multinomial logistic regression in the same syntax
+as the binomial logistic regression, but instead of
+<strong>glm()</strong>, use the <strong>vglm()</strong> function.</p>
+<p>We will run this regression on the Y variable Species, which has 3
+distinct categories. The <strong>vglm()</strong> function will
+automatically set the last of these categories as the “reference
+category”, so the probabilities are in comparisons to the reference
+category. Note the following:</p>
 <ul>
-<li><a href="https://www.linkedin.com/in/kevinlingfengli/">LinkedIn</a>
-| <a href="https://kevinli03.github.io">Personal Website</a></li>
+<li><p><strong>multinomial_reg</strong> is the variable I am saving my
+regression model to. You can name this anything you want to.</p></li>
+<li><p><strong>Species</strong> is the Y variable (Dependent variable) I
+am using for the regression. This is what variable I am trying to
+predict. Replace this with the Y variable you intend on using.</p></li>
+<li><p><strong>Petal.Length</strong> is the X1 variable (Independent
+Varibale) I am using for the regression. This is what variable I am
+using to make the prediction. Replace this with the X variable you
+intend on using.</p></li>
+<li><p><strong>Petal.Width</strong> is the X2 variable (Independent
+Varibale) I am using for the regression. This is what variable I am
+using to make the prediction. Replace this with the X variable you
+intend on using.</p></li>
+<li><p><strong>df</strong> is the name of my data frame that I am
+drawing these X and Y variables from. Replace this with the name of your
+dataframe.</p></li>
+<li><p>NOTE: In the formula section, Y always goes first (<strong>Y ~
+X)</strong>. Remember to use <strong>family = multinomial</strong>, or
+else this regression will not work.</p></li>
+<li><p>To add more than 2 X independent variables, simply do <strong>+
+X3 + X4 …</strong></p></li>
+<li><p>We need to use the <strong>summary()</strong> function to bring
+up the output of the OLS regression.</p></li>
 </ul>
-<p>I completed my undergraduate in BSc Politics at King’s College
-London, focusing on statistical methods and game theory, obtaining a
-First-Class Honours (US equivalent: Summa Cum Laude) classification. I
-then went on to pursue a MSc in Political Science &amp; Political
-Economy at the London School of Economics (LSE).</p>
-<p>I created this handbook as a helpful guide while studying for his
-Masters degree. I realised that I had learned a ton of methods, but
-could not remember the syntax for all of them. Online resources often
-over-complicated the functions needed for political science analysis.
-Thus, in my free time, I created this handbook as a quick guide to
-implementing common statistical techniques.</p>
-<p>I do my best to update this handbook: it is a tool not only for my
-classmates and other political science students, but for me myself.
-However, as a full-time student with an internship, I may not be able to
-update this site at a fast enough pace.</p>
+<pre class="r"><code>multinomial_reg &lt;- vglm(Species ~ Petal.Length + Petal.Width,
+                    data = df,
+                    family = multinomial)
+
+# Use summary() to see results
+summary(multinomial_reg)</code></pre>
+<pre><code>## 
+## Call:
+## vglm(formula = Species ~ Petal.Length + Petal.Width, family = multinomial, 
+##     data = df)
+## 
+## Coefficients: 
+##                 Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept):1    100.412   6917.695      NA       NA    
+## (Intercept):2     45.272     13.612   3.326 0.000881 ***
+## Petal.Length:1   -20.491   6538.425  -0.003 0.997500    
+## Petal.Length:2    -5.755      2.306  -2.496 0.012576 *  
+## Petal.Width:1    -35.212  15749.252  -0.002 0.998216    
+## Petal.Width:2    -10.447      3.756      NA       NA    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Names of linear predictors: log(mu[,1]/mu[,3]), log(mu[,2]/mu[,3])
+## 
+## Residual deviance: 20.5635 on 294 degrees of freedom
+## 
+## Log-likelihood: -10.2818 on 294 degrees of freedom
+## 
+## Number of Fisher scoring iterations: 22 
+## 
+## Warning: Hauck-Donner effect detected in the following estimate(s):
+## &#39;(Intercept):1&#39;, &#39;(Intercept):2&#39;, &#39;Petal.Width:2&#39;
+## 
+## 
+## Reference group is level  3  of the response</code></pre>
+<p>We can calculate the odds ratio for better interperation:</p>
+<pre class="r"><code># cbind to create a table
+or_interval &lt;- exp(cbind(OR = coef(multinomial_reg), confint(multinomial_reg)))
+
+# print the table
+print(or_interval)</code></pre>
+<pre><code>##                          OR        2.5 %       97.5 %
+## (Intercept):1  4.060039e+43 0.000000e+00          Inf
+## (Intercept):2  4.587004e+19 1.189203e+08 1.769302e+31
+## Petal.Length:1 1.262052e-09 0.000000e+00          Inf
+## Petal.Length:2 3.168388e-03 3.451773e-05 2.908269e-01
+## Petal.Width:1  5.103029e-16 0.000000e+00          Inf
+## Petal.Width:2  2.904396e-05 1.846035e-08 4.569532e-02</code></pre>
+<p>Remember, <strong>vglm()</strong> sets the last category as the
+reference category. Thus, the coefficients with <strong>1</strong>
+indicate the probability of being in category <strong>1</strong>
+compared to category <strong>3</strong>. The coefficients with
+<strong>2</strong> indicate the probability of being in category
+<strong>2</strong> compared to category <strong>3</strong>. The
+interpretations are the same as standard odds ratios.</p>
 <hr />
+<p><a href="#table-of-contents">Table of Contents</a></p>
 </div>
-<div id="resources-for-learning-statistics-and-r-programming" class="section level4">
-<h4>Resources for Learning Statistics and R-Programming</h4>
-<ul>
-<li><p>For those who need an introduction to statistics, I recommend the
-<strong>Khan Academy</strong> course on AP Stats for a mathematical
-introduction: <a href="https://www.khanacademy.org/math/ap-statistics" class="uri">https://www.khanacademy.org/math/ap-statistics</a></p></li>
-<li><p>There is also a terrific free textbook on <strong>Statistical
-learning with applications to R</strong>: <a href="https://www.statlearning.com" class="uri">https://www.statlearning.com</a></p></li>
-<li><p>For more advanced individuals who want to learn more in-depth
-about statistics, see this excellent <strong>MIT lecture
-series</strong>: <a href="https://www.youtube.com/playlist?list=PLUl4u3cNGP61ATaGTFcSp7bhogloD2wHP" class="uri">https://www.youtube.com/playlist?list=PLUl4u3cNGP61ATaGTFcSp7bhogloD2wHP</a></p></li>
-<li><p>A free resource to learn R with is <strong>CodeAcademy</strong>:
-<a href="https://www.codecademy.com/enrolled/courses/learn-r" class="uri">https://www.codecademy.com/enrolled/courses/learn-r</a></p></li>
-<li><p>For those who have spare cash to spend, there is an excellent R
-programming course <strong>(Data Analysis with R) offered by IBM on
-Coursera</strong>, which teaches R and statistics: <a href="https://www.coursera.org/learn/data-analysis-with-r" class="uri">https://www.coursera.org/learn/data-analysis-with-r</a></p></li>
-<li><p>I also highly recommend those who can afford it, to attend the
-<strong>London School of Economic (LSE) Summer School</strong>, which
-has an excellent course - <strong>ME314 Introduction to Data Science and
-Machine Learning</strong>. Many of these methods are covered in depth in
-this course, and the course is run by one of the developers of Quanteda,
-the main textual-analysis R package.</p></li>
-</ul>
+<div id="ordinal-logistic-regression" class="section level2">
+<h2>Ordinal Logistic Regression</h2>
+<p>Coming Soon</p>
 <hr />
-<p>The contents of this handbook are advisory: they should not be taken
-as gospel. The contents of this handbook are accurate to the best of my
-ability, as of August 2024. Later updates to R and packages may result
-in errors.</p>
-</div>
+<p><a href="#table-of-contents">Table of Contents</a></p>
+<p><a href="https://politicalscience.github.io">Handbook
+Homepage</a></p>
 </div>
 
 
