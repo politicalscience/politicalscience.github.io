@@ -40,31 +40,23 @@ df <- read_csv("voctaxdata.csv")
 
 ## Binomial Logistic Regression
 
-Logistic regression is used when we are trying to use X to predict a categorical/binary/factor Y variable.
+Logistic regression is used when we are trying to use X to predict a categorical/binary/factor Y variable. For example - if our goal is to use a few independent variables to predict Y - whether a country is a democracy or not (Yes/No is binary/categorical).
 
-These are variables that are generally categorical - as in that there are a limited number of categories, and these categories are un-rankable (one is not inherently better/higher than another). These behave differently from numerical continuous variables (ex. 2 \> 1, 3 \> 2, etc.).
-
--   For example, take the variable **company**, which consists of the values {apple, microsoft, nvidia, meta, google}. There are a limited number of categories, and apple is not inherently higher/better than microsoft, nvidia, etc.
-
--   Another example common in political science is countries. United States is not inherently a higher value than Canada, unlike 2 is always higher than 1.
-
-Logistic Regression helps us predict the probability that an observation is in one Y category or another, based on the X variable values. This helps us analyse how changes in X affect the probability than an observation is in a certain category.
-
-Lets run simple binomial logistic regression with a Binary Y. For non-binary Y, see multinomial and ordinal logistic later in this lesson. Take note of the following:
+Lets run simple binomial logistic regression with a Binary Y (**Y \~ X1 + X2 + X3...**) . For non-binary Y, see multinomial and ordinal logistic later in this lesson. In the example below:
 
 -   **logistic_reg** is the variable I am saving my regression model to. You can name this anything you want to.
 
--   **voc** is the Y variable (Dependent variable) I am using for the regression. This is what variable I am trying to predict. Replace this with the Y variable you intend on using.
+-   **voc** is the Y variable (Dependent variable) I am using for the regression. This is what variable I am trying to predict. Replace this with the Y variable you intend on using. I included **as.factor()** so R treats this as a categorical variable (only necessary if your categorical variable is coded into numbers).
 
--   **personaltax** is the X1 variable (Independent Varibale) I am using for the regression. This is what variable I am using to make the prediction. Replace this with the X variable you intend on using.
+-   **personaltax** is the X1 variable (Independent Variable) I am using for the regression. Replace this with the X variable you intend on using.
 
--   **gini** is the X2 variable (Independent Varibale) I am using for the regression. This is what variable I am using to make the prediction. Replace this with the X variable you intend on using.
+-   **gini** is the X2 variable (Independent Varibale) I am using for the regression. Replace this with the X variable you intend on using.
 
 -   **df** is the name of my data frame that I am drawing these X and Y variables from. Replace this with the name of your dataframe.
 
 -   NOTE: In the formula section, Y always goes first (**Y \~ X)**. Remember to use **family = binomial**, or else this regression will not work.
 
--   To add more than 2 X independent variables, simply do **+ X3 + X4 ...**
+-   To add more than 2 X independent variables, simply add in the formula **+ X3 + X4 ...**
 
 -   We need to use the **summary()** function to bring up the output of the OLS regression.
 
@@ -76,11 +68,17 @@ logistic_reg <- glm(as.factor(voc) ~ personaltax + gini, data = df, family = bin
 summary(logistic_reg)
 ```
 
-We can interpret the significance levels (stars) and **Pr(\>\|z\|)** as we normally do with linear regressions. Basically, if **Pr(\>\|z\|)** is less than 0.05, we can generally reject the null hypothesis, and conclude there is a significant relationship.
+We can interpret the significance levels (stars) and **Pr(\>\|z\|)** as we normally do with linear regressions.
 
-We can also interpret the sign of the estimates. If the X variable coefficient estimate is positive, then there is a positive effect of X on Y, and if the coefficient estimate is negative, then there is a negative effect of X on Y.
+-   If **Pr(\>\|z\|)** is less than 0.05, we can reject the null hypothesis, and conclude there is a significant relationship.
 
-However, unlike linear regressions, we cannot directly interpret the estimated coefficients. These do not mean anything meaningful to us. To interpret, we need to calculate the **odds ratios** of the regression (see below).
+We can also interpret the sign of the estimates.
+
+-   If the X variable coefficient estimate is positive, then there is a positive effect of X on Y.
+
+-   If the coefficient estimate is negative, then there is a negative effect of X on Y.
+
+However, unlike linear regressions, **we cannot directly interpret the estimated coefficients**. These do not mean anything meaningful to us. To interpret, we need to calculate the **odds ratios** of the regression (see below).
 
 ------------------------------------------------------------------------
 
@@ -88,7 +86,7 @@ However, unlike linear regressions, we cannot directly interpret the estimated c
 
 ## Odds Ratios and Relative Risk Ratios
 
-To interpret logistic regression coefficients, we need to calculate the odds ratios. We can do this with a few commands. Take note of the following:
+To interpret logistic regression coefficients, we need to calculate the odds ratios. We can do this with a few commands. In the example below:
 
 -   **odds_ratios** is the variable I am storing our calculated odds ratios in. You can rename this to whatever you want.
 
@@ -121,7 +119,7 @@ Interpreting magnitude of odds ratios:
 
 -   The significance P value of each is seen in the original logistic regression (don't use odds ratios).
 
-If we want to calculate the 95% confidence intervals of the odds ratio estimates, we can do the following code. Take note of the following:
+If we want to calculate the 95% confidence intervals of the odds ratio estimates, we can create a table using **cbind()** that includes both coefficient values and confidence interval values. In the example below:
 
 -   **or_interval** is the variable I am storing my odds ratio and confidence interval results in. You can name this whatever you want.
 
@@ -160,7 +158,7 @@ options(warn = -1)
 
 Now, we can run a Multinomial logistic regression in the same syntax as the binomial logistic regression, but instead of **glm()**, use the **vglm()** function.
 
-We will run this regression on the Y variable Species, which has 3 distinct categories. The **vglm()** function will automatically set the last of these categories as the "reference category", so the probabilities are in comparisons to the reference category. Note the following:
+We will run this regression on the Y variable Species, which has 3 distinct categories (**Y \~ X1 + X2 + X3...**) . The **vglm()** function will automatically set the last of these categories as the "reference category", so the probabilities are in comparisons to the reference category. In the example below:
 
 -   **multinomial_reg** is the variable I am saving my regression model to. You can name this anything you want to.
 
@@ -174,7 +172,7 @@ We will run this regression on the Y variable Species, which has 3 distinct cate
 
 -   NOTE: In the formula section, Y always goes first (**Y \~ X)**. Remember to use **family = multinomial**, or else this regression will not work.
 
--   To add more than 2 X independent variables, simply do **+ X3 + X4 ...**
+-   To add more than 2 X independent variables, simply add in the formula **+ X3 + X4 ...**
 
 -   We need to use the **summary()** function to bring up the output of the OLS regression.
 

@@ -381,50 +381,35 @@ Regression</a></p></li>
 <div id="binomial-logistic-regression" class="section level2">
 <h2>Binomial Logistic Regression</h2>
 <p>Logistic regression is used when we are trying to use X to predict a
-categorical/binary/factor Y variable.</p>
-<p>These are variables that are generally categorical - as in that there
-are a limited number of categories, and these categories are un-rankable
-(one is not inherently better/higher than another). These behave
-differently from numerical continuous variables (ex. 2 &gt; 1, 3 &gt; 2,
-etc.).</p>
-<ul>
-<li><p>For example, take the variable <strong>company</strong>, which
-consists of the values {apple, microsoft, nvidia, meta, google}. There
-are a limited number of categories, and apple is not inherently
-higher/better than microsoft, nvidia, etc.</p></li>
-<li><p>Another example common in political science is countries. United
-States is not inherently a higher value than Canada, unlike 2 is always
-higher than 1.</p></li>
-</ul>
-<p>Logistic Regression helps us predict the probability that an
-observation is in one Y category or another, based on the X variable
-values. This helps us analyse how changes in X affect the probability
-than an observation is in a certain category.</p>
-<p>Lets run simple binomial logistic regression with a Binary Y. For
-non-binary Y, see multinomial and ordinal logistic later in this lesson.
-Take note of the following:</p>
+categorical/binary/factor Y variable. For example - if our goal is to
+use a few independent variables to predict Y - whether a country is a
+democracy or not (Yes/No is binary/categorical).</p>
+<p>Lets run simple binomial logistic regression with a Binary Y
+(<strong>Y ~ X1 + X2 + X3…</strong>) . For non-binary Y, see multinomial
+and ordinal logistic later in this lesson. In the example below:</p>
 <ul>
 <li><p><strong>logistic_reg</strong> is the variable I am saving my
 regression model to. You can name this anything you want to.</p></li>
 <li><p><strong>voc</strong> is the Y variable (Dependent variable) I am
 using for the regression. This is what variable I am trying to predict.
-Replace this with the Y variable you intend on using.</p></li>
+Replace this with the Y variable you intend on using. I included
+<strong>as.factor()</strong> so R treats this as a categorical variable
+(only necessary if your categorical variable is coded into
+numbers).</p></li>
 <li><p><strong>personaltax</strong> is the X1 variable (Independent
-Varibale) I am using for the regression. This is what variable I am
-using to make the prediction. Replace this with the X variable you
-intend on using.</p></li>
+Variable) I am using for the regression. Replace this with the X
+variable you intend on using.</p></li>
 <li><p><strong>gini</strong> is the X2 variable (Independent Varibale) I
-am using for the regression. This is what variable I am using to make
-the prediction. Replace this with the X variable you intend on
-using.</p></li>
+am using for the regression. Replace this with the X variable you intend
+on using.</p></li>
 <li><p><strong>df</strong> is the name of my data frame that I am
 drawing these X and Y variables from. Replace this with the name of your
 dataframe.</p></li>
 <li><p>NOTE: In the formula section, Y always goes first (<strong>Y ~
 X)</strong>. Remember to use <strong>family = binomial</strong>, or else
 this regression will not work.</p></li>
-<li><p>To add more than 2 X independent variables, simply do <strong>+
-X3 + X4 …</strong></p></li>
+<li><p>To add more than 2 X independent variables, simply add in the
+formula <strong>+ X3 + X4 …</strong></p></li>
 <li><p>We need to use the <strong>summary()</strong> function to bring
 up the output of the OLS regression.</p></li>
 </ul>
@@ -453,26 +438,31 @@ summary(logistic_reg)</code></pre>
 ## 
 ## Number of Fisher Scoring iterations: 7</code></pre>
 <p>We can interpret the significance levels (stars) and
-<strong>Pr(&gt;|z|)</strong> as we normally do with linear regressions.
-Basically, if <strong>Pr(&gt;|z|)</strong> is less than 0.05, we can
-generally reject the null hypothesis, and conclude there is a
-significant relationship.</p>
-<p>We can also interpret the sign of the estimates. If the X variable
-coefficient estimate is positive, then there is a positive effect of X
-on Y, and if the coefficient estimate is negative, then there is a
-negative effect of X on Y.</p>
-<p>However, unlike linear regressions, we cannot directly interpret the
-estimated coefficients. These do not mean anything meaningful to us. To
-interpret, we need to calculate the <strong>odds ratios</strong> of the
-regression (see below).</p>
+<strong>Pr(&gt;|z|)</strong> as we normally do with linear
+regressions.</p>
+<ul>
+<li>If <strong>Pr(&gt;|z|)</strong> is less than 0.05, we can reject the
+null hypothesis, and conclude there is a significant relationship.</li>
+</ul>
+<p>We can also interpret the sign of the estimates.</p>
+<ul>
+<li><p>If the X variable coefficient estimate is positive, then there is
+a positive effect of X on Y.</p></li>
+<li><p>If the coefficient estimate is negative, then there is a negative
+effect of X on Y.</p></li>
+</ul>
+<p>However, unlike linear regressions, <strong>we cannot directly
+interpret the estimated coefficients</strong>. These do not mean
+anything meaningful to us. To interpret, we need to calculate the
+<strong>odds ratios</strong> of the regression (see below).</p>
 <hr />
 <p><a href="#table-of-contents">Table of Contents</a></p>
 </div>
 <div id="odds-ratios-and-relative-risk-ratios" class="section level2">
 <h2>Odds Ratios and Relative Risk Ratios</h2>
 <p>To interpret logistic regression coefficients, we need to calculate
-the odds ratios. We can do this with a few commands. Take note of the
-following:</p>
+the odds ratios. We can do this with a few commands. In the example
+below:</p>
 <ul>
 <li><p><strong>odds_ratios</strong> is the variable I am storing our
 calculated odds ratios in. You can rename this to whatever you
@@ -512,8 +502,9 @@ simply, probability * 0.5)</p></li>
 regression (don’t use odds ratios).</p></li>
 </ul>
 <p>If we want to calculate the 95% confidence intervals of the odds
-ratio estimates, we can do the following code. Take note of the
-following:</p>
+ratio estimates, we can create a table using <strong>cbind()</strong>
+that includes both coefficient values and confidence interval values. In
+the example below:</p>
 <ul>
 <li><p><strong>or_interval</strong> is the variable I am storing my odds
 ratio and confidence interval results in. You can name this whatever you
@@ -549,10 +540,10 @@ package</p>
 as the binomial logistic regression, but instead of
 <strong>glm()</strong>, use the <strong>vglm()</strong> function.</p>
 <p>We will run this regression on the Y variable Species, which has 3
-distinct categories. The <strong>vglm()</strong> function will
-automatically set the last of these categories as the “reference
-category”, so the probabilities are in comparisons to the reference
-category. Note the following:</p>
+distinct categories (<strong>Y ~ X1 + X2 + X3…</strong>) . The
+<strong>vglm()</strong> function will automatically set the last of
+these categories as the “reference category”, so the probabilities are
+in comparisons to the reference category. In the example below:</p>
 <ul>
 <li><p><strong>multinomial_reg</strong> is the variable I am saving my
 regression model to. You can name this anything you want to.</p></li>
@@ -573,8 +564,8 @@ dataframe.</p></li>
 <li><p>NOTE: In the formula section, Y always goes first (<strong>Y ~
 X)</strong>. Remember to use <strong>family = multinomial</strong>, or
 else this regression will not work.</p></li>
-<li><p>To add more than 2 X independent variables, simply do <strong>+
-X3 + X4 …</strong></p></li>
+<li><p>To add more than 2 X independent variables, simply add in the
+formula <strong>+ X3 + X4 …</strong></p></li>
 <li><p>We need to use the <strong>summary()</strong> function to bring
 up the output of the OLS regression.</p></li>
 </ul>

@@ -1,0 +1,186 @@
+---
+title: "Tree-Based Prediction Methods"
+output: html_document
+date: "2024-08-26"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+[Handbook Homepage](https://politicalscience.github.io)
+
+## Table of Contents
+
+-   [Bagging (Bootstrap Aggregation)]
+
+-   [Random Forest]
+
+Note: to see Tree methods for classification, go to the classification methods in section 3 of the homepage.
+
+------------------------------------------------------------------------
+
+Remember to load tidyverse. We will also need the package **randomForest**.
+
+```{r, message=FALSE}
+library(tidyverse)
+library(randomForest)
+```
+
+Let us also load the dataset we will be using for these examples (feel free to load your own dataset)
+
+```{r, message = FALSE}
+df <- read_csv("voctaxdata.csv")
+```
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+## Bagging (Bootstrap Aggregation)
+
+Note: I am not introducing simple regression trees - their accuracy is not very high for out-of-sample prediction, so it isn't of much use for us. However, it is useful to understand regression trees in order to understand more advanced tree methods.
+
+Bagging (Bootstrap Aggregation) is a tree-based method. It solves the issue of variance with with solo regression trees through producing many different trees through bootstrap sampling, then finding the average result.
+
+```{r, echo = FALSE, message = FALSE}
+
+df <- df %>%
+  select(-id, -countryid, -countryname, -countrycode, -year)
+
+```
+
+To create a bagging prediction model (**Y \~ X1 + X2 +...**), we can use the **randomForest()** command. Take note of the following:
+
+-   **bagging** is the variable I am saving my regression model to. You can name this anything you want to.
+
+-   **econglobal** is the Y variable (Dependent variable) I am using for the regression. This is what variable I am trying to predict. Replace this with the Y variable you intend on using.
+
+-   I use the "**.**" symbol to indicate I want to include all other variables as independent variables in predicting my Y. You can also manually write out the X variables you want to include, separating them with **+** signs.
+
+-   **df** is the name of my data frame that I am drawing these X and Y variables from. Replace this with the name of your dataframe.
+
+-   For the number after **mtry =**, you should set it equal to the square root of the number of independent variables. in this case, I have 7 independent variables, so the square root approximately 3, and I have set **mtry = 3**.
+
+-   NOTE: In the formula section, Y always goes first (**Y \~ X**).
+
+-   NOTE: Remember to include **na.action =na.omit**, and **importance = TRUE**.
+
+-   To see the general output, simply print the variable storing the model.
+
+```{r}
+
+# Remember to install and load package randomForest
+
+bagging <- randomForest(econglobal ~ .,
+                        data = df,
+                        na.action = na.omit,
+                        mtry = 3, #approx sq rt of 7
+                        importance = TRUE)
+
+# call model variable to see output
+bagging
+
+```
+
+The output shows us some info about the tree we ran. The most useful parts of the above output are:
+
+-   **Mean of Squared Residuals**: a general measure of how well the model performed.
+
+-   **% Variance explained**: how well our independent variables explain the variation in the Y variable. Similar to R\^2 from linear regression.
+
+However, we can get more detailed information on this model. We might be wondering, since we included many independent variables, which ones are most important in predicting the outcome?
+
+To see the importance of each predictor variable, we can use the **varImpPlot()** function. Take note of the following:
+
+-   **bagging** is the variable I saved the previous model to. You should replace this with the variable you stored your own bagging model in.
+
+-   **main = ""** is where we put the title of the graph. You can put anything you want here, it is for presentation purposes only.
+
+-   **type = 2** tells R to use mean decrease in node impurity, the best measure of importance. You can also use **type = 1**, which uses mean decrease in accuracy, a different and slightly worse measurement of importance.
+
+```{r}
+
+varImpPlot(bagging,
+           main = "Title of the Graph",
+           type = 2)
+
+```
+
+We're not going to dive into what IncNodePurity actually measures. But simply, the higher the value, the more influential the predictor is in predicting the outcome variable.
+
+-   In our example, **export** is the most important predictor of our Y variable, **econglobal**.
+
+We can also save the actual predictions the model makes for every specific observation. To do this, use the **predict()** function. Taken note of the following:
+
+-   I created a new data frame called **df_results** to store the predictions. I intentionally only selected the **econglobal** column, because this is our Y variable we are trying to predict, so we can use the actual Y values to compare to the predictions. If you have any id/name columns, you can also include them for ease of reading.
+
+-   You can rename **df_results** to anything you want, change **df** to the name of your original data frame, and change **econglobal** to the Y variable you are using.
+
+-   **df_results\$prediction** creates a new column in the **df_results** data frame called prediction. I assign the prediction values using the **prediction() function**. You can change the **df_results** part to your results data frame, and **prediction** to whatever name you give your new prediction column.
+
+-   Within the **predict()** function is **bagging**, the name of my bagging model. You can change this to whatever variable you saved your model to.
+
+-   Within the **predict()** function is newdata = **df**. You can change **df** to the name of your original data frame with all the X independent variables you are using to make your prediction.
+
+```{r}
+
+# Remember to install and load package randomForest
+
+#create new df for comparison of actual and prediction
+df_results <- df %>%
+  select(econglobal)
+
+df_results$prediction <- predict(bagging, newdata = df)
+
+# brief glimpse of the results
+head(df_results)
+```
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+## Random Forest
+
+Random forest is almost the exact same thing as bagging, with all the same code, with ONE exception:
+
+-   For example, in our previous bagging model, we set **mtry = 3**, because that was approximately the square root of the number of X variables we had (7).
+
+-   However, in a Random Forest model, we should set **mtry** to the number of X variables we have, in this case, **mtry = 7**.
+
+The rest of the code with Bagging and Random Forest is identical. See the above bagging section for more details.
+
+Let us just quickly run the same model as the Bagging, but this time, changing **mtry** so it is a Random Forest model:
+
+```{r}
+
+# Remember to install and load package randomForest
+
+random_forest <- randomForest(econglobal ~ .,
+                        data = df,
+                        na.action = na.omit,
+                        mtry = 7, #approx sq rt of 7
+                        importance = TRUE)
+
+# call model variable to see output
+random_forest
+```
+
+We can compare the Random Forest model with our Bagging model through the two bottom metrics: **Mean of squared Residuals** and % **Var Explained.**
+
+-   The lower the **Mean of Squared Residuals**, the better the model is.
+
+-   The higher the **% Var Explained**, the better the model is.
+
+NOTE: These metrics are in-sample only. If you want to make accurate predictions out of sample, see the Section 3 lesson on Evaluating Prediction Models.
+
+In general, Random Forest is typically more accurate than Bagging, especially out of sample. However, this is not always the case. Since both models are so similar to each other, it makes sense to always test both.
+
+Random Forest models can undergo the same importance plot and prediction methods as shown in the bagging section above.
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+[Handbook Homepage](https://politicalscience.github.io)
