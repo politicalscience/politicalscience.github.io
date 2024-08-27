@@ -4,14 +4,6 @@ output: html_document
 date: "2024-08-20"
 ---
 
-```{=html}
-<style type="text/css">
-  body{
-  font-size: 12pt;
-  line-height: 1.8;
-}
-</style>
-```
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -44,7 +36,9 @@ df <- read_csv("voctaxdata.csv")
 
 ------------------------------------------------------------------------
 
-# Simple Linear Regression (OLS) {#simple-linear-regression-ols}
+<br />
+
+# [Simple Linear Regression (OLS)]{.underline} {#simple-linear-regression-ols}
 
 ### Intuition and Theory
 
@@ -57,6 +51,8 @@ $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x$
 -   $\hat{\mathbf{\beta}}_0$ is the intercept coefficient (value of $\hat{\mathbf{y}}$ when $x = 0$)
 -   $\hat{\mathbf{\beta}}_1$ is the coefficient of $x$ (the amount $\hat{\mathbf{y}}$ increases when $x$ increases by 1)
 
+<br />
+
 OLS generates an prediction equation in the above form, through selecting $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$. It selects these coefficient values through finding the coefficients that minimises the **sum of squared errors** of the prediction model.
 
 -   An error is the difference between the actual value of $y$ at a certain $x$ value (let us say $x=i$), and the predicted $\hat{\mathbf{y}}$ of at that same $x$ value produced by the model: $y_i-\hat{\mathbf{y}}_i$
@@ -64,6 +60,8 @@ OLS generates an prediction equation in the above form, through selecting $\hat{
 -   The sum of the squared errors is all of the squared errors for every value $n$ of $x$: $\sum (y_i-\hat{\mathbf{y_i}})^2$
 -   OLS methodology uses mathematics (beyond the scope of this guide) to find the optimal $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$ that minimises the sum of the squared errors we just described.
 -   For this guide, we will let R do the calculations of coefficients for us.
+
+<br />
 
 ### Example in R
 
@@ -93,6 +91,8 @@ These are the parts of the syntax that can be altered:
 
 -   If your Y variable is categorical/non-continuous/binary, do not use OLS regression. Instead, use [logistic regression](https://politicalscience.github.io/r/logistic.html).
 
+<br />
+
 Take the following example, where I am using **econglobal** as my X variable, to predict my Y variable **personal tax**:
 
 ```{r}
@@ -115,11 +115,13 @@ The **summary()** function produces an output. The interpretation of the above e
 
 -   The $r^2$ value is the amount of variation in Y explained by the model. In this example, the $r^2$ value shows that our model explains 26.15% of the variation of Y.
 
+<br />
+
 ------------------------------------------------------------------------
 
 [Table of Contents]
 
-# Graphing Simple Linear Regression
+# [Graphing Simple Linear Regression]{.underline}
 
 We can graph OLS linear regressions with one independent variable in **ggplot**. The syntax is as follows:
 
@@ -138,6 +140,8 @@ These are the parts of the syntax that can be altered:
 
 -   **red** is the colour I am assigning to the best fit line. *You can change this to whatever colour you want (subject to R understanding the colour).*
 
+<br />
+
 Take the following example, where I am using **econglobal** as my X variable, to predict my Y variable **personal tax**:
 
 ```{r}
@@ -147,17 +151,21 @@ df %>%
   geom_smooth(method = "lm", color = "red")
 ```
 
+<br />
+
 ------------------------------------------------------------------------
 
 [Table of Contents]
 
-# Categorical X Variables {#factor-x-variables-non-continuous-x-variables}
+# [Categorical X Variables]{.underline} {#factor-x-variables-non-continuous-x-variables}
 
 ### Intuition and Theory
 
 Sometimes, we have non-continuous categorical $x$ predictor variables in a regression. These don't work the same as continuous $x$ variables. Why? Well, it doesn't really make sense to have a "slope" of $x$ for non-continuous varibales, where one increase of $x$ is associated with a constant increase of $y$.
 
 -   For example, if we have the categorical variable **company**, with the vector $<microsoft,  apple,  google>$, a constant slope makes no sense. Why would an increase of 1 from microsoft to apple, have the same value increase from apple to google? These companies aren't evenly spaced and ordered on a number line.
+
+<br />
 
 Instead, we have to treat these variables as factor variables - comparing each category to each other. For example, let us take the binary categorical X variable **democracy**.
 
@@ -169,6 +177,8 @@ Instead, we have to treat these variables as factor variables - comparing each c
 -   What do we notice? The difference between $x = 0$ (not a democracy) and $x = 1$ (democracy) is $\hat{\mathbf{\beta}}_1$
 
 So, our OLS regression has basically become a **difference-in-means** test! $\hat{\mathbf{\beta}}_1$ is no longer the slope, but the difference between our 2 categories.
+
+<br />
 
 What if we have more than 2 categories in our X variable? Well, it is a little complicated. What we need to do is essentially divide our X variable into more X variables. For example, take the earlier example of the variable **company**, with values $<microsoft,  apple,  google>$, with values $<0, 1, 2>$
 
@@ -186,6 +196,8 @@ Now, we will have the following regression equation: $\hat{\mathbf{y}} = \hat{\m
 -   To see the prediction for microsoft, we set $x_1 = x_2 = 0$: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0$
 
 We do this for any X with more than 2 categories. The number of variables to divide X into is $categories - 1$
+
+<br />
 
 ### Example in R
 
@@ -206,6 +218,8 @@ We can tell R to do this with the **as.factor()** function, and putting that var
 as.factor(X) # x is the categorical variable we want to factor
 ```
 
+<br />
+
 We can insert this **as.factor()** function into anywhere where there is a variable in R. For example, let us do a regression, where we predict **personaltax** using the factored variable **voc**.
 
 ```{r}
@@ -217,11 +231,13 @@ summary(factor_linear_reg)
 
 The coefficient that has been produced is the difference in means. If you have more categories, R will display more coefficients (remember, number of categories - 1).
 
+<br />
+
 ------------------------------------------------------------------------
 
 [Table of Contents]
 
-# Multivariate Linear Regression
+# [Multivariate Linear Regression]{.underline}
 
 ### Intuition and Theory
 
@@ -235,6 +251,8 @@ You can include as many $x$ variables as the amount of observations you have. Al
 
 -   Remember to use **as.factor()** on categorical variables when applicable (see section: [Factor X Variables (Non-Continuous X Variables)](#factor-x-variables-non-continuous-x-variables))
 
+<br />
+
 The great thing about multivariate linear regression is that each $\hat{\mathbf{\beta}}_p x_p$ is added together (see equation above). This allows for one key thing: **we can hold other variables constant to see the effect of one X variable on Y**.
 
 -   $\hat{\mathbf{\beta}}_p$ is the effect on $x_p$ on $y$, given all other $x_1, x_2, ...$ are held constant.
@@ -242,6 +260,8 @@ The great thing about multivariate linear regression is that each $\hat{\mathbf{
 Multivariate regression also uses the OLS framework to estimate parameters. However, unlike simple linear regression which can be illustrated with a line in a 2-dimensional graph, things can get very complicated mathematically/graphically, as every $x_p$ is a different dimension.
 
 -   For example, a model with 3 X variables and 1 Y variable can be illustrated with a plane on a 4 dimensional space.
+
+<br />
 
 ### Example in R
 
@@ -267,6 +287,8 @@ These are the parts of the syntax that can be altered:
 
 -   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
 
+<br />
+
 If you want to include a ton of X variables (For example, all other variables in your dataset), you can also use the following syntax:
 
 ```{r, eval = FALSE}
@@ -288,6 +310,8 @@ These are the parts of the syntax that can be altered:
     -   NOTE: Please check that you genuinely want all variables in the data frame in your regression. Sometimes, variables (such as ID) make no sense to include. If you need to exclude any, you can use the **select()** function introduced in the Visualizing Data lesson.
 
 -   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
+
+<br />
 
 Take this example of predicting the Y variable **personaltax** with the X variables **econglobal** and **socialexp**:
 
