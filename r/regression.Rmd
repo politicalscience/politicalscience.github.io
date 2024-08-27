@@ -173,7 +173,7 @@ df %>%
 
 Sometimes, we have non-continuous categorical $x$ predictor variables in a regression. These don't work the same as continuous $x$ variables. Why? Well, it doesn't really make sense to have a "slope" of $x$ for non-continuous varibales, where one increase of $x$ is associated with a constant increase of $y$.
 
--   For example, if we have the categorical variable **company**, with the vector $<microsoft,  apple,  google>$, a constant slope makes no sense. Why would an increase of 1 from microsoft to apple, have a constant depedent variable Y change from apple to google? These companies aren't evenly spaced and ordered on a number line.
+-   For example, if we have the categorical variable **company**, with the vector $<microsoft,  apple,  google>$, a constant slope makes no sense. Why would an increase of 1 from microsoft to apple, have a constant depedent variable Y change the same as from apple to google? These companies aren't evenly spaced and ordered on a number line.
 
 <br />
 
@@ -190,12 +190,13 @@ So, our OLS regression has basically become a **difference-in-means** test! $\ha
 
 <br />
 
-What if we have more than 2 categories in our X variable? Well, it is a little complicated. What we need to do is essentially divide our X variable into more X variables. For example, take the earlier example of the variable **company**, with values $<microsoft,  apple,  google>$, with values $<0, 1, 2>$
+What if we have more than 2 categories in our X variable? What we need to do is essentially divide our X variable into X variables with 2 categories (so we can compare the difference!). For example, take the earlier example of the variable **company**, with values $<microsoft,  apple,  google>$, with values $<0, 1, 2>$
 
 -   To make a difference in means test, we can only have binary variables (so we can identify the difference!). So, we have to split this 3-category variable, into 2 variables, each with 2 categories.
--   Let us take $x = 0$ (microsoft) as our **reference category**. This will be the point of comparison for both our variables.
--   Now lets create a variable: **apple or microsoft** ($x_1$). We will define $x = 0$ (our reference) as microsoft, and $x = 1$ as apple.
--   Now lets create a second variable: **google or microsoft** ($x_2$). We will define $x = 0$ (our reference) as microsoft, and $x = 1$ as google.
+-   Let us take **microsoft** as our **reference category**. This will be the point of comparison for both our variables.
+-   Now lets create a variable: **apple or not** ($x_1$). We will define $x = 0$ as **not apple**, and $x = 1$ as **apple**.
+-   Now lets create a second variable: **google or not** ($x_2$). We will define $x = 0$ as **not google**, and $x = 1$ as **google**.
+-   We don't need a variable for our reference category **microsoft**. This is because microsoft is simply when both $x_1, x_2$ are equal to $0$
 
 Now, we will have the following regression equation: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_1 + \hat{\mathbf{\beta}}_2 x_2$
 
@@ -213,7 +214,11 @@ Thus, the following is true about our coefficients:
 
 -   The prediction of our reference category, microsoft, is $\hat{\mathbf{\beta}}_0$
 
-We do this for any X with more than 2 categories. The number of variables to divide X into is $categories - 1$
+Note that we cannot compare microsoft and apple directly - to do this, we have to change the reference category to either on of them.
+
+<br />
+
+The same process works with any X with more than 2 categories. The number of variables to divide X into is $categories - 1$
 
 <br />
 
@@ -274,10 +279,6 @@ You can include as many $x$ variables as the amount of observations you have. Al
 The great thing about multivariate linear regression is that each $\hat{\mathbf{\beta}}_p x_p$ is added together (see equation above). This allows for one key thing: **we can hold other variables constant to see the effect of one X variable on Y**.
 
 -   $\hat{\mathbf{\beta}}_p$ is the effect on $x_p$ on $y$, given all other $x_1, x_2, ...$ are held constant.
-
-Multivariate regression also uses the OLS framework to estimate parameters. However, unlike simple linear regression which can be illustrated with a line in a 2-dimensional graph, things can get very complicated mathematically/graphically, as every $x_p$ is a different dimension.
-
--   For example, a model with 3 X variables and 1 Y variable can be illustrated with a plane on a 4 dimensional space.
 
 <br />
 
