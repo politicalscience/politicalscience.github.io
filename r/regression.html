@@ -418,7 +418,7 @@ model.</p>
 <li>The squared error is the square of the difference we just
 calculated: <span class="math inline">\((y_i-\hat{\mathbf{y_i}})^2\)</span></li>
 <li>The sum of the squared errors is all of the squared errors for every
-value <span class="math inline">\(n\)</span> of <span class="math inline">\(x\)</span>: <span class="math inline">\(\sum
+value <span class="math inline">\(i\)</span> of <span class="math inline">\(x\)</span>: <span class="math inline">\(\sum
 (y_i-\hat{\mathbf{y_i}})^2\)</span></li>
 <li>OLS methodology uses mathematics (beyond the scope of this guide) to
 find the optimal <span class="math inline">\(\hat{\mathbf{\beta}}_0\)</span> and <span class="math inline">\(\hat{\mathbf{\beta}}_1\)</span> that minimises the
@@ -567,8 +567,9 @@ of <span class="math inline">\(y\)</span>.</p>
 <li>For example, if we have the categorical variable
 <strong>company</strong>, with the vector <span class="math inline">\(&lt;microsoft,  apple,  google&gt;\)</span>, a
 constant slope makes no sense. Why would an increase of 1 from microsoft
-to apple, have the same value increase from apple to google? These
-companies aren’t evenly spaced and ordered on a number line.</li>
+to apple, have a constant depedent variable Y change from apple to
+google? These companies aren’t evenly spaced and ordered on a number
+line.</li>
 </ul>
 <p><br /></p>
 <p>Instead, we have to treat these variables as factor variables -
@@ -624,6 +625,16 @@ google.</li>
 <li><p>To see the prediction for microsoft, we set <span class="math inline">\(x_1 = x_2 = 0\)</span>: <span class="math inline">\(\hat{\mathbf{y}} =
 \hat{\mathbf{\beta}}_0\)</span></p></li>
 </ul>
+<p>Thus, the following is true about our coefficients:</p>
+<ul>
+<li><p>The coefficient of <span class="math inline">\(x_1\)</span>,
+<span class="math inline">\(\hat{\mathbf{\beta}}_1\)</span>, is the
+difference between apple and microsoft (our reference).</p></li>
+<li><p>The coefficient of <span class="math inline">\(x_2\)</span>,
+<span class="math inline">\(\hat{\mathbf{\beta}}_2\)</span>, is the
+difference between google and microsoft (our reference).</p></li>
+<li><p>The prediction of our reference category, microsoft, is <span class="math inline">\(\hat{\mathbf{\beta}}_0\)</span></p></li>
+</ul>
 <p>We do this for any X with more than 2 categories. The number of
 variables to divide X into is <span class="math inline">\(categories -
 1\)</span></p>
@@ -655,7 +666,9 @@ of it. The syntax is as follows:</p>
 <p>We can insert this <strong>as.factor()</strong> function into
 anywhere where there is a variable in R. For example, let us do a
 regression, where we predict <strong>personaltax</strong> using the
-factored variable <strong>voc</strong>.</p>
+factored variable <strong>voc</strong>. R will automatically treat
+either <span class="math inline">\(x = 0\)</span> or the first category
+of the variable vector as the reference category.</p>
 <pre class="r"><code>factor_linear_reg &lt;- lm(personaltax ~ as.factor(voc), data = df)
 
 #for output, use summary function

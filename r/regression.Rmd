@@ -67,7 +67,7 @@ OLS generates an prediction equation in the above form, through selecting $\hat{
 
 -   An error is the difference between the actual value of $y$ at a certain $x$ value (let us say $x=i$), and the predicted $\hat{\mathbf{y}}$ of at that same $x$ value produced by the model: $y_i-\hat{\mathbf{y}}_i$
 -   The squared error is the square of the difference we just calculated: $(y_i-\hat{\mathbf{y_i}})^2$
--   The sum of the squared errors is all of the squared errors for every value $n$ of $x$: $\sum (y_i-\hat{\mathbf{y_i}})^2$
+-   The sum of the squared errors is all of the squared errors for every value $i$ of $x$: $\sum (y_i-\hat{\mathbf{y_i}})^2$
 -   OLS methodology uses mathematics (beyond the scope of this guide) to find the optimal $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$ that minimises the sum of the squared errors we just described.
 -   For this guide, we will let R do the calculations of coefficients for us.
 
@@ -173,7 +173,7 @@ df %>%
 
 Sometimes, we have non-continuous categorical $x$ predictor variables in a regression. These don't work the same as continuous $x$ variables. Why? Well, it doesn't really make sense to have a "slope" of $x$ for non-continuous varibales, where one increase of $x$ is associated with a constant increase of $y$.
 
--   For example, if we have the categorical variable **company**, with the vector $<microsoft,  apple,  google>$, a constant slope makes no sense. Why would an increase of 1 from microsoft to apple, have the same value increase from apple to google? These companies aren't evenly spaced and ordered on a number line.
+-   For example, if we have the categorical variable **company**, with the vector $<microsoft,  apple,  google>$, a constant slope makes no sense. Why would an increase of 1 from microsoft to apple, have a constant depedent variable Y change from apple to google? These companies aren't evenly spaced and ordered on a number line.
 
 <br />
 
@@ -205,6 +205,14 @@ Now, we will have the following regression equation: $\hat{\mathbf{y}} = \hat{\m
 
 -   To see the prediction for microsoft, we set $x_1 = x_2 = 0$: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0$
 
+Thus, the following is true about our coefficients:
+
+-   The coefficient of $x_1$, $\hat{\mathbf{\beta}}_1$, is the difference between apple and microsoft (our reference).
+
+-   The coefficient of $x_2$, $\hat{\mathbf{\beta}}_2$, is the difference between google and microsoft (our reference).
+
+-   The prediction of our reference category, microsoft, is $\hat{\mathbf{\beta}}_0$
+
 We do this for any X with more than 2 categories. The number of variables to divide X into is $categories - 1$
 
 <br />
@@ -230,7 +238,7 @@ as.factor(X) # x is the categorical variable we want to factor
 
 <br />
 
-We can insert this **as.factor()** function into anywhere where there is a variable in R. For example, let us do a regression, where we predict **personaltax** using the factored variable **voc**.
+We can insert this **as.factor()** function into anywhere where there is a variable in R. For example, let us do a regression, where we predict **personaltax** using the factored variable **voc**. R will automatically treat either $x = 0$ or the first category of the variable vector as the reference category.
 
 ```{r}
 factor_linear_reg <- lm(personaltax ~ as.factor(voc), data = df)
