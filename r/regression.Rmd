@@ -1,5 +1,5 @@
 ---
-title: "OLS Regression and Moderating/Interaction Effects"
+title: "Single and Multivariate OLS Regression"
 output: html_document
 date: "2024-08-20"
 ---
@@ -14,11 +14,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -   [Simple Linear Regression (OLS)](#simple-linear-regression-ols)
 
+-   [Graphing Simple Linear Regression]
+
 -   [Factor X Variables (Non-Continuous X Variables)](#factor-x-variables-non-continuous-x-variables)
 
 -   [Multivariate Linear Regression]
-
--   [Linear Regression with Moderating/Interaction Effects]
 
 ------------------------------------------------------------------------
 
@@ -36,23 +36,54 @@ df <- read_csv("voctaxdata.csv")
 
 ------------------------------------------------------------------------
 
-## Simple Linear Regression (OLS) {#simple-linear-regression-ols}
+# Simple Linear Regression (OLS) {#simple-linear-regression-ols}
 
-A simple linear regression is a method to create a prediction of Y, given a value of X (**Y \~ X)**. OLS is generally only used on continuous Y variables (not categorical/binary Y variables).
+### Intuition and Theory
 
-We conduct a simple linear regression (**Y \~ X**) in R as follows. In the example below:
+A simple linear regression is a method to predict a dependent variable Y, given a value of an independent variable X. Ordinary Least Squares (OLS) is a method to obtain a linear estimation of Y given a value of X. OLS prediction models take the following form:
 
--   **linear_reg** is the variable I am saving my linear regression model to. You can name this anything you want to.
+$\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x$
 
--   **personaltax** is the Y variable (Dependent variable) I am using for the regression. This is what variable I am trying to predict. Replace this with the Y variable you intend on using.
+-   $\hat{\mathbf{y}}$ is the predicted $y$ from the OLS model
+-   $x$ is the value of $x$ in which to predict the corresponding $y$
+-   $\hat{\mathbf{\beta}}_0$ is the intercept coefficient (value of $\hat{\mathbf{y}}$ when $x = 0$)
+-   $\hat{\mathbf{\beta}}_1$ is the coefficient of $x$ (the amount $\hat{\mathbf{y}}$ increases when $x$ increases by 1)
 
--   **econglobal** is the X variable (Independent Varibale) I am using for the regression. This is what variable I am using to make the prediction. Replace this with the X variable you intend on using.
+OLS generates an prediction equation in the above form, through selecting $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$. It selects these coefficient values through finding the coefficients that minimises the sum of squared errors of the prediction model.
 
--   **df** is the name of my data frame that I am drawing these X and Y variables from. Replace this with the name of your dataframe.
+-   An error is the difference between the actual value of $y$, and the predicted $\hat{\mathbf{y}}$ of the model. The squared error is the square of the difference. The sum of the squared errors is all of the squared errors for every value of $x$.
+-   OLS methodology uses mathematics (beyond the scope of this guide) to find the optimal $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$ that minimises the sum of the squared errors.
+-   For this guide, we will let R do the calculations of coefficients for us.
 
--   NOTE: In the formula section, Y always goes first (**Y \~ X)**.
+### Example in R
 
--   We need to use the **summary()** function to bring up the output of the OLS regression.
+OLS regression in R is conducted using the **lm()** function and **summary()** function. The syntax is as follows:
+
+```{r, eval = FALSE}
+
+linear_reg <- lm(Y ~ X, data = df)
+
+# for output, use summary function
+summary(linear_reg)
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **linear_reg** is the variable I am saving my linear regression model to. *You can name this anything you want to.*
+
+-   **Y** is the Y variable (Dependent variable) you are trying to predict, and **X** is the X variable (independent variable) you are using to get your prediction. *Replace these with the variables you want to use.*
+
+    -   NOTE: Always put the Y variable before the X variable. Separate the two with a tilda **\~**
+
+-   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
+
+**Two important notes:**
+
+-   If your X variable is categorical/non-continuous/binary, please consult the section: [Factor X Variables (Non-Continuous X Variables)](#factor-x-variables-non-continuous-x-variables)
+
+-   If your Y variable is categorical/non-continuous/binary, do not use OLS regression. Instead, use [logistic regression](https://politicalscience.github.io/r/logistic.html).
+
+Take the following example, where I am using **econglobal** as my X variable, to predict my Y variable **personal tax**:
 
 ```{r}
 linear_reg <- lm(personaltax ~ econglobal, data = df)
@@ -62,21 +93,42 @@ summary(linear_reg)
 
 ```
 
-The interpretation is as follows:
+The **summary()** function produces an output. The interpretation of the above example is as follows:
 
--   **Intercept Estimate** is the estimated B0 (Y-Intercept) of the model. In other words, when the X variable (**econglobal** in this case) is equal to 0, there is a predicted -8.2389 value of Y (**personaltax** in this case).
+-   **Intercept Estimate** is the estimated $\hat{\mathbf{\beta}}_0$ (Y-Intercept) of the model. This means, when the X variable (**econglobal** in this case) is equal to 0, there is a predicted -8.2389 value of Y (**personaltax** in this case).
 
--   **econglobal Estimate** is the estimated B1 (Slope) of the model. This will be labled whatever your X variable is named. This indicates that for every increase of 1 in the X variable (**econglobal** in this case), there is a predicted 0.62268 increase in the Y variable (**personaltax** in this case).
+-   **econglobal Estimate** is the estimated $\hat{\mathbf{\beta}}_1$ (Slope) of the model. This will be labled whatever your X variable is named. This indicates that for every increase of 1 in the X variable (**econglobal** in this case), there is a predicted 0.62268 increase in the Y variable (**personaltax** in this case).
 
--   **Std. Error** are the standard errors of the estimates of B0 and B1. Multiply by 1.96, then add and subtract that product from the estimate, to create 95% confidence intervals.
+-   **Std. Error** are the standard errors of the estimates of $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$. Multiply by 1.96, then add and subtract that product from the estimate, to create 95% confidence intervals.
 
 -   **Pr(\>\|t\|)** is the P value of the estimate. Basically, if it is less than 0.05, we can generally reject the null hypothesis, and conclude there is a significant relationship.
 
-We can also put this in graphical form with **ggplot** as follows. In the example below:
+-   The $r^2$ value is the amount of variation in Y explained by the model.
 
--   **df** is the name of the dataframe containing our X and Y variables. Rename this to whatever your dataframe is called.
+------------------------------------------------------------------------
 
--   Input the names of your X and Y variable where **econglobal** and **personaltax** are.
+[Table of Contents]
+
+# Graphing Simple Linear Regression
+
+We can graph OLS linear regressions with one independent variable in **ggplot**. The syntax is as follows:
+
+```{r, eval = FALSE}
+df %>%
+  ggplot(aes(x = X_variable, y = Y_variable)) +
+  geom_point() +
+  geom_smooth(method = "lm", color = "red")
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
+
+-   **X_variable** is the variable to plot on the X axis, and **Y_varibale** is the variable to plot on the Y axis. *Replace these with the variables you want to use.*
+
+-   **red** is the colour I am assigning to the best fit line. *You can change this to whatever colour you want (subject to R understanding the colour).*
+
+Take the following example, where I am using **econglobal** as my X variable, to predict my Y variable **personal tax**:
 
 ```{r}
 df %>%
@@ -89,23 +141,62 @@ df %>%
 
 [Table of Contents]
 
-## Factor X Variables (Non-Continuous X Variables) {#factor-x-variables-non-continuous-x-variables}
+# Factor X Variables (Non-Continuous X Variables) {#factor-x-variables-non-continuous-x-variables}
 
-Categorical/Binary X variables are treated differently in a regression.
+### Intuition and Theory
 
-**R AUTMOATICALLY DETECTS TEXT-STRING VARIABLES AS FACTOR VARIABLES**
+Sometimes, we have non-continuous categorical X predictor variables in a regression. These don't work the same as continuous X variables. Why? Well, it doesn't really make sense to have a "slope" of X for non-continuous varibales, where one increase of X is associated with a constant increase of Y.
 
--   For example, if our variable is {United States, Canada, France}, R will automatically factor the variable into 2 binary variables.
+-   For example, if we have the categorical variable **company**, with the vector $<microsoft,  apple,  google>$, a constant slope makes no sense. Why would an increase of 1 from microsoft to apple, have the same value increase from apple to google? These companies aren't evenly spaced and ordered on a number line.
+
+Instead, we have to treat these variables as factor variables. For example, let us take the binary categorical X variable **democracy**.
+
+-   Our variable democracy (x) has two values:$x = 0$ (not a democracy), and $x = 1$ (democracy)
+-   Remember our linear regression model: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x$
+-   Lets insert $x = 0$ and $x = 1$ into the above equation:
+    -   When $x = 0$ (not a democracy), our equation is: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0$
+    -   When $x = 1$ (democracy), our equation is: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1$
+-   What do we notice? The difference between $x = 0$ (not a democracy) and $x = 1$ (democracy) is $\hat{\mathbf{\beta}}_1$
+
+So, our OLS regression has basically become a **difference-in-means** test! $\hat{\mathbf{\beta}}_1$ is no longer the slope, but the difference between our 2 categories.
+
+What if we have more than 2 categories in our X variable? Well, it is a little complicated. What we need to do is essentially divide our X variable into more X variables. For example, take the earlier example of the variable **company**, with values $<microsoft,  apple,  google>$, with values $<0, 1, 2>$
+
+-   To make a difference in means test, we can only have binary variables (so we can identify the difference!). So, we have to split this 3-category variable, into 2 variables, each with 2 categories.
+-   Let us take $x = 0$ (microsoft) as our **reference category**. This will be the point of comparison for both our variables.
+-   Now lets create a variable: **apple or microsoft** ($x_1$). We will define $x = 0$ (our reference) as microsoft, and $x = 1$ as apple.
+-   Now lets create a second variable: **google or microsoft** ($x_2$). We will define $x = 0$ (our reference) as microsoft, and $x = 1$ as google.
+
+Now, we will have the following regression equation: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_1 + \hat{\mathbf{\beta}}_2 x_2$
+
+-   To see the prediction for apple, we set $x_1 = 1$, and $x_2 = 0$: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1$
+
+-   To see the prediction for google, we set $x_1 = 0$, and $x_2 = 1$: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_2$
+
+-   To see the prediction for microsoft, we set $x_1 = x_2 = 0$: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0$
+
+We do this for any X with more than 2 categories. The number of variables to divide X into is $categories - 1$
+
+### Example in R
+
+R AUTMOATICALLY DETECTS TEXT-STRING VARIABLES AS FACTOR VARIABLES
+
+-   For example, if our variable is {United States, Canada, France}, R will automatically divide the variable into 2 binary variables.
 
 -   Thus, if our factor/categorical variables are all text-string type, we don't have to do any extra work.
 
-**HOWEVER, IF THE CATEGORICAL VARIABLE IS ENCODED AS NUMBERS, R DOESN'T KNOW IT IS CATEGORICAL. THUS, WE NEED TO TELL R THIS.**
+HOWEVER, IF THE CATEGORICAL VARIABLE IS ENCODED AS NUMBERS, R DOESN'T KNOW IT IS CATEGORICAL. THUS, WE NEED TO TELL R THIS.
 
 -   For example, maybe instead of {United States, Canada, France}, we have a variable {1, 2, 3}, where 1 = US, 2 = Canada, 3 = France. But since the variable is encoded in R as {1, 2, 3}, we have to tell R to treat it like a factor variable.
 
-We can tell R to do this with the **as.factor()** function, and putting that variable we want to treat as a factor inside of it. In the example below:
+We can tell R to do this with the **as.factor()** function, and putting that variable we want to treat as a factor inside of it. The syntax is as follows:
 
--   **voc** is the categorical variable here. We want to treat it as a factor, so we put it in the **as.factor()** function within the regression
+```{r, eval = FALSE}
+
+as.factor(X) #x is the categorical variable we want to factor
+```
+
+We can insert this **as.factor()** function into anywhere where there is a variable in R. For example, let us do a regression, where we predict **personaltax** using the factored variable **voc**.
 
 ```{r}
 factor_linear_reg <- lm(personaltax ~ as.factor(voc), data = df)
@@ -114,31 +205,79 @@ factor_linear_reg <- lm(personaltax ~ as.factor(voc), data = df)
 summary(factor_linear_reg)
 ```
 
-See how the variable has been treated as a factor - **voc** originally had 2 categories, so there is 1 factor: **voc1**, which shows the difference between 1 and 0.
+The coefficient that has been produced is the difference in means. If you have more categories, R will display more coefficients (remember, number of categories - 1).
 
 ------------------------------------------------------------------------
 
 [Table of Contents]
 
-## Multivariate Linear Regression
+# Multivariate Linear Regression
 
-Almost always in political science, we will need more than one X predictor variable (**Y \~ X1 + X2 + X3...**). In R, we can do this quite simply by adding onto the Single Linear Regression format. In the example below:
+### Intuition and Theory
 
--   **multiple_reg** is the variable I am saving my linear regression model to. You can name this anything you want to.
+Almost always in political science (and the social sciences), we will need more than one X predictor variable. This is because the world is very complicated, and rarely does one variable explain everything.
 
--   **personaltax** is the Y variable (Dependent variable) I am using for the regression. This is what variable I am trying to predict. Replace this with the Y variable you intend on using.
+Multivariate regression takes the following form: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_1 + \hat{\mathbf{\beta}}_2 x_2 + ... + + \hat{\mathbf{\beta}}_p x_p$
 
--   **econglobal** is the X1 variable (Independent Variable) I am using for the regression. This is one of two variables I am using to make the prediction. Replace this with the X1 variable you intend on using.
+You can include as many X variables as the amount of observations you have. Although, generally, the closer the number of X variables is to your number of observations, the less explanatory the model will be. You can include any type of variable, including both continuous and categorical variables.
 
--   **socialexp** is the X2 variable (Independent Variable) I am using for the regression. This is the second of the two variables I am using to make the prediction. Replace this with the X2 variable you intend on using.
+-   Remember to use **as.factor()** on categorical variables when applicable (see section: [Factor X Variables (Non-Continuous X Variables)])
 
--   **df** is the name of my data frame that I am drawing these X and Y variables from. Replace this with the name of your dataframe.
+The great thing about multivariate linear regression is that each $\hat{\mathbf{\beta}}_p x_p$ is added together (see equation above). This allows for one key thing: **we can hold other variables constant to see the effect of one X variable on Y**.
 
--   To add more than 2 X independent variables, simply do **+ X3 + X4 ...**
+-   $\hat{\mathbf{\beta}}_p$ is the effect on $x_p$ on $y$, given all other $x$ are held constant.
 
--   NOTE: In the formula section, Y always goes first (**Y \~ X1 + X2**).
+Multivariate regression also uses the OLS framework to estimate paramters. However, unlike simple linear regression which can be illustrated with a line in a 2-dimensional graph, things can get very complicated mathematically/graphically, as every $x_p$ is a different dimension.
 
--   We need to use the **summary()** function to bring up the output of the OLS regression.
+-   For example, a model with 3 X variables and 1 Y variable can be illustrated with a plane on a 4 dimensional space.
+
+### Example in R
+
+The syntax for multiple linear regression is very similar to that of simple linear regression. We simply add additional x variables behind the 1st X variable with **+** signs.
+
+```{r, eval = FALSE}
+
+multiple_reg <- lm(Y ~ X1 + X2 + X3 + X4, data = df)
+
+#for output, use summary function
+summary(multiple_reg)
+
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **multiple_reg** is the variable I am saving my linear regression model to. *You can name this anything you want to.*
+
+-   **Y** is the Y variable (Dependent variable) you are trying to predict, and **X1, X2, X3...** are the X variables (independent variables) you are using to get your prediction. *Replace these with the variables you want to use.*
+
+    -   NOTE: Always put the Y variable before the X variable. Separate the two with a tilda **\~**
+    -   NOTE: You can add more simply by using a **+** sign and adding another variable.
+
+-   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
+
+If you want to include a ton of X variables (For example, all other variables in your dataset), you can also use the following syntax:
+
+```{r, eval = FALSE}
+
+multiple_reg <- lm(Y ~ ., data = df)
+
+#for output, use summary function
+summary(multiple_reg)
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **multiple_reg** is the variable I am saving my linear regression model to. *You can name this anything you want to.*
+
+-   **Y** is the Y variable (Dependent variable) you are trying to predict
+
+-   The period "**.**" tells R to include all other variables in the data frame as independent variables.
+
+    -   NOTE: Please check that you genuinely want all variables in the data frame in your regression. Sometimes, variables (such as ID) make no sense to include. If you need to exclude any, you can use the **select()** function introduced in the Visualizing Data lesson.
+
+-   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
+
+Take this example of predicting the Y variable **personaltax** with the X variables **econglobal** and **socialexp**:
 
 ```{r}
 multiple_reg <- lm(personaltax ~ econglobal + socialexp, data = df)
@@ -150,13 +289,7 @@ summary(multiple_reg)
 
 Interpretation is the same as Single Linear Regression, except that we have an extra variable. When interpreting one variable, always mention that the other variables are **being held constant**.
 
-If we want to use all the variables in our dataset, we can use a "trick" to simplify our multiple linear regression formula:
-
--   NOTE: Please check that you genuinely want all variables in the data frame in your regression. Sometimes, variables (such as ID) make no sense to include. If you need to exclude any, you can use the **select()** function introduced in the Visualizing Data lesson.
-
--   This specific example does not exclude any even though there are some variables that probably should be excluded - this is an example for demonstration of code only.
-
--   Also note how R deals with the country variable as a factor variable automatically (see above section on Factor X variables)
+Take this second example of prediction the Y variable **personaltax** with every other variable in the data frame **df** acting as an X variable:
 
 ```{r}
 multiple_reg_2 <- lm(personaltax ~ ., data = df)
