@@ -4,6 +4,14 @@ output: html_document
 date: "2024-08-20"
 ---
 
+```{=html}
+<style type="text/css">
+  body{
+  font-size: 12pt;
+  line-height: 1.8;
+}
+</style>
+```
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -16,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -   [Graphing Simple Linear Regression]
 
--   [Factor X Variables (Non-Continuous X Variables)](#factor-x-variables-non-continuous-x-variables)
+-   [Categorical X Variables](#factor-x-variables-non-continuous-x-variables)
 
 -   [Multivariate Linear Regression]
 
@@ -40,7 +48,7 @@ df <- read_csv("voctaxdata.csv")
 
 ### Intuition and Theory
 
-A simple linear regression is a method to predict a dependent variable Y, given a value of an independent variable X. Ordinary Least Squares (OLS) is a method to obtain a linear estimation of Y given a value of X. OLS prediction models take the following form:
+A simple linear regression is a method to predict a dependent variable $y$, given a value of an independent variable $x$. Ordinary Least Squares (OLS) is a method to obtain a linear estimation of $y$ given a value of $x$. OLS prediction models take the following form:
 
 $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x$
 
@@ -49,10 +57,12 @@ $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x$
 -   $\hat{\mathbf{\beta}}_0$ is the intercept coefficient (value of $\hat{\mathbf{y}}$ when $x = 0$)
 -   $\hat{\mathbf{\beta}}_1$ is the coefficient of $x$ (the amount $\hat{\mathbf{y}}$ increases when $x$ increases by 1)
 
-OLS generates an prediction equation in the above form, through selecting $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$. It selects these coefficient values through finding the coefficients that minimises the sum of squared errors of the prediction model.
+OLS generates an prediction equation in the above form, through selecting $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$. It selects these coefficient values through finding the coefficients that minimises the **sum of squared errors** of the prediction model.
 
--   An error is the difference between the actual value of $y$, and the predicted $\hat{\mathbf{y}}$ of the model. The squared error is the square of the difference. The sum of the squared errors is all of the squared errors for every value of $x$.
--   OLS methodology uses mathematics (beyond the scope of this guide) to find the optimal $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$ that minimises the sum of the squared errors.
+-   An error is the difference between the actual value of $y$ at a certain $x$ value (let us say $x=i$), and the predicted $\hat{\mathbf{y}}$ of at that same $x$ value produced by the model: $y_i-\hat{\mathbf{y}}_i$
+-   The squared error is the square of the difference we just calculated: $(y_i-\hat{\mathbf{y_i}})^2$
+-   The sum of the squared errors is all of the squared errors for every value $n$ of $x$: $\sum (y_i-\hat{\mathbf{y_i}})^2$
+-   OLS methodology uses mathematics (beyond the scope of this guide) to find the optimal $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$ that minimises the sum of the squared errors we just described.
 -   For this guide, we will let R do the calculations of coefficients for us.
 
 ### Example in R
@@ -79,7 +89,7 @@ These are the parts of the syntax that can be altered:
 
 **Two important notes:**
 
--   If your X variable is categorical/non-continuous/binary, please consult the section: [Factor X Variables (Non-Continuous X Variables)](#factor-x-variables-non-continuous-x-variables)
+-   If your X variable is categorical/non-continuous/binary, please consult the section: [Categorical X Variables](#factor-x-variables-non-continuous-x-variables)
 
 -   If your Y variable is categorical/non-continuous/binary, do not use OLS regression. Instead, use [logistic regression](https://politicalscience.github.io/r/logistic.html).
 
@@ -103,7 +113,7 @@ The **summary()** function produces an output. The interpretation of the above e
 
 -   **Pr(\>\|t\|)** is the P value of the estimate. Basically, if it is less than 0.05, we can generally reject the null hypothesis, and conclude there is a significant relationship.
 
--   The $r^2$ value is the amount of variation in Y explained by the model.
+-   The $r^2$ value is the amount of variation in Y explained by the model. In this example, the $r^2$ value shows that our model explains 26.15% of the variation of Y.
 
 ------------------------------------------------------------------------
 
@@ -141,15 +151,15 @@ df %>%
 
 [Table of Contents]
 
-# Factor X Variables (Non-Continuous X Variables) {#factor-x-variables-non-continuous-x-variables}
+# Categorical X Variables {#factor-x-variables-non-continuous-x-variables}
 
 ### Intuition and Theory
 
-Sometimes, we have non-continuous categorical X predictor variables in a regression. These don't work the same as continuous X variables. Why? Well, it doesn't really make sense to have a "slope" of X for non-continuous varibales, where one increase of X is associated with a constant increase of Y.
+Sometimes, we have non-continuous categorical $x$ predictor variables in a regression. These don't work the same as continuous $x$ variables. Why? Well, it doesn't really make sense to have a "slope" of $x$ for non-continuous varibales, where one increase of $x$ is associated with a constant increase of $y$.
 
 -   For example, if we have the categorical variable **company**, with the vector $<microsoft,  apple,  google>$, a constant slope makes no sense. Why would an increase of 1 from microsoft to apple, have the same value increase from apple to google? These companies aren't evenly spaced and ordered on a number line.
 
-Instead, we have to treat these variables as factor variables. For example, let us take the binary categorical X variable **democracy**.
+Instead, we have to treat these variables as factor variables - comparing each category to each other. For example, let us take the binary categorical X variable **democracy**.
 
 -   Our variable democracy (x) has two values:$x = 0$ (not a democracy), and $x = 1$ (democracy)
 -   Remember our linear regression model: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x$
@@ -193,7 +203,7 @@ We can tell R to do this with the **as.factor()** function, and putting that var
 
 ```{r, eval = FALSE}
 
-as.factor(X) #x is the categorical variable we want to factor
+as.factor(X) # x is the categorical variable we want to factor
 ```
 
 We can insert this **as.factor()** function into anywhere where there is a variable in R. For example, let us do a regression, where we predict **personaltax** using the factored variable **voc**.
@@ -219,15 +229,17 @@ Almost always in political science (and the social sciences), we will need more 
 
 Multivariate regression takes the following form: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_1 + \hat{\mathbf{\beta}}_2 x_2 + ... + + \hat{\mathbf{\beta}}_p x_p$
 
-You can include as many X variables as the amount of observations you have. Although, generally, the closer the number of X variables is to your number of observations, the less explanatory the model will be. You can include any type of variable, including both continuous and categorical variables.
+-   Where each $x_1, x_2, ... , x_p$ is a different independent variable.
 
--   Remember to use **as.factor()** on categorical variables when applicable (see section: [Factor X Variables (Non-Continuous X Variables)])
+You can include as many $x$ variables as the amount of observations you have. Although, generally, the closer the number of X variables is to your number of observations, the less explanatory the model will be. You can include any type of variable, including both continuous and categorical variables.
+
+-   Remember to use **as.factor()** on categorical variables when applicable (see section: [Factor X Variables (Non-Continuous X Variables)](#factor-x-variables-non-continuous-x-variables))
 
 The great thing about multivariate linear regression is that each $\hat{\mathbf{\beta}}_p x_p$ is added together (see equation above). This allows for one key thing: **we can hold other variables constant to see the effect of one X variable on Y**.
 
--   $\hat{\mathbf{\beta}}_p$ is the effect on $x_p$ on $y$, given all other $x$ are held constant.
+-   $\hat{\mathbf{\beta}}_p$ is the effect on $x_p$ on $y$, given all other $x_1, x_2, ...$ are held constant.
 
-Multivariate regression also uses the OLS framework to estimate paramters. However, unlike simple linear regression which can be illustrated with a line in a 2-dimensional graph, things can get very complicated mathematically/graphically, as every $x_p$ is a different dimension.
+Multivariate regression also uses the OLS framework to estimate parameters. However, unlike simple linear regression which can be illustrated with a line in a 2-dimensional graph, things can get very complicated mathematically/graphically, as every $x_p$ is a different dimension.
 
 -   For example, a model with 3 X variables and 1 Y variable can be illustrated with a plane on a 4 dimensional space.
 

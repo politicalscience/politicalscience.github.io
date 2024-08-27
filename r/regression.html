@@ -355,6 +355,12 @@ display: none;
 </div>
 
 
+<style type="text/css">
+body{
+font-size: 12pt;
+line-height: 1.8;
+}
+</style>
 <p><a href="https://politicalscience.github.io">Handbook
 Homepage</a></p>
 <div id="table-of-contents" class="section level2">
@@ -364,8 +370,8 @@ Homepage</a></p>
 (OLS)</a></p></li>
 <li><p><a href="#graphing-simple-linear-regression">Graphing Simple
 Linear Regression</a></p></li>
-<li><p><a href="#factor-x-variables-non-continuous-x-variables">Factor X
-Variables (Non-Continuous X Variables)</a></p></li>
+<li><p><a href="#factor-x-variables-non-continuous-x-variables">Categorical X
+Variables</a></p></li>
 <li><p><a href="#multivariate-linear-regression">Multivariate Linear
 Regression</a></p></li>
 </ul>
@@ -382,9 +388,10 @@ Regression</a></p></li>
 <div id="intuition-and-theory" class="section level3">
 <h3>Intuition and Theory</h3>
 <p>A simple linear regression is a method to predict a dependent
-variable Y, given a value of an independent variable X. Ordinary Least
-Squares (OLS) is a method to obtain a linear estimation of Y given a
-value of X. OLS prediction models take the following form:</p>
+variable <span class="math inline">\(y\)</span>, given a value of an
+independent variable <span class="math inline">\(x\)</span>. Ordinary
+Least Squares (OLS) is a method to obtain a linear estimation of <span class="math inline">\(y\)</span> given a value of <span class="math inline">\(x\)</span>. OLS prediction models take the
+following form:</p>
 <p><span class="math inline">\(\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0
 + \hat{\mathbf{\beta}}_1 x\)</span></p>
 <ul>
@@ -401,14 +408,18 @@ coefficient of <span class="math inline">\(x\)</span> (the amount <span class="m
 selecting <span class="math inline">\(\hat{\mathbf{\beta}}_0\)</span>
 and <span class="math inline">\(\hat{\mathbf{\beta}}_1\)</span>. It
 selects these coefficient values through finding the coefficients that
-minimises the sum of squared errors of the prediction model.</p>
+minimises the <strong>sum of squared errors</strong> of the prediction
+model.</p>
 <ul>
-<li>An error is the difference between the actual value of <span class="math inline">\(y\)</span>, and the predicted <span class="math inline">\(\hat{\mathbf{y}}\)</span> of the model. The
-squared error is the square of the difference. The sum of the squared
-errors is all of the squared errors for every value of <span class="math inline">\(x\)</span>.</li>
+<li>An error is the difference between the actual value of <span class="math inline">\(y\)</span> at a certain <span class="math inline">\(x\)</span> value (let us say <span class="math inline">\(x=i\)</span>), and the predicted <span class="math inline">\(\hat{\mathbf{y}}\)</span> of at that same <span class="math inline">\(x\)</span> value produced by the model: <span class="math inline">\(y_i-\hat{\mathbf{y}}_i\)</span></li>
+<li>The squared error is the square of the difference we just
+calculated: <span class="math inline">\((y_i-\hat{\mathbf{y_i}})^2\)</span></li>
+<li>The sum of the squared errors is all of the squared errors for every
+value <span class="math inline">\(n\)</span> of <span class="math inline">\(x\)</span>: <span class="math inline">\(\sum
+(y_i-\hat{\mathbf{y_i}})^2\)</span></li>
 <li>OLS methodology uses mathematics (beyond the scope of this guide) to
 find the optimal <span class="math inline">\(\hat{\mathbf{\beta}}_0\)</span> and <span class="math inline">\(\hat{\mathbf{\beta}}_1\)</span> that minimises the
-sum of the squared errors.</li>
+sum of the squared errors we just described.</li>
 <li>For this guide, we will let R do the calculations of coefficients
 for us.</li>
 </ul>
@@ -442,8 +453,8 @@ your data frame.</em></p></li>
 <p><strong>Two important notes:</strong></p>
 <ul>
 <li><p>If your X variable is categorical/non-continuous/binary, please
-consult the section: <a href="#factor-x-variables-non-continuous-x-variables">Factor X Variables
-(Non-Continuous X Variables)</a></p></li>
+consult the section: <a href="#factor-x-variables-non-continuous-x-variables">Categorical X
+Variables</a></p></li>
 <li><p>If your Y variable is categorical/non-continuous/binary, do not
 use OLS regression. Instead, use <a href="https://politicalscience.github.io/r/logistic.html">logistic
 regression</a>.</p></li>
@@ -495,7 +506,8 @@ to create 95% confidence intervals.</p></li>
 Basically, if it is less than 0.05, we can generally reject the null
 hypothesis, and conclude there is a significant relationship.</p></li>
 <li><p>The <span class="math inline">\(r^2\)</span> value is the amount
-of variation in Y explained by the model.</p></li>
+of variation in Y explained by the model. In this example, the <span class="math inline">\(r^2\)</span> value shows that our model explains
+26.15% of the variation of Y.</p></li>
 </ul>
 <hr />
 <p><a href="#table-of-contents">Table of Contents</a></p>
@@ -535,14 +547,14 @@ understanding the colour).</em></p></li>
 <p><a href="#table-of-contents">Table of Contents</a></p>
 </div>
 <div id="factor-x-variables-non-continuous-x-variables" class="section level1">
-<h1>Factor X Variables (Non-Continuous X Variables)</h1>
+<h1>Categorical X Variables</h1>
 <div id="intuition-and-theory-1" class="section level3">
 <h3>Intuition and Theory</h3>
-<p>Sometimes, we have non-continuous categorical X predictor variables
-in a regression. These don’t work the same as continuous X variables.
-Why? Well, it doesn’t really make sense to have a “slope” of X for
-non-continuous varibales, where one increase of X is associated with a
-constant increase of Y.</p>
+<p>Sometimes, we have non-continuous categorical <span class="math inline">\(x\)</span> predictor variables in a regression.
+These don’t work the same as continuous <span class="math inline">\(x\)</span> variables. Why? Well, it doesn’t really
+make sense to have a “slope” of <span class="math inline">\(x\)</span>
+for non-continuous varibales, where one increase of <span class="math inline">\(x\)</span> is associated with a constant increase
+of <span class="math inline">\(y\)</span>.</p>
 <ul>
 <li>For example, if we have the categorical variable
 <strong>company</strong>, with the vector <span class="math inline">\(&lt;microsoft,  apple,  google&gt;\)</span>, a
@@ -550,9 +562,9 @@ constant slope makes no sense. Why would an increase of 1 from microsoft
 to apple, have the same value increase from apple to google? These
 companies aren’t evenly spaced and ordered on a number line.</li>
 </ul>
-<p>Instead, we have to treat these variables as factor variables. For
-example, let us take the binary categorical X variable
-<strong>democracy</strong>.</p>
+<p>Instead, we have to treat these variables as factor variables -
+comparing each category to each other. For example, let us take the
+binary categorical X variable <strong>democracy</strong>.</p>
 <ul>
 <li>Our variable democracy (x) has two values:<span class="math inline">\(x = 0\)</span> (not a democracy), and <span class="math inline">\(x = 1\)</span> (democracy)</li>
 <li>Remember our linear regression model: <span class="math inline">\(\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 +
@@ -627,7 +639,7 @@ treat it like a factor variable.</li>
 <p>We can tell R to do this with the <strong>as.factor()</strong>
 function, and putting that variable we want to treat as a factor inside
 of it. The syntax is as follows:</p>
-<pre class="r"><code>as.factor(X) #x is the categorical variable we want to factor</code></pre>
+<pre class="r"><code>as.factor(X) # x is the categorical variable we want to factor</code></pre>
 <p>We can insert this <strong>as.factor()</strong> function into
 anywhere where there is a variable in R. For example, let us do a
 regression, where we predict <strong>personaltax</strong> using the
@@ -671,11 +683,15 @@ very complicated, and rarely does one variable explain everything.</p>
 <p>Multivariate regression takes the following form: <span class="math inline">\(\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 +
 \hat{\mathbf{\beta}}_1 x_1 + \hat{\mathbf{\beta}}_2 x_2 + ... + +
 \hat{\mathbf{\beta}}_p x_p\)</span></p>
-<p>You can include as many X variables as the amount of observations you
-have. Although, generally, the closer the number of X variables is to
-your number of observations, the less explanatory the model will be. You
-can include any type of variable, including both continuous and
-categorical variables.</p>
+<ul>
+<li>Where each <span class="math inline">\(x_1, x_2, ... , x_p\)</span>
+is a different independent variable.</li>
+</ul>
+<p>You can include as many <span class="math inline">\(x\)</span>
+variables as the amount of observations you have. Although, generally,
+the closer the number of X variables is to your number of observations,
+the less explanatory the model will be. You can include any type of
+variable, including both continuous and categorical variables.</p>
 <ul>
 <li>Remember to use <strong>as.factor()</strong> on categorical
 variables when applicable (see section: <a href="#factor-x-variables-non-continuous-x-variables">Factor X Variables
@@ -688,10 +704,10 @@ can hold other variables constant to see the effect of one X variable on
 Y</strong>.</p>
 <ul>
 <li><span class="math inline">\(\hat{\mathbf{\beta}}_p\)</span> is the
-effect on <span class="math inline">\(x_p\)</span> on <span class="math inline">\(y\)</span>, given all other <span class="math inline">\(x\)</span> are held constant.</li>
+effect on <span class="math inline">\(x_p\)</span> on <span class="math inline">\(y\)</span>, given all other <span class="math inline">\(x_1, x_2, ...\)</span> are held constant.</li>
 </ul>
 <p>Multivariate regression also uses the OLS framework to estimate
-paramters. However, unlike simple linear regression which can be
+parameters. However, unlike simple linear regression which can be
 illustrated with a line in a 2-dimensional graph, things can get very
 complicated mathematically/graphically, as every <span class="math inline">\(x_p\)</span> is a different dimension.</p>
 <ul>
