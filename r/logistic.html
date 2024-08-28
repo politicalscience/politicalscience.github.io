@@ -355,19 +355,22 @@ display: none;
 </div>
 
 
+<style type="text/css">
+body{
+font-size: 12pt;
+line-height: 150%;
+}
+</style>
 <p><a href="https://politicalscience.github.io">Handbook
 Homepage</a></p>
 <div id="table-of-contents" class="section level2">
 <h2>Table of Contents</h2>
 <ul>
-<li><p><a href="#binomial-logistic-regression">Binomial Logistic
+<li><p><a href="#binomial">Binomial Logistic Regression</a></p></li>
+<li><p><a href="#odds">Odds Ratios and Relative Risk Ratios</a></p></li>
+<li><p><a href="#multinomial">Multinomial Logistic
 Regression</a></p></li>
-<li><p><a href="#odds-ratios-and-relative-risk-ratios">Odds Ratios and
-Relative Risk Ratios</a></p></li>
-<li><p><a href="#multinomial-logistic-regression">Multinomial Logistic
-Regression</a></p></li>
-<li><p><a href="#ordinal-logistic-regression">Ordinal Logistic
-Regression</a></p></li>
+<li><p><a href="#ordinal">Ordinal Logistic Regression</a></p></li>
 </ul>
 <hr />
 <p>Remember to load tidyverse</p>
@@ -376,41 +379,146 @@ Regression</a></p></li>
 (feel free to load your own dataset)</p>
 <pre class="r"><code>df &lt;- read_csv(&quot;voctaxdata.csv&quot;)</code></pre>
 <hr />
-<p><a href="#table-of-contents">Table of Contents</a></p>
+<p><a href="#table-of-contents">Table of Contents</a> | <a href="https://politicalscience.github.io">Handbook Homepage</a></p>
 </div>
-<div id="binomial-logistic-regression" class="section level2">
-<h2>Binomial Logistic Regression</h2>
+<div id="binomial" class="section level1">
+<h1>Binomial Logistic Regression</h1>
+<p><a href="#id_1001">Intuition and Theory</a> | <a href="#id_1002">Example in R</a></p>
+<div id="id_1001" class="section level3">
+<h3>Intuition and Theory</h3>
 <p>Logistic regression is used when we are trying to use X to predict a
-categorical/binary/factor Y variable.</p>
-<p>Lets run simple binomial logistic regression with a Binary Y
-(<strong>Y ~ X1 + X2 + X3…</strong>) . For non-binary Y, see multinomial
-and ordinal logistic later in this lesson. In the example below:</p>
+binary Y variable.</p>
+<ul>
+<li><p>With a binary variable, we are interested in the probability
+<span class="math inline">\(π\)</span> of an observation being in a
+specific category <span class="math inline">\(i\)</span> ( <span class="math inline">\(π_i\)</span> )</p></li>
+<li><p>Importantly, probability ranges on a scale between 0 (0% chance)
+and 1 (100% chance).</p></li>
+<li><p>Thus, we need a prediction method that only outputs predictions
+between 0 and 1.</p></li>
+</ul>
+<p><br /></p>
+<p>However, the previously covered OLS regression does not output values
+between 0 and 1. The linear slope means that OLS will produce estimates
+above 1 and below 0, and that makes no sense.</p>
+<ul>
+<li><p>The traditional linear model <span class="math inline">\(P(y_i =
+1) = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}1 x_i\)</span> can
+produce values outside the 0 and 1 range, which doesn’t make sense for
+probability.</p></li>
+<li><p>So, to solve this function, we need to apply a function <span class="math inline">\(f\)</span> that will force the linear regression
+model to return a value between 0 and 1.</p></li>
+<li><p>Thus, it takes the form of <span class="math inline">\(P(y_i = 1)
+= f(\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}1 x_i)\)</span>, where
+<span class="math inline">\(f\)</span> is a function that never returns
+a value below 0 or above 1.</p></li>
+</ul>
+<p><br /></p>
+<p>The logistic function is one type of <span class="math inline">\(f\)</span> transformation that does not return a
+value below 0 or above 1. It takes the following form:</p>
+<p><span class="math inline">\(f(m) = \frac{e^m}{1+e^m}\)</span>, where
+<span class="math inline">\(m = \hat{\mathbf{\beta}}_0 +
+\hat{\mathbf{\beta}}_1 x_i\)</span></p>
+<p>When applying the logistic transformation, this gives us the
+following model that predicts probability of being in category <span class="math inline">\(i\)</span> ( <span class="math inline">\(π_i\)</span> ):</p>
+<p><span class="math inline">\(\hat{π_i} =
+\frac{e^{\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x}}{1 +
+e^{\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x}}\)</span></p>
+<p>This allows us to predict the probability of being in a specific
+category of Y, given we know x.</p>
+<p>We can also expand the model to a multivariate model, simply by
+adding <span class="math inline">\(+ \hat{\mathbf{\beta}}_2 x_2 +
+\hat{\mathbf{\beta}}_3 x_3 ... + \hat{\mathbf{\beta}}_p x_p\)</span></p>
+<p><br /></p>
+<p>How does logistic regression select the coefficients <span class="math inline">\(\hat{\mathbf{\beta}}_0,
+\hat{\mathbf{\beta}}_1,..., \hat{\mathbf{\beta}}_p\)</span> ?</p>
+<ul>
+<li><p>Generally, maximum likelihood estimation (MLE) is used to
+estimate these parameters.</p></li>
+<li><p>The idea is simply: what are the values of <span class="math inline">\(\hat{\mathbf{\beta}}_0,
+\hat{\mathbf{\beta}}_1,..., \hat{\mathbf{\beta}}_p\)</span> that
+generate predicted probabilities <span class="math inline">\(\hat{π_i}\)</span> for each observation, that are
+as close to the actual categories of <span class="math inline">\(y\)</span> ?</p></li>
+<li><p>The likelihood function for logistic regression is: <span class="math inline">\(\prod_{i:y_i = 1} \hat{π_i} \prod_{i:y_i = 0} (1 -
+\hat{π_i})\)</span></p></li>
+<li><p>This function tells us the probability of observed zeroes and
+ones in the data, given values <span class="math inline">\(\hat{\mathbf{\beta}}_0, \hat{\mathbf{\beta}}_1,
+... , \hat{\mathbf{\beta}}_p\)</span> values within <span class="math inline">\(\hat{π_i}\)</span></p></li>
+<li><p>We want to choose <span class="math inline">\(\hat{\mathbf{\beta}}_0, \hat{\mathbf{\beta}}_1...
++ \hat{\mathbf{\beta}}_p\)</span> values within <span class="math inline">\(\hat{π_i}\)</span> to maximise this likelihood
+function.</p></li>
+</ul>
+<p><br /></p>
+<p>This is generally done with a computer algorithm. For each <span class="math inline">\(\hat{\mathbf{\beta}}_0, \hat{\mathbf{\beta}}_1,
+... ,\hat{\mathbf{\beta}}_p\)</span> , the computer does the
+following:</p>
+<ol style="list-style-type: decimal">
+<li>Start somewhere with some value of the parameter</li>
+<li>Shift the parameter in both directions (up and down), and see which
+direction will increase the likelihood function.</li>
+<li>Go a small distance in that chosen direction.</li>
+<li>Again, shift the parameter in both directions (up and down), and see
+which direction will increase the likelihood function.</li>
+<li>Go a small distance in that chosen direction.</li>
+<li>Continue until when you shift in both directions, and the likelihood
+function only drops. This suggests you are “at the top of the mountain”,
+maximising the likelihood function.</li>
+</ol>
+<p><br /></p>
+<p>The selected parameters <span class="math inline">\(\hat{\mathbf{\beta}}_1,...
+,\hat{\mathbf{\beta}}_p\)</span> are in a format that is difficult to
+interpret. We can interpret them with <a href="#odds">odds
+ratios</a>.</p>
+<p><br /></p>
+<p>Uses of logistic regression in Political Science research:</p>
+<ul>
+<li>Political scientists often want to explore categorical Y variables.
+The most obvious example is predicting whether or not a country is a
+democracy or not. Other common categorical Y variables include voting
+systems, type of government, type of economy, etc.</li>
+</ul>
+<p>If you want to use categorical Y variables with more than 2
+categories, see the section on <a href="#multinomial">multinomial
+logistic regression</a>.</p>
+<p><br /></p>
+</div>
+<div id="id_1002" class="section level3">
+<h3>Example in R</h3>
+<p>Binary logistic regression in R is conducted using the
+<strong>glm()</strong> function and <strong>summary()</strong> function.
+The syntax is as follows:</p>
+<pre class="r"><code>logistic_reg &lt;- glm(Y ~ X1 + X2, data = df, family = binomial)
+
+# Use summary() function to see results
+summary(logistic_reg)</code></pre>
+<p>These are the parts of the syntax that can be altered:</p>
 <ul>
 <li><p><strong>logistic_reg</strong> is the variable I am saving my
-regression model to. You can name this anything you want to.</p></li>
-<li><p><strong>voc</strong> is the Y variable (Dependent variable) I am
-using for the regression. This is what variable I am trying to predict.
-Replace this with the Y variable you intend on using. I included
-<strong>as.factor()</strong> so R treats this as a categorical variable
-(only necessary if your categorical variable is coded into
-numbers).</p></li>
-<li><p><strong>personaltax</strong> is the X1 variable (Independent
-Variable) I am using for the regression. Replace this with the X
-variable you intend on using.</p></li>
-<li><p><strong>gini</strong> is the X2 variable (Independent Varibale) I
-am using for the regression. Replace this with the X variable you intend
-on using.</p></li>
-<li><p><strong>df</strong> is the name of my data frame that I am
-drawing these X and Y variables from. Replace this with the name of your
-dataframe.</p></li>
-<li><p>NOTE: In the formula section, Y always goes first (<strong>Y ~
-X)</strong>. Remember to use <strong>family = binomial</strong>, or else
-this regression will not work.</p></li>
-<li><p>To add more than 2 X independent variables, simply add in the
-formula <strong>+ X3 + X4 …</strong></p></li>
-<li><p>We need to use the <strong>summary()</strong> function to bring
-up the output of the OLS regression.</p></li>
+linear regression model to. <em>You can name this anything you want
+to.</em></p></li>
+<li><p><strong>Y</strong> is the Y variable (Dependent variable) you are
+trying to predict, and <strong>X1, X2</strong> are the X variable
+(independent variable) you are using to get your prediction. <em>Replace
+these with the variables you want to use.</em></p>
+<ul>
+<li>NOTE: Y must be binary. For categorical Y (more than 2 categories),
+see the section on <a href="#multinomial">Multinomial Logistic
+Regression</a>.</li>
+<li>NOTE: Always put the Y variable before the X variable. Separate the
+two with a tilda <strong>~</strong></li>
+<li>NOTE: You can add more simply by using a <strong>+</strong> sign and
+adding another variable.</li>
+</ul></li>
+<li><p><strong>df</strong> is the name of the data frame that I am
+drawing these X and Y variables from. <em>Replace this with the name of
+your data frame.</em></p></li>
 </ul>
+<p>Remember to use <strong>family = binomial</strong>, or else this
+regression will not work.</p>
+<p><br /></p>
+<p>Take this following example of predicting the probability of being in
+category 1 of <strong>voc</strong> with the X variables
+<strong>personaltax</strong> and <strong>gini</strong>:</p>
 <pre class="r"><code>logistic_reg &lt;- glm(as.factor(voc) ~ personaltax + gini, data = df, family = binomial)
 
 # Use summary() function to see results
@@ -435,47 +543,51 @@ summary(logistic_reg)</code></pre>
 ## AIC: 128.47
 ## 
 ## Number of Fisher Scoring iterations: 7</code></pre>
-<p>We can interpret the significance levels (stars) and
-<strong>Pr(&gt;|z|)</strong> as we normally do with linear
-regressions.</p>
+<p>The <strong>summary()</strong> function produces an output. The
+interpretation of the above example is as follows:</p>
 <ul>
-<li>If <strong>Pr(&gt;|z|)</strong> is less than 0.05, we can reject the
-null hypothesis, and conclude there is a significant relationship.</li>
-</ul>
-<p>We can also interpret the sign of the estimates.</p>
+<li><p>We can interpret the significance levels (stars) and
+<strong>Pr(&gt;|z|)</strong> as we normally do with linear regressions.
+If <strong>Pr(&gt;|z|)</strong> is less than 0.05, we can reject the
+null hypothesis, and conclude there is a significant
+relationship.</p></li>
+<li><p>We can also interpret the sign of the estimates.</p>
 <ul>
 <li><p>If the X variable coefficient estimate is positive, then there is
 a positive effect of X on Y.</p></li>
 <li><p>If the coefficient estimate is negative, then there is a negative
 effect of X on Y.</p></li>
+</ul></li>
 </ul>
 <p>However, unlike linear regressions, <strong>we cannot directly
 interpret the estimated coefficients</strong>. These actual numbers do
 not mean anything meaningful to us. To interpret, we need to calculate
-the <strong>odds ratios</strong> of the regression (see below).</p>
+the <a href="#odds">odds ratios</a> of the regression.</p>
+<p><br /></p>
 <hr />
-<p><a href="#table-of-contents">Table of Contents</a></p>
+<p><a href="#table-of-contents">Table of Contents</a> | <a href="https://politicalscience.github.io">Handbook Homepage</a></p>
 </div>
-<div id="odds-ratios-and-relative-risk-ratios" class="section level2">
-<h2>Odds Ratios and Relative Risk Ratios</h2>
-<p>To interpret logistic regression coefficients, we need to calculate
-the odds ratios. We can do this with a few commands. In the example
-below:</p>
+</div>
+<div id="odds" class="section level1">
+<h1>Odds Ratios and Relative Risk Ratios</h1>
+<p><a href="#id_2001">Intuition and Theory</a> | <a href="#id_2002">Example in R</a></p>
+<div id="id_2001" class="section level3">
+<h3>Intuition and Theory</h3>
+<p>We talked about previously how the parameters of logistic regression
+<span class="math inline">\(\hat{\mathbf{\beta}}_0,
+\hat{\mathbf{\beta}}_1, ... ,\hat{\mathbf{\beta}}_p\)</span> are
+estimated. We noted that these value estimates of the parameters cannot
+be understood without interpretation (only the signs can be
+interpreted).</p>
+<p>To interpret the these parameters, we can use odds ratios/relative
+risk ratios.</p>
+<p>To calculate odds ratios/relative risk ratios, we simply take <span class="math inline">\(e\)</span> to the power of the coefficient:</p>
 <ul>
-<li><p><strong>odds_ratios</strong> is the variable I am storing our
-calculated odds ratios in. You can rename this to whatever you
-want.</p></li>
-<li><p><strong>logsitic_reg</strong> is the variable containing my
-logistic regression I ran in the previous section. Rename this to what
-your logistic regression model variable is named.</p></li>
+<li>Ex. Odds ratio of <span class="math inline">\(\hat{\mathbf{\beta}}_1\)</span> is <span class="math inline">\(e^{\hat{\mathbf{\beta}}_1}\)</span></li>
 </ul>
-<pre class="r"><code>odds_ratios &lt;- exp(coef(logistic_reg))
-
-# print the variable
-print(odds_ratios)</code></pre>
-<pre><code>##  (Intercept)  personaltax         gini 
-## 7.776664e+21 9.552285e-01 2.205778e-01</code></pre>
-<p>How do we interpret these ratios?</p>
+<p><br /></p>
+<p>Odds ratios can be interpreted for <strong>direction of
+correlation</strong>:</p>
 <ul>
 <li><p>If the odds ratio is less than 1, the effect of X on Y is
 negative.</p></li>
@@ -484,33 +596,58 @@ positive.</p></li>
 <li><p>If the odds ratio is equal to 1, there is no
 relationship.</p></li>
 </ul>
-<p>Interpreting magnitude of odds ratios:</p>
+<p>Odds ratios can also be interpreted for <strong>magnitude of
+correlation</strong>:</p>
 <ul>
 <li><p>If we subtract 1 from the odds ratio, we get the “rate of
 change”.</p></li>
 <li><p>For every one unit increase of X, the probability will change by
 the rate of change.</p></li>
 <li><p>Ex. If the odds ratio is 1.25, that means for each increase of 1
-in X, we predict the probability of Y will increase by 0.25 or 25% (or
-simply, probability * 1.25).</p></li>
-<li><p>Ex. If the odds ratio is 0.5, that means for each increase of 1
-in X, we predict the probability of Y will decrease by 0.5 or 50% (or
-simply, probability * 0.5)</p></li>
-<li><p>The significance P value of each is seen in the original logistic
-regression (don’t use odds ratios).</p></li>
-</ul>
-<p>If we want to calculate the 95% confidence intervals of the odds
-ratio estimates, we can create a table using <strong>cbind()</strong>
-that includes both coefficient values and confidence interval values. In
-the example below:</p>
+in X, we predict the probability of Y will increase by 0.25 or 25%</p>
 <ul>
-<li><p><strong>or_interval</strong> is the variable I am storing my odds
-ratio and confidence interval results in. You can name this whatever you
-want.</p></li>
-<li><p><strong>logistic_reg</strong> is the variable containing my
-logistic regression I ran in the previous section. Rename this to what
-your logistic regression model variable is named.</p></li>
+<li><span class="math inline">\(π_{i,x=n} = π_{i, x = n - 1} *
+1.25\)</span></li>
+</ul></li>
+<li><p>Ex. If the odds ratio is 0.5, that means for each increase of 1
+in X, we predict the probability of Y will decrease by 0.5 or 50%</p>
+<ul>
+<li><span class="math inline">\(π_{i,x=n} = π_{i, x = n - 1} *
+0.5\)</span></li>
+</ul></li>
 </ul>
+<p><br /></p>
+<p>Uses of odds ratios in Political Science research:</p>
+<ul>
+<li>Political scientists often are not just interested in the direction
+of correlation and causality, but also the magnitude of correlation and
+causality. After all, even if <span class="math inline">\(x\)</span>
+causes <span class="math inline">\(y\)</span>, if the causal effect is
+of minimal strength, then it may not be very important for policymakers
+to consider. On the other hand, if <span class="math inline">\(x\)</span> has a huge effect on <span class="math inline">\(y\)</span>, this could be very important to the
+study of the topic.</li>
+</ul>
+<p><br /></p>
+</div>
+<div id="id_2002" class="section level3">
+<h3>Example in R</h3>
+<p>Odds ratios/relative risk ratios in R are calculated with a simple
+mathematical operation. NOTE - you must have already conducted a
+logistic regression before calculated odds ratios. The syntax is as
+follows:</p>
+<pre class="r"><code>odds_ratios &lt;- exp(coef(logistic_reg))</code></pre>
+<p>These are the parts of the syntax that can be altered:</p>
+<ul>
+<li><p><strong>odds_ratios</strong> is the variable I am saving my odds
+ratios to. <em>You can name this anything you want to.</em></p></li>
+<li><p><strong>logistic_reg</strong> is the variable I stored my
+previous logistic regression that I want to calculate the odds ratios
+for. <em>Rename this to the variable you stored your logistic regression
+in.</em></p></li>
+</ul>
+<p><br /></p>
+<p>We can also calculate 95% confidence intervals for odds ratios quite
+simply in R. The syntax is as follows:</p>
 <pre class="r"><code># cbind to create a table
 or_interval &lt;- exp(cbind(OR = coef(logistic_reg), confint(logistic_reg)))</code></pre>
 <pre><code>## Waiting for profiling to be done...</code></pre>
@@ -520,53 +657,173 @@ print(or_interval)</code></pre>
 ## (Intercept) 7.776664e+21 1.847178e+15 2.614028e+30
 ## personaltax 9.552285e-01 9.016633e-01 1.007093e+00
 ## gini        2.205778e-01 1.262251e-01 3.390714e-01</code></pre>
-<p>The interpretation of these values is the same, but now, we have 95%
-confidence intervals!</p>
-<p><strong>Relative Risk Ratios</strong> are the same thing as odds
-ratios, but are called that when applied to a multinomial logistic
-regression (see below).</p>
+<p>These are the parts of the syntax that can be altered:</p>
+<ul>
+<li><p><strong>or_interval</strong> is the variable I am saving my odds
+ratios and confidence interval to. <em>You can name this anything you
+want to.</em></p></li>
+<li><p><strong>logistic_reg</strong> is the variable I stored my
+previous logistic regression that I want to calculate the odds ratios
+for. <em>Rename this to the variable you stored your logistic regression
+in.</em></p></li>
+</ul>
+<p><br /></p>
+<p>An example of calculating odds ratios, based on the logistic
+regression I conducted in the binary logistic example:</p>
+<pre class="r"><code>odds_ratios &lt;- exp(coef(logistic_reg))
+
+# print the variable
+print(odds_ratios)</code></pre>
+<pre><code>##  (Intercept)  personaltax         gini 
+## 7.776664e+21 9.552285e-01 2.205778e-01</code></pre>
+<p>Interpretation is explained in the <a href="#id_2001">intuition and
+theory section</a>.</p>
+<p><br /></p>
+<p>An example of calculating odds ratios and confidence intervals, based
+on the logistic regression I conducted in the binary logistic
+example:</p>
+<pre class="r"><code># cbind to create a table
+or_interval &lt;- exp(cbind(OR = coef(logistic_reg), confint(logistic_reg)))</code></pre>
+<pre><code>## Waiting for profiling to be done...</code></pre>
+<pre class="r"><code># print the table
+print(or_interval)</code></pre>
+<pre><code>##                       OR        2.5 %       97.5 %
+## (Intercept) 7.776664e+21 1.847178e+15 2.614028e+30
+## personaltax 9.552285e-01 9.016633e-01 1.007093e+00
+## gini        2.205778e-01 1.262251e-01 3.390714e-01</code></pre>
+<p>Interpretation is explained in the <a href="#id_2001">intuition and
+theory section</a>.</p>
+<p><br /></p>
 <hr />
-<p><a href="#table-of-contents">Table of Contents</a></p>
+<p><a href="#table-of-contents">Table of Contents</a> | <a href="https://politicalscience.github.io">Handbook Homepage</a></p>
 </div>
-<div id="multinomial-logistic-regression" class="section level2">
-<h2>Multinomial Logistic Regression</h2>
-<p>Multinomial logistic regression is used to predict a Y, which has
-more than 2 outcomes. We will need to install the <strong>VGAM</strong>
-package</p>
+</div>
+<div id="multinomial" class="section level1">
+<h1>Multinomial Logistic Regression</h1>
+<p><a href="#id_3001">Intuition and Theory</a> | <a href="#id_3002">Example in R</a></p>
+<div id="id_3001" class="section level3">
+<h3>Intuition and Theory</h3>
+<p>Multinomial logistic regression is used to predict a categorical Y,
+which has more than 2 outcomes. The mathematical concepts of Multinomial
+logistic regression are the same as <a href="#binomial">binomial
+logistic regression</a>, both involving the same form and same
+estimation techniques.</p>
+<p>However, with 3 or more categories, there becomes an issue - how do
+we illustrate probabilities for 3 categories, if we are only looking for
+<span class="math inline">\(π_i\)</span>? Our original framework of
+<span class="math inline">\(π_i\)</span> implies that <span class="math inline">\(i\)</span> is either <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, so that <span class="math inline">\(π_{i=0} = 1 - π_i\)</span>. But with 3 categories,
+this framework does not work.</p>
+<p><br /></p>
+<p>The solution to this is, well, to split our Y categorical variable
+into multiple smaller binary Y variables. This allows us to run a bunch
+of smaller binary logistic regressions.</p>
+<ul>
+<li><p>For example, take a <span class="math inline">\(y\)</span>
+variable that has 3 categories: <span class="math inline">\(i = 1, 2,
+3\)</span></p></li>
+<li><p>Let us set one of these as a “reference category”, which we will
+compare all other categories against. I have chosen <span class="math inline">\(i=3\)</span> as the reference since our
+<strong>VGAM</strong> package in R (that we will use later)
+automatically selects the last category as the reference. However, you
+can select any as the reference and the general idea remains the
+same.</p></li>
+<li><p>With <span class="math inline">\(i=3\)</span> as our reference
+category, we can now divide the remaning categories into binary
+comparisons with our reference <span class="math inline">\(i=3\)</span></p>
+<ul>
+<li><p>One logistic model will compare <span class="math inline">\(i=3\)</span> (reference) to <span class="math inline">\(i=1\)</span></p></li>
+<li><p>Another logistic model will compare <span class="math inline">\(i=3\)</span> (reference) to <span class="math inline">\(i=2\)</span></p></li>
+</ul></li>
+<li><p>Now that we have 2 binary logistic models, we can use the
+property <span class="math inline">\(π_{i=0} = 1 - π_i\)</span> without
+issue.</p></li>
+<li><p>For any categorical <span class="math inline">\(y\)</span>
+variable with <span class="math inline">\(i\)</span> categories, the
+number of “sub-regressions” we will run is <span class="math inline">\(i-1\)</span></p></li>
+</ul>
+<p><br /></p>
+<p>Thus, in our regression output, we will actually have <span class="math inline">\(i-1\)</span> versions of each <span class="math inline">\(x\)</span> variable.</p>
+<ul>
+<li><p>For example, lets say we only have on <span class="math inline">\(x\)</span> variable, <span class="math inline">\(x\)</span></p></li>
+<li><p>If we have the <span class="math inline">\(y\)</span> variable
+above with categories <span class="math inline">\(i=1,2,3\)</span>, with
+<span class="math inline">\(i = 3\)</span> as our reference, we will
+have 2 <span class="math inline">\(x\)</span> variables in our
+regression output.</p>
+<ul>
+<li><p><span class="math inline">\(x:1\)</span> is the logistic variable
+that corresponds to the logistic model comparing <span class="math inline">\(i=1\)</span> to our reference <span class="math inline">\(i=3\)</span></p></li>
+<li><p><span class="math inline">\(x:2\)</span> is the logistic variable
+that corresponds to the logistic model comparing <span class="math inline">\(i=2\)</span> to our reference <span class="math inline">\(i=3\)</span></p></li>
+</ul></li>
+<li><p>For each version of <span class="math inline">\(x\)</span>, there
+will be a unique <span class="math inline">\(\beta\)</span> parameter.
+We can interpret these parameters the same as in binary logistic
+regressions, including calculating odds ratios.</p>
+<ul>
+<li>Just remember, what version of <span class="math inline">\(x\)</span> the <span class="math inline">\(\beta\)</span> belongs to when interpreting (which
+2 categories of <span class="math inline">\(y\)</span> is it
+comparing).</li>
+</ul></li>
+</ul>
+<p><br /></p>
+</div>
+<div id="id_3002" class="section level3">
+<h3>Example in R</h3>
+<p>We will need to load the <strong>VGAM</strong> package to do
+Multinomial logistic regression in R. If you have not installed it,
+install this package.</p>
 <pre class="r"><code>library(VGAM)</code></pre>
 <p>Now, we can run a Multinomial logistic regression in the same syntax
 as the binomial logistic regression, but instead of
-<strong>glm()</strong>, use the <strong>vglm()</strong> function.</p>
-<p>We will run this regression on the Y variable Species, which has 3
-distinct categories (<strong>Y ~ X1 + X2 + X3…</strong>) . The
-<strong>vglm()</strong> function will automatically set the last of
-these categories as the “reference category”, so the probabilities are
-in comparisons to the reference category. In the example below:</p>
+<strong>glm()</strong>, use the <strong>vglm()</strong> function. The
+syntax is as follows:</p>
+<pre class="r"><code>multinomial_reg &lt;- vglm(Y ~ X1 + X2,
+                    data = df,
+                    family = multinomial)
+
+# Use summary() to see results
+summary(multinomial_reg)</code></pre>
+<p>These are the parts of the syntax that can be altered:</p>
 <ul>
 <li><p><strong>multinomial_reg</strong> is the variable I am saving my
-regression model to. You can name this anything you want to.</p></li>
-<li><p><strong>Species</strong> is the Y variable (Dependent variable) I
-am using for the regression. This is what variable I am trying to
-predict. Replace this with the Y variable you intend on using.</p></li>
-<li><p><strong>Petal.Length</strong> is the X1 variable (Independent
-Varibale) I am using for the regression. This is what variable I am
-using to make the prediction. Replace this with the X variable you
-intend on using.</p></li>
-<li><p><strong>Petal.Width</strong> is the X2 variable (Independent
-Varibale) I am using for the regression. This is what variable I am
-using to make the prediction. Replace this with the X variable you
-intend on using.</p></li>
-<li><p><strong>df</strong> is the name of my data frame that I am
-drawing these X and Y variables from. Replace this with the name of your
-dataframe.</p></li>
-<li><p>NOTE: In the formula section, Y always goes first (<strong>Y ~
-X)</strong>. Remember to use <strong>family = multinomial</strong>, or
-else this regression will not work.</p></li>
-<li><p>To add more than 2 X independent variables, simply add in the
-formula <strong>+ X3 + X4 …</strong></p></li>
-<li><p>We need to use the <strong>summary()</strong> function to bring
-up the output of the OLS regression.</p></li>
+linear regression model to. <em>You can name this anything you want
+to.</em></p></li>
+<li><p><strong>Y</strong> is the Y variable (Dependent variable) you are
+trying to predict, and <strong>X1, X2</strong> are the X variable
+(independent variable) you are using to get your prediction. <em>Replace
+these with the variables you want to use.</em></p>
+<ul>
+<li>NOTE: Y must have more than 2 categories. For binary Y (2
+categories), see the section on <a href="#binomial">Binomial Logistic
+Regression</a>.</li>
+<li>NOTE: Always put the Y variable before the X variable. Separate the
+two with a tilda <strong>~</strong></li>
+<li>NOTE: You can add more simply by using a <strong>+</strong> sign and
+adding another variable.</li>
+</ul></li>
+<li><p><strong>df</strong> is the name of the data frame that I am
+drawing these X and Y variables from. <em>Replace this with the name of
+your data frame.</em></p></li>
 </ul>
+<p>Remember to use <strong>family = multinomial</strong>, or else this
+regression will not work.</p>
+<p>If you want to calculate the <a href="#odds">odds ratios/relative
+risk ratio</a> for interpretation, the R code is the same as
+binomial.</p>
+<ul>
+<li>Remember, <strong>vglm()</strong> sets the last category as the
+reference category. Thus, the coefficients with <strong>1</strong>
+indicate the probability of being in category <strong>1</strong>
+compared to category <strong>3</strong>. The coefficients with
+<strong>2</strong> indicate the probability of being in category
+<strong>2</strong> compared to category <strong>3</strong>. The
+interpretations are the same as standard odds ratios.</li>
+</ul>
+<p><br /></p>
+<p>Take the following example where we predict the
+<strong>Species</strong> of a flower from its
+<strong>Petal.Length</strong> and <strong>Petal.Width</strong>:</p>
 <pre class="r"><code>multinomial_reg &lt;- vglm(Species ~ Petal.Length + Petal.Width,
                     data = df,
                     family = multinomial)
@@ -623,15 +880,14 @@ compared to category <strong>3</strong>. The coefficients with
 <strong>2</strong> compared to category <strong>3</strong>. The
 interpretations are the same as standard odds ratios.</p>
 <hr />
-<p><a href="#table-of-contents">Table of Contents</a></p>
+<p><a href="#table-of-contents">Table of Contents</a> | <a href="https://politicalscience.github.io">Handbook Homepage</a></p>
 </div>
-<div id="ordinal-logistic-regression" class="section level2">
+<div id="ordinal" class="section level2">
 <h2>Ordinal Logistic Regression</h2>
 <p>Coming Soon</p>
 <hr />
-<p><a href="#table-of-contents">Table of Contents</a></p>
-<p><a href="https://politicalscience.github.io">Handbook
-Homepage</a></p>
+<p><a href="#table-of-contents">Table of Contents</a> | <a href="https://politicalscience.github.io">Handbook Homepage</a></p>
+</div>
 </div>
 
 

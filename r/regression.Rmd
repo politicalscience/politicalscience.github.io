@@ -22,8 +22,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -   [Simple Linear Regression (OLS)](#simple-linear-regression-ols)
 
--   [Graphing Simple Linear Regression](#graphing)
-
 -   [Categorical X Variables](#factor-x-variables-non-continuous-x-variables)
 
 -   [Multivariate Linear Regression](#multivariate)
@@ -50,7 +48,9 @@ df <- read_csv("voctaxdata.csv")
 
 # [Simple Linear Regression (OLS)]{.underline} {#simple-linear-regression-ols}
 
-### Intuition and Theory
+[Intuition and Theory](#1001) \| [Example in R](#1002) \| [Graphing Simple Linear Regression](#graphing)
+
+### Intuition and Theory {#1001}
 
 A simple linear regression is a method to predict a dependent variable $y$, given a value of an independent variable $x$. Ordinary Least Squares (OLS) is a method to obtain a linear estimation of $y$ given a value of $x$. OLS prediction models take the following form:
 
@@ -68,12 +68,30 @@ OLS generates an prediction equation in the above form, through selecting $\hat{
 -   An error is the difference between the actual value of $y$ at a certain $x$ value (let us say $x=i$), and the predicted $\hat{\mathbf{y}}$ of at that same $x$ value produced by the model: $y_i-\hat{\mathbf{y}}_i$
 -   The squared error is the square of the difference we just calculated: $(y_i-\hat{\mathbf{y_i}})^2$
 -   The sum of the squared errors is all of the squared errors for every value $i$ of $x$: $\sum (y_i-\hat{\mathbf{y_i}})^2$
--   OLS methodology uses mathematics (beyond the scope of this guide) to find the optimal $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$ that minimises the sum of the squared errors we just described.
--   For this guide, we will let R do the calculations of coefficients for us.
 
 <br />
 
-### Example in R
+OLS methodology uses the following formulas to find the optimal $\hat{\mathbf{\beta}}_0$ and $\hat{\mathbf{\beta}}_1$ that minimises the sum of the squared errors we just described:
+
+-   $\hat{\mathbf{\beta}}_1 = \frac{\sum (x_i-\bar x)(y_i - \bar y)}{\sum(x_i-\bar x)^2}$
+
+-   $\hat{\mathbf{\beta}}_0 = \bar y - \hat{\mathbf{\beta}}_1 \bar x$
+
+I will not show the mathematical proof of these formulas, as that is beyond what is needed for this lesson. However, a quick google search will show you statistical proofs of the calculations.
+
+For this guide, we will let R do the calculations of coefficients for us, instead of manually plugging in the numbers to these formulas.
+
+<br />
+
+Uses of linear regression in Political Science research:
+
+-   Linear regression can help establish correlation/covariation between variables, which is essential to establishing causal relationships.
+
+-   Linear regression is often used in hypothesis testing to determine if there is a significant relationship between 2 variables, that is not occurring because of chance.
+
+<br />
+
+### Example in R {#1002}
 
 OLS regression in R is conducted using the **lm()** function and **summary()** function. The syntax is as follows:
 
@@ -127,11 +145,7 @@ The **summary()** function produces an output. The interpretation of the above e
 
 <br />
 
-------------------------------------------------------------------------
-
-[Table of Contents] \| [Handbook Homepage](https://politicalscience.github.io)
-
-# [Graphing Simple Linear Regression]{.underline} {#graphing}
+### Graphing Simple Linear Regression {#graphing}
 
 We can graph OLS linear regressions with one independent variable in **ggplot**. The syntax is as follows:
 
@@ -146,7 +160,7 @@ These are the parts of the syntax that can be altered:
 
 -   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
 
--   **X_variable** is the variable to plot on the X axis, and **Y_varibale** is the variable to plot on the Y axis. *Replace these with the variables you want to use.*
+-   **X_variable** is the variable to plot on the X axis, and **Y_variable** is the variable to plot on the Y axis. *Replace these with the variables you want to use.*
 
 -   **red** is the colour I am assigning to the best fit line. *You can change this to whatever colour you want (subject to R understanding the colour).*
 
@@ -169,7 +183,9 @@ df %>%
 
 # [Categorical X Variables]{.underline} {#factor-x-variables-non-continuous-x-variables}
 
-### Intuition and Theory
+[Intuition and Theory](#2001) \| [Example in R](#2002)
+
+### Intuition and Theory {#2001}
 
 Sometimes, we have non-continuous categorical $x$ predictor variables in a regression. These don't work the same as continuous $x$ variables. Why? Well, it doesn't really make sense to have a "slope" of $x$ for non-continuous varibales, where one increase of $x$ is associated with a constant increase of $y$.
 
@@ -216,13 +232,17 @@ Thus, the following is true about our coefficients:
 
 Note that we cannot compare microsoft and apple directly - to do this, we have to change the reference category to either on of them.
 
-<br />
-
 The same process works with any X with more than 2 categories. The number of variables to divide X into is $categories - 1$
 
 <br />
 
-### Example in R
+Uses of Categorical X Variable regression in Political Science:
+
+-   Many common variables used in Political Science take the form of categorical variables. For example: democracy or not; type of electoral system; country; etc.
+
+<br />
+
+### Example in R {#2002}
 
 R AUTMOATICALLY DETECTS TEXT-STRING VARIABLES AS FACTOR VARIABLES
 
@@ -262,11 +282,13 @@ The coefficient that has been produced is the difference in means. If you have m
 
 # [Multivariate Linear Regression]{.underline} {#multivariate}
 
-### Intuition and Theory
+[Intuition and Theory](#3001) \| [Example in R](#3002)
+
+### Intuition and Theory {#3001}
 
 Almost always in political science (and the social sciences), we will need more than one X predictor variable. This is because the world is very complicated, and rarely does one variable explain everything.
 
-Multivariate regression takes the following form: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_1 + \hat{\mathbf{\beta}}_2 x_2 + ... + + \hat{\mathbf{\beta}}_p x_p$
+Multivariate regression takes the following form: $\hat{\mathbf{y}} = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_1 + \hat{\mathbf{\beta}}_2 x_2 + ... + \hat{\mathbf{\beta}}_p x_p$
 
 -   Where each $x_1, x_2, ... , x_p$ is a different independent variable.
 
@@ -282,7 +304,15 @@ The great thing about multivariate linear regression is that each $\hat{\mathbf{
 
 <br />
 
-### Example in R
+Uses of multivariate linear regression in Political Science research:
+
+-   Since we can hold other variables constant, this allows us to focus on the effect of one independent variable, and treat the others as control variables. Controlling for alternative explanations is a key part in determining causality.
+
+-   Political Science phenomena are rarely caused by just one variable. Thus, to make accurate predictions, multivariate linear regression is very useful, as it allows us to include many different potential causes and factors.
+
+<br />
+
+### Example in R {#3002}
 
 The syntax for multiple linear regression is very similar to that of simple linear regression. We simply add additional x variables behind the 1st X variable with **+** signs.
 
