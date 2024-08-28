@@ -62,13 +62,13 @@ Logistic regression is used when we are trying to use X to predict a binary Y va
 
 <br />
 
-However, the previously covered OLS regression does not output values between 0 and 1. The linear slope means that OLS will produce estimates above 1 and below 0, and that makes no sense.
+However, the previously covered OLS regression does not always output values between 0 and 1. The linear slope means that OLS will sometimes produce estimates above 1 and below 0, and that makes no sense.
 
--   The traditional linear model $P(y_i = 1) = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}1 x_i$ can produce values outside the 0 and 1 range, which doesn't make sense for probability.
+-   The traditional linear model $P(y_i = 1) = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_i$ can produce values outside the 0 and 1 range, which doesn't make sense for probability.
 
--   So, to solve this function, we need to apply a function $f$ that will force the linear regression model to return a value between 0 and 1.
+-   So, to solve this problem, we need to apply a function $f$ that will force the linear regression model to return a value between 0 and 1.
 
--   Thus, it takes the form of $P(y_i = 1) = f(\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}1 x_i)$, where $f$ is a function that never returns a value below 0 or above 1.
+-   Thus, it takes the form of $P(y_i = 1) = f(\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_i)$, where $f$ is a function that never returns a value below 0 or above 1.
 
 <br />
 
@@ -80,7 +80,7 @@ When applying the logistic transformation, this gives us the following model tha
 
 $\hat{π_i} = \frac{e^{\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x}}{1 + e^{\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x}}$
 
-This allows us to predict the probability of being in a specific category of Y, given we know x.
+This allows us to predict the probability of being in a specific category of $y$, given a value of $x$.
 
 We can also expand the model to a multivariate model, simply by adding $+ \hat{\mathbf{\beta}}_2 x_2 + \hat{\mathbf{\beta}}_3 x_3 ... + \hat{\mathbf{\beta}}_p x_p$
 
@@ -107,7 +107,7 @@ This is generally done with a computer algorithm. For each $\hat{\mathbf{\beta}}
 3.  Go a small distance in that chosen direction.
 4.  Again, shift the parameter in both directions (up and down), and see which direction will increase the likelihood function.
 5.  Go a small distance in that chosen direction.
-6.  Continue until when you shift in both directions, and the likelihood function only drops. This suggests you are "at the top of the mountain", maximising the likelihood function.
+6.  Continue until when you shift in both directions, the likelihood function only drops. This suggests you are "at the top of the mountain", maximising the likelihood function.
 
 <br />
 
@@ -185,7 +185,7 @@ However, unlike linear regressions, **we cannot directly interpret the estimated
 
 ### Intuition and Theory {#2001}
 
-We talked about previously how the parameters of logistic regression $\hat{\mathbf{\beta}}_0, \hat{\mathbf{\beta}}_1, ... ,\hat{\mathbf{\beta}}_p$ are estimated. We noted that these value estimates of the parameters cannot be understood without interpretation (only the signs can be interpreted).
+We talked about previously how the parameters of logistic regression $\hat{\mathbf{\beta}}_0, \hat{\mathbf{\beta}}_1, ... ,\hat{\mathbf{\beta}}_p$ are estimated. We noted that these value estimates of the parameters cannot be interpreted in their base form (only the signs can be interpreted).
 
 To interpret the these parameters, we can use odds ratios/relative risk ratios.
 
@@ -205,17 +205,18 @@ Odds ratios can be interpreted for **direction of correlation**:
 
 Odds ratios can also be interpreted for **magnitude of correlation**:
 
--   If we subtract 1 from the odds ratio, we get the "rate of change".
+-   For every increase of 1 in $x$, the change in $y$ is the previous $y$ value multiplied by the odds ratio
 
--   For every one unit increase of X, the probability will change by the rate of change.
+    -   $π_{i,x=n} = π_{i, x = n - 1} * e^{\beta}$
 
--   Ex. If the odds ratio is 1.25, that means for each increase of 1 in X, we predict the probability of Y will increase by 0.25 or 25%
+-   Ex. If the odds ratio is 1.25, that means for each increase of 1 in $x$, we take the old $y$, and multiply by $1.25$
 
     -   $π_{i,x=n} = π_{i, x = n - 1} * 1.25$
+    -   In other words, for every increase of 1 in $x$, $y$ increases by 25%
 
--   Ex. If the odds ratio is 0.5, that means for each increase of 1 in X, we predict the probability of Y will decrease by 0.5 or 50%
+-   Ex. If the odds ratio is 0.6, that means for each increase of 1 in $x$, we take the old $y$, and multiply by $0.6$
 
-    -   $π_{i,x=n} = π_{i, x = n - 1} * 0.5$
+    -   $π_{i,x=n} = π_{i, x = n - 1} * 0.6$
 
 <br />
 
@@ -325,7 +326,7 @@ The solution to this is, well, to split our Y categorical variable into multiple
 
 Thus, in our regression output, we will actually have $i-1$ versions of each $x$ variable.
 
--   For example, lets say we only have on $x$ variable, $x$
+-   For example, lets say we only have one $x$ variable, $x$
 
 -   If we have the $y$ variable above with categories $i=1,2,3$, with $i = 3$ as our reference, we will have 2 $x$ variables in our regression output.
 

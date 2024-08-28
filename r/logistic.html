@@ -398,18 +398,18 @@ and 1 (100% chance).</p></li>
 between 0 and 1.</p></li>
 </ul>
 <p><br /></p>
-<p>However, the previously covered OLS regression does not output values
-between 0 and 1. The linear slope means that OLS will produce estimates
-above 1 and below 0, and that makes no sense.</p>
+<p>However, the previously covered OLS regression does not always output
+values between 0 and 1. The linear slope means that OLS will sometimes
+produce estimates above 1 and below 0, and that makes no sense.</p>
 <ul>
 <li><p>The traditional linear model <span class="math inline">\(P(y_i =
-1) = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}1 x_i\)</span> can
+1) = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_i\)</span> can
 produce values outside the 0 and 1 range, which doesn’t make sense for
 probability.</p></li>
-<li><p>So, to solve this function, we need to apply a function <span class="math inline">\(f\)</span> that will force the linear regression
+<li><p>So, to solve this problem, we need to apply a function <span class="math inline">\(f\)</span> that will force the linear regression
 model to return a value between 0 and 1.</p></li>
 <li><p>Thus, it takes the form of <span class="math inline">\(P(y_i = 1)
-= f(\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}1 x_i)\)</span>, where
+= f(\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_i)\)</span>, where
 <span class="math inline">\(f\)</span> is a function that never returns
 a value below 0 or above 1.</p></li>
 </ul>
@@ -425,7 +425,8 @@ following model that predicts probability of being in category <span class="math
 \frac{e^{\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x}}{1 +
 e^{\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x}}\)</span></p>
 <p>This allows us to predict the probability of being in a specific
-category of Y, given we know x.</p>
+category of <span class="math inline">\(y\)</span>, given a value of
+<span class="math inline">\(x\)</span>.</p>
 <p>We can also expand the model to a multivariate model, simply by
 adding <span class="math inline">\(+ \hat{\mathbf{\beta}}_2 x_2 +
 \hat{\mathbf{\beta}}_3 x_3 ... + \hat{\mathbf{\beta}}_p x_p\)</span></p>
@@ -460,7 +461,7 @@ direction will increase the likelihood function.</li>
 <li>Again, shift the parameter in both directions (up and down), and see
 which direction will increase the likelihood function.</li>
 <li>Go a small distance in that chosen direction.</li>
-<li>Continue until when you shift in both directions, and the likelihood
+<li>Continue until when you shift in both directions, the likelihood
 function only drops. This suggests you are “at the top of the mountain”,
 maximising the likelihood function.</li>
 </ol>
@@ -577,7 +578,7 @@ the <a href="#odds">odds ratios</a> of the regression.</p>
 <span class="math inline">\(\hat{\mathbf{\beta}}_0,
 \hat{\mathbf{\beta}}_1, ... ,\hat{\mathbf{\beta}}_p\)</span> are
 estimated. We noted that these value estimates of the parameters cannot
-be understood without interpretation (only the signs can be
+be interpreted in their base form (only the signs can be
 interpreted).</p>
 <p>To interpret the these parameters, we can use odds ratios/relative
 risk ratios.</p>
@@ -599,21 +600,24 @@ relationship.</p></li>
 <p>Odds ratios can also be interpreted for <strong>magnitude of
 correlation</strong>:</p>
 <ul>
-<li><p>If we subtract 1 from the odds ratio, we get the “rate of
-change”.</p></li>
-<li><p>For every one unit increase of X, the probability will change by
-the rate of change.</p></li>
+<li><p>For every increase of 1 in <span class="math inline">\(x\)</span>, the change in <span class="math inline">\(y\)</span> is the previous <span class="math inline">\(y\)</span> value multiplied by the odds ratio</p>
+<ul>
+<li><span class="math inline">\(π_{i,x=n} = π_{i, x = n - 1} *
+e^{\beta}\)</span></li>
+</ul></li>
 <li><p>Ex. If the odds ratio is 1.25, that means for each increase of 1
-in X, we predict the probability of Y will increase by 0.25 or 25%</p>
+in <span class="math inline">\(x\)</span>, we take the old <span class="math inline">\(y\)</span>, and multiply by <span class="math inline">\(1.25\)</span></p>
 <ul>
 <li><span class="math inline">\(π_{i,x=n} = π_{i, x = n - 1} *
 1.25\)</span></li>
+<li>In other words, for every increase of 1 in <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span>
+increases by 25%</li>
 </ul></li>
-<li><p>Ex. If the odds ratio is 0.5, that means for each increase of 1
-in X, we predict the probability of Y will decrease by 0.5 or 50%</p>
+<li><p>Ex. If the odds ratio is 0.6, that means for each increase of 1
+in <span class="math inline">\(x\)</span>, we take the old <span class="math inline">\(y\)</span>, and multiply by <span class="math inline">\(0.6\)</span></p>
 <ul>
 <li><span class="math inline">\(π_{i,x=n} = π_{i, x = n - 1} *
-0.5\)</span></li>
+0.6\)</span></li>
 </ul></li>
 </ul>
 <p><br /></p>
@@ -744,7 +748,7 @@ number of “sub-regressions” we will run is <span class="math inline">\(i-1\)
 <p><br /></p>
 <p>Thus, in our regression output, we will actually have <span class="math inline">\(i-1\)</span> versions of each <span class="math inline">\(x\)</span> variable.</p>
 <ul>
-<li><p>For example, lets say we only have on <span class="math inline">\(x\)</span> variable, <span class="math inline">\(x\)</span></p></li>
+<li><p>For example, lets say we only have one <span class="math inline">\(x\)</span> variable, <span class="math inline">\(x\)</span></p></li>
 <li><p>If we have the <span class="math inline">\(y\)</span> variable
 above with categories <span class="math inline">\(i=1,2,3\)</span>, with
 <span class="math inline">\(i = 3\)</span> as our reference, we will
