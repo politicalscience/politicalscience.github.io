@@ -1,0 +1,506 @@
+---
+title: "Tree-Based Prediction Methods"
+output: html_document
+date: "2024-08-26"
+---
+
+```{=html}
+<style type="text/css">
+  body{
+  font-size: 12pt;
+  line-height: 150%;
+}
+</style>
+```
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+[Course Homepage](https://politicalscience.github.io/#machine1)
+
+## Table of Contents
+
+-   [Regression Trees](#trees)
+
+-   [Bagging and Random Forest](#bagging)
+
+-   [Importance Statistics](#importance)
+
+Note: to see Tree methods for classification, go to the classification methods lecture.
+
+------------------------------------------------------------------------
+
+Remember to load tidyverse. We will also need the package **tree** and **randomForest**.
+
+```{r, message=FALSE}
+library(tidyverse)
+library(tree)
+library(randomForest)
+```
+
+Let us also load the dataset we will be using for these examples (feel free to load your own dataset)
+
+```{r, message = FALSE}
+df <- read_csv("voctaxdata.csv")
+```
+
+------------------------------------------------------------------------
+
+[Table of Contents]
+
+# Regression Trees {#trees}
+
+[Intuition and Theory](#1001) \| [Example in R](#1002)
+
+### Intuition and Theory {#1001}
+
+Regression Trees are an alternative way to obtain estimations of $y$ from $x$. Instead of modelling how $y$ changes with every unit change in $x$ with a function $y=f(x)$, regression trees instead use stratification:
+
+1.  Tree-based methods will divide the independent variable $x$ into a number of regions (usually 2).
+    -   For example, if we had an $x$ variable with values between $0$ and $100$, we could split the variable at $x=50$ to create two regions.
+2.  Calculate the mean outcome value $y$ in each region of $x$
+3.  Predict $y$, based on the mean of the region of $x$ which the observation falls into.
+
+<br />
+
+If we have to split $x$ into regions, at what threshold of $x$ should the regions be split at?
+
+-   For example, if we had an $x$ variable with values between $0$ and $100$, we could split the variable at $x=50$, or $x=20$, or really any value of $x$.
+
+To determine at which threshold to split $x$, the computer will find the optimal $x$ threshold for splitting based on which value reduces the residual sum of squares the most.
+
+-   This is very similar to OLS, which finds coefficient values that minimises the sum of squared errors.
+
+Once we have split $x$, find the average $y$ in each region, and that is our prediction for the points in the region.
+
+<br />
+
+When there are multiple independent variables $x_1, x_2, ... , x_p$, regression trees will do the following:
+
+1.  Test all $x$ variables and the possible split thresholds $s$ for each.
+2.  Identify the specific $x$ variable $x_j$ and specific split threshold $s$ that results in the greatest reduction in the residual sum of squares.
+3.  Now, divide chosen $x_j$ at chosen threshold $s$ to create two regions: $x_j < s, x_j ≥s$
+4.  Now, we repeat the process of testing all $x$ variables (including the one we just chose) and the possible thresholds $s$ for each. HOWEVER, this time, instead of looking for this through the entire data set, look only inside one of the 2 regions we just created.
+5.  Now, when we split again after finding the optimal $x$ and $j$, we only divide one of the 2 subregions we created in step 3.
+6.  Continue dividing each subregions further, until we meet a stopping criterion (this is often that no region has more than 5 observations).
+7.  For each final subregion, find the average $y$ value, and that is our prediction for all points in that region.
+
+<br />
+
+Below is an example of a tree regression, with $y$ being **gini index**, $x_1$ is **export volume**, and $x_2$ is **tax percent**. Note the following:
+
+-   The top division is a split in **taxpercent**. This tells use that this $x$ variable with the split point $x = 34.2935$ is the split that reduces the residual sum of squares the most. This is the most "influential" variable on the prediction.
+
+-   Notice how after the top division, we go to divide the subregions. We always have one divison per "level".
+
+-   Notice how the variable **taxpercent** appears again on the right hand side. Trees test optimal $x$ and $s$ with replacement.
+
+-   At the end, you see the numbers at the bottom. These are called **leaves**, and are the final categories of the tree with their mean of $y$ labelled.
+
+```{r, echo = FALSE}
+
+tree_example <- tree(gini ~ export + taxpercent, data = df)
+
+plot(tree_example)
+text(tree_example)
+```
+
+<br />
+
+While regression trees are a cool way to visualise predictions, they tend to have high variance: just slightly changing the data will result in a completely different tree being generated.
+
+-   This is an issue, especially if we are interested in predicting out-of-sample observations.
+
+Thus, simple regression trees are almost never used in data science for predictions. The more advanced models of [Bagging and Random Forest](#bagging) that build on regression trees are frequently used and solve many of the issues with regression trees.
+
+<br />
+
+### Example in R {#1002}
+
+Tree regressions in R are conducted using the **tree()** function. We can view the summary by simply printing the regression variable. We can view a tree plot with the **plot()** and **text()** functions. The syntax is as follows:
+
+```{r, eval = FALSE}
+# remember to load package tree
+
+tree_reg<- tree(Y ~ X1 + X2, data = df)
+
+# see written summary of tree
+tree_reg
+
+# create tree plot
+plot(tree_example)
+text(tree_example)
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **tree_reg** is the variable I am saving my linear regression model to. *You can name this anything you want to.*
+
+-   **Y** is the Y variable (Dependent variable) you are trying to predict, and **X1, X2,...** are the X variables (independent variables) you are using to get your prediction. *Replace these with the variables you want to use.*
+
+    -   NOTE: Always put the Y variable before the X variable. Separate the two with a tilda **\~**
+    -   NOTE: You can add more simply by using a **+** sign and adding another variable.
+
+-   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
+
+<br />
+
+If we are interested in prediction, we can use the **predict()** function. You can predict in-sample data by setting **newdata** = the data frame you used for regression. You can predict out-of-sample data by using a dataframe with the same variables but new values. The syntax is as follows:
+
+```{r, eval = FALSE}
+#create new df for comparison of actual and prediction
+df_results <- df %>%
+  select(Y) #optional, may help with readability
+
+# newdata is what values of X1, X2... to predict for.
+df_results$prediction <- predict(tree_reg, newdata = df)
+
+# brief glimpse of the results
+head(df_results)
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **df_results** is the results data frame I am creating. *You can name this anything you want to.*
+
+-   **Y** is the Y variable I am trying to predict. *Replace this with the name of your Y variable.*
+
+-   **tree_reg** is the variable I am saving my linear regression model to. *You can name this anything you want to.*
+
+-   **df** is the name of the data frame that houses the $x$ values I want to predict for. *Replace this with the name of your data frame with the* $x$ *values you want to predict for.*
+
+<br />
+
+Take this following example of a tree regression, with $y$ being **gini index**, $x_1$ is **export volume**, and $x_2$ is **tax percent** (same as the figure displayed earlier)
+
+```{r}
+
+# building a tree
+tree_reg <- tree(gini ~ export + taxpercent, data = df)
+
+# making predictions
+# create new df for comparison of actual and prediction
+df_results <- df %>%
+  select(gini)
+
+# predict in-sample data
+df_results$prediction <- predict(tree_reg, newdata = df)
+
+# brief glimpse of the results
+head(df_results)
+```
+
+Here, you can see the predictions vs. the actual values in my dataframe **df_results**.
+
+<br />
+
+------------------------------------------------------------------------
+
+[Table of Contents] \| [Course Homepage](https://politicalscience.github.io/#machine1)
+
+# Bagging and Random Forest {#bagging}
+
+[Intuition and Theory](#2001) \| [Example in R](#2002)
+
+### Intuition and Theory {#2001}
+
+Bagging and Random Forest are tree-based methods that build on the simple [tree regression](#trees). While regression trees are a cool way to visualise predictions, they tend to have high variance: just slightly changing the data will result in a completely different tree being generated.
+
+-   This is an issue, especially if we are interested in predicting out-of-sample observations.
+
+<br />
+
+Bagging (Bootstrap Aggergation) is a procedure for reducing the variance of a statistical learning method.
+
+-   In a set of $n$ observations $Z_1, Z_2, ... , Z_n$, each with variance $\sigma^2$, the variance of the mean $\bar{Z}$ of the observations is $\sigma^2/n$
+
+-   What this means, essentially, is that averaging a set of observations will reduce the variance.
+
+However, there is one issue: we only have one observation (our training data). How do average a set of observations if we only have one observation?
+
+<br />
+
+The answer is Bootstrap Sampling:
+
+-   Bootstrap Sampling is basically **sampling with replacement** from the data we already have.
+
+-   Essentially, we sample observations from our current data set, and once we draw one observation out, we put it back in before drawing the next one.
+
+-   If we take a few Bootstrap Samples, we will have a few similar, but slightly different data sets. We are essentially replicating the process of obtaining new data sets, without actually gathering more data.
+
+-   Now, with our multiple data sets, we can find the average, and reduce variance.
+
+<br />
+
+Bagging (Bootstrap Aggregation) applies Bootstrap Sampling to Tree Regressions.
+
+-   We first generate $B$ different samples using Bootstrap Sampling
+
+-   We then train a tree on each different sample, creating a prediction function $f_b(x)$, where $b$ represents the $b$th sample.
+
+-   Then, we average all the predictions to obtain our prediction function: $f_{bag}(x)=\frac{1}{B} \sum_{b=1}^{B} f_b(x)$
+
+Bagging reduces variance, and is one of the most accurate prediction methods, often outperforming linear and non-linear methods.
+
+<br />
+
+However, Bagging accuracy can still be improved. Bagging has an issue that the trees that are created are heavily correlated.
+
+-   Heavily correlated in this sense means that in general, the trees will have the same top-level $x$ variable.
+
+-   This is a problem if we have on very strong predictor $x$ compared to others. This means that our trees will almost always have that $x$ at the top of the tree, making the trees similar despite our different samples.
+
+-   Averaging highly correlated trees does not reduce variance very much.
+
+Reducing the correlation in predictions decreases variance, which is good for test set error.
+
+<br />
+
+Random Forest address this issue by not only Bootstrap Sampling observations like Bagging does, but also Bootstrap Sampling predictor $x$ variables.
+
+-   For example, lets say you have 16 independent variables in your tree.
+
+-   Bagging would include all 16 independent variables in every true.
+
+-   Random Forest would instead sample 4 out of the 16 independent variables to use for every tree
+
+    -   Typically, Random Forest samples the square root of the number of independent variables - this has been shown through testing to be the optimal amount on average.
+
+-   This means that Random Forest will exclude strong predictors in many trees, giving the other important predictors more of a chance.
+
+Thus, Random Forest will have less correlated trees, which further reduces variance when we take the average.
+
+<br />
+
+Random Forest is typically more accurate when it comes to out of set prediction than Bagging. However, this is not always the case, so it is important to check the explanatory power of both before altering.
+
+One disadvantage is that we cannot have the easy interpretation of simple Tree Regressions. This is because it is impractical to view 500 different trees from different samples.
+
+-   One way to remedy this is with [importance statistics](#importance), which can illustrate the most important variables in a Bagging/Random Forest model.
+
+<br />
+
+Uses of Bagging and Random Forest in Political Science research:
+
+-   Bagging and Random Forest are generally significantly more accurate in predictions than their linear/non-linear counterparts. This is especially the case when the relationships are not linear.
+
+-   For example, Bagging and Random Forest have much better success in predictions of Civil War than linear/non-linear models do.
+
+<br />
+
+### Example in R {#2002}
+
+```{r, echo = FALSE, message = FALSE}
+
+df <- df %>%
+  select(-id, -countryid, -countryname, -countrycode, -year)
+
+```
+
+Bagging in R is conducted using the **randomForest()** function. We can view the summary by simply printing the regression variable.
+
+```{r, eval = FALSE}
+# Remember to install and load package randomForest
+
+bagging <- randomForest(Y ~ .,
+                        data = df,
+                        na.action = na.omit,
+                        mtry = 9, # set to number of IV
+                        importance = TRUE)
+
+# call model variable to see output
+bagging
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **bagging** is the variable I am saving my linear regression model to. *You can name this anything you want to.*
+
+-   **Y** is the Y variable (Dependent variable) you are trying to predict. *Replace this with the variables you want to use.*
+
+-   "**.**" after the tilda **\~** tells R to include all other variables in the data frame as independent variables. This is very common for Bagging since you will typically include all variables.
+
+    -   Note: Make sure to de-select variables you don't want to include in the model, such as ID, date, etc.
+
+-   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
+
+-   NOTE: Remember to include the sections **na.action = na.omit**, and **importance = TRUE**.
+
+<br />
+
+To create a Random Forest model, the syntax is the exact same, except for the fact we set **mtry** to the square root of the number of independent variables in your regression.
+
+```{r, eval = FALSE}
+# Remember to install and load package randomForest
+
+randomforest <- randomForest(Y ~ .,
+                        data = df,
+                        na.action = na.omit,
+                        mtry = 3, # square root of number of IV
+                        importance = TRUE)
+
+# call model variable to see output
+randomforest
+```
+
+<br />
+
+We can generate predictions with the **prediction()** function (just like we did in the Regression Tree section)
+
+```{r, eval = FALSE}
+#create new df for comparison of actual and prediction
+df_results <- df %>%
+  select(Y) #optional, may help with readability
+
+# newdata is what values of X1, X2... to predict for.
+df_results$prediction <- predict(bagging, newdata = df)
+
+# brief glimpse of the results
+head(df_results)
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **df_results** is the results data frame I am creating. *You can name this anything you want to.*
+
+-   **Y** is the Y variable I am trying to predict. *Replace this with the name of your Y variable.*
+
+-   **bagging** is the variable I am saving my linear regression model to. *You can name this anything you want to.*
+
+-   **df** is the name of the data frame that houses the $x$ values I want to predict for. *Replace this with the name of your data frame with the* $x$ *values you want to predict for.*
+
+<br />
+
+Take the following example of predicting **econglobal** using the rest of my independent variables:
+
+```{r}
+
+rf_example <- randomForest(econglobal ~ .,
+                        data = df,
+                        na.action = na.omit,
+                        mtry = 3, #approx sq rt of 7
+                        importance = TRUE)
+
+# call model variable to see output
+rf_example
+
+```
+
+The output shows us some info about the tree we ran. The most useful parts of the above output are:
+
+-   **Mean of Squared Residuals**: a general measure of how well the model performed.
+
+-   **% Variance explained**: how well our independent variables explain the variation in the Y variable. Similar to R\^2 from linear regression.
+
+However, we can get more detailed information on this model. See the [importance statistics](#importance) section for more information.
+
+<br />
+
+Now, let me run the predictions for in-sample data.
+
+```{r}
+#create new df for comparison of actual and prediction
+df_results <- df %>%
+  select(econglobal)
+
+# newdata is what values of X1, X2... to predict for.
+df_results$prediction <- predict(rf_example, newdata = df)
+
+# brief glimpse of the results
+head(df_results)
+```
+
+<br />
+
+------------------------------------------------------------------------
+
+[Table of Contents] \| [Course Homepage](https://politicalscience.github.io/#machine1)
+
+# Importance Statistics {#importance}
+
+[Intuition and Theory](#3001) \| [Example in R](#3002)
+
+### Intuition and Theory {#3001}
+
+One downside we mentioned about [Bagging and Random Forest](#bagging) is that it is not as easily interpretable as simple [Regression Trees](#trees).
+
+-   Regression Trees produce a nice diagram, with the most important variable at the top.
+
+-   However, because Bagging and Random Forest average hundreds or thousands of different trees together, we can't really diagram every one individually.
+
+However, importance statistics can help us interpret Bagging and Random Forest models.
+
+<br />
+
+We can calculate the importance of a variable through the reduction in the sum of squared errors whenever a variable is chosen to split.
+
+-   Remember, when we calculate a simple [Tree Regression](#trees), we note which variable reduces the residual sum of squares the most.
+
+-   To calculate importance, we simply "remember" the reduction of the residual sum of squares for each variable when split, in each regression.
+
+-   This is why in our earlier code for Bagging and Random Forest, we specified a condition **importance = TRUE**. We are telling the machine to "remember" the reduction in residual sum of squares.
+
+<br />
+
+We can then graph the reduction in sum of squared errors when a variable is chosen to split:
+
+```{r, echo = FALSE}
+
+varImpPlot(rf_example,
+           main = "Importance of Variables in Predicting Econglobal",
+           type = 2)
+
+```
+
+We can clearly see that **export** is the most important X variable in predicting our Y variable, **econglobal**.
+
+<br />
+
+Uses of Importance Statistics in Political Science research:
+
+-   Often when we are making predictions (as we often do with Bagging and Random Forest), we want to know what is driving these predictions. This can help us plan and act, and potentially prevent the prediction from coming true.
+
+-   For example, if we know what variables are frequently important in predicting civil wars, this may inform our approach in attempting to prevent civil wars.
+
+<br />
+
+### Example in R {#3002}
+
+To see the importance of each predictor variable, we can use the **varImpPlot()** function. YOU MUST HAVE ALREADY RUN A BAGGING/RANDOM FOREST MODEL TO DO THIS. The syntax is as follows.
+
+```{r, eval = FALSE}
+
+# You need the package randomForest loaded
+
+varImpPlot(model_variable,
+           main = "Title of the Graph",
+           type = 2)
+
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **model_variable** is the model I am running my importance plot on. *Rename this to the variable you saved your model to.*
+
+-   **"Title of the Graph"** is the title you put on the graph. *You can change this to anything you want, just remember quotations.*
+
+-   NOTE: don't change **type = 2**.
+
+<br />
+
+Take this following example:
+
+```{r}
+
+varImpPlot(rf_example,
+           main = "Importance of Variables in Predicting Econglobal",
+           type = 2)
+```
+
+The higher the mean decrease in node purity, the more influential the predictor is in predicting the outcome variable.
+
+-   In our example, **export** is the most important predictor of our Y variable, **econglobal**.
+
+------------------------------------------------------------------------
+
+[Table of Contents] \| [Course Homepage](https://politicalscience.github.io/#machine1)
