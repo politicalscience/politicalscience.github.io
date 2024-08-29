@@ -54,12 +54,14 @@ df <- read_csv("voctaxdata.csv")
 
 ### Intuition and Theory {#1001}
 
-Regression Trees are an alternative way to obtain estimations of $y$ from $x$. Instead of modelling how $y$ changes with every unit change in $x$ with a function $y=f(x)$, regression trees instead use stratification:
+Regression Trees are an alternative way to obtain estimations of $y$ from $x$. Instead of modelling how $y$ changes with every unit change in $x$, regression trees instead use stratification:
 
-1.  Tree-based methods will divide the independent variable $x$ into a number of regions (usually 2).
+1.  Tree-based methods will divide the independent variable $x$ into 2 regions, splitting $x$ at some value $s$
     -   For example, if we had an $x$ variable with values between $0$ and $100$, we could split the variable at $x=50$ to create two regions.
 2.  Calculate the mean outcome value $y$ in each region of $x$
-3.  Predict $y$, based on the mean of the region of $x$ which the observation falls into.
+    -   For example, if we had split $x$ at $x=50$, we would have 2 regions of $x$: 0 to 49, and 50 to 100. We would calculate the average $y$ value of each region.
+3.  Predict $y$, based on the mean $y$ of the region which the observation falls into.
+    -   The region in which the observation falls into depends on its value of $x$. For example, if we follow the splits above, if an observation had $x=5$, it would be classified in the region of 0 to 49, and its prediction would be the mean $y$ value of that region's observations.
 
 <br />
 
@@ -69,9 +71,14 @@ If we have to split $x$ into regions, at what threshold of $x$ should the region
 
 To determine at which threshold to split $x$, the computer will find the optimal $x$ threshold for splitting based on which value reduces the residual sum of squares the most.
 
+-   Essentially, the computer tests all possible $x$ values in which we could split by, and finds the one that reduces the residual sum of squares the most.
+
+```{=html}
+<!-- -->
+```
 -   This is very similar to OLS, which finds coefficient values that minimises the sum of squared errors.
 
-Once we have split $x$, find the average $y$ in each region, and that is our prediction for the points in the region.
+Once we have split $x$, find the average $y$ for the observations in each region, and that is our prediction for the points in the region.
 
 <br />
 
@@ -83,7 +90,7 @@ When there are multiple independent variables $x_1, x_2, ... , x_p$, regression 
 4.  Now, we repeat the process of testing all $x$ variables (including the one we just chose) and the possible thresholds $s$ for each. HOWEVER, this time, instead of looking for this through the entire data set, look only inside one of the 2 regions we just created.
 5.  Now, when we split again after finding the optimal $x$ and $j$, we only divide one of the 2 subregions we created in step 3.
 6.  Continue dividing each subregions further, until we meet a stopping criterion (this is often that no region has more than 5 observations).
-7.  For each final subregion, find the average $y$ value, and that is our prediction for all points in that region.
+7.  For each final subregion, find the average $y$ value of the observations in that subregion, and that is our prediction for all points in that subregion.
 
 <br />
 
@@ -91,9 +98,9 @@ Below is an example of a tree regression, with $y$ being **gini index**, $x_1$ i
 
 -   The top division is a split in **taxpercent**. This tells use that this $x$ variable with the split point $x = 34.2935$ is the split that reduces the residual sum of squares the most. This is the most "influential" variable on the prediction.
 
--   Notice how after the top division, we go to divide the subregions. We always have one divison per "level".
+-   Notice how after the top division, we go to divide the subregions. We can only further divide subregions already created (no going back to the whole data set).
 
--   Notice how the variable **taxpercent** appears again on the right hand side. Trees test optimal $x$ and $s$ with replacement.
+-   Notice how the variable **taxpercent** appears again on the right hand side. This is possible for a variable to occur multiple times.
 
 -   At the end, you see the numbers at the bottom. These are called **leaves**, and are the final categories of the tree with their mean of $y$ labelled.
 
@@ -224,9 +231,9 @@ The answer is Bootstrap Sampling:
 
 -   Bootstrap Sampling is basically **sampling with replacement** from the data we already have.
 
--   Essentially, we sample observations from our current data set, and once we draw one observation out, we put it back in before drawing the next one.
+-   To create a bootstrap sample, we choose 1 observation at random from our original sample. We add that observation to our bootstrap sample, and replace it back in the original sample. We then draw another observation, add it to our bootstrap sample, and replace it back. We do this $n$ times ( $n$ being the size of the bootstrap sample)
 
--   If we take a few Bootstrap Samples, we will have a few similar, but slightly different data sets. We are essentially replicating the process of obtaining new data sets, without actually gathering more data.
+-   If we do this several times creating different Bootstrap Samples, we will have a few similar, but slightly different data sets. We are essentially replicating the process of obtaining new data sets, without actually gathering more data.
 
 -   Now, with our multiple data sets, we can find the average, and reduce variance.
 
@@ -256,7 +263,7 @@ Reducing the correlation in predictions decreases variance, which is good for te
 
 <br />
 
-Random Forest address this issue by not only Bootstrap Sampling observations like Bagging does, but also Bootstrap Sampling predictor $x$ variables.
+Random Forest address this issue by not only Bootstrap Sampling observations like Bagging does, but also sampling predictor $x$ variables.
 
 -   For example, lets say you have 16 independent variables in your tree.
 
