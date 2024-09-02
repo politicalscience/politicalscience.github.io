@@ -1,0 +1,233 @@
+---
+title: "Evaluation of Classification Methods"
+output: html_document
+subtitle: "Lesson 2.3, Applied Machine Learning"
+---
+
+```{=html}
+<style type="text/css">
+  body{
+  font-size: 12pt;
+  line-height: 150%;
+  }
+  .main-container {
+  max-width: 800px !important;
+  margin: auto;
+  }
+</style>
+```
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+[Course Homepage](https://politicalscience.github.io/ml)
+
+## Table of Contents {#contents}
+
+1.  [Introduction to Classification](#intro)
+2.  [Naive Bayes Classifier](#bayes)
+3.  [Naive Bayes in R](#r)
+
+------------------------------------------------------------------------
+
+Remember to load tidyverse. We will also need the package **e1071** and **randomForest**.
+
+```{r, message = FALSE}
+library(e1071)
+library(randomForest)
+library(tidyverse)
+```
+
+Let us also load the dataset we will be using for these examples (feel free to load your own dataset)
+
+```{r, message = FALSE}
+df <- read_csv("voctaxdata.csv")
+```
+
+------------------------------------------------------------------------
+
+[Table of Contents](#contents) \| [Course Homepage](https://politicalscience.github.io/ml)
+
+# Evaluating Classification Models {#evaluation}
+
+Now that we have learned different classification methods, how do we choose the right one? How do we evaluate the performance of our classification methods, just as we did for prediction methods?
+
+The simplest metric is just what proportion our method got correct/wrong:
+
+-   Error rate: The percentage of observations that our classification method got wrong.
+
+-   Accuracy: The percentage of observations that our classification method got right.
+
+<br />
+
+We can dig more into detail. If we have a binary $y$ variable, we do this by determining two metrics:
+
+-   False positive rate: The observations that are $y=0$, but our classification method predicted $\hat{y} = 1$
+
+-   False negative rate: The observations that are $y=1$, but our classification method predicted $\hat{y} = 0$
+
+<br />
+
+We can also do the inverse: instead of calculating error rates like above, we can calculate accuracy rates. There are two metrics for this:
+
+-   Specificity: the observations that are $y=0$, and our classification method correctly predicted $\hat{y} = 0$
+
+-   Sensitivity: the observations that are $y=1$, and our classification method correctly predicted $\hat{y} = 1$
+
+<br />
+
+Is specificity or sensitivity more important? Is false positive rate or false negative rate more important?
+
+-   Well, it depends on the application of our model.
+
+-   If our model tests for extremely dangerous diseases, its probably better if the model detects some false positives, rather than under-detects people who are actually sick.
+
+-   But, for judicial systems, since we are afraid of putting an innocent person in jail, we might prefer less false positives, and more false negatives.
+
+Choosing the right model requires some subjectivity here.
+
+<br />
+
+------------------------------------------------------------------------
+
+[Table of Contents](#contents) \| [Course Homepage](https://politicalscience.github.io/ml)
+
+# Classification Metrics in R
+
+We need the library **e1071** and **randomForest**
+
+```{r, message = FALSE, eval = FALSE}
+library(e1071)
+library(randomForest)
+```
+
+Remember to load tidyverse.
+
+```{r, message = FALSE, eval = FALSE}
+library(tidyverse)
+```
+
+Let us also load the dataset we will be using for these examples (feel free to load your own dataset)
+
+```{r, message = FALSE, eval = FALSE}
+df <- read_csv("voctaxdata.csv")
+```
+
+<br />
+
+#### Confusion Matrix
+
+If we have a Naive Bayes classifier, we can generate a table comparing our predictions to the actual. This table is often called a **confusion matrix**. To do this, make sure we have already generated the predictions, and stored them in the same data frame as the actual values.
+
+Then, we generate the confusion matrix. The syntax is as follows:
+
+```{r, eval = FALSE}
+
+table(Prediction = df_results$prediction, Actual = df_results$Y)
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **df_results\$prediction** is the prediction column of our data frame with results. *Change the part before \$ to the data frame name that you stored your prediction to, and the part after \$ to the variable you stored your prediction to.*
+
+-   **Y** is the Y variable in our data frame with the actual values of y. *Change this to the name of your Y variable.*
+
+<br />
+
+For Bagging/Random Forest, the default output includes a confusion matrix. We just simply print the model. The syntax is as follows:
+
+```{r, eval = FALSE}
+
+print(bagging)
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **bagging** is the variable I am saved my prior model to. *Rename this to what your prior model was named.*
+
+<br />
+
+#### Example in R
+
+For example, let us generate the confusion matrices of the Naive Bayes and Bagging Model we ran in the last few lectures on classification methods. Take the following examples, where I predict whether a country is a **Liberal Market Economy (0) or Coordinated Market Economy (1)**. (These are topics from Comparative Political Economy).
+
+<br />
+
+Let us first run a Naive Bayes model and generate predictions:
+
+```{r}
+#Naive Bayes model
+nb_model <- naiveBayes(as.factor(voc) ~ taxpercent + gini + econglobal, data = df)
+
+#Add predictions to new data frame
+nb_results <- df %>%
+  select(voc) #optional, may help with readability
+
+# newdata is what values of X1, X2... to predict for.
+nb_results$prediction <- predict(nb_model, newdata = df)
+
+# brief glimpse of the results
+head(nb_results)
+```
+
+<br />
+
+Then let us run the Bagging model:
+
+```{r}
+# Remember to install and load package randomForest
+
+# set a seed to keep the same results when we re-run
+set.seed(100)
+
+bagging <- randomForest(as.factor(voc) ~ taxpercent + gini + econglobal,
+                        data = df,
+                        na.action = na.omit,
+                        mtry = 3, # set to number of IV
+                        importance = TRUE)
+```
+
+<br />
+
+Now, let us also calculate some key metrics:
+
+Naive Bayes:
+
+```{r}
+
+table(Prediction = nb_results$prediction, Actual = nb_results$voc)
+```
+
+Let us calculate some metrics:
+
+-   Accuracy: $\frac{100+136}{100+17+2+136} = 92.54 \%$
+
+-   Error Rate: $\frac{17+2}{100+17+2+136}=7.45 \%$
+
+-   Specificity: $\frac{100}{100+2}=98.03 \%$
+
+-   Sensitivity: $\frac{136}{17+136}=88.88 \%$
+
+<br />
+
+For Bagging:
+
+```{r}
+print(bagging)
+```
+
+Let us calculate some metrics:
+
+-   Accuracy: $\frac{102+150}{102+0+3+150} = 98.82 \%$
+
+-   Error Rate: Already given in output as $1.18 \%$
+
+-   Specificity: $\frac{102}{102+3}=97.14 \%$
+
+-   Sensitivity: $\frac{150}{0+150}=100 \%$
+
+<br />
+
+------------------------------------------------------------------------
+
+[Table of Contents](#contents) \| [Course Homepage](https://politicalscience.github.io/ml)

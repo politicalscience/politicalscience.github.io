@@ -11,7 +11,7 @@
 
 
 
-<title>Indefinite Integrals</title>
+<title>Generalised Additive Models</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -348,8 +348,8 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Indefinite Integrals</h1>
-<h3 class="subtitle">Lesson 2.6, Maths for Political Science</h3>
+<h1 class="title toc-ignore">Generalised Additive Models</h1>
+<h3 class="subtitle">Lesson 1.4, Applied Machine Learning</h3>
 
 </div>
 
@@ -364,208 +364,252 @@ max-width: 800px !important;
 margin: auto;
 }
 </style>
-<p><a href="https://politicalscience.github.io/math">Course
+<p><a href="https://politicalscience.github.io/ml">Course
 Homepage</a></p>
 <div id="contents" class="section level2">
 <h2>Table of Contents</h2>
 <ol style="list-style-type: decimal">
-<li>Indefinite Integrals</li>
-<li>Calculating Integrals</li>
+<li><a href="#gam">Generalised Additive Models (GAMs)</a></li>
+<li><a href="#r">GAMs in R</a></li>
 </ol>
 <hr />
-<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/math">Course Homepage</a></p>
-</div>
-<div id="integrals" class="section level1">
-<h1>Indefinite Integrals</h1>
-<p>In the previous 5 lessons, we have focused on finding the derivative
-of a function. However, we are sometimes interested in finding the
-opposite of the derivative.</p>
-<p>The opposite of a derivative, is an antiderivative, or an integral.
-If <span class="math inline">\(f\)</span> is a function, its derivative
-<span class="math inline">\(F\)</span> would be the following:</p>
-<p><span class="math display">\[
-F(x) = \int f(x)dx
-\]</span></p>
-<p><br /></p>
-<p>For example, take this equation:</p>
-<p><span class="math display">\[
-y = x^2
-\]</span></p>
-<p>If we take the derivative, we get:</p>
-<p><span class="math display">\[
-\frac{dy}{dx} = 2x
-\]</span></p>
-<p>If we then do the antiderivative/integral of our derivatve, we return
-(almost) to our original equation:</p>
-<p><span class="math display">\[
-\int 2x \space dx = x^2 + c
-\]</span></p>
-<p><br /></p>
-<p>What is up with the <span class="math inline">\(+c\)</span> in our
-integral? Unlike finding the derivative, which there is only one of per
-function, there are mutliple integrals for every function.</p>
-<p>Why? Well, remember when we took a derivative of a constant? The
-result would be 0.</p>
-<p><span class="math display">\[
-\frac{d}{dx}[c] = 0
-\]</span></p>
-<p><br /></p>
-<p>Well, when we try to take the antiderivative, there could be a
-constant <span class="math inline">\(c\)</span> that doesn’t occur in
-our function, since it is a <span class="math inline">\(0\)</span>.</p>
-<p>Thus, when we find the integral of a function, we always add <span class="math inline">\(+c\)</span> at the end of our equation, to account
-for this potential missing constant.</p>
-<p><br /></p>
-<p>You might wonder, why am I talking about <strong>indefinite</strong>
-integrals, not all integrals? Well, as you will see in the next lesson,
-the integral <span class="math inline">\(F\)</span> is also equal to the
-area under the curve of <span class="math inline">\(f\)</span>.</p>
-<ul>
-<li><p>A <strong>definite</strong> integral would be about calculating
-the area between two points <span class="math inline">\(x=a\)</span> and
-<span class="math inline">\(x=b\)</span>.</p></li>
-<li><p>An <strong>indefinite</strong> integral, as in our case, is just
-concerned with finding the integral <span class="math inline">\(F\)</span>, without concern for the area between
-<span class="math inline">\(x=a\)</span> and <span class="math inline">\(x=b\)</span></p></li>
-</ul>
-<p><br /></p>
-<p>Integrals can be more difficult to calculate than derivatives.</p>
-<ul>
-<li>In fact, there are many integrals which cannot be calculated without
-computers.</li>
-</ul>
-<p>However, luckily for us, integrals are also used far less than
-derivatives in Political Science.</p>
-<p><br /></p>
-<p>But what are some of the uses of integrals?</p>
-<ol style="list-style-type: decimal">
-<li>Integrals are essential to statistical inference: the chance of
-something occuring is the area under the probability distribution, which
-we can find by taking the integral of the probability distribution.</li>
-<li>Integrals also help calculate expected utility, which is relevant
-for Game Theory.</li>
-</ol>
+<p>Remember to load tidyverse.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<p>Let us also load the dataset we will be using for these examples
+(feel free to load your own dataset)</p>
+<pre class="r"><code>df &lt;- read_csv(&quot;voctaxdata.csv&quot;)</code></pre>
 <hr />
-<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/math">Course Homepage</a></p>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/ml">Course Homepage</a></p>
 </div>
-<div id="calculations" class="section level1">
-<h1>Calculating Integrals</h1>
-<p>These are a few of the most common rules of integrals that can assist
-us in finding integrals of a function:</p>
+<div id="gam" class="section level1">
+<h1>Generalised Additive Models (GAMs)</h1>
+<p>To understand Generalised Additive Models, we must understand <a href="#local">Local Linear Regression</a>, <a href="https://politicalscience.github.io/ml/1-1.html">Polynomial
+Regression</a>, <a href="https://politicalscience.github.io/ml/1-2.html">Step Functions and
+Splines</a>.</p>
+<p><br /></p>
+<p>If we remember back to the course Regression Analysis, linear
+multivariate regression models take the following form.</p>
 <p><span class="math display">\[
-1.\space \int a f(x)dx = a*\int f(x)dx
-\]</span></p>
-<p><span class="math display">\[
-2. \int [f(x) + g(x)]dx = \int f(x)dx + \int g(x)dx
-\]</span></p>
-<p><span class="math display">\[
-3. \int x^n dx = \frac{1}{n+1} x^{n+1} + c
-\]</span></p>
-<p><span class="math display">\[
-4. \int e^x dx = e^x + c
-\]</span></p>
-<p><span class="math display">\[
-5. \int \frac{1}{x} dx = \ln x + c
-\]</span></p>
-<p><span class="math display">\[
-6. \int e^{f(x)} f&#39;(x)dx = e^{f(x)}+c
-\]</span></p>
-<p><span class="math display">\[
-7. \int [f(x)]^n f&#39;(x)dx = \frac{1}{n+1}[f(x)]^{n+1} + c
-\]</span></p>
-<p><span class="math display">\[
-8. \int \frac{f&#39;(x)}{f(x)}dx = \ln f(x) + c
+\hat{y}=\hat{\beta}_0 + \hat{\beta}_1 x_1 + \hat{\beta}_2 x_2 + ... +
+\hat{\beta}_p x_p
 \]</span></p>
 <p><br /></p>
-<p>As you have probably noticed, a lot of these rules are the opposite
-of the derivative rules we introduced previously.</p>
-<p><br /></p>
-<div id="example-1" class="section level4">
-<h4>Example 1:</h4>
-<p>Find <span class="math inline">\(F(x) = \int f(x)dx\)</span> where
-<span class="math inline">\(f(x) = 3x^2\)</span></p>
+<p>The fact that the terms are added together is one of the best
+features of linear models - since it allows us to see the independent
+effect of one variable while holding others constant.</p>
+<p>We can illustrate this benefit of linear regression by finding how
+one specific <span class="math inline">\(x\)</span> variable (let us
+take <span class="math inline">\(x_1\)</span> for example) affects the
+prediction <span class="math inline">\(\hat{y}\)</span>. We do this by
+taking the partial derivative in respect to <span class="math inline">\(x_1\)</span>:</p>
 <p><span class="math display">\[
-F(x) = \int 3x^2 dx
+\frac{\partial \hat{y}}{\partial x_1} = \frac{\partial \hat{y}}{\partial
+x_1}[\hat{\beta}_0] + \frac{\partial \hat{y}}{\partial
+x_1}[\hat{\beta}_1 x_1] + \frac{\partial \hat{y}}{\partial
+x_1}[\hat{\beta}_2 x_2] + ... + \frac{\partial \hat{y}}{\partial
+x_1}[\hat{\beta}_p x_p]
 \]</span></p>
 <p><span class="math display">\[
-\text{using the rule: } \int a f(x)dx = a*\int f(x)dx, \text{ we know:}
+\text{since } x_2,...x_p \text{ are treated as constants}
 \]</span></p>
 <p><span class="math display">\[
-F(x) = 3 * \int x^2
+\frac{\partial \hat{y}}{\partial x_1} = 0 + \hat{\beta}_1 + 0 + ... + 0
 \]</span></p>
 <p><span class="math display">\[
-\text{using the rule: } \int x^n dx = \frac{1}{n+1} x^{n+1} + c, \text{
-we know:}
-\]</span></p>
-<p><span class="math display">\[
-F(x) = 3 * \frac{1}{2+1} x^{2+1} + c
-\]</span></p>
-<p><span class="math display">\[
-F(x) = 3 * \frac{1}{3} x^3 + c
-\]</span></p>
-<p><span class="math display">\[
-F(x) = x^3 + c
+\frac{\partial \hat{y}}{\partial x_1} = \hat{\beta}_1
 \]</span></p>
 <p><br /></p>
-</div>
-<div id="example-2" class="section level4">
-<h4>Example 2:</h4>
-<p>Find <span class="math inline">\(F(x) = \int f(x)dx\)</span> where
-<span class="math inline">\(f(x) = 2x + 1\)</span></p>
-<p><span class="math display">\[
-F(x) = \int (2x + 1)dx
-\]</span></p>
-<p><span class="math display">\[
-\text{using the rule: } \int [f(x) + g(x)]dx = \int f(x)dx + \int
-g(x)dx, \text{ we know:}
-\]</span></p>
-<p><span class="math display">\[
-F(x) = \int (2x)dx + \int (1)dx
-\]</span></p>
-<p><span class="math display">\[
-\text{rewritten as: } F(x) = \int (2x^1)dx + \int (x^0)
-\]</span></p>
-<p><span class="math display">\[
-\text{using the rule: } \int a f(x)dx = a*\int f(x)dx, \text{ we know:}
-\]</span></p>
-<p><span class="math display">\[
-F(x) = 2*\int (x^1)dx + \int (x^0)
-\]</span></p>
-<p><span class="math display">\[
-\text{using the rule: } \int x^n dx = \frac{1}{n+1} x^{n+1} + c, \text{
-we know:}
-\]</span></p>
-<p><span class="math display">\[
-F(x) = 2 * \frac{1}{1+1} x^{1+1} + c + \frac{1}{0+1} x^{0+1} + c
-\]</span></p>
-<p><span class="math display">\[
-F(x) = 2 * \frac{1}{2} x^2 + c + 1*x^1 + c
-\]</span></p>
-<p><span class="math display">\[
-F(x) = x^2 + x + c
-\]</span></p>
+<p>We can see that the effect of <span class="math inline">\(x_1\)</span> on <span class="math inline">\(\hat{y}\)</span> is only dependent on the
+coefficient of <span class="math inline">\(x_1\)</span>, <span class="math inline">\(\hat{\beta}_1\)</span>. This allows us to
+independently assess every independent variable’s effect on <span class="math inline">\(y\)</span>.</p>
 <p><br /></p>
-</div>
-<div id="example-3" class="section level4">
-<h4>Example 3:</h4>
-<p>Find <span class="math inline">\(F(x) = \int f(x)dx\)</span> where
-<span class="math inline">\(f(x) = e^x e^{e^x}\)</span></p>
+<p>Generalised additive models (GAMs) build on this same intuition. They
+use an additive model of the same form to preserve the fact that every
+independent variable <span class="math inline">\(x\)</span>’s effect on
+<span class="math inline">\(y\)</span> can be isolated from each other.
+GAMs take it a step further by also allowing us to apply different
+methods to each independent variable:</p>
 <p><span class="math display">\[
-F(x) = \int e^x e^{e^x} dx
+\hat{y} = \beta_0 + f_1(x_1) + f_2(x_2) + ... + f_p(x_p)
 \]</span></p>
-<p><span class="math display">\[
-\text{we know that } \frac{d}{dx}[e^x] = e^x
-\]</span></p>
-<p><span class="math display">\[
-\text{using the rule: } \int e^{f(x)} f&#39;(x)dx = e^{f(x)}+c, \text{
-we know:}
-\]</span></p>
-<p><span class="math display">\[
-F(x) = e^{e^x} + c
-\]</span></p>
+<ul>
+<li><p>Where <span class="math inline">\(f_1, f_2, ..., f_p\)</span> can
+all be different types of transformation methods, such as splines, local
+regressions, step functions, and polynomials.</p></li>
+<li><p>This allows us to mix different methods, based on our beliefs
+about the relationship between <span class="math inline">\(x_p\)</span>
+and <span class="math inline">\(y\)</span></p></li>
+</ul>
+<p>While I will not re-find the partial derivative of the GAM in the
+above form, the same idea as the linear model applies: each <span class="math inline">\(x\)</span> independent variable can have its own,
+independent, and unique effect on <span class="math inline">\(y\)</span>, without worrying about the values of
+other variables.</p>
+<p><br /></p>
+<p>We can also add interaction/moderating effects just like in standard
+linear regression.</p>
+<p>This flexibility of GAMs makes it a favourite method for many when
+trying to make accurate predictions.</p>
 <p><br /></p>
 <hr />
-<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/math">Course Homepage</a></p>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/ml">Course Homepage</a></p>
+</div>
+<div id="r" class="section level1">
+<h1>GAMs in R</h1>
+<p>First, we will need the package <strong>gam</strong> and
+<strong>splines</strong> to implement these methods in R:</p>
+<pre class="r"><code>library(splines)
+library(gam)</code></pre>
+<p>Remember to load tidyverse.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<p>Let us also load the dataset we will be using for these examples
+(feel free to load your own dataset)</p>
+<pre class="r"><code>df &lt;- read_csv(&quot;voctaxdata.csv&quot;)</code></pre>
+<p><br /></p>
+<div id="creating-the-model-in-r" class="section level4">
+<h4>Creating the Model in R</h4>
+<p>We can implement the different methods we have learned into gam with
+certain functions:</p>
+<ul>
+<li><p>Splines: <strong>bs(variable, df = #, degree =
+#)</strong></p></li>
+<li><p>Local Regression: <strong>lo(variable, #)</strong></p></li>
+<li><p>Step Functions: <strong>cut(variable, #)</strong></p></li>
+<li><p>Polynomials: <strong>poly(variable, #)</strong></p></li>
+</ul>
+<p>For more information on syntax, check out the implementations in R in
+the following lessons: <a href="#local">Local Linear Regression</a>, <a href="https://politicalscience.github.io/ml/1-1.html">Polynomial
+Regression</a>, and <a href="https://politicalscience.github.io/ml/1-2.html">Step Functions and
+Splines</a>.</p>
+<p><br /></p>
+<p>We can include all of these in a GAM with the <strong>gam()</strong>
+function. We will need the package <strong>gam</strong> for this. The
+syntax is as follows:</p>
+<pre class="r"><code>gam_model &lt;- gam(Y ~ bs(X1, 5) + lo(X2, 0.5), cut(X3, 6), poly(X4, 3) + X5, data = df)</code></pre>
+<p>These are the parts of the syntax that can be altered:</p>
+<ul>
+<li><p><strong>gam_model</strong> is the variable I am saving my model
+to. <em>You can name this anything you want to.</em></p></li>
+<li><p><strong>Y</strong> is the Y variable (Dependent variable) you are
+trying to predict, and <strong>X1, X2, X3, X4, X5</strong> are the X
+variables (independent variable) you are using to get your prediction.
+<em>Replace these with the variables you want to use.</em></p>
+<ul>
+<li>NOTE: Always put the Y variable before the X variable. Separate the
+two with a tilda <strong>~</strong></li>
+<li>NOTE: You can add more simply by using a <strong>+</strong> sign and
+adding another variable.</li>
+</ul></li>
+<li><p><strong>bs(), lo(), cut(), poly()</strong> are all different
+non-linear methods. <em>You can pick and chose which methods to put on
+what variables - you don’t need to include all, you can use one method
+on multiple variables.</em></p></li>
+<li><p><strong>df</strong> is the name of the data frame that I am
+drawing these X and Y variables from. <em>Replace this with the name of
+your data frame.</em></p></li>
+</ul>
+<p><br /></p>
+</div>
+<div id="prediction-in-r" class="section level4">
+<h4>Prediction in R</h4>
+<p>If we are interested in prediction, we can use the
+<strong>predict()</strong> function. You can predict in-sample data by
+setting <strong>newdata</strong> = the data frame you used for
+regression. You can predict out-of-sample data by using a dataframe with
+the same variables but new values. The syntax is as follows:</p>
+<ul>
+<li>Note: this syntax for prediction works in general for any type of
+model, not just GAMs.</li>
+</ul>
+<pre class="r"><code>#create new df for comparison of actual and prediction
+df_results &lt;- df %&gt;%
+  select(Y) #optional, may help with readability
+
+# newdata is what values of X1, X2... to predict for.
+df_results$prediction &lt;- predict(gam_model, newdata = df)
+
+# brief glimpse of the results
+head(df_results)</code></pre>
+<p>These are the parts of the syntax that can be altered:</p>
+<ul>
+<li><p><strong>df_results</strong> is the results data frame I am
+creating. <em>You can name this anything you want to.</em></p></li>
+<li><p><strong>Y</strong> is the Y variable I am trying to predict.
+<em>Replace this with the name of your Y variable.</em></p></li>
+<li><p><strong>gam_model</strong> is the variable I am saving my linear
+regression model to. <em>You can name this anything you want
+to.</em></p></li>
+<li><p><strong>df</strong> is the name of the data frame that houses the
+<span class="math inline">\(x\)</span> values I want to predict for.
+<em>Replace this with the name of your data frame with the</em> <span class="math inline">\(x\)</span> <em>values you want to predict
+for.</em></p></li>
+</ul>
+<p><br /></p>
+</div>
+<div id="example-in-r" class="section level4">
+<h4>Example in R</h4>
+<p>Take this following example (Note, I just chose the methods to apply
+to the variables at random):</p>
+<pre class="r"><code>gam_model &lt;- gam(econglobal ~ lo(export, 0.5) + bs(gini, df = 9, degree = 3), data = df)</code></pre>
+<pre class="r"><code>summary(gam_model)</code></pre>
+<pre><code>## 
+## Call: gam(formula = econglobal ~ lo(export, 0.5) + bs(gini, df = 9, 
+##     degree = 3), data = df)
+## Deviance Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -7.1063 -2.4340 -0.2177  1.7537  9.9364 
+## 
+## (Dispersion Parameter for gaussian family taken to be 12.3787)
+## 
+##     Null Deviance: 15534.31 on 254 degrees of freedom
+## Residual Deviance: 3006.481 on 242.8752 degrees of freedom
+## AIC: 1379.06 
+## 
+## Number of Local Scoring Iterations: NA 
+## 
+## Anova for Parametric Effects
+##                                  Df  Sum Sq Mean Sq  F value    Pr(&gt;F)    
+## lo(export, 0.5)                1.00 10308.0 10308.0 832.7174 &lt; 2.2e-16 ***
+## bs(gini, df = 9, degree = 3)   9.00   953.7   106.0   8.5608 3.998e-11 ***
+## Residuals                    242.88  3006.5    12.4                       
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Anova for Nonparametric Effects
+##                              Npar Df Npar F     Pr(F)    
+## (Intercept)                                              
+## lo(export, 0.5)                  1.1 40.067 1.802e-10 ***
+## bs(gini, df = 9, degree = 3)                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>We can use our model to make some in-sample predictions:</p>
+<pre class="r"><code>#create new df for comparison of actual and prediction
+df_results &lt;- df %&gt;%
+  select(econglobal) #optional, may help with readability
+
+# newdata is what values of X1, X2... to predict for.
+df_results$prediction &lt;- predict(gam_model, newdata = df)</code></pre>
+<pre><code>## Warning in gam.lo(data[[&quot;lo(export, 0.5)&quot;]], z, w, span = 0.5, degree = 1, :
+## pseudoinverse used at 9.0124 0.5</code></pre>
+<pre><code>## Warning in gam.lo(data[[&quot;lo(export, 0.5)&quot;]], z, w, span = 0.5, degree = 1, :
+## neighborhood radius 34.465</code></pre>
+<pre><code>## Warning in gam.lo(data[[&quot;lo(export, 0.5)&quot;]], z, w, span = 0.5, degree = 1, :
+## reciprocal condition number 3.4044e-17</code></pre>
+<pre><code>## Warning in gam.lo(data[[&quot;lo(export, 0.5)&quot;]], z, w, span = 0.5, degree = 1, :
+## There are other near singularities as well. 8062</code></pre>
+<pre class="r"><code># brief glimpse of the results
+head(df_results)</code></pre>
+<pre><code>## # A tibble: 6 × 2
+##   econglobal prediction
+##        &lt;dbl&gt;      &lt;dbl&gt;
+## 1       66.9       69.5
+## 2       66.9       70.0
+## 3       68.4       70.1
+## 4       69.6       70.1
+## 5       66.6       69.1
+## 6       67.4       68.1</code></pre>
+<p><br /></p>
+<hr />
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/ml">Course Homepage</a></p>
 </div>
 </div>
 

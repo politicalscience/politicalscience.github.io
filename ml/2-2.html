@@ -10,9 +10,8 @@
 
 
 
-<meta name="date" content="2024-09-01" />
 
-<title>Classification Methods</title>
+<title>Tree-Based Classifiers</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -349,8 +348,8 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Classification Methods</h1>
-<h4 class="date">2024-09-01</h4>
+<h1 class="title toc-ignore">Tree-Based Classifiers</h1>
+<h3 class="subtitle">Lesson 2.2, Applied Machine Learning</h3>
 
 </div>
 
@@ -360,284 +359,35 @@ body{
 font-size: 12pt;
 line-height: 150%;
 }
+.main-container {
+max-width: 800px !important;
+margin: auto;
+}
 </style>
-<p><a href="https://politicalscience.github.io/#machine1">Course
+<p><a href="https://politicalscience.github.io/ml">Course
 Homepage</a></p>
 <div id="contents" class="section level2">
 <h2>Table of Contents</h2>
-<ul>
-<li><p><a href="#naive">Naive Bayes Classifier</a></p></li>
+<ol style="list-style-type: decimal">
 <li><p><a href="#trees">Tree-Based Classifiers</a></p></li>
-<li><p><a href="#evaluation">Evaluating Classification
-Models</a></p></li>
-</ul>
-<p><br /></p>
+<li><p><a href="#r">Tree-Based Classifiers in R</a></p></li>
+</ol>
 <hr />
-<p>Remember to load tidyverse.</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
+<p>Remember to load tidyverse. We will also need the package
+<strong>randomForest</strong>.</p>
+<pre class="r"><code>library(randomForest)
+library(tidyverse)</code></pre>
 <p>Let us also load the dataset we will be using for these examples
 (feel free to load your own dataset)</p>
 <pre class="r"><code>df &lt;- read_csv(&quot;voctaxdata.csv&quot;)</code></pre>
 <hr />
-<p><a href="#contents" data-heading="Table of Contents">Table of
-Contents</a> | <a href="https://politicalscience.github.io/#machine1">Course
-Homepage</a></p>
-</div>
-<div id="naive" class="section level1">
-<h1>Naive Bayes Classifier</h1>
-<p><a href="#id_1001">Intuition and Theory</a> | <a href="#id_1002">Example in R</a></p>
-<div id="id_1001" class="section level3">
-<h3>Intuition and Theory</h3>
-<p>So far in this course, we have focused on predicting <span class="math inline">\(y\)</span> values. However, what about when we
-have a categorical or binary <span class="math inline">\(y\)</span>, and
-our goal is to predict which category <span class="math inline">\(k\)</span> a specific observation falls into? This
-is called classification.</p>
-<p>An example of a binary <span class="math inline">\(y\)</span>
-variable in which classification would be relevant is the following:</p>
-<p><span class="math display">\[
-y = \left\{    \begin{array}{lr}        
-k = 0, &amp; \text{Not a Democracy }\\        k=1, &amp;
-\text{Democracy}    \end{array}\right\}
-\]</span></p>
-<p>Where we would try to predict what category of <span class="math inline">\(y\)</span> an observation falls into based on its
-<span class="math inline">\(x\)</span> values, by first predicting the
-probability of being in <span class="math inline">\(y=k\)</span>, <span class="math inline">\(\hat{\pi}\)</span>, and the assigning observations
-based on <span class="math inline">\(\hat{\pi}\)</span> to
-categories.</p>
-<p><br /></p>
-<p>In <a href="https://politicalscience.github.io/#stats2">Statistics
-II: Regression Analysis</a>, we covered logistic regression, which is
-the more “traditional” method of classification prediction. Logistic
-regression a transformation of the linear regression model to ensure
-probabilities predicted remain between 0 and 1.</p>
-<p><span class="math display">\[
-\text{Logistic transformation function} \space f(m) = \frac{e^m}{1+e^m}
-\]</span></p>
-<p><span class="math display">\[
-\text{where the linear model is the input:} \space m =
-\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_i
-\]</span></p>
-<p><span class="math display">\[
-\text{and the resulting model is: } \hat{π_i} =
-\frac{e^{\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x}}{1 +
-e^{\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x}}
-\]</span></p>
-<p><br /></p>
-<p>However, there is an alternative approach to estimate the
-probabilities of being in a category of <span class="math inline">\(y\)</span>: the Naive Bayes Classifier.</p>
-<p>Naive Bayes, as the name suggests, relies on Bayes’ Rule, which
-states the following:</p>
-<p><span class="math display">\[
-P(A|B) = \frac{P(B|A) P(A)}{P(B)}
-\]</span></p>
-<ul>
-<li><p>Where <span class="math inline">\(P(A|B)\)</span> is the
-probability of event A occurring, given <span class="math inline">\(B\)</span> is true.</p></li>
-<li><p>Where <span class="math inline">\(P(B|A)\)</span> is the
-probability of event B occurring, given B is true.</p></li>
-<li><p>Where <span class="math inline">\(P(A)\)</span> and <span class="math inline">\(P(B)\)</span> are the probabilities of observing
-<span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> without any conditions (prior
-probabilities).</p></li>
-</ul>
-<p><br /></p>
-<p>When we are making classifications, we are trying to predict the
-probability <span class="math inline">\(\hat{\pi}\)</span> of being in a
-certain category <span class="math inline">\(y=k\)</span>, given the
-condition that our input values of our independent variables <span class="math inline">\(X_i\)</span> equals <span class="math inline">\(x\)</span>. Thus:</p>
-<p><span class="math display">\[
-\hat{\pi} = P(Y=k|X_i = x)
-\]</span></p>
-<p><br /></p>
-<p>The equation above has the form of <span class="math inline">\(P(A|B)\)</span>. Thus, using Bayes’ rule, we
-know:</p>
-<p><span class="math display">\[
-P(Y=k|X_i=x) \propto P(Y)P(X_i=x|Y=k)
-\]</span></p>
-<p>Where:</p>
-<ul>
-<li><p><span class="math inline">\(Y = k\)</span> is when the output
-variable <span class="math inline">\(Y\)</span> has the value of
-category <span class="math inline">\(k\)</span></p></li>
-<li><p><span class="math inline">\(X_i\)</span> is the vector of
-covariates containing our independent variables.</p></li>
-<li><p><span class="math inline">\(P(Y)\)</span> is the probability that
-a randomly chosen observation is in class <span class="math inline">\(k\)</span> (called the prior). We can estimate
-this from the proportions of the sample</p></li>
-<li><p><span class="math inline">\(P(X_i=x|Y=k)\)</span> is the
-probability of a randomly chosen observation in class <span class="math inline">\(k\)</span>, has the independent variable vector
-<span class="math inline">\(X_i\)</span> equal the value of <span class="math inline">\(x\)</span>, our input values (This is called the
-likelihood).</p>
-<ul>
-<li>Basically, if we look at category <span class="math inline">\(k\)</span>, what are the chances we get the input
-values that we are inputting into the model?</li>
-</ul></li>
-</ul>
-<p>Note: I use <span class="math inline">\(\propto\)</span>
-(proportional) instead of <span class="math inline">\(=\)</span>
-(equal), because I have omitted the denominator to simplify the
-explanation.</p>
-<ul>
-<li>The denominator does not depend on the category, so we will worry
-about it later.</li>
-</ul>
-<p><br /></p>
-<p>Because <span class="math inline">\(X_i\)</span> is a vector of
-covariates, we, in theory, would need to work out <span class="math inline">\(P(X_i=x|Y=k)\)</span> from a multivariate
-probability distribution.</p>
-<p>But, we can use a simplification step: assuming that features are
-independent.</p>
-<ul>
-<li>This assumption is often not true, but it does simplify the
-estimation process.</li>
-</ul>
-<p>When we make this simplification, since independent probabilities are
-simply multiplied, we know the second part of the equation (the
-likelihood) is:</p>
-<p><span class="math display">\[
-\text{Let us first shorthand } P(X_i = x | Y = k) \text{ to } P(x|k)
-\]</span></p>
-<p><span class="math display">\[
-P(x|k) = P(x_1|k) * P(x_2 |k) *P(x_3 | k) ...
-\]</span></p>
-<p><span class="math display">\[
-P(x|k) = \prod\limits_{j=1}^J P (x_j|k)
-\]</span></p>
-<p><br /></p>
-<p>Now, we can plug this likelihood back into the Bayes’ Rule equation,
-replacing <span class="math inline">\(P(X_i = x|Y = k)\)</span> to
-get:</p>
-<p><span class="math display">\[
-P(Y_i = k|X_i) \propto P(k) \prod\limits_{j=1}^J P(x_j|k)
-\]</span></p>
-<p><br /></p>
-<p>But this equation (when we include the denominator) gives us
-probabilities. But, we want to classify - actually assign observations
-to categories.</p>
-<ul>
-<li>Thus, we need to not only calculate probabilities, but assign each
-observation to a category depending on which category it is most
-probable to belong to.</li>
-</ul>
-<p><br /></p>
-<p>To do this, we assign an algorithm to the function. This algorithm
-will return the class <span class="math inline">\(k\)</span>, of the
-observation, which has the maximum probability. We actually can just
-ignore the denominator, since it is always constant within the same
-sample.</p>
-<p>We introduce the the <strong>argmax</strong> function to assign the
-category, where the <span class="math inline">\(k\)</span> value with
-the highest result for the function is assigned the category. The result
-will be the prediction of which category of <span class="math inline">\(y\)</span> the observation belongs to:</p>
-<p><span class="math display">\[
-\hat{y}=\argmax_{k \in \{ 1, ... k\}} P(k) \prod\limits_{j=1}^J P(x_j|k)
-\]</span></p>
-<p><br /></p>
-<p>Despite the very strong (and often not met) assumptions that Naive
-Bayes makes, it still performs especially well.</p>
-<ul>
-<li>Naive Bayes performs especially well when there are a lot of
-independent variables.</li>
-</ul>
-<p>Thus, it is often the favoured technique for large models aiming to
-make classification predictions.</p>
-<p><br /></p>
-</div>
-<div id="id_1002" class="section level3">
-<h3>Example in R</h3>
-<p>To run Naive Bayes, we need the library <strong>e1071</strong>:</p>
-<pre class="r"><code>library(e1071)</code></pre>
-<p>We can run a Naive Bayes with the function
-<strong>naiveBayes()</strong>. Let us first generate the model, then
-generate the predictions. The syntax is as follows:</p>
-<pre class="r"><code>nb_model &lt;- naiveBayes(Y ~ X1 + X2, data = df)</code></pre>
-<p>These are the parts of the syntax that can be altered:</p>
-<ul>
-<li><p><strong>nb_model</strong> is the variable I am saving my model
-to. <em>You can name this anything you want to.</em></p></li>
-<li><p><strong>Y</strong> is the Y variable (Dependent variable) you are
-trying to predict, and <strong>X1, X2</strong> are the X variables
-(independent variable) you are using to get your prediction. <em>Replace
-these with the variables you want to use.</em></p>
-<ul>
-<li>NOTE: Always put the Y variable before the X variable. Separate the
-two with a tilda <strong>~</strong></li>
-<li>NOTE: You can add more simply by using a <strong>+</strong> sign and
-adding another variable.</li>
-</ul></li>
-<li><p><strong>df</strong> is the name of the data frame that I am
-drawing these X and Y variables from. <em>Replace this with the name of
-your data frame.</em></p></li>
-</ul>
-<p><br /></p>
-<p>Now, let us generate predictions for our sample. You can predict
-in-sample data by setting <strong>newdata</strong> = the data frame you
-used for regression. You can predict out-of-sample data by using a
-dataframe with the same variables but new values. The syntax is as
-follows:</p>
-<pre class="r"><code>#create new df for comparison of actual and prediction
-nb_results &lt;- df %&gt;%
-  select(Y) #optional, may help with readability
-
-# newdata is what values of X1, X2... to predict for.
-nb_results$prediction &lt;- predict(nb_model, newdata = df)
-
-# brief glimpse of the results
-head(nb_results)</code></pre>
-<p>These are the parts of the syntax that can be altered:</p>
-<ul>
-<li><p><strong>nb_results</strong> is the results data frame I am
-creating. <em>You can name this anything you want to.</em></p></li>
-<li><p><strong>Y</strong> is the Y variable I am trying to predict.
-<em>Replace this with the name of your Y variable.</em></p></li>
-<li><p><strong>nb_model</strong> is the variable I am saved my prior
-model to. <em>Rename this to what your prior model was
-named.</em></p></li>
-<li><p><strong>df</strong> is the name of the data frame that houses the
-<span class="math inline">\(x\)</span> values I want to predict for.
-<em>Replace this with the name of your data frame with the</em> <span class="math inline">\(x\)</span> <em>values you want to predict
-with.</em></p></li>
-</ul>
-<p><br /></p>
-<p>Take the following examples, where I predict whether a country is a
-<strong>Liberal Market Economy (0) or Coordinated Market Economy
-(1)</strong>. (These are topics from Comparative Political Economy).</p>
-<pre class="r"><code>#Naive Bayes model
-nb_model &lt;- naiveBayes(as.factor(voc) ~ taxpercent + gini + econglobal, data = df)
-
-#Add predictions to new data frame
-nb_results &lt;- df %&gt;%
-  select(voc) #optional, may help with readability
-
-# newdata is what values of X1, X2... to predict for.
-nb_results$prediction &lt;- predict(nb_model, newdata = df)
-
-# brief glimpse of the results
-head(nb_results)</code></pre>
-<pre><code>## # A tibble: 6 × 2
-##     voc prediction
-##   &lt;dbl&gt; &lt;fct&gt;     
-## 1     0 0         
-## 2     0 0         
-## 3     0 0         
-## 4     0 0         
-## 5     0 0         
-## 6     0 0</code></pre>
-<p>We will talk about prediction accuracy metrics in the later section
-on <a href="#evaluation">Evaluating Classification Models</a>.</p>
-<p><br /></p>
-<hr />
-<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/#machine1">Course
-Homepage</a></p>
-</div>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/ml">Course Homepage</a></p>
 </div>
 <div id="trees" class="section level1">
 <h1>Tree-Based Classifiers</h1>
-<p><a href="#id_2001">Intuition and Theory</a> | <a href="#id_2002">Example in R</a></p>
-<div id="id_2001" class="section level3">
-<h3>Intuition and Theory</h3>
-<p>In the previous lesson on <a href="https://politicalscience.github.io/machine_learning_1/trees.html">Tree-Based
-Prediction Methods</a>, we covered the prediction methods of Bagging and
-Random Forest.</p>
+<p>In the previous lesson on <a href="https://politicalscience.github.io/ml/1-6.html">Bagging and Random
+Forest</a>, we covered the prediction methods of Bagging and Random
+Forest.</p>
 <p>In that lesson, we focused on how Bagging and Random Forest could be
 used to predict continuous <span class="math inline">\(y\)</span>
 variables. However, Bagging and Random Forest can also be applied to
@@ -645,8 +395,9 @@ classification with a few small modifications.</p>
 <p><br /></p>
 <p>Bagging and Random Forest work in almost the same way for
 classification (If you need a refresher on how they work, check out the
-lesson <a href="https://politicalscience.github.io/machine_learning_1/trees.html">Tree-Based
-Prediction Methods</a>).</p>
+lessons <a href="https://politicalscience.github.io/ml/1-5.html">Regression
+Trees</a> and <a href="https://politicalscience.github.io/ml/1-6.html">Bagging and Random
+Forest</a>).</p>
 <p>In Tree-Based Prediction Models, to determine at which threshold to
 split <span class="math inline">\(x\)</span>, the computer will find the
 optimal <span class="math inline">\(x\)</span> threshold for splitting
@@ -671,13 +422,22 @@ optimal <span class="math inline">\(x\)</span> threshold for splitting
 based on which value reduces the Clasification Error Rate the most</p>
 <p>Aside from this, classification trees work the same way.</p>
 <p><br /></p>
+<hr />
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/ml">Course Homepage</a></p>
 </div>
-<div id="id_2002" class="section level3">
-<h3>Example in R</h3>
+<div id="r" class="section level1">
+<h1>Tree-Based Classifiers in R</h1>
 <p>To conduct Bagging and Random Forest, wee need the package
 <strong>randomForest</strong>:</p>
 <pre class="r"><code>library(randomForest)</code></pre>
+<p>Remember to load tidyverse.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<p>Let us also load the dataset we will be using for these examples
+(feel free to load your own dataset)</p>
+<pre class="r"><code>df &lt;- read_csv(&quot;voctaxdata.csv&quot;)</code></pre>
 <p><br /></p>
+<div id="bagging-classifier-in-r" class="section level4">
+<h4>Bagging Classifier in R</h4>
 <p>Bagging in R is conducted using the <strong>randomForest()</strong>
 function. We can view the summary by simply printing the regression
 variable.</p>
@@ -717,6 +477,9 @@ your data frame.</em></p></li>
 na.omit</strong>, and <strong>importance = TRUE</strong>.</p></li>
 </ul>
 <p><br /></p>
+</div>
+<div id="random-forest-classifier-in-r" class="section level4">
+<h4>Random Forest Classifier in R</h4>
 <p>To create a Random Forest model, the syntax is the exact same, except
 for the fact we set <strong>mtry</strong> to the square root of the
 number of independent variables in your regression.</p>
@@ -734,6 +497,9 @@ randomforest &lt;- randomForest(Y ~ .,
 # call model variable to see output
 randomforest</code></pre>
 <p><br /></p>
+</div>
+<div id="predictions-in-r" class="section level3">
+<h3>Predictions in R</h3>
 <p>We can generate predictions with the <strong>predict()</strong>
 function:</p>
 <pre class="r"><code>#create new df for comparison of actual and prediction
@@ -760,6 +526,8 @@ named.</em></p></li>
 for.</em></p></li>
 </ul>
 <p><br /></p>
+<div id="example-in-r" class="section level4">
+<h4>Example in R</h4>
 <p>Take the following examples, where I predict whether a country is a
 <strong>Liberal Market Economy (0) or Coordinated Market Economy
 (1)</strong>. (These are topics from Comparative Political Economy).</p>
@@ -789,7 +557,8 @@ bagging</code></pre>
 ## 0 102   0  0.00000000
 ## 1   3 150  0.01960784</code></pre>
 <p>We will discuss the output confusion matrix in the later section on
-<a href="#evaluation">Evaluating Classification Models</a>.</p>
+<a href="https://politicalscience.github.io/ml/2-3.html">Evaluating
+Classification Models</a>.</p>
 <p><br /></p>
 <p>Let us generate in-sample predictions for this model:</p>
 <pre class="r"><code>#create new df for comparison of actual and prediction
@@ -812,140 +581,8 @@ head(df_results)</code></pre>
 ## 6     0 0</code></pre>
 <p><br /></p>
 <hr />
-<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/#machine1">Course
-Homepage</a></p>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/ml">Course Homepage</a></p>
 </div>
-</div>
-<div id="evaluation" class="section level1">
-<h1>Evaluating Classification Models</h1>
-<p><a href="#id_3001">Intuition and Theory</a> | <a href="#id_3002">Example in R</a></p>
-<div id="id_3001" class="section level3">
-<h3>Intuition and Theory</h3>
-<p>Now that we have learned different classification methods, how do we
-choose the right one? How do we evaluate the performance of our
-classification methods, just as we did for prediction methods?</p>
-<p>The simplest metric is just what proportion our method got
-correct/wrong:</p>
-<ul>
-<li><p>Error rate: The percentage of observations that our
-classification method got wrong.</p></li>
-<li><p>Accuracy: The percentage of observations that our classification
-method got right.</p></li>
-</ul>
-<p><br /></p>
-<p>We can dig more into detail. If we have a binary <span class="math inline">\(y\)</span> variable, we do this by determining two
-metrics:</p>
-<ul>
-<li><p>False positive rate: The observations that are <span class="math inline">\(y=0\)</span>, but our classification method
-predicted <span class="math inline">\(\hat{y} = 1\)</span></p></li>
-<li><p>False negative rate: The observations that are <span class="math inline">\(y=1\)</span>, but our classification method
-predicted <span class="math inline">\(\hat{y} = 0\)</span></p></li>
-</ul>
-<p><br /></p>
-<p>We can also do the inverse: instead of calculating error rates like
-above, we can calculate accuracy rates. There are two metrics for
-this:</p>
-<ul>
-<li><p>Specificity: the observations that are <span class="math inline">\(y=0\)</span>, and our classification method
-correctly predicted <span class="math inline">\(\hat{y} =
-0\)</span></p></li>
-<li><p>Sensitivity: the observations that are <span class="math inline">\(y=1\)</span>, and our classification method
-correctly predicted <span class="math inline">\(\hat{y} =
-1\)</span></p></li>
-</ul>
-<p><br /></p>
-<p>Is specificity or sensitivity more important? Is false positive rate
-or false negative rate more important?</p>
-<ul>
-<li><p>Well, it depends on the application of our model.</p></li>
-<li><p>If our model tests for extremely dangerous diseases, its probably
-better if the model detects some false positives, rather than
-under-detects people who are actually sick.</p></li>
-<li><p>But, for judicial systems, since we are afraid of putting an
-innocent person in jail, we might prefer less false positives, and more
-false negatives.</p></li>
-</ul>
-<p>Choosing the right model requires some subjectivity here.</p>
-<p><br /></p>
-</div>
-<div id="id_3002" class="section level3">
-<h3>Example in R</h3>
-<p>If we have a Naive Bayes classifier, we can generate a table
-comparing our predictions to the actual. This table is often called a
-<strong>confusion matrix</strong>. To do this, make sure we have already
-generated the predictions, and stored them in the same data frame as the
-actual values.</p>
-<p>Then, we generate the confusion matrix. The syntax is as follows:</p>
-<pre class="r"><code>table(Prediction = df_results$prediction, Actual = df_results$Y)</code></pre>
-<p>These are the parts of the syntax that can be altered:</p>
-<ul>
-<li><p><strong>df_results$prediction</strong> is the prediction column
-of our data frame with results. <em>Change the part before $ to the data
-frame name that you stored your prediction to, and the part after $ to
-the variable you stored your prediction to.</em></p></li>
-<li><p><strong>Y</strong> is the Y variable in our data frame with the
-actual values of y. <em>Change this to the name of your Y
-variable.</em></p></li>
-</ul>
-<p><br /></p>
-<p>For Bagging/Random Forest, the default output includes a confusion
-matrix. We just simply print the model. The syntax is as follows:</p>
-<pre class="r"><code>print(bagging)</code></pre>
-<p>These are the parts of the syntax that can be altered:</p>
-<ul>
-<li><strong>bagging</strong> is the variable I am saved my prior model
-to. <em>Rename this to what your prior model was named.</em></li>
-</ul>
-<p><br /></p>
-<p>For example, let us generate the confusion matrices of the Naive
-Bayes and Bagging Model we ran in the earlier sections. Let us also
-calculate some key metrics:</p>
-<p>Naive Bayes:</p>
-<pre class="r"><code>table(Prediction = nb_results$prediction, Actual = nb_results$voc)</code></pre>
-<pre><code>##           Actual
-## Prediction   0   1
-##          0 100  17
-##          1   2 136</code></pre>
-<p>Let us calculate some metrics:</p>
-<ul>
-<li><p>Accuracy: <span class="math inline">\(\frac{100+136}{100+17+2+136} = 92.54
-\%\)</span></p></li>
-<li><p>Error Rate: <span class="math inline">\(\frac{17+2}{100+17+2+136}=7.45
-\%\)</span></p></li>
-<li><p>Specificity: <span class="math inline">\(\frac{100}{100+2}=98.03
-\%\)</span></p></li>
-<li><p>Sensitivity: <span class="math inline">\(\frac{136}{17+136}=88.88
-\%\)</span></p></li>
-</ul>
-<p><br /></p>
-<p>For Bagging:</p>
-<pre class="r"><code>print(bagging)</code></pre>
-<pre><code>## 
-## Call:
-##  randomForest(formula = as.factor(voc) ~ taxpercent + gini + econglobal,      data = df, mtry = 3, importance = TRUE, na.action = na.omit) 
-##                Type of random forest: classification
-##                      Number of trees: 500
-## No. of variables tried at each split: 3
-## 
-##         OOB estimate of  error rate: 1.18%
-## Confusion matrix:
-##     0   1 class.error
-## 0 102   0  0.00000000
-## 1   3 150  0.01960784</code></pre>
-<p>Let us calculate some metrics:</p>
-<ul>
-<li><p>Accuracy: <span class="math inline">\(\frac{102+150}{102+0+3+150}
-= 98.82 \%\)</span></p></li>
-<li><p>Error Rate: Already given in output as <span class="math inline">\(1.18 \%\)</span></p></li>
-<li><p>Specificity: <span class="math inline">\(\frac{102}{102+3}=97.14
-\%\)</span></p></li>
-<li><p>Sensitivity: <span class="math inline">\(\frac{150}{0+150}=100
-\%\)</span></p></li>
-</ul>
-<p><br /></p>
-<hr />
-<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/#machine1">Course
-Homepage</a></p>
 </div>
 </div>
 
