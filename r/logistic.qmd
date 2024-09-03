@@ -1,0 +1,427 @@
+---
+title: "Logistic Regression"
+output: html_document
+date: "2024-08-22"
+---
+
+```{=html}
+<style type="text/css">
+  body{
+  font-size: 12pt;
+  line-height: 150%;
+}
+</style>
+```
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+[Handbook Homepage](https://politicalscience.github.io)
+
+## Table of Contents
+
+-   [Binomial Logistic Regression](#binomial)
+
+-   [Odds Ratios and Relative Risk Ratios](#odds)
+
+-   [Multinomial Logistic Regression](#multinomial)
+
+-   [Ordinal Logistic Regression](#ordinal)
+
+------------------------------------------------------------------------
+
+Remember to load tidyverse
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+Let us also load the dataset we will be using for these examples (feel free to load your own dataset)
+
+```{r, message = FALSE}
+df <- read_csv("voctaxdata.csv")
+```
+
+------------------------------------------------------------------------
+
+[Table of Contents] \| [Handbook Homepage](https://politicalscience.github.io)
+
+# Binomial Logistic Regression {#binomial}
+
+[Intuition and Theory](#1001) \| [Example in R](#1002)
+
+### Intuition and Theory {#1001}
+
+Logistic regression is used when we are trying to use X to predict a binary Y variable.
+
+-   With a binary variable, we are interested in the probability $π$ of an observation being in a specific category $i$ ( $π_i$ )
+
+-   Importantly, probability ranges on a scale between 0 (0% chance) and 1 (100% chance).
+
+-   Thus, we need a prediction method that only outputs predictions between 0 and 1.
+
+<br />
+
+However, the previously covered OLS regression does not always output values between 0 and 1. The linear slope means that OLS will sometimes produce estimates above 1 and below 0, and that makes no sense.
+
+-   The traditional linear model $P(y_i = 1) = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_i$ can produce values outside the 0 and 1 range, which doesn't make sense for probability.
+
+-   So, to solve this problem, we need to apply a function $f$ that will force the linear regression model to return a value between 0 and 1.
+
+-   Thus, it takes the form of $P(y_i = 1) = f(\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_i)$, where $f$ is a function that never returns a value below 0 or above 1.
+
+<br />
+
+The logistic function is one type of $f$ transformation that does not return a value below 0 or above 1. It takes the following form:
+
+$f(m) = \frac{e^m}{1+e^m}$, where $m = \hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x_i$
+
+When applying the logistic transformation, this gives us the following model that predicts probability of being in category $i$ ( $π_i$ ):
+
+$\hat{π_i} = \frac{e^{\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x}}{1 + e^{\hat{\mathbf{\beta}}_0 + \hat{\mathbf{\beta}}_1 x}}$
+
+This allows us to predict the probability of being in a specific category of $y$, given a value of $x$.
+
+We can also expand the model to a multivariate model, simply by adding $+ \hat{\mathbf{\beta}}_2 x_2 + \hat{\mathbf{\beta}}_3 x_3 ... + \hat{\mathbf{\beta}}_p x_p$
+
+<br />
+
+How does logistic regression select the coefficients $\hat{\mathbf{\beta}}_0, \hat{\mathbf{\beta}}_1,..., \hat{\mathbf{\beta}}_p$ ?
+
+-   Generally, maximum likelihood estimation (MLE) is used to estimate these parameters.
+
+-   The idea is simply: what are the values of $\hat{\mathbf{\beta}}_0, \hat{\mathbf{\beta}}_1,..., \hat{\mathbf{\beta}}_p$ that generate predicted probabilities $\hat{π_i}$ for each observation, that are as close to the actual categories of $y$ ?
+
+-   The likelihood function for logistic regression is: $\prod_{i:y_i = 1} \hat{π_i} \prod_{i:y_i = 0} (1 - \hat{π_i})$
+
+-   This function tells us the probability of observed zeroes and ones in the data, given values $\hat{\mathbf{\beta}}_0, \hat{\mathbf{\beta}}_1, ... , \hat{\mathbf{\beta}}_p$ values within $\hat{π_i}$
+
+-   We want to choose $\hat{\mathbf{\beta}}_0, \hat{\mathbf{\beta}}_1... + \hat{\mathbf{\beta}}_p$ values within $\hat{π_i}$ to maximise this likelihood function.
+
+<br />
+
+This is generally done with a computer algorithm. For each $\hat{\mathbf{\beta}}_0, \hat{\mathbf{\beta}}_1, ... ,\hat{\mathbf{\beta}}_p$ , the computer does the following:
+
+1.  Start somewhere with some value of the parameter
+2.  Shift the parameter in both directions (up and down), and see which direction will increase the likelihood function.
+3.  Go a small distance in that chosen direction.
+4.  Again, shift the parameter in both directions (up and down), and see which direction will increase the likelihood function.
+5.  Go a small distance in that chosen direction.
+6.  Continue until when you shift in both directions, the likelihood function only drops. This suggests you are "at the top of the mountain", maximising the likelihood function.
+
+<br />
+
+The selected parameters $\hat{\mathbf{\beta}}_1,... ,\hat{\mathbf{\beta}}_p$ are in a format that is difficult to interpret. We can interpret them with [odds ratios](#odds).
+
+<br />
+
+Uses of logistic regression in Political Science research:
+
+-   Political scientists often want to explore categorical Y variables. The most obvious example is predicting whether or not a country is a democracy or not. Other common categorical Y variables include voting systems, type of government, type of economy, etc.
+
+If you want to use categorical Y variables with more than 2 categories, see the section on [multinomial logistic regression](#multinomial).
+
+<br />
+
+### Example in R {#1002}
+
+Binary logistic regression in R is conducted using the **glm()** function and **summary()** function. The syntax is as follows:
+
+```{r, eval = FALSE}
+
+logistic_reg <- glm(Y ~ X1 + X2, data = df, family = binomial)
+
+# Use summary() function to see results
+summary(logistic_reg)
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **logistic_reg** is the variable I am saving my linear regression model to. *You can name this anything you want to.*
+
+-   **Y** is the Y variable (Dependent variable) you are trying to predict, and **X1, X2** are the X variable (independent variable) you are using to get your prediction. *Replace these with the variables you want to use.*
+
+    -   NOTE: Y must be binary. For categorical Y (more than 2 categories), see the section on [Multinomial Logistic Regression](#multinomial).
+    -   NOTE: Always put the Y variable before the X variable. Separate the two with a tilda **\~**
+    -   NOTE: You can add more simply by using a **+** sign and adding another variable.
+
+-   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
+
+Remember to use **family = binomial**, or else this regression will not work.
+
+<br />
+
+Take this following example of predicting the probability of being in category 1 of **voc** with the X variables **personaltax** and **gini**:
+
+```{r}
+
+logistic_reg <- glm(as.factor(voc) ~ personaltax + gini, data = df, family = binomial)
+
+# Use summary() function to see results
+summary(logistic_reg)
+```
+
+The **summary()** function produces an output. The interpretation of the above example is as follows:
+
+-   We can interpret the significance levels (stars) and **Pr(\>\|z\|)** as we normally do with linear regressions. If **Pr(\>\|z\|)** is less than 0.05, we can reject the null hypothesis, and conclude there is a significant relationship.
+
+-   We can also interpret the sign of the estimates.
+
+    -   If the X variable coefficient estimate is positive, then there is a positive effect of X on Y.
+
+    -   If the coefficient estimate is negative, then there is a negative effect of X on Y.
+
+However, unlike linear regressions, **we cannot directly interpret the estimated coefficients**. These actual numbers do not mean anything meaningful to us. To interpret, we need to calculate the [odds ratios](#odds) of the regression.
+
+<br />
+
+------------------------------------------------------------------------
+
+[Table of Contents] \| [Handbook Homepage](https://politicalscience.github.io)
+
+# Odds Ratios and Relative Risk Ratios {#odds}
+
+[Intuition and Theory](#2001) \| [Example in R](#2002)
+
+### Intuition and Theory {#2001}
+
+We talked about previously how the parameters of logistic regression $\hat{\mathbf{\beta}}_0, \hat{\mathbf{\beta}}_1, ... ,\hat{\mathbf{\beta}}_p$ are estimated. We noted that these value estimates of the parameters cannot be interpreted in their base form (only the signs can be interpreted).
+
+To interpret the these parameters, we can use odds ratios/relative risk ratios.
+
+To calculate odds ratios/relative risk ratios, we simply take $e$ to the power of the coefficient:
+
+-   Ex. Odds ratio of $\hat{\mathbf{\beta}}_1$ is $e^{\hat{\mathbf{\beta}}_1}$
+
+<br />
+
+Odds ratios can be interpreted for **direction of correlation**:
+
+-   If the odds ratio is less than 1, the effect of X on Y is negative.
+
+-   If the odds ratio is greater than 1, the effect of X on Y is positive.
+
+-   If the odds ratio is equal to 1, there is no relationship.
+
+Odds ratios can also be interpreted for **magnitude of correlation**:
+
+-   For every increase of 1 in $x$, the change in $y$ is the previous $y$ value multiplied by the odds ratio
+
+    -   $π_{i,x=n} = π_{i, x = n - 1} * e^{\beta}$
+
+-   Ex. If the odds ratio is 1.25, that means for each increase of 1 in $x$, we take the old $y$, and multiply by $1.25$
+
+    -   $π_{i,x=n} = π_{i, x = n - 1} * 1.25$
+    -   In other words, for every increase of 1 in $x$, $y$ increases by 25%
+
+-   Ex. If the odds ratio is 0.6, that means for each increase of 1 in $x$, we take the old $y$, and multiply by $0.6$
+
+    -   $π_{i,x=n} = π_{i, x = n - 1} * 0.6$
+
+<br />
+
+Uses of odds ratios in Political Science research:
+
+-   Political scientists often are not just interested in the direction of correlation and causality, but also the magnitude of correlation and causality. After all, even if $x$ causes $y$, if the causal effect is of minimal strength, then it may not be very important for policymakers to consider. On the other hand, if $x$ has a huge effect on $y$, this could be very important to the study of the topic.
+
+<br />
+
+### Example in R {#2002}
+
+Odds ratios/relative risk ratios in R are calculated with a simple mathematical operation. NOTE - you must have already conducted a logistic regression before calculated odds ratios. The syntax is as follows:
+
+```{r, eval = FALSE}
+
+odds_ratios <- exp(coef(logistic_reg))
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **odds_ratios** is the variable I am saving my odds ratios to. *You can name this anything you want to.*
+
+-   **logistic_reg** is the variable I stored my previous logistic regression that I want to calculate the odds ratios for. *Rename this to the variable you stored your logistic regression in.*
+
+<br />
+
+We can also calculate 95% confidence intervals for odds ratios quite simply in R. The syntax is as follows:
+
+```{r, eval = FALSE}
+# cbind to create a table
+or_interval <- exp(cbind(OR = coef(logistic_reg), confint(logistic_reg)))
+
+# print the table
+print(or_interval)
+
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **or_interval** is the variable I am saving my odds ratios and confidence interval to. *You can name this anything you want to.*
+
+-   **logistic_reg** is the variable I stored my previous logistic regression that I want to calculate the odds ratios for. *Rename this to the variable you stored your logistic regression in.*
+
+<br />
+
+An example of calculating odds ratios, based on the logistic regression I conducted in the binary logistic example:
+
+```{r}
+odds_ratios <- exp(coef(logistic_reg))
+
+# print the variable
+print(odds_ratios)
+```
+
+Interpretation is explained in the [intuition and theory section](#2001).
+
+<br />
+
+An example of calculating odds ratios and confidence intervals, based on the logistic regression I conducted in the binary logistic example:
+
+```{r}
+
+# cbind to create a table
+or_interval <- exp(cbind(OR = coef(logistic_reg), confint(logistic_reg)))
+
+# print the table
+print(or_interval)
+```
+
+Interpretation is explained in the [intuition and theory section](#2001).
+
+<br />
+
+------------------------------------------------------------------------
+
+[Table of Contents] \| [Handbook Homepage](https://politicalscience.github.io)
+
+# Multinomial Logistic Regression {#multinomial}
+
+[Intuition and Theory](#3001) \| [Example in R](#3002)
+
+### Intuition and Theory {#3001}
+
+Multinomial logistic regression is used to predict a categorical Y, which has more than 2 outcomes. The mathematical concepts of Multinomial logistic regression are the same as [binomial logistic regression](#binomial), both involving the same form and same estimation techniques.
+
+However, with 3 or more categories, there becomes an issue - how do we illustrate probabilities for 3 categories, if we are only looking for $π_i$? Our original framework of $π_i$ implies that $i$ is either $0$ or $1$, so that $π_{i=0} = 1 - π_i$. But with 3 categories, this framework does not work.
+
+<br />
+
+The solution to this is, well, to split our Y categorical variable into multiple smaller binary Y variables. This allows us to run a bunch of smaller binary logistic regressions.
+
+-   For example, take a $y$ variable that has 3 categories: $i = 1, 2, 3$
+
+-   Let us set one of these as a "reference category", which we will compare all other categories against. I have chosen $i=3$ as the reference since our **VGAM** package in R (that we will use later) automatically selects the last category as the reference. However, you can select any as the reference and the general idea remains the same.
+
+-   With $i=3$ as our reference category, we can now divide the remaning categories into binary comparisons with our reference $i=3$
+
+    -   One logistic model will compare $i=3$ (reference) to $i=1$
+
+    -   Another logistic model will compare $i=3$ (reference) to $i=2$
+
+-   Now that we have 2 binary logistic models, we can use the property $π_{i=0} = 1 - π_i$ without issue.
+
+-   For any categorical $y$ variable with $i$ categories, the number of "sub-regressions" we will run is $i-1$
+
+<br />
+
+Thus, in our regression output, we will actually have $i-1$ versions of each $x$ variable.
+
+-   For example, lets say we only have one $x$ variable, $x$
+
+-   If we have the $y$ variable above with categories $i=1,2,3$, with $i = 3$ as our reference, we will have 2 $x$ variables in our regression output.
+
+    -   $x:1$ is the logistic variable that corresponds to the logistic model comparing $i=1$ to our reference $i=3$
+
+    -   $x:2$ is the logistic variable that corresponds to the logistic model comparing $i=2$ to our reference $i=3$
+
+-   For each version of $x$, there will be a unique $\beta$ parameter. We can interpret these parameters the same as in binary logistic regressions, including calculating odds ratios.
+
+    -   Just remember, what version of $x$ the $\beta$ belongs to when interpreting (which 2 categories of $y$ is it comparing).
+
+<br />
+
+### Example in R {#3002}
+
+We will need to load the **VGAM** package to do Multinomial logistic regression in R. If you have not installed it, install this package.
+
+```{r, message = FALSE}
+library(VGAM)
+```
+
+```{r, echo = FALSE}
+data(iris)
+df <- iris
+options(warn = -1)
+```
+
+Now, we can run a Multinomial logistic regression in the same syntax as the binomial logistic regression, but instead of **glm()**, use the **vglm()** function. The syntax is as follows:
+
+```{r, eval = FALSE}
+
+multinomial_reg <- vglm(Y ~ X1 + X2,
+                    data = df,
+                    family = multinomial)
+
+# Use summary() to see results
+summary(multinomial_reg)
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **multinomial_reg** is the variable I am saving my linear regression model to. *You can name this anything you want to.*
+
+-   **Y** is the Y variable (Dependent variable) you are trying to predict, and **X1, X2** are the X variable (independent variable) you are using to get your prediction. *Replace these with the variables you want to use.*
+
+    -   NOTE: Y must have more than 2 categories. For binary Y (2 categories), see the section on [Binomial Logistic Regression](#binomial).
+    -   NOTE: Always put the Y variable before the X variable. Separate the two with a tilda **\~**
+    -   NOTE: You can add more simply by using a **+** sign and adding another variable.
+
+-   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
+
+Remember to use **family = multinomial**, or else this regression will not work.
+
+If you want to calculate the [odds ratios/relative risk ratio](#odds) for interpretation, the R code is the same as binomial.
+
+-   Remember, **vglm()** sets the last category as the reference category. Thus, the coefficients with **1** indicate the probability of being in category **1** compared to category **3**. The coefficients with **2** indicate the probability of being in category **2** compared to category **3**. The interpretations are the same as standard odds ratios.
+
+<br />
+
+Take the following example where we predict the **Species** of a flower from its **Petal.Length** and **Petal.Width**:
+
+```{r}
+
+multinomial_reg <- vglm(Species ~ Petal.Length + Petal.Width,
+                    data = df,
+                    family = multinomial)
+
+# Use summary() to see results
+summary(multinomial_reg)
+```
+
+```{r, echo = FALSE}
+options(warn = 0)
+```
+
+We can calculate the odds ratio for better interperation:
+
+```{r}
+# cbind to create a table
+or_interval <- exp(cbind(OR = coef(multinomial_reg), confint(multinomial_reg)))
+
+# print the table
+print(or_interval)
+```
+
+Remember, **vglm()** sets the last category as the reference category. Thus, the coefficients with **1** indicate the probability of being in category **1** compared to category **3**. The coefficients with **2** indicate the probability of being in category **2** compared to category **3**. The interpretations are the same as standard odds ratios.
+
+------------------------------------------------------------------------
+
+[Table of Contents] \| [Handbook Homepage](https://politicalscience.github.io)
+
+## Ordinal Logistic Regression {#ordinal}
+
+Coming Soon
+
+------------------------------------------------------------------------
+
+[Table of Contents] \| [Handbook Homepage](https://politicalscience.github.io)
