@@ -1,0 +1,232 @@
+---
+title: "Generalised Additive Models"
+format:
+    html:
+        theme: darkly
+        max-width: 800px
+        fontsize: 12pt
+subtitle: "Lesson 1.4, Applied Machine Learning"
+---
+
+[Course Homepage](https://politicalscience.github.io/ml)
+
+## Table of Contents {#contents}
+
+1.  [Generalised Additive Models (GAMs)](#gam)
+2.  [GAMs in R](#r)
+
+------------------------------------------------------------------------
+
+Remember to load tidyverse.
+
+```{r, message = FALSE}
+library(tidyverse)
+```
+
+Let us also load the dataset we will be using for these examples (feel free to load your own dataset)
+
+```{r, message = FALSE}
+df <- read_csv("voctaxdata.csv")
+```
+
+------------------------------------------------------------------------
+
+[Table of Contents](#contents) \| [Course Homepage](https://politicalscience.github.io/ml)
+
+# Generalised Additive Models (GAMs) {#gam}
+
+To understand Generalised Additive Models, we must understand [Local Linear Regression](#local), [Polynomial Regression](https://politicalscience.github.io/ml/1-1.html), [Step Functions and Splines](https://politicalscience.github.io/ml/1-2.html).
+
+<br />
+
+If we remember back to the course Regression Analysis, linear multivariate regression models take the following form.
+
+$$
+\hat{y}=\hat{\beta}_0 + \hat{\beta}_1 x_1 + \hat{\beta}_2 x_2 + ... + \hat{\beta}_p x_p
+$$
+
+<br />
+
+The fact that the terms are added together is one of the best features of linear models - since it allows us to see the independent effect of one variable while holding others constant.
+
+We can illustrate this benefit of linear regression by finding how one specific $x$ variable (let us take $x_1$ for example) affects the prediction $\hat{y}$. We do this by taking the partial derivative in respect to $x_1$:
+
+$$
+\frac{\partial \hat{y}}{\partial x_1} = \frac{\partial \hat{y}}{\partial x_1}[\hat{\beta}_0] + \frac{\partial \hat{y}}{\partial x_1}[\hat{\beta}_1 x_1] + \frac{\partial \hat{y}}{\partial x_1}[\hat{\beta}_2 x_2] + ... + \frac{\partial \hat{y}}{\partial x_1}[\hat{\beta}_p x_p]
+$$
+
+$$
+\text{since } x_2,...x_p \text{ are treated as constants}
+$$
+
+$$
+\frac{\partial \hat{y}}{\partial x_1} = 0 + \hat{\beta}_1 + 0 + ... + 0
+$$
+
+$$
+\frac{\partial \hat{y}}{\partial x_1} = \hat{\beta}_1
+$$
+
+<br />
+
+We can see that the effect of $x_1$ on $\hat{y}$ is only dependent on the coefficient of $x_1$, $\hat{\beta}_1$. This allows us to independently assess every independent variable's effect on $y$.
+
+<br />
+
+Generalised additive models (GAMs) build on this same intuition. They use an additive model of the same form to preserve the fact that every independent variable $x$'s effect on $y$ can be isolated from each other. GAMs take it a step further by also allowing us to apply different methods to each independent variable:
+
+$$
+\hat{y} = \beta_0 + f_1(x_1) + f_2(x_2) + ... + f_p(x_p)
+$$
+
+-   Where $f_1, f_2, ..., f_p$ can all be different types of transformation methods, such as splines, local regressions, step functions, and polynomials.
+
+-   This allows us to mix different methods, based on our beliefs about the relationship between $x_p$ and $y$
+
+While I will not re-find the partial derivative of the GAM in the above form, the same idea as the linear model applies: each $x$ independent variable can have its own, independent, and unique effect on $y$, without worrying about the values of other variables.
+
+<br />
+
+We can also add interaction/moderating effects just like in standard linear regression.
+
+This flexibility of GAMs makes it a favourite method for many when trying to make accurate predictions.
+
+<br />
+
+------------------------------------------------------------------------
+
+[Table of Contents](#contents) \| [Course Homepage](https://politicalscience.github.io/ml)
+
+# GAMs in R {#r}
+
+First, we will need the package **gam** and **splines** to implement these methods in R:
+
+```{r, message = FALSE}
+
+library(splines)
+library(gam)
+```
+
+Remember to load tidyverse.
+
+```{r, message = FALSE, eval = FALSE}
+library(tidyverse)
+```
+
+Let us also load the dataset we will be using for these examples (feel free to load your own dataset)
+
+```{r, message = FALSE, eval = FALSE}
+df <- read_csv("voctaxdata.csv")
+```
+
+<br />
+
+#### Creating the Model in R
+
+We can implement the different methods we have learned into gam with certain functions:
+
+-   Splines: **bs(variable, df = #, degree = \#)**
+
+-   Local Regression: **lo(variable, \#)**
+
+-   Step Functions: **cut(variable, \#)**
+
+-   Polynomials: **poly(variable, \#)**
+
+For more information on syntax, check out the implementations in R in the following lessons: [Local Linear Regression](#local), [Polynomial Regression](https://politicalscience.github.io/ml/1-1.html), and [Step Functions and Splines](https://politicalscience.github.io/ml/1-2.html).
+
+<br />
+
+We can include all of these in a GAM with the **gam()** function. We will need the package **gam** for this. The syntax is as follows:
+
+```{r, eval = FALSE}
+
+gam_model <- gam(Y ~ bs(X1, 5) + lo(X2, 0.5), cut(X3, 6), poly(X4, 3) + X5, data = df)
+
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **gam_model** is the variable I am saving my model to. *You can name this anything you want to.*
+
+-   **Y** is the Y variable (Dependent variable) you are trying to predict, and **X1, X2, X3, X4, X5** are the X variables (independent variable) you are using to get your prediction. *Replace these with the variables you want to use.*
+
+    -   NOTE: Always put the Y variable before the X variable. Separate the two with a tilda **\~**
+    -   NOTE: You can add more simply by using a **+** sign and adding another variable.
+
+-   **bs(), lo(), cut(), poly()** are all different non-linear methods. *You can pick and chose which methods to put on what variables - you don't need to include all, you can use one method on multiple variables.*
+
+-   **df** is the name of the data frame that I am drawing these X and Y variables from. *Replace this with the name of your data frame.*
+
+<br />
+
+#### Prediction in R
+
+If we are interested in prediction, we can use the **predict()** function. You can predict in-sample data by setting **newdata** = the data frame you used for regression. You can predict out-of-sample data by using a dataframe with the same variables but new values. The syntax is as follows:
+
+-   Note: this syntax for prediction works in general for any type of model, not just GAMs.
+
+```{r, eval = FALSE}
+#create new df for comparison of actual and prediction
+df_results <- df %>%
+  select(Y) #optional, may help with readability
+
+# newdata is what values of X1, X2... to predict for.
+df_results$prediction <- predict(gam_model, newdata = df)
+
+# brief glimpse of the results
+head(df_results)
+```
+
+These are the parts of the syntax that can be altered:
+
+-   **df_results** is the results data frame I am creating. *You can name this anything you want to.*
+
+-   **Y** is the Y variable I am trying to predict. *Replace this with the name of your Y variable.*
+
+-   **gam_model** is the variable I am saving my linear regression model to. *You can name this anything you want to.*
+
+-   **df** is the name of the data frame that houses the $x$ values I want to predict for. *Replace this with the name of your data frame with the* $x$ *values you want to predict for.*
+
+<br />
+
+#### Example in R
+
+Take this following example (Note, I just chose the methods to apply to the variables at random):
+
+```{r, echo = FALSE}
+options(warn = -1)
+```
+
+```{r, message = FALSE}
+
+gam_model <- gam(econglobal ~ lo(export, 0.5) + bs(gini, df = 9, degree = 3), data = df)
+```
+
+```{r}
+summary(gam_model)
+```
+
+```{r, echo = FALSE}
+options(warn = 0)
+```
+
+We can use our model to make some in-sample predictions:
+
+```{r}
+#create new df for comparison of actual and prediction
+df_results <- df %>%
+  select(econglobal) #optional, may help with readability
+
+# newdata is what values of X1, X2... to predict for.
+df_results$prediction <- predict(gam_model, newdata = df)
+
+# brief glimpse of the results
+head(df_results)
+```
+
+<br />
+
+------------------------------------------------------------------------
+
+[Table of Contents](#contents) \| [Course Homepage](https://politicalscience.github.io/ml)
