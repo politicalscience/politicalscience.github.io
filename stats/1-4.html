@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Introductory Statistical Inference</title>
+<title>1.4 Conditional Probability and Bayes’ Law</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,17 +23,46 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="index_files/libs/clipboard/clipboard.min.js"></script>
-<script src="index_files/libs/quarto-html/quarto.js"></script>
-<script src="index_files/libs/quarto-html/popper.min.js"></script>
-<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="index_files/libs/quarto-html/anchor.min.js"></script>
-<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<script src="1-4_files/libs/clipboard/clipboard.min.js"></script>
+<script src="1-4_files/libs/quarto-html/quarto.js"></script>
+<script src="1-4_files/libs/quarto-html/popper.min.js"></script>
+<script src="1-4_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="1-4_files/libs/quarto-html/anchor.min.js"></script>
+<link href="1-4_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="1-4_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="1-4_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="1-4_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="1-4_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -45,7 +74,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Introductory Statistical Inference</h1>
+<h1 class="title">1.4 Conditional Probability and Bayes’ Law</h1>
+<p class="subtitle lead">Lesson 1.4, Introductory Statistical Inference</p>
 </div>
 
 
@@ -62,124 +92,172 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p><a href="https://politicalscience.github.io">Political Science Academy Homepage</a></p>
-<p>This is an introduction to statistical thinking and probability theory for Political Science. This course is about building the foundations for the applied methods taught in subsequent courses.</p>
-<p>Probability theory and statistical theory is essential for regression analysis, causal inference, and game theory.</p>
-<p><br></p>
-<p>Prerequisites: Officially, none, but some understanding of <a href="https://politicalscience.github.io/math/">Maths for Political Science</a> up to single variable calculus would be helpful.</p>
-<p><br></p>
-<section id="chapter-1-basics-of-probability" class="level3">
-<h3 class="anchored" data-anchor-id="chapter-1-basics-of-probability">Chapter 1: Basics of Probability</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Topics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/stats/1-1.html">1.1 Sets</a></td>
-<td>Sets, Set Notation, Set Operators, Set Properties</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/stats/1-2.html">1.2 Key Concepts in Probabilty</a></td>
-<td>Axioms of Probability, Rules of Probability, Independence</td>
-</tr>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/stats/1-3.html">1.3 Calculating Probabilities</a></td>
-<td>Fundamental Principle of Counting, Permutations, Combinations</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/stats/1-4.html">1.4 Conditional Probability and Bayes’ Rule</a></td>
-<td>Conditional Probability, Multiplicative Law, Law of Total Probability, Bayes’ Rule</td>
-</tr>
-</tbody>
-</table>
-<p><br></p>
+<p><a href="https://politicalscience.github.io/stats">Course Homepage</a></p>
+<section id="contents" class="level2">
+<h2 class="anchored" data-anchor-id="contents">Table of Contents</h2>
+<ol type="1">
+<li><a href="#conditional">Conditional Probability</a></li>
+<li><a href="#multiplicative">Multiplicative Law</a></li>
+<li><a href="#bayes">Bayes’ Rule</a></li>
+</ol>
+<hr>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/stats">Course Homepage</a></p>
 </section>
-<section id="chapter-2-random-variables" class="level3">
-<h3 class="anchored" data-anchor-id="chapter-2-random-variables">Chapter 2: Random Variables</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 56%">
-<col style="width: 43%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Topics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2.1 Random Variables</td>
-<td>+princeton lecture</td>
-</tr>
-<tr class="even">
-<td>2.2 Discrete Distributions</td>
-<td>Discrete Random Variable, Proabability Mass Function, Cumulative Density Function.</td>
-</tr>
-<tr class="odd">
-<td>2.3 Continuous Distributions</td>
-<td>Continuous Random Variable, Probability Density Function, Cumulative Density Function</td>
-</tr>
-<tr class="even">
-<td>2.4: Expectations</td>
-<td>Expectations of Discrete Random Variables, Expectations of Continuous Random Variabls, Expected Value</td>
-</tr>
-<tr class="odd">
-<td>2.5 Expectations and Moments</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>2.6 Variance and Covariance</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>2.7 Types of Discrete Distributions</td>
-<td>Binomial Distribution, Poisson Distribution</td>
-</tr>
-<tr class="even">
-<td>2.8 Types of Continuous Distributions</td>
-<td>Uniform Distribution, Normal Distribution</td>
-</tr>
-<tr class="odd">
-<td>2.9 Joint Distributions</td>
-<td>Joint Probability Distribution, Marginal Probability Distribution, Conditional Probability Distribution.</td>
-</tr>
-</tbody>
-</table>
+<section id="conditional" class="level1">
+<h1>Conditional Probability</h1>
+<p>Conditional Probability describes the probability of an event, given that another event has occurred. Conditional probability takes the following form:</p>
+<p><span class="math display">\[
+Pr(A|B) = \frac{Pr(A \cap B)}{Pr(B)}
+\]</span></p>
+<ul>
+<li><p><span class="math inline">\(Pr(A|B)\)</span> is the probability of event <span class="math inline">\(A\)</span> occurring, given event <span class="math inline">\(B\)</span> has occurred.</p></li>
+<li><p><span class="math inline">\(Pr(A \cap B)\)</span> is the probability that an event that is in the intersection of <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> occurs - i.e., when event <span class="math inline">\(A\)</span> also falls into event <span class="math inline">\(B\)</span></p></li>
+<li><p><span class="math inline">\(Pr(B)\)</span> is the probability that event B occurs. It is in the denominator, since we are assuming it already has occurred, and we are concerned with <span class="math inline">\(Pr(A \cap B)\)</span> after <span class="math inline">\(Pr(B)\)</span> has occurred.</p></li>
+</ul>
 <p><br></p>
+<section id="example" class="level4">
+<h4 class="anchored" data-anchor-id="example">Example</h4>
+<p>We roll a 6-sided dice. The outcome is (somehow) known to be an odd-number. What is the probability of the outcome being 1?</p>
+<p>Let us first define terms in the framework of conditional probability</p>
+<ul>
+<li><p>Event <span class="math inline">\(A\)</span> is rolling a 1, so <span class="math inline">\(Pr(A)\)</span> is the probability of rolling a 1.</p></li>
+<li><p>Event <span class="math inline">\(B\)</span> is rolling an odd number, so <span class="math inline">\(Pr(B)\)</span> is the probability of rolling an odd number.</p></li>
+<li><p><span class="math inline">\(Pr(A \cap B)\)</span> is the probability that the outcome is in both <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, which means the outcome must be both odd, and the number 1.</p></li>
+<li><p><span class="math inline">\(Pr(A|B)\)</span> is the probability of <span class="math inline">\(A\)</span> occurring given <span class="math inline">\(B\)</span> occurred, the premise of the question.</p></li>
+</ul>
+<p><br></p>
+<p>Now, let us find the probability of the relevant terms:</p>
+<ul>
+<li><p><span class="math inline">\(Pr(A \cap B) = 1/6\)</span></p>
+<ul>
+<li><p>The total number of outcomes is 6, as it is a 6 sided die.</p></li>
+<li><p>The intersection of <span class="math inline">\(B\)</span> the outcome of odd number, and <span class="math inline">\(A\)</span> the outcome of #1, is just <span class="math inline">\(A\)</span> the outcome of #1, since the other odd numbers don’t fit into category <span class="math inline">\(A\)</span> thus wouldn’t be in the intersection. Thus, the numerator is 1.</p></li>
+</ul></li>
+<li><p><span class="math inline">\(Pr(B) = 1/2\)</span></p>
+<ul>
+<li><p>The total number of outcomes is 6, as it is a 6 sided die.</p></li>
+<li><p><span class="math inline">\(B\)</span>, the outcome of being an odd-number, will have a numerator of 3, as there are 3 odd numbers between 1 and 6 inclusive.</p></li>
+<li><p>We can simplify <span class="math inline">\(3/6\)</span> to <span class="math inline">\(1/2\)</span></p></li>
+</ul></li>
+</ul>
+<p><br></p>
+<p>Now, let us fit this into the framework of Conditional Probability:</p>
+<p><span class="math display">\[
+Pr(A|B) = \frac{Pr(A \cap B)}{Pr(B)}
+\]</span></p>
+<p><span class="math display">\[
+Pr(A|B) = \frac{1/6}{1/2} = \frac{1}{6} * \frac{2}{1}
+\]</span></p>
+<p><span class="math display">\[
+Pr(A|B) = \frac{1}{3}
+\]</span></p>
+<p>This makes sense, as there are 3 odd numbers, and #1 is one of the 3.</p>
+<p><br></p>
+<hr>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/stats">Course Homepage</a></p>
 </section>
-<section id="chapter-3-statistical-inference" class="level3">
-<h3 class="anchored" data-anchor-id="chapter-3-statistical-inference">Chapter 3: Statistical Inference</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 56%">
-<col style="width: 43%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Topics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2.1 Summary Statistics</td>
-<td>Measurements of Central Tendency, Measurements of Spread</td>
-</tr>
-<tr class="even">
-<td>2.2 Samples and Populations</td>
-<td>Sampling, Inference</td>
-</tr>
-<tr class="odd">
-<td>2.3 Intro to Hypothesis Testing</td>
-<td>Hypothesis Testing, Chi-Square Tests, Difference in Means, Confidence Intervals</td>
-</tr>
-</tbody>
-</table>
+</section>
+<section id="multiplicative" class="level1">
+<h1>Multiplicative Law</h1>
+<p>The multiplicative law of probability illustrates the probability of the intersection of two events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> as follows:</p>
+<p><span class="math display">\[
+Pr(A \cap B) = Pr(A) * Pr (B|A) = Pr(B) * Pr(A|B)
+\]</span></p>
+<p><br></p>
+<p>How do we know this? Well, we can derive this from the definition of <a href="#conditional">conditional probability</a> by solving for <span class="math inline">\(Pr(A \cap B)\)</span>:</p>
+<p><span class="math display">\[
+Pr(A|B) = \frac{Pr(A \cap B)}{Pr(B)}
+\]</span></p>
+<p><span class="math display">\[
+Pr(A \cap B) = Pr(A|B) * Pr(B)
+\]</span></p>
+<p><br></p>
+<p>That proves the <span class="math inline">\(Pr(A \cap B) =  Pr(B) * Pr(A|B)\)</span> part of the equation. But, we still have the <span class="math inline">\(= Pr(A) * Pr (B|A)\)</span> part to prove.</p>
+<p><br></p>
+<p>Let us first find the conditional probability of <span class="math inline">\(B\)</span> given <span class="math inline">\(A\)</span>, once again using the definition of conditional probability, but renaming set <span class="math inline">\(A\)</span> as <span class="math inline">\(B\)</span> and <span class="math inline">\(B\)</span> as <span class="math inline">\(A\)</span>.</p>
+<p><span class="math display">\[
+Pr(B|A) = \frac{Pr(B \cap A)}{Pr(A)}
+\]</span></p>
+<p><span class="math display">\[
+Pr(B \cap A) = Pr(B|A) * Pr(A)
+\]</span></p>
+<p><br></p>
+<p>So we have established the following two truths:</p>
+<p><span class="math display">\[
+Pr(A \cap B) = Pr(A|B) * Pr(B)
+\]</span></p>
+<p><span class="math display">\[
+Pr(B \cap A) = Pr(B|A) * Pr(A)
+\]</span></p>
+<p>We also know from the lesson on <a href="https://politicalscience.github.io/stats/1-1.html">sets</a>, that the commutative property states:</p>
+<p><span class="math display">\[
+A \cap B = B \cap A
+\]</span></p>
+<p><br></p>
+<p>Thus, <span class="math inline">\(Pr(A \cap B) = Pr(B \cap A)\)</span>, and thus:</p>
+<p><span class="math display">\[
+Pr(A|B) * Pr(B) = Pr(B|A) * Pr(A)
+\]</span></p>
+<p>Who both equal:</p>
+<p><span class="math display">\[
+=Pr(A \cap B)=Pr(B \cap A)
+\]</span></p>
+<p><br></p>
+<hr>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/stats">Course Homepage</a></p>
+</section>
+<section id="bayes" class="level1">
+<h1>Bayes’ Rule</h1>
+<p>So, in the section on <a href="#conditional">conditional probability</a>, we have established that:</p>
+<p><span class="math display">\[
+Pr(A|B) = \frac{Pr(A \cap B)}{Pr(B)}
+\]</span></p>
+<p><br></p>
+<p>And, in the section on the <a href="#multiplicative">multiplicative law</a>, we have established that:</p>
+<p><span class="math display">\[
+Pr(A \cap B) = Pr(A) * Pr (B|A) = Pr(B) * Pr(A|B)
+\]</span></p>
+<p><br></p>
+<p>So lets put these two ideas together. Let us substitution the multiplicative law into the conditional probability definition.</p>
+<p>This gives us Bayes’ Rule (also called Bayes’ Theorem or Bayes’ Law):</p>
+<p><span class="math display">\[
+Pr(A|B)=\frac{Pr(B|A)*Pr(A)}{Pr(B)}
+\]</span></p>
+<p><br></p>
+<p>Each part of Bayes’ Rule has its own name:</p>
+<ul>
+<li><p><span class="math inline">\(Pr(A|B)\)</span> is the conditional probability.</p></li>
+<li><p><span class="math inline">\(Pr(B|A)\)</span> is called the posterior probability</p></li>
+<li><p><span class="math inline">\(Pr(A)\)</span> is the prior probability</p></li>
+<li><p><span class="math inline">\(Pr(B)\)</span> is the marginal probability</p></li>
+</ul>
+<p><br></p>
+<p>In many applications of Bayes’ rule, such as Bayesian Inference (used in many techniques including the machine learning technique of Naive Bayes Classifier), the numerator <span class="math inline">\(P(B)\)</span> is constant.</p>
+<p>So, especially when <span class="math inline">\(P(B)\)</span> is difficult to calculate, you will often see the following equation:</p>
+<p><span class="math display">\[
+P(A|B) \propto Pr(B|A)*Pr(A)
+\]</span></p>
+<p>Where <span class="math inline">\(\propto\)</span> indicates “proportional to”.</p>
+<p><br></p>
+<section id="extensions" class="level4">
+<h4 class="anchored" data-anchor-id="extensions">Extensions:</h4>
+<p>Sometimes, <span class="math inline">\(P(B)\)</span> is not obvious. We can rewrite the denominator <span class="math inline">\(P(B)\)</span> in the following ways:</p>
+<p><br></p>
+<p>If the event <span class="math inline">\(A\)</span> only has two states (binary, example - yes/no, off/on, etc.), then Bayes’ rule can also be written as:</p>
+<p><span class="math display">\[
+P(A|B) = \frac{Pr(B|A)*Pr(A)}{Pr(B|A)Pr(A)+Pr(B|A^C)Pr(A^C)}
+\]</span></p>
+<p><br></p>
+<p>In the event <span class="math inline">\(A\)</span> has <span class="math inline">\(k\)</span> number of states, then Bayes’ rule can also be written as, if we are interested in the outcome category <span class="math inline">\(i\)</span> of event <span class="math inline">\(A\)</span>:</p>
+<p><span class="math display">\[
+Pr(A_i|B) = \frac{Pr(B|A_i)*Pr(A_i)}{\sum\limits_{j=1}^k Pr(B|A_j)Pr(A_j)}
+\]</span></p>
+<p><br></p>
+<p>How did we get these? The law of total probability, which I will not discuss in this lesson, but provides a framework for rewriting the denominator of Bayes’ Rule.</p>
+<p><br></p>
+<hr>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/stats">Course Homepage</a></p>
+</section>
 </section>
 
 </main>
