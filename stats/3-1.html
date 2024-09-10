@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Introductory Statistical Inference</title>
+<title>3.1 Samples and Populations</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,17 +23,46 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="index_files/libs/clipboard/clipboard.min.js"></script>
-<script src="index_files/libs/quarto-html/quarto.js"></script>
-<script src="index_files/libs/quarto-html/popper.min.js"></script>
-<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="index_files/libs/quarto-html/anchor.min.js"></script>
-<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<script src="3-1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="3-1_files/libs/quarto-html/quarto.js"></script>
+<script src="3-1_files/libs/quarto-html/popper.min.js"></script>
+<script src="3-1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="3-1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="3-1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="3-1_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="3-1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="3-1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="3-1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -45,7 +74,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Introductory Statistical Inference</h1>
+<h1 class="title">3.1 Samples and Populations</h1>
+<p class="subtitle lead">Lesson 3.1, Introductory Statistical Inference</p>
 </div>
 
 
@@ -62,96 +92,139 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p><a href="https://politicalscience.github.io">Political Science Academy Homepage</a></p>
-<p>This is an introduction to statistical thinking and probability theory for Political Science. This course is about building the foundations for the applied methods taught in subsequent courses.</p>
-<p>Probability theory and statistical theory is essential for regression analysis, causal inference, and game theory.</p>
+<p><a href="https://politicalscience.github.io/stats">Course Homepage</a></p>
+<section id="contents" class="level2">
+<h2 class="anchored" data-anchor-id="contents">Table of Contents</h2>
+<ol type="1">
+<li><a href="#sampling">Sampling</a></li>
+<li><a href="#clm">Central Limit Theorem</a></li>
+</ol>
+<hr>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/stats">Course Homepage</a></p>
+</section>
+<section id="sampling" class="level1">
+<h1>Sampling</h1>
+<section id="what-are-samples-and-populations" class="level4">
+<h4 class="anchored" data-anchor-id="what-are-samples-and-populations">What are Samples and Populations</h4>
+<p>When we want to analyse a phenomena in political science, we often take samples of the population.</p>
+<ul>
+<li><p>Samples are a portion of all the observations that exist.</p></li>
+<li><p>Population is all of the observations that exist.</p></li>
+<li><p>We often use samples, instead of the whole population, because data for the whole population may not exist or be extremely expensive to collect.</p></li>
+</ul>
 <p><br></p>
-<p>Prerequisites: Officially, none, but some understanding of <a href="https://politicalscience.github.io/math/">Maths for Political Science</a> up to single variable calculus would be helpful.</p>
-<p><br></p>
-<section id="chapter-1-basics-of-probability" class="level3">
-<h3 class="anchored" data-anchor-id="chapter-1-basics-of-probability">Chapter 1: Basics of Probability</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Topics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/stats/1-1.html">1.1 Sets</a></td>
-<td>Sets, Set Notation, Set Operators, Set Properties</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/stats/1-2.html">1.2 Key Concepts in Probabilty</a></td>
-<td>Axioms of Probability, Rules of Probability, Independence</td>
-</tr>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/stats/1-3.html">1.3 Counting</a></td>
-<td>Fundamental Principle of Counting, Permutations, Combinations</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/stats/1-4.html">1.4 Conditional Probability and Bayes’ Rule</a></td>
-<td>Conditional Probability, Multiplicative Law, Law of Total Probability, Bayes’ Rule</td>
-</tr>
-</tbody>
-</table>
+<p>For example, if we want to know about the happiness of every person in the UK:</p>
+<ul>
+<li><p>Actually asking all nearly 70 million citizens would be nearly impossible - it would take so much time, effort, and money, plus people are constantly being born or dying.</p></li>
+<li><p>Instead, we could take a sample of UK citizens, and use that sample to infer something about the entire population.</p></li>
+</ul>
+<p>This is the idea of statistical inference - using a sample to tell us something about the larger population.</p>
 <p><br></p>
 </section>
-<section id="chapter-2-random-variables" class="level3">
-<h3 class="anchored" data-anchor-id="chapter-2-random-variables">Chapter 2: Random Variables</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Topics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/stats/2-1.html">2.1 Discrete Distributions</a></td>
-<td>Discrete Random Variable, Proabability Mass Function, Cumulative Density Function.</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/stats/2-2.html">2.2 Continuous Distributions</a></td>
-<td>Continuous Random Variable, Probability Density Function, Cumulative Density Function</td>
-</tr>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/stats/2-3.html">2.3: Expectations of Random Variables</a></td>
-<td>Expectations of Random Variables, Functions, Properties of Expected Value, Variance</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/stats/2-4.html">2.4 Types of Distributions</a></td>
-<td>Uniform Distribution, Normal Distribution, Binomial Distribution, Poisson Distribution</td>
-</tr>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/stats/2-5.html">2.5 Joint Distributions</a></td>
-<td>Joint Probability Distribution, Marginal Probability Distribution, Conditional Probability Distribution.</td>
-</tr>
-</tbody>
-</table>
+<section id="sampling-procedure" class="level4">
+<h4 class="anchored" data-anchor-id="sampling-procedure">Sampling Procedure</h4>
+<p>Sampling is the process of how we select this portion of observations from all the possible observations in the population.</p>
+<ul>
+<li><p>The way we chose to sample is very important: a “bad” sample could result in the wrong conclusions and inferences made on the population.</p></li>
+<li><p>Thus, we are very interested in the way we sample.</p></li>
+</ul>
+<p>Done correctly, sampling can be very accurate at inferring the reality in the population, as well as being significantly cheaper and less time-intensive.</p>
+<p><br></p>
+<p>The primary method of sampling is <strong>Random Sampling</strong>. This is because Random Sampling avoids <strong>Self Selection Bias</strong>.</p>
+<ul>
+<li><p>For example, say that you are interested in the average amount of time students study at your university.</p></li>
+<li><p>If you chose to set up your survey stand outside the library - there is an issue: The people you survey are the ones who spend time in the library, and those people probably study more than the average student does.</p></li>
+<li><p>Thus, this positioning creates self-selection bias.</p></li>
+</ul>
+<p><br></p>
+<p>To prevent self selection bias, we need to make sure every observation in the population, has an <strong>equal chance</strong> of being selected in our sample.</p>
+<ul>
+<li><p>This, in other words, means we need to employ <strong>Random Sampling</strong></p></li>
+<li><p>Random sampling is basically, well, randomly sampling observations from the population, assuming each observation has an equal chance of being selected.</p></li>
+</ul>
+<p><br></p>
+<p>With random sampling, we can create samples that roughly reflect the true population.</p>
+<ul>
+<li>If we draw multiple random samples, and find the averages, we can be even more certain of the true population.</li>
+</ul>
+<p>Generally, the larger our samples are, the more confident we are that our samples reflect the population.</p>
+<p><br></p>
+<hr>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/stats">Course Homepage</a></p>
+</section>
+</section>
+<section id="clm" class="level1">
+<h1>Central Limit Theorem</h1>
+<p>The Central Limit Theorem is key to understanding why statistical inference from sampling works.</p>
+<p><br></p>
+<p>Imagine that from a very diverse population of people, we took a random sample.</p>
+<ul>
+<li>What if somehow, maybe through bad luck, we ended up with only the tallest people? What about all the shortest?</li>
+</ul>
+<p>The Central Limit Theorem tells us that:</p>
+<ul>
+<li>There is a <strong>systematic relationship</strong> between the probability that we will pick a particular sample, and how far that sample is from the true population average.</li>
+</ul>
+<p><br></p>
+<section id="intuition-behind-the-central-limit-theorem" class="level4">
+<h4 class="anchored" data-anchor-id="intuition-behind-the-central-limit-theorem">Intuition Behind the Central Limit Theorem</h4>
+<p>Imagine we are interested in the heights of Dutch people.</p>
+<ul>
+<li><p>We draw a random sample, then record the mean <span class="math inline">\(\mu\)</span> height of the sample.</p></li>
+<li><p>Replace all observations back into the population. Then we then draw another sample, the record the mean <span class="math inline">\(\mu_2\)</span> height of the sample.</p></li>
+<li><p>Replace all observations back into the population. Then we keep drawing samples, replacing back, until the number of samples <span class="math inline">\(n\)</span> approaches infinity.</p></li>
+<li><p>Then, we will have an infinite number of samples <span class="math inline">\(n=∞\)</span>, and an infinite number of sample means from each sample: <span class="math inline">\(\mu_1, \mu_2, \mu_3,...,\mu_n\)</span></p></li>
+</ul>
+<p><br></p>
+<p>Now, let us graph all the sample means <span class="math inline">\(\mu_1, \mu_2, \mu_3,...,\mu_n\)</span> in a frequency distribution. The <span class="math inline">\(x\)</span> axis will be the value of the mean, and the <span class="math inline">\(y\)</span> axis is frequency (how many times that specific mean appears).</p>
+<ul>
+<li>This graph is also called a sampling distribution</li>
+</ul>
+<p><br></p>
+<p>The Central Limit Theorem states that if each sample’s size is sufficiently large (usually each sample has more than 30 observations), we can assume that the frequency distribution of the different sample means <span class="math inline">\(\mu_1, \mu_2, ..., \mu_n\)</span> will approximate the shape of a <a href="https://politicalscience.github.io/stats/2-4.html#normal">normal distribution</a>, with the centre/mean of the normal distribution being the mean of all the sample means.</p>
+<ul>
+<li><p>The mean of all the sample means <span class="math inline">\(\mu_1, \mu_2, ..., \mu_n\)</span> is the centre of the normal distribution by the law of large numbers.</p></li>
+<li><p>We can see a <a href="http://www.ltcconline.net/greenl/java/Statistics/clt/cltsimulation.html">simulator</a> of how the distribution of sample means approximates a normal distribution.</p></li>
+<li><p>This is true, even if the population distribution is not normally distributed.</p></li>
+</ul>
+<p><br></p>
+<p>Because the frequency distribution of sample means should approximate a normal distribution, we can apply the properties of a normal distribution , as seen in the figure below (see lesson on <a href="https://politicalscience.github.io/stats/2-4.html#normal">normal distribution</a> for more details):</p>
+<p><img src="normal.png" class="img-fluid" style="width:60.0%"></p>
+<p><br></p>
+<p>We can turn the frequency distribution into a probability distribution:</p>
+<ul>
+<li><p>How? Well we know that the probability of one outcome, is just the number of times that outcome occurs divided by the total amount of observations.</p></li>
+<li><p>So, we take the frequency <span class="math inline">\(y\)</span> axis value of one <span class="math inline">\(x\)</span> outcome, and divide it by the total number of observations.</p></li>
+<li><p>The above figure does just this, but for sections of <span class="math inline">\(x\)</span> rather than one <span class="math inline">\(x\)</span> value.</p></li>
+</ul>
+<p><br></p>
+<p>With our normal distribution telling us probabilities, we can now determine the probability of getting certain sample averages.</p>
+<ul>
+<li><p>For example, if we had taken a ton of random samples, and we were concerned one was full of only tall people, we could place the average height outcome on our normal distribution, and determine the probability of getting an outcome with that average height or higher.</p></li>
+<li><p>Sampling Distributions are also useful for another reason: Hypothesis testing, the topic of our next lesson.</p></li>
+</ul>
 <p><br></p>
 </section>
-<section id="chapter-3-statistical-inference" class="level3">
-<h3 class="anchored" data-anchor-id="chapter-3-statistical-inference">Chapter 3: Statistical Inference</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Topics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/stats/3-1.html">3.1 Samples and Populations</a></td>
-<td>Sampling, Inference, Central Limit Theorem</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/stats/3-2.html">3.2 Intro to Hypothesis Testing</a></td>
-<td>Hypothesis Testing, Difference in Means, Confidence Intervals, Chi-Squared Tests</td>
-</tr>
-</tbody>
-</table>
+<section id="properties-of-sampling-distributions" class="level4">
+<h4 class="anchored" data-anchor-id="properties-of-sampling-distributions">Properties of Sampling Distributions</h4>
+<p>There are several properties of the Central Limit Theorem and Sampling Distributions:</p>
+<ul>
+<li><p>The mean of the sampling distribution <span class="math inline">\(\mu_{\bar{x}}\)</span> is the same as the mean of the population.</p>
+<ul>
+<li>This is because of the law of large numbers - if you take enough samples (remember, as <span class="math inline">\(n\)</span> approaches <span class="math inline">\(∞\)</span>), the mean will converge with the real value.</li>
+</ul></li>
+<li><p>The standard deviation of the sampling distribution, is the standard deviation of the population divided by the square root of the size of each sample: <span class="math inline">\(\sigma_{\bar{x}} = \frac{\sigma}{\sqrt{n}}\)</span></p></li>
+</ul>
+<p><br></p>
+<p>Because of the properties of a normal distribution, by knowing the mean of the sampling distribution <span class="math inline">\(\mu_{\bar{x}}\)</span> and the standard deviation of the sampling distribution <span class="math inline">\(\sigma_{\bar{x}}\)</span>, we can calculate the probability of certain outcomes occurring.</p>
+<ul>
+<li><p>See lesson on <a href="https://politicalscience.github.io/stats/2-4.html#normal">normal distribution</a> for more details on Normal Distributions</p></li>
+<li><p>See lesson on hypothesis testing for an implementation of Central Limit Theorem.</p></li>
+</ul>
+<p><br></p>
+<hr>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/stats">Course Homepage</a></p>
+</section>
 </section>
 
 </main>
