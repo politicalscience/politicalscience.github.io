@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Maths for Political Science</title>
+<title>Vectors</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,17 +23,46 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="index_files/libs/clipboard/clipboard.min.js"></script>
-<script src="index_files/libs/quarto-html/quarto.js"></script>
-<script src="index_files/libs/quarto-html/popper.min.js"></script>
-<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="index_files/libs/quarto-html/anchor.min.js"></script>
-<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<script src="4-1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="4-1_files/libs/quarto-html/quarto.js"></script>
+<script src="4-1_files/libs/quarto-html/popper.min.js"></script>
+<script src="4-1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="4-1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="4-1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="4-1_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="4-1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="4-1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="4-1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -45,7 +74,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Maths for Political Science</h1>
+<h1 class="title">Vectors</h1>
+<p class="subtitle lead">Lesson 4.1, Maths for Political Science</p>
 </div>
 
 
@@ -62,185 +92,150 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p><a href="https://politicalscience.github.io">Political Science Academy Homepage</a></p>
-<p>This course covers some of the key topics in algebra, calculus, and linear algebra needed to understand the methods behind political science.</p>
-<p>The point of this course is not meant to be a thorough explanation of math topics - it is instead to install practical skills which will be useful in research. Thus, I will not be going through many proofs of concepts.</p>
-<p><br></p>
-<p><strong>Prerequisites</strong>: Algebra to the level of a typical secondary education.</p>
-<p>Note: You don’t need to study this course from beginning to end - you can focus on particular areas where you may struggle with.</p>
-<p><br></p>
-<section id="chapter-1-topics-in-algebra" class="level3">
-<h3 class="anchored" data-anchor-id="chapter-1-topics-in-algebra">Chapter 1: Topics in Algebra</h3>
-<p><em>Building the foundations of mathematics for Political Scientists</em></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Topics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/math/1-1.html">1.1 Functions</a></td>
-<td>Dimensionality, Definition of Functions, Roots, Limits, Continuity</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/math/1-2.html">1.2 Exponents and Logarithms</a></td>
-<td>Exponent Rules, Logarithm Rules</td>
-</tr>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/math/1-3.html">1.3 Sum and Product Notation</a></td>
-<td>Summation Notation, Product Notation</td>
-</tr>
-</tbody>
-</table>
-<p><br></p>
+<p><a href="https://politicalscience.github.io/math">Course Hompage</a></p>
+<section id="contents" class="level2">
+<h2 class="anchored" data-anchor-id="contents">Table of Contents</h2>
+<ol type="1">
+<li><a href="#intro">Intro to Linear Algebra</a></li>
+<li><a href="#scalars">Scalars and Vectors</a></li>
+<li><a href="#graphical">Graphical Representation of Vectors</a></li>
+</ol>
+<hr>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/math">Course Hompage</a></p>
 </section>
-<section id="chapter-2-single-variable-calculus" class="level3">
-<h3 class="anchored" data-anchor-id="chapter-2-single-variable-calculus">Chapter 2: Single Variable Calculus</h3>
-<p><em>Building key concepts frequently used in Political Science</em></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Topics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/math/2-1.html">2.1 Introduction to Derivatives</a></td>
-<td>Definition of Derivative, Calculating Simple Derivatives</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/math/2-2.html">2.2 Chain Rule Derivatives</a></td>
-<td>Composite Functions, Chain Rule</td>
-</tr>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/math/2-3.html">2.3 Exponent and Log Derivatives</a></td>
-<td>Derivatives of Exponential Functions, Derivatives of Logarithms</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/math/2-4.html">2.4 Partial Derivatives</a></td>
-<td>Partial Derivatives, Application in Regression, Application in Economics</td>
-</tr>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/math/2-5.html">2.5 Indefinite Integrals</a></td>
-<td>Indefinite Integrals, Calculating Integrals</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/math/2-6.html">2.6 Definite Integrals</a></td>
-<td>Riemann Sum and Rieman Integral, Fundamental Theorem of Calculus</td>
-</tr>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/math/2-7.html">2.7 Integrating by Substitution</a></td>
-<td>U-Subsitution</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/math/2-8.html">2.8 Integrating by Parts</a></td>
-<td>Integration by Parts for Indefinite and Definite Integrals</td>
-</tr>
-</tbody>
-</table>
+<section id="intro" class="level1">
+<h1>Intro to Linear Algebra</h1>
+<p>Linear Algebra is a broad topic, that covers systems of linear equations, matrices, and vectors.</p>
 <p><br></p>
-</section>
-<section id="chapter-3-optimisation" class="level3">
-<h3 class="anchored" data-anchor-id="chapter-3-optimisation">Chapter 3: Optimisation</h3>
-<p><em>Optimisation is one of the primary focuses of Political Science methods.</em></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Topics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/math/3-1.html">3.1 Maxima and Minima</a></td>
-<td>Slope and Concavity, Critical Points, Global and Local Maxima and Minima</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/math/3-2.html">3.2 Unconstrained Optimisation</a></td>
-<td>Optimisation in Decision Theory, Optimisation in Linear Regression</td>
-</tr>
-<tr class="odd">
-<td>3.3 Constrained Optimisation</td>
-<td>Equality Constraints, Langrangian Function</td>
-</tr>
-</tbody>
-</table>
+<p>Matrices and Vectors are very important for political science:</p>
+<ul>
+<li><p>You can represent each variable in statistics as a vector, with each observation’s <span class="math inline">\(x_1, x_2, x_3,...,x_n\)</span> is essentially a <span class="math inline">\(n\)</span>-long vector.</p></li>
+<li><p>If we have multiple dependent variables (so multiple vectors), we can represent them in a matrix, with each column can be a different variable.</p></li>
+</ul>
+<p>We use these vectors and matrices to directly compute coefficients of regressions and other estimators.</p>
 <p><br></p>
-</section>
-<section id="chapter-4-intro-to-linear-algebra" class="level3">
-<h3 class="anchored" data-anchor-id="chapter-4-intro-to-linear-algebra">Chapter 4: Intro to Linear Algebra</h3>
-<p><em>More advanced materials to better understand regressions.</em></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Topics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="https://politicalscience.github.io/math/4-1.html">4.1 Vectors</a></td>
-<td>Introduction to Linear Algebra, Vectors and Scalars, Graphical Representation of Vectors</td>
-</tr>
-<tr class="even">
-<td><a href="https://politicalscience.github.io/math/4-2.html">4.2 Vector Algebra</a></td>
-<td>Vector Addition, Scalar Multiplication, Dot Product</td>
-</tr>
-<tr class="odd">
-<td>4.3 Matrices</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>4.4 Matrix Algebra</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>4.5 Matrix Operators</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>4.6 Properties</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>4.7 OLS Regression</td>
-<td></td>
-</tr>
-</tbody>
-</table>
+<p>Matrices are also used in Game Theory for political science:</p>
+<ul>
+<li><p>Game theory, when we have to solve for optimal behaviour, you often have multiple players and different payoffs.</p></li>
+<li><p>You will often have different variables that you need to solve an equation, which incorporates linear algebra, matrices, and vectors.</p></li>
+</ul>
 <p><br></p>
-</section>
-<section id="chapter-5-intro-to-multivariate-calculus" class="level3">
-<h3 class="anchored" data-anchor-id="chapter-5-intro-to-multivariate-calculus">Chapter 5: Intro to Multivariate Calculus</h3>
-<p><em>Highly advanced material.</em></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Topics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>5.1 Functions of Several Variables</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>5.2 Further Partial Derivatives</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>5.3 Multidimensional Integrals</td>
-<td></td>
-</tr>
-</tbody>
-</table>
+<p>More advanced topics, including Markov Chains, Monte Carlo Simulations, and Advanced Game Theory models, also are based in Linear Algebra.</p>
 <p><br></p>
 <hr>
-<p><a href="https://politicalscience.github.io">Political Science Academy Homepage</a></p>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/math">Course Hompage</a></p>
+</section>
+<section id="scalars" class="level1">
+<h1>Scalars and Vectors</h1>
+<section id="scalars-1" class="level4">
+<h4 class="anchored" data-anchor-id="scalars-1">Scalars</h4>
+<p><strong>Scalars</strong> are any element, for example, a real number.</p>
+<ul>
+<li><p>For example, a scalar could be a real number <span class="math inline">\(X_1 \in R\)</span></p>
+<ul>
+<li>NOTE: <span class="math inline">\(\in\)</span> means “in”, and <span class="math inline">\(R\)</span> means the set of all real numbers.</li>
+</ul></li>
+<li><p>Or <span class="math inline">\(X_2 \in R\)</span></p></li>
+<li><p>Or any other single number you have used in your entire life, like <span class="math inline">\(1, 2, 3...\)</span></p></li>
+</ul>
+<p><br></p>
+</section>
+<section id="vectors" class="level4">
+<h4 class="anchored" data-anchor-id="vectors">Vectors</h4>
+<p><strong>Vectors</strong> are a collection of scalars.</p>
+<ul>
+<li>All a vector is, is a collection of scalars (any element, for example, a real number - see above).</li>
+</ul>
+<p><br></p>
+<p>Vectors have 2 types - row and column:</p>
+<ul>
+<li><p>A row vector has multiple components/elements <span class="math inline">\(x_1, x_2,..., x_n\)</span> arranged in a row (horizontal).</p></li>
+<li><p>A column vector has multiple components/elements <span class="math inline">\(x_1, x_2,..., x_n\)</span> arranged in a column (vertical).</p></li>
+</ul>
+<p><br></p>
+<p>The <strong>dimension</strong> of a vector is the number of components/elements.</p>
+<ul>
+<li><p>For example, a vector of components <span class="math inline">\(x_1, x_2, x_3\)</span> is a 3 dimensional vector.</p></li>
+<li><p>For example, a vector of components <span class="math inline">\(x_1, x_2, x_3, x_4\)</span> is a 4 dimensional vector.</p></li>
+</ul>
+<p><br></p>
+<p>Vector notation is as follows:</p>
+<ul>
+<li><p>Generally, the components of a vector are numbered, so we can easily tell the position of each component.</p>
+<ul>
+<li>Ex. <span class="math inline">\(x_1, x_2, x_3, x_4\)</span></li>
+</ul></li>
+<li><p>The vector itself is generally bolded: <span class="math inline">\(\mathbf{x}\)</span>. However, when this is impractical to notate, we often put an arrow above the variable to indicate a vector: <span class="math inline">\(\overrightarrow{x}\)</span></p></li>
+<li><p>Scalars are just regular variables: <span class="math inline">\(x\)</span></p></li>
+</ul>
+<p><br></p>
+<hr>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/math">Course Hompage</a></p>
+</section>
+</section>
+<section id="graphical" class="level1">
+<h1>Graphical Representation of Vectors</h1>
+<p>In the previous section, we discussed how vectors are simply, a collection of components/elements/scalars.</p>
+<p>However, we can actually graph vectors:</p>
+<ul>
+<li>This relates to the “dimension” of a vector.</li>
+</ul>
+<p><br></p>
+<p>Let us take a 2 dimensional vector as an example:</p>
+<ul>
+<li>The vector has 2 components: <span class="math inline">\(x_1, x_2\)</span></li>
+</ul>
+<p>We can view <span class="math inline">\(x_1\)</span> as the value along the <span class="math inline">\(x\)</span> axis, and <span class="math inline">\(x_2\)</span> as the value along the <span class="math inline">\(y\)</span> axis.</p>
+<ul>
+<li>We can plot the point on the graph where <span class="math inline">\(x=x_1\)</span> and <span class="math inline">\(y=x_2\)</span> meet</li>
+</ul>
+<p>The vector is the <strong>direct line from the origin</strong> <span class="math inline">\(0,0\)</span> <strong>to the point</strong> <span class="math inline">\((x=x_1, y=x_2)\)</span></p>
+<p><br></p>
+<p>For example, take the following 2 dimensional vector <span class="math inline">\(x_1, x_2\)</span>, where <span class="math inline">\(x_1 = 2\)</span> and <span class="math inline">\(x_2 = 3\)</span></p>
+<ul>
+<li><p>Let us view <span class="math inline">\(x_1\)</span> as the value along the x axis, and <span class="math inline">\(x_2\)</span> as the value along the <span class="math inline">\(y\)</span> axis.</p></li>
+<li><p>Thus, that means the <span class="math inline">\(x\)</span> axis has a value of <span class="math inline">\(2\)</span>, and the <span class="math inline">\(y\)</span> axis has a value of <span class="math inline">\(3\)</span></p></li>
+</ul>
+<p>Then, let us find the point <span class="math inline">\((x=x_1=2, y=x_2=3)\)</span> and plot it, then drawing a straight line from the origin to that point. This is our vector:</p>
+<p><img src="vector.jpeg" class="img-fluid" style="width:60.0%"></p>
+<p><br></p>
+<section id="key-features-of-the-graphical-vector" class="level4">
+<h4 class="anchored" data-anchor-id="key-features-of-the-graphical-vector">Key Features of the Graphical Vector</h4>
+<p>Here are a few key features:</p>
+<ul>
+<li><p>The <strong>head</strong> of the vector is the point we plotted earlier. We put an arrow on the head.</p></li>
+<li><p>The <strong>tail</strong> of the vector is the part that touches the origin <span class="math inline">\((0, 0)\)</span>.</p></li>
+</ul>
+<p>It is useful to sometimes draw out vectors, as it can help visualise operations we will apply to these vectors.</p>
+<p><br></p>
+<p>We previously talked about the <strong>dimension</strong> of the vector.</p>
+<p>Now, let us talk about the <strong>length</strong> of a vector (this is not the same thing as dimension).</p>
+<ul>
+<li><p>The length of the vector is simply, well, the length of the vector in our graphical representation above.</p></li>
+<li><p>With a 2 dimensional vector, we can use the quadratic formula ( <span class="math inline">\(a^2 + b^2 = c^2\)</span> ) to find the length.</p></li>
+<li><p>The length is often called the norm, and is notated by two double bars on each side: <span class="math inline">\(||\overrightarrow{a}||\)</span></p></li>
+</ul>
+<p>For vectors with more dimensions, the length/norm is as follows:</p>
+<p><span class="math display">\[
+||\overrightarrow{a}|| = \sqrt{a_1^2 + a_2^2 + ... + a_n^2}
+\]</span></p>
+<p><br></p>
+</section>
+<section id="higher-dimensions" class="level4">
+<h4 class="anchored" data-anchor-id="higher-dimensions">Higher Dimensions</h4>
+<p>For higher dimensional vectors, we would simply add more axes to a higher dimensional plane:</p>
+<ul>
+<li><p>For example, with the vector <span class="math inline">\(x_1, x_2, x_3\)</span>, we would have 3 dimensions. Thus, we could assign each element as the distance on the <span class="math inline">\(x, y, z\)</span> axes, and draw a line from the origin to the point <span class="math inline">\((x_1, x_2, x_3)\)</span> in the 3-dimensional plot.</p></li>
+<li><p>Thus, the vector <span class="math inline">\(x_1, x_2,...,x_n\)</span> would be in an <span class="math inline">\(n\)</span>-dimensional space.</p></li>
+</ul>
+<p>For more dimensions, the more “trickier” to represent it, especially for anything above 3 dimensions.</p>
+<ul>
+<li>Thus, it is often helpful to not imagine this with too high dimensions, and just stick to the “combination of components” definition of vectors.</li>
+</ul>
+<p><br></p>
+<hr>
+<p><a href="#contents">Table of Contents</a> | <a href="https://politicalscience.github.io/math">Course Hompage</a></p>
+</section>
 </section>
 
 </main>
