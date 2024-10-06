@@ -1,0 +1,208 @@
+---
+title: "Introductory Statistical Theory"
+subtitle: "Module 1, Statistical Methods"
+format:
+    html:
+        theme: sketchy
+        max-width: 800px
+        toc: TRUE
+        toc-depth: 3
+        toc-location: left
+        toc-title: Chapters
+        toc-expand: TRUE
+---
+
+This module will discuss key topics in probability and statistical theory, which form the basis of quantitative methodology in Political Science. We start of with a discussion of probability. Then, we move to random variables and descriptive statistics. Finally, we move on to the principles of statistical inference, and how to apply them in simple tests, where we will also use programming languages to illustrate how to execute tests.
+
+[Prerequisites]{.underline}: Single Variable Calculus is helpful, but not formally required.
+
+------------------------------------------------------------------------
+
+[Section Homepage](https://politicalscience.github.io/#section-1-statistical-methods)
+
+# Chapter 1: Probability
+
+### 1.1: Basics of Probability
+
+[Kolmogrov's Axioms]{.underline}, also known as the Axioms of Probability, form the backbones of probability theory. The following are true about probability:
+
+1.  For any event $A$, $Pr(A) ≥ 0$
+    -   In more intuitive terms - the probability of an event, is a non-negative real number
+2.  $Pr(S) = 1$, where $S$ is the sample space of all possible events
+    -   In more intuitive terms - $S$ is the set of all possible events (any possible thing that could happen), and the probability of all possible events is 1.
+3.  For any sequence of mutually exclusive events $A_1, A_2,..., A_k$, $Pr \left( \bigcup\limits_{i=1}^k A_i \right) = \sum\limits_{i=1}^k Pr(A_i)$
+    -   More intuitively, if we have a group of mutually exclusive events (events that cannot occur together at the same time), then the probability of all the events occurring, is equal to the sum of the probabilities of the individual events
+
+<br />
+
+There are other fundamental rules of probability (see module 1 of Mathematics for Political Science for info on set notation):
+
+-   $Pr(\varnothing) = 0$ - the probability of nothing is 0
+
+-    $0 ≤ Pr(A) ≤ 1)$ - the [probability of any event is between 0 and 1]{.underline}
+
+-   $Pr(A^c) = 1 - Pr(A)$ - the probability of not-A occuring, is the same as 1 minus the probability of A
+
+-   If $A \subset B$, then $Pr(A) ≤ Pr(B)$ - if $A$ is a subset of $B$, then the probability of $A$ must be less than or equal to $B$
+
+-   $Pr(A \cup B) = Pr(A) + Pr(B) - Pr (A \cap B)$
+
+    -   This basically says, the combined probability of $A$ and $B$, is equal to the probability of $A$ + $B$, then subtract the probability of $A$ and $B$ occurring together
+
+    -   Why? Well $A$ and $B$ already contain the possibility of $A$ and $B$ occurring together twice (in both $A$ and $B$ ), so we have to subtract the double counting
+
+-   For any set of events, $Pr \left( \bigcup\limits_{i=1}^k A_i \right) ≤ \sum\limits_{i=1}^k Pr(A_i)$
+
+    -   Why? We established the 2 are equal when events are mutually exclusive
+
+    -   The other possibility is that they are not mutually exclusive - which means they will have overlap, thus, the probability will be less than the sum
+
+<br />
+
+### 1.2: Independence
+
+Events $A$ and $B$ are independent, when the occurrence of $A$ does not affect the probability of $B$
+
+For example, let us say event $A$ is flipping a coin and getting heads, and event $B$ is rolling a 6-sided die and getting #5. Initially, $Pr(B) = 1/6$ before we flip the coin. After we flip the coin, and get heads, $Pr(B)=1/6$ - the die is still the same. Thus, these events are independent
+
+On the opposite hand, say we have a box with 5 apples and 4 oranges. Event $A$ is selecting an apple and eating it, and $B$ is selecting an orange and eating it. Initially $Pr(B) = 4/9$, because 4 oranges out of 9. However, if $A$ occurs, that means one apple is gone and eaten, so we only have 4 apples and 4 oranges left. Now, $Pr(B) = 4/8$, because 4 oranges out of only 8 remaining. Since $Pr(B)$ changes with the occurrence of $A$, these events are not independent.
+
+<br />
+
+Independence is important to understand, since many of our models require independence as an assumption. If we fail to meet this assumption, we have to do additional modifications to make our models work.
+
+<br />
+
+Independent events have a few properties:
+
+-   $Pr(A|B) = Pr(A)$ and $Pr(B|A) = Pr(B)$
+
+    -   $Pr(A|B)$ means the probability of $A$, given $B$ has occurred. Vice versa for the second
+
+    -   The expressions state that since $A$ and $B$ are independent, the occurrence of the other does not change the probability
+
+-   $Pr (A \cap B) = Pr(A) \times Pr(B)$
+
+    -   [The probability of two independent events occurring, is the product of the individual probabilities]{.underline}
+
+-   $Pr \left( \bigcap\limits_{i=1}^k A_i \right) = \prod\limits_{i=1}^k Pr(A_i)$
+
+    -   This is just the previous rule, but expanded to more than 2 events
+
+    -   Essentially, the probability of $k$ number of independent events occurring, is the product of all their probabilities
+
+-   [If $A$ and $B$ are mutually exclusive, they are not independent]{.underline}
+
+    -   $A$ and $B$ being mutually exclusive means if one occurs, the other cannot
+
+    -   This rule is true because, that means, if $A$ occurs, the probability of $B$ changes to 0, since it can no longer occur.
+
+    -   Thus, $A$ affects the $Pr(B)$, thus meaning they are not independent
+
+<br />
+
+### 1.3: Counting, Permutations, Combinations
+
+The Fundamental Counting Principle, also called the multiplication rule, says that if there are $a$ number ways of doing something, and $b$ number of ways to do another thing, there are $a \times b$ ways of doing both actions.
+
+-   This can be extended to however many things - they are all multiplied
+
+For example, let us say you are planning a vacation. You have 15 hotels to choose from, 6 different rental cars to choose from, and 8 different flights to choose from. How many different ways could you take your vacation?
+
+-   The fundamental counting principle says that the number of ways is simply the possibilities of each event multiplied
+
+-   Thus, the total possible amounts of different vacations is $15 \times 6 \times 8 = 720$
+
+Counting is very important, since to find the probability of something, we need to know how many possibilities to put in the denominator
+
+<br />
+
+[Permutations]{.underline} are a way to count the number of arrangements [when order matters]{.underline}, when you select $r$ number of objects from $n$ total objects.
+
+What does "order matters" mean? Simply, it means $A,B,C$ is considered a different arrangement than $C,B,A$ or $B,C,A$.
+
+Permutations are given by the following formula:
+
+$$
+P(n,r) = \frac{n!}{(n-r)!}
+$$
+
+<br />
+
+For example, what is the number of ways to arrange 3 books out of 5, taken from a shelf. We are selecting 3 books, so $r=3$, and we have a total of 5 books, so $n=5$. So, let us plug it into the permutation formula:
+
+$$
+P(5,3) = \frac{5!}{(5-3)!} = \frac{5 \times 4 \times 3 \times 2 \times 1}{2 \times 1} = 5 \times 4 \times 3 = 60
+$$
+
+We can actually prove this quite easily using the fundamental counting theorem. We are selecting 3 books, where order matters. For the first book, we can choose from any of the 5 books on the shelf. For the second book, we can choose from any of the 4 on the shelf remaining. For the third book, we can choose from any of the 3 on the shelf remaining. Using fundamental counting theorem, we know that the possibilities are:
+
+$$
+5 \times 4 \times 3 = 60
+$$
+
+Which is the same answer as our permutation got
+
+<br />
+
+[Combinations]{.underline} are a way to count the number of arrangements [when order does not matter]{.underline}, when you select $r$ number of objects from $n$ total objects.
+
+What does "order does not matter" mean? It means that the arrangements $A,B,C$, and $C,B,A$, and $B,C,A$ are all considered the same arrangement. Basically, we only care about what elements are in the arrangement, not the order they are in.
+
+Combinations are given by the following formula:
+
+$$
+C(n,r) = \frac{n!}{r!(n-r)!}
+$$
+
+<br />
+
+For example, let us just select 3 books from the shelf of 5 books to give to a friend - we don't care about the order at all, just throw the books in a bag. So, $r=3$ as we are selecting 3 books, from a total of $n=5$ books. Let us plug it into the formula:
+
+$$
+C(5,3) = \frac{5!}{3!(5-3)!} = 10
+$$
+
+Why do we divide by an extra $r!$ in the combination? Well, it is quite inuitive. We first do the same thing as a permutation, selecting books with an order, so that gets us $5 \times 4 \times 3$ (see above). However, we need to now, get rid of order. So, 3 books have $3 \times 2 \times 1 = 3!$ ways of being ordered internally, so, we divide the permutation by $3!$ to get rid of order
+
+<br />
+
+### 1.4: Conditional and Joint Probability
+
+### 1.5: Bayes' Rule
+
+### 1.6 Law of Total Probability
+
+<br />
+
+------------------------------------------------------------------------
+
+[Section Homepage](https://politicalscience.github.io/#section-1-statistical-methods)
+
+# Chapter 2: Random Variables
+
+### 2.1: Discrete Distributions
+
+### 2.2: Continuous Distributions
+
+### 2.3 Expectations and Variance
+
+### 2.4: Types of Distributions
+
+<br />
+
+[Section Homepage](https://politicalscience.github.io/#section-1-statistical-methods)
+
+# Chapter 3: Statistical Inference
+
+### 3.1: Sampling & Central Limit Theorem
+
+Sampling, CLM, Confidence intervals
+
+### 3.2: Hypothesis Testing
+
+### 3.3: Difference of Means Test
+
+### 3.4: Chi-Squared Test
+
+### 3.5: Covariance & Correlation

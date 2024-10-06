@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Introductory Statistical Theory</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="1_files/libs/quarto-html/quarto.js"></script>
+<script src="1_files/libs/quarto-html/popper.min.js"></script>
+<script src="1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Chapters</h2>
+   
+  <ul>
+  <li><a href="#chapter-1-probability" id="toc-chapter-1-probability" class="nav-link active" data-scroll-target="#chapter-1-probability">Chapter 1: Probability</a>
+  <ul class="collapse">
+  <li><a href="#basics-of-probability" id="toc-basics-of-probability" class="nav-link" data-scroll-target="#basics-of-probability">1.1: Basics of Probability</a></li>
+  <li><a href="#independence" id="toc-independence" class="nav-link" data-scroll-target="#independence">1.2: Independence</a></li>
+  <li><a href="#counting-permutations-combinations" id="toc-counting-permutations-combinations" class="nav-link" data-scroll-target="#counting-permutations-combinations">1.3: Counting, Permutations, Combinations</a></li>
+  <li><a href="#conditional-and-joint-probability" id="toc-conditional-and-joint-probability" class="nav-link" data-scroll-target="#conditional-and-joint-probability">1.4: Conditional and Joint Probability</a></li>
+  <li><a href="#bayes-rule" id="toc-bayes-rule" class="nav-link" data-scroll-target="#bayes-rule">1.5: Bayes’ Rule</a></li>
+  <li><a href="#law-of-total-probability" id="toc-law-of-total-probability" class="nav-link" data-scroll-target="#law-of-total-probability">1.6 Law of Total Probability</a></li>
+  </ul></li>
+  <li><a href="#chapter-2-random-variables" id="toc-chapter-2-random-variables" class="nav-link" data-scroll-target="#chapter-2-random-variables">Chapter 2: Random Variables</a>
+  <ul class="collapse">
+  <li><a href="#discrete-distributions" id="toc-discrete-distributions" class="nav-link" data-scroll-target="#discrete-distributions">2.1: Discrete Distributions</a></li>
+  <li><a href="#continuous-distributions" id="toc-continuous-distributions" class="nav-link" data-scroll-target="#continuous-distributions">2.2: Continuous Distributions</a></li>
+  <li><a href="#expectations-and-variance" id="toc-expectations-and-variance" class="nav-link" data-scroll-target="#expectations-and-variance">2.3 Expectations and Variance</a></li>
+  <li><a href="#types-of-distributions" id="toc-types-of-distributions" class="nav-link" data-scroll-target="#types-of-distributions">2.4: Types of Distributions</a></li>
+  </ul></li>
+  <li><a href="#chapter-3-statistical-inference" id="toc-chapter-3-statistical-inference" class="nav-link" data-scroll-target="#chapter-3-statistical-inference">Chapter 3: Statistical Inference</a>
+  <ul class="collapse">
+  <li><a href="#sampling-central-limit-theorem" id="toc-sampling-central-limit-theorem" class="nav-link" data-scroll-target="#sampling-central-limit-theorem">3.1: Sampling &amp; Central Limit Theorem</a></li>
+  <li><a href="#hypothesis-testing" id="toc-hypothesis-testing" class="nav-link" data-scroll-target="#hypothesis-testing">3.2: Hypothesis Testing</a></li>
+  <li><a href="#difference-of-means-test" id="toc-difference-of-means-test" class="nav-link" data-scroll-target="#difference-of-means-test">3.3: Difference of Means Test</a></li>
+  <li><a href="#chi-squared-test" id="toc-chi-squared-test" class="nav-link" data-scroll-target="#chi-squared-test">3.4: Chi-Squared Test</a></li>
+  <li><a href="#covariance-correlation" id="toc-covariance-correlation" class="nav-link" data-scroll-target="#covariance-correlation">3.5: Covariance &amp; Correlation</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Introductory Statistical Theory</h1>
+<p class="subtitle lead">Module 1, Statistical Methods</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This module will discuss key topics in probability and statistical theory, which form the basis of quantitative methodology in Political Science. We start of with a discussion of probability. Then, we move to random variables and descriptive statistics. Finally, we move on to the principles of statistical inference, and how to apply them in simple tests, where we will also use programming languages to illustrate how to execute tests.</p>
+<p><u>Prerequisites</u>: Single Variable Calculus is helpful, but not formally required.</p>
+<hr>
+<p><a href="https://politicalscience.github.io/#section-1-statistical-methods">Section Homepage</a></p>
+<section id="chapter-1-probability" class="level1">
+<h1>Chapter 1: Probability</h1>
+<section id="basics-of-probability" class="level3">
+<h3 class="anchored" data-anchor-id="basics-of-probability">1.1: Basics of Probability</h3>
+<p><u>Kolmogrov’s Axioms</u>, also known as the Axioms of Probability, form the backbones of probability theory. The following are true about probability:</p>
+<ol type="1">
+<li>For any event <span class="math inline">\(A\)</span>, <span class="math inline">\(Pr(A) ≥ 0\)</span>
+<ul>
+<li>In more intuitive terms - the probability of an event, is a non-negative real number</li>
+</ul></li>
+<li><span class="math inline">\(Pr(S) = 1\)</span>, where <span class="math inline">\(S\)</span> is the sample space of all possible events
+<ul>
+<li>In more intuitive terms - <span class="math inline">\(S\)</span> is the set of all possible events (any possible thing that could happen), and the probability of all possible events is 1.</li>
+</ul></li>
+<li>For any sequence of mutually exclusive events <span class="math inline">\(A_1, A_2,..., A_k\)</span>, <span class="math inline">\(Pr \left( \bigcup\limits_{i=1}^k A_i \right) = \sum\limits_{i=1}^k Pr(A_i)\)</span>
+<ul>
+<li>More intuitively, if we have a group of mutually exclusive events (events that cannot occur together at the same time), then the probability of all the events occurring, is equal to the sum of the probabilities of the individual events</li>
+</ul></li>
+</ol>
+<p><br></p>
+<p>There are other fundamental rules of probability (see module 1 of Mathematics for Political Science for info on set notation):</p>
+<ul>
+<li><p><span class="math inline">\(Pr(\varnothing) = 0\)</span> - the probability of nothing is 0</p></li>
+<li><p><span class="math inline">\(0 ≤ Pr(A) ≤ 1)\)</span> - the <u>probability of any event is between 0 and 1</u></p></li>
+<li><p><span class="math inline">\(Pr(A^c) = 1 - Pr(A)\)</span> - the probability of not-A occuring, is the same as 1 minus the probability of A</p></li>
+<li><p>If <span class="math inline">\(A \subset B\)</span>, then <span class="math inline">\(Pr(A) ≤ Pr(B)\)</span> - if <span class="math inline">\(A\)</span> is a subset of <span class="math inline">\(B\)</span>, then the probability of <span class="math inline">\(A\)</span> must be less than or equal to <span class="math inline">\(B\)</span></p></li>
+<li><p><span class="math inline">\(Pr(A \cup B) = Pr(A) + Pr(B) - Pr (A \cap B)\)</span></p>
+<ul>
+<li><p>This basically says, the combined probability of <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, is equal to the probability of <span class="math inline">\(A\)</span> + <span class="math inline">\(B\)</span>, then subtract the probability of <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> occurring together</p></li>
+<li><p>Why? Well <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> already contain the possibility of <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> occurring together twice (in both <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> ), so we have to subtract the double counting</p></li>
+</ul></li>
+<li><p>For any set of events, <span class="math inline">\(Pr \left( \bigcup\limits_{i=1}^k A_i \right) ≤ \sum\limits_{i=1}^k Pr(A_i)\)</span></p>
+<ul>
+<li><p>Why? We established the 2 are equal when events are mutually exclusive</p></li>
+<li><p>The other possibility is that they are not mutually exclusive - which means they will have overlap, thus, the probability will be less than the sum</p></li>
+</ul></li>
+</ul>
+<p><br></p>
+</section>
+<section id="independence" class="level3">
+<h3 class="anchored" data-anchor-id="independence">1.2: Independence</h3>
+<p>Events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent, when the occurrence of <span class="math inline">\(A\)</span> does not affect the probability of <span class="math inline">\(B\)</span></p>
+<p>For example, let us say event <span class="math inline">\(A\)</span> is flipping a coin and getting heads, and event <span class="math inline">\(B\)</span> is rolling a 6-sided die and getting #5. Initially, <span class="math inline">\(Pr(B) = 1/6\)</span> before we flip the coin. After we flip the coin, and get heads, <span class="math inline">\(Pr(B)=1/6\)</span> - the die is still the same. Thus, these events are independent</p>
+<p>On the opposite hand, say we have a box with 5 apples and 4 oranges. Event <span class="math inline">\(A\)</span> is selecting an apple and eating it, and <span class="math inline">\(B\)</span> is selecting an orange and eating it. Initially <span class="math inline">\(Pr(B) = 4/9\)</span>, because 4 oranges out of 9. However, if <span class="math inline">\(A\)</span> occurs, that means one apple is gone and eaten, so we only have 4 apples and 4 oranges left. Now, <span class="math inline">\(Pr(B) = 4/8\)</span>, because 4 oranges out of only 8 remaining. Since <span class="math inline">\(Pr(B)\)</span> changes with the occurrence of <span class="math inline">\(A\)</span>, these events are not independent.</p>
+<p><br></p>
+<p>Independence is important to understand, since many of our models require independence as an assumption. If we fail to meet this assumption, we have to do additional modifications to make our models work.</p>
+<p><br></p>
+<p>Independent events have a few properties:</p>
+<ul>
+<li><p><span class="math inline">\(Pr(A|B) = Pr(A)\)</span> and <span class="math inline">\(Pr(B|A) = Pr(B)\)</span></p>
+<ul>
+<li><p><span class="math inline">\(Pr(A|B)\)</span> means the probability of <span class="math inline">\(A\)</span>, given <span class="math inline">\(B\)</span> has occurred. Vice versa for the second</p></li>
+<li><p>The expressions state that since <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent, the occurrence of the other does not change the probability</p></li>
+</ul></li>
+<li><p><span class="math inline">\(Pr (A \cap B) = Pr(A) \times Pr(B)\)</span></p>
+<ul>
+<li><u>The probability of two independent events occurring, is the product of the individual probabilities</u></li>
+</ul></li>
+<li><p><span class="math inline">\(Pr \left( \bigcap\limits_{i=1}^k A_i \right) = \prod\limits_{i=1}^k Pr(A_i)\)</span></p>
+<ul>
+<li><p>This is just the previous rule, but expanded to more than 2 events</p></li>
+<li><p>Essentially, the probability of <span class="math inline">\(k\)</span> number of independent events occurring, is the product of all their probabilities</p></li>
+</ul></li>
+<li><p><u>If <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are mutually exclusive, they are not independent</u></p>
+<ul>
+<li><p><span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> being mutually exclusive means if one occurs, the other cannot</p></li>
+<li><p>This rule is true because, that means, if <span class="math inline">\(A\)</span> occurs, the probability of <span class="math inline">\(B\)</span> changes to 0, since it can no longer occur.</p></li>
+<li><p>Thus, <span class="math inline">\(A\)</span> affects the <span class="math inline">\(Pr(B)\)</span>, thus meaning they are not independent</p></li>
+</ul></li>
+</ul>
+<p><br></p>
+</section>
+<section id="counting-permutations-combinations" class="level3">
+<h3 class="anchored" data-anchor-id="counting-permutations-combinations">1.3: Counting, Permutations, Combinations</h3>
+<p>The Fundamental Counting Principle, also called the multiplication rule, says that if there are <span class="math inline">\(a\)</span> number ways of doing something, and <span class="math inline">\(b\)</span> number of ways to do another thing, there are <span class="math inline">\(a \times b\)</span> ways of doing both actions.</p>
+<ul>
+<li>This can be extended to however many things - they are all multiplied</li>
+</ul>
+<p>For example, let us say you are planning a vacation. You have 15 hotels to choose from, 6 different rental cars to choose from, and 8 different flights to choose from. How many different ways could you take your vacation?</p>
+<ul>
+<li><p>The fundamental counting principle says that the number of ways is simply the possibilities of each event multiplied</p></li>
+<li><p>Thus, the total possible amounts of different vacations is <span class="math inline">\(15 \times 6 \times 8 = 720\)</span></p></li>
+</ul>
+<p>Counting is very important, since to find the probability of something, we need to know how many possibilities to put in the denominator</p>
+<p><br></p>
+<p><u>Permutations</u> are a way to count the number of arrangements <u>when order matters</u>, when you select <span class="math inline">\(r\)</span> number of objects from <span class="math inline">\(n\)</span> total objects.</p>
+<p>What does “order matters” mean? Simply, it means <span class="math inline">\(A,B,C\)</span> is considered a different arrangement than <span class="math inline">\(C,B,A\)</span> or <span class="math inline">\(B,C,A\)</span>.</p>
+<p>Permutations are given by the following formula:</p>
+<p><span class="math display">\[
+P(n,r) = \frac{n!}{(n-r)!}
+\]</span></p>
+<p><br></p>
+<p>For example, what is the number of ways to arrange 3 books out of 5, taken from a shelf. We are selecting 3 books, so <span class="math inline">\(r=3\)</span>, and we have a total of 5 books, so <span class="math inline">\(n=5\)</span>. So, let us plug it into the permutation formula:</p>
+<p><span class="math display">\[
+P(5,3) = \frac{5!}{(5-3)!} = \frac{5 \times 4 \times 3 \times 2 \times 1}{2 \times 1} = 5 \times 4 \times 3 = 60
+\]</span></p>
+<p>We can actually prove this quite easily using the fundamental counting theorem. We are selecting 3 books, where order matters. For the first book, we can choose from any of the 5 books on the shelf. For the second book, we can choose from any of the 4 on the shelf remaining. For the third book, we can choose from any of the 3 on the shelf remaining. Using fundamental counting theorem, we know that the possibilities are:</p>
+<p><span class="math display">\[
+5 \times 4 \times 3 = 60
+\]</span></p>
+<p>Which is the same answer as our permutation got</p>
+<p><br></p>
+<p><u>Combinations</u> are a way to count the number of arrangements <u>when order does not matter</u>, when you select <span class="math inline">\(r\)</span> number of objects from <span class="math inline">\(n\)</span> total objects.</p>
+<p>What does “order does not matter” mean? It means that the arrangements <span class="math inline">\(A,B,C\)</span>, and <span class="math inline">\(C,B,A\)</span>, and <span class="math inline">\(B,C,A\)</span> are all considered the same arrangement. Basically, we only care about what elements are in the arrangement, not the order they are in.</p>
+<p>Combinations are given by the following formula:</p>
+<p><span class="math display">\[
+C(n,r) = \frac{n!}{r!(n-r)!}
+\]</span></p>
+<p><br></p>
+<p>For example, let us just select 3 books from the shelf of 5 books to give to a friend - we don’t care about the order at all, just throw the books in a bag. So, <span class="math inline">\(r=3\)</span> as we are selecting 3 books, from a total of <span class="math inline">\(n=5\)</span> books. Let us plug it into the formula:</p>
+<p><span class="math display">\[
+C(5,3) = \frac{5!}{3!(5-3)!} = 10
+\]</span></p>
+<p>Why do we divide by an extra <span class="math inline">\(r!\)</span> in the combination? Well, it is quite inuitive. We first do the same thing as a permutation, selecting books with an order, so that gets us <span class="math inline">\(5 \times 4 \times 3\)</span> (see above). However, we need to now, get rid of order. So, 3 books have <span class="math inline">\(3 \times 2 \times 1 = 3!\)</span> ways of being ordered internally, so, we divide the permutation by <span class="math inline">\(3!\)</span> to get rid of order</p>
+<p><br></p>
+</section>
+<section id="conditional-and-joint-probability" class="level3">
+<h3 class="anchored" data-anchor-id="conditional-and-joint-probability">1.4: Conditional and Joint Probability</h3>
+</section>
+<section id="bayes-rule" class="level3">
+<h3 class="anchored" data-anchor-id="bayes-rule">1.5: Bayes’ Rule</h3>
+</section>
+<section id="law-of-total-probability" class="level3">
+<h3 class="anchored" data-anchor-id="law-of-total-probability">1.6 Law of Total Probability</h3>
+<p><br></p>
+<hr>
+<p><a href="https://politicalscience.github.io/#section-1-statistical-methods">Section Homepage</a></p>
+</section>
+</section>
+<section id="chapter-2-random-variables" class="level1">
+<h1>Chapter 2: Random Variables</h1>
+<section id="discrete-distributions" class="level3">
+<h3 class="anchored" data-anchor-id="discrete-distributions">2.1: Discrete Distributions</h3>
+</section>
+<section id="continuous-distributions" class="level3">
+<h3 class="anchored" data-anchor-id="continuous-distributions">2.2: Continuous Distributions</h3>
+</section>
+<section id="expectations-and-variance" class="level3">
+<h3 class="anchored" data-anchor-id="expectations-and-variance">2.3 Expectations and Variance</h3>
+</section>
+<section id="types-of-distributions" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-distributions">2.4: Types of Distributions</h3>
+<p><br></p>
+<p><a href="https://politicalscience.github.io/#section-1-statistical-methods">Section Homepage</a></p>
+</section>
+</section>
+<section id="chapter-3-statistical-inference" class="level1">
+<h1>Chapter 3: Statistical Inference</h1>
+<section id="sampling-central-limit-theorem" class="level3">
+<h3 class="anchored" data-anchor-id="sampling-central-limit-theorem">3.1: Sampling &amp; Central Limit Theorem</h3>
+<p>Sampling, CLM, Confidence intervals</p>
+</section>
+<section id="hypothesis-testing" class="level3">
+<h3 class="anchored" data-anchor-id="hypothesis-testing">3.2: Hypothesis Testing</h3>
+</section>
+<section id="difference-of-means-test" class="level3">
+<h3 class="anchored" data-anchor-id="difference-of-means-test">3.3: Difference of Means Test</h3>
+</section>
+<section id="chi-squared-test" class="level3">
+<h3 class="anchored" data-anchor-id="chi-squared-test">3.4: Chi-Squared Test</h3>
+</section>
+<section id="covariance-correlation" class="level3">
+<h3 class="anchored" data-anchor-id="covariance-correlation">3.5: Covariance &amp; Correlation</h3>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
