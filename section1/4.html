@@ -34,6 +34,35 @@ ul.task-list li input[type="checkbox"] {
 <link href="4_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="4_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -45,19 +74,19 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Chapters</h2>
    
   <ul>
-  <li><a href="#chapter-1-statistical-inference" id="toc-chapter-1-statistical-inference" class="nav-link active" data-scroll-target="#chapter-1-statistical-inference">Chapter 1: Statistical Inference</a>
+  <li><a href="#preface" id="toc-preface" class="nav-link active" data-scroll-target="#preface">Preface</a></li>
+  <li><a href="#chapter-1-statistical-inference" id="toc-chapter-1-statistical-inference" class="nav-link" data-scroll-target="#chapter-1-statistical-inference">Chapter 1: Statistical Inference</a>
   <ul class="collapse">
-  <li><a href="#descriptive-statistics" id="toc-descriptive-statistics" class="nav-link" data-scroll-target="#descriptive-statistics">3.1: Descriptive Statistics</a></li>
-  <li><a href="#samples-and-population" id="toc-samples-and-population" class="nav-link" data-scroll-target="#samples-and-population">3.2: Samples and Population</a></li>
-  <li><a href="#central-limit-theorem" id="toc-central-limit-theorem" class="nav-link" data-scroll-target="#central-limit-theorem">3.3: Central Limit Theorem</a></li>
-  <li><a href="#confidence-intervals" id="toc-confidence-intervals" class="nav-link" data-scroll-target="#confidence-intervals">3.4: Confidence Intervals</a></li>
+  <li><a href="#samples-and-population" id="toc-samples-and-population" class="nav-link" data-scroll-target="#samples-and-population">1.1: Samples and Population</a></li>
+  <li><a href="#central-limit-theorem" id="toc-central-limit-theorem" class="nav-link" data-scroll-target="#central-limit-theorem">1.2: Central Limit Theorem</a></li>
+  <li><a href="#z-scores-and-probability" id="toc-z-scores-and-probability" class="nav-link" data-scroll-target="#z-scores-and-probability">1.3: Z-Scores and Probability</a></li>
+  <li><a href="#t-distributions" id="toc-t-distributions" class="nav-link" data-scroll-target="#t-distributions">1.4: T-Distributions</a></li>
   </ul></li>
   <li><a href="#chapter-2-hypothesis-testing" id="toc-chapter-2-hypothesis-testing" class="nav-link" data-scroll-target="#chapter-2-hypothesis-testing">Chapter 2: Hypothesis Testing</a>
   <ul class="collapse">
-  <li><a href="#difference-of-means-test" id="toc-difference-of-means-test" class="nav-link" data-scroll-target="#difference-of-means-test">2.1: Difference of Means Test</a></li>
-  <li><a href="#programming-difference-of-means" id="toc-programming-difference-of-means" class="nav-link" data-scroll-target="#programming-difference-of-means">2.2: Programming: Difference of Means</a></li>
-  <li><a href="#chi-squared-test" id="toc-chi-squared-test" class="nav-link" data-scroll-target="#chi-squared-test">2.3: Chi-Squared Test</a></li>
-  <li><a href="#programming-chi-squared-test" id="toc-programming-chi-squared-test" class="nav-link" data-scroll-target="#programming-chi-squared-test">2.4: Programming: Chi-Squared Test</a></li>
+  <li><a href="#hypothesis-testing" id="toc-hypothesis-testing" class="nav-link" data-scroll-target="#hypothesis-testing">2.1: Hypothesis Testing</a></li>
+  <li><a href="#difference-of-means-test" id="toc-difference-of-means-test" class="nav-link" data-scroll-target="#difference-of-means-test">2.2: Difference of Means Test</a></li>
+  <li><a href="#programming-difference-of-means" id="toc-programming-difference-of-means" class="nav-link" data-scroll-target="#programming-difference-of-means">2.3: Programming: Difference of Means</a></li>
   </ul></li>
   <li><a href="#chapter-3-correlation" id="toc-chapter-3-correlation" class="nav-link" data-scroll-target="#chapter-3-correlation">Chapter 3: Correlation</a>
   <ul class="collapse">
@@ -75,7 +104,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Introductory Statistical Inference</h1>
-<p class="subtitle lead">Module 4 (Section 1: Quantitative Methods)</p>
+<p class="subtitle lead">Module 4 (Section 1: Core Statistical Methods)</p>
 </div>
 
 
@@ -92,24 +121,128 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This module will discuss key topics in statistical theory. First, we look at statistical inference - how we draw conclusions about populations from samples. Then, we discuss some hypothesis testing and do some simple testing. Finally, we look at relationships between features, which sets up regression analysis.</p>
-<p><u>Prerequisites</u>: Modules 1-3 (Or Equivalent)</p>
+<section id="preface" class="level1">
+<h1>Preface</h1>
+<p>Political Science research is heavily dominated by statistics. Statistics allows us to describe relationships between variables, infer beyond samples, and provides the basis for causal inference. However, to utilise common statistical techniques such as regression or quasi-experimental techniques, we first need to understand statistical inference.</p>
+<p>This module is an introduction statistical inference. Chapter 1 focuses on how we can use samples and extrapolate to the population. Chapter 2 discusses hypothesis testing, and applies that to a difference of means test. Chapter 3 introduces relationships between variables, and provides a solid foundation for the upcoming linear regression module.</p>
+<p><u>Prerequisites</u>: Section 0 (Or Equivalent)</p>
 <hr>
 <p><a href="https://politicalscience.github.io/#section-1-statistical-methods">Section Homepage</a></p>
+</section>
 <section id="chapter-1-statistical-inference" class="level1">
 <h1>Chapter 1: Statistical Inference</h1>
-<section id="descriptive-statistics" class="level3">
-<h3 class="anchored" data-anchor-id="descriptive-statistics">3.1: Descriptive Statistics</h3>
-</section>
 <section id="samples-and-population" class="level3">
-<h3 class="anchored" data-anchor-id="samples-and-population">3.2: Samples and Population</h3>
-<p>Sampling, CLM, Confidence intervals</p>
+<h3 class="anchored" data-anchor-id="samples-and-population">1.1: Samples and Population</h3>
+<p>In political science and the social sciences, we are often interested in studying large groups of people and entities. For example, we might be interested some feature regarding all people in a country, such as the average income, or average working hours, or average education level.</p>
+<p>However, if we are dealing with large population sizes, it is often impossible to ask every single individual in the population. For example, if we wanted to study the average educational level of the UK, we would need to ask nearly 70 million people. This is completely impractical.</p>
+<p><u>A sample is a subset of a population</u>, where ideally, the sample can tell us something about the population. If our sample can reflect the greater population, then we can use the sample in our study, instead of the large population.</p>
+<p><br></p>
+<p><u>Sampling</u> is the process by which we select a sample from a larger population. Like I just mentioned, we want the sample to be representative of the larger population, so that we can use the sample to make claims about the population.</p>
+<p>To make sure the sample is representative of the population, we need to determine is a given sample is a good sample or a bad sample. The quality of sample depends on two major factors:</p>
+<ol type="1">
+<li>The sampling procedure which we decide to implement</li>
+<li>Luck</li>
+</ol>
+<p>We will go back to luck in the future sections (hypothesis testing allows us to deal with that issue). Now, let us focus on sampling procedure.</p>
+<p>The gold standard of sampling procedure is a <u>random sample</u> - where individuals in the sample are selected at random from the population. This is because in a random sample, every possible individual has an equal chance of being selected, and thus, the resulting sample is likely to be reflective of the common traits of the population.</p>
+<p><br></p>
+<p>However, in real research, random samples are often very difficult to obtain. If a sample isn’t randomly selected, then it may contain <u>sample bias</u> - i.e., the sample does not accurately reflect the population. Common examples of sample bias include:</p>
+<ol type="1">
+<li><u>Self-Selection Bias</u>: if you are sampling people because they agree to participate in your survey, your results may be biased. This is because people who do agree to participate in your sample may have a common trait together, which means one group of people may be over-represented in the sample compared to the population.</li>
+<li><u>Non-Response Bias</u>: This is the opposite of self-selection. Perhaps, you have randomly selected individuals, but some refuse to respond. It is very possible that people who don’t want to respond may have some common trait together, which means that trait will be under-represented in your sample compared to the population</li>
+<li><u>Survivorship Bias</u>: This is when our sample only includes people who have successfully passed some selection process. A classic example is shark attacks - if you only ask people who have experienced shark attacks to estimate the percentage of people who survive shark attacks, you will get the result that 100% of people survive shark attacks. Why? Well, the people you ask have to have survived, or else, they would be dead and wouldn’t respond to your sample!</li>
+<li><u>Undercoverage Bias</u>: This is when our sample under-represents under-represented groups. This is because under-represented groups are naturally, less common, so it is plausible that our sampling procedure may fail to contain them.</li>
+<li><u>Proximity Sampling Bias</u>: This is when we only sample people that are easy to sample. However, this can lead to bias. For example, if I am sampling students for how long they study every day, but I am lazy so I stand at the entrance of the library (since a lot of people enter/exit it), I might get a biased sample, since people entering the library are likely people who study more than the average student.</li>
+</ol>
+<p><br></p>
 </section>
 <section id="central-limit-theorem" class="level3">
-<h3 class="anchored" data-anchor-id="central-limit-theorem">3.3: Central Limit Theorem</h3>
+<h3 class="anchored" data-anchor-id="central-limit-theorem">1.2: Central Limit Theorem</h3>
+<p>Before we introduce the Central Limit Theorem, we need to explain a <u>distribution of sample means</u>.</p>
+<p>Imagine that we take a random sample from a population. Then, we find the mean of the variable we are interested in the sample. That is a sample mean.</p>
+<p>Then, let us take another sample from the same population, and find the mean. This will be slightly different than the first sample, since we are randomly sampling. That is another sample mean.</p>
+<p>We keep taking samples from the same population, and getting more and more sample means.</p>
+<p>Now, let us plot all our sample means into a “histogram” or density plot. The <span class="math inline">\(x\)</span> axis labels the possible sample means values, and the <span class="math inline">\(y\)</span> axis is how frequently a specific sample mean occurs. We will get a distribution, just like a random variable distribution.</p>
+<p>That distribution is the distribution of sample means - it basically measures the frequency of different sample means that we get, given we keep drawing samples from the same population and calculating their means.</p>
+<p><br></p>
+<p><u>The Central Limit Theorem states that the distribution of sample means of a variable, will be distributed in a approximately normal distribution</u>. This is regardless of the variable’s population distribution shape.</p>
+<ul>
+<li>Essentially, no matter what distribution the population takes, if we take enough samples, the sample means plotted in a distribution will resemble a normal distribution.</li>
+</ul>
+<p>There are a few criteria for the Central Limit Theorem to be true:</p>
+<ol type="1">
+<li>The sample size (of the individual samples) should be at least 30</li>
+<li>Sample independence - one sample’s results should not affect other sample’s results</li>
+<li>Samples must be randomly sampled</li>
+</ol>
+<p>There are a few additional points:</p>
+<ul>
+<li><p>If the sample size condition is not met, but the population is normally distributed, we can still assume that central limit theorem occurs</p></li>
+<li><p>If the sample size condition is not met, and the population is not normally distributed, we cannot use central limit theorem. The t-distribution may be of more use here.</p></li>
+</ul>
+<p><br></p>
+<p><u>The Central Limit Theorem is arguably, the most important part of statistical inference</u>. Why? If we recall from module 3, the normal distribution has some key properties, which are very useful for statistical inference purposes.</p>
+<p>If we recall, the normal distribution has the 68-95-99.7 rule:</p>
+<ul>
+<li><p>Between <span class="math inline">\(\mu - \sigma\)</span> and <span class="math inline">\(\mu + \sigma\)</span> (one standard deviation on both sides of the mean), there contains 68.26% of the total area under the curve</p></li>
+<li><p>Between <span class="math inline">\(\mu - 2 \sigma\)</span> and <span class="math inline">\(\mu + 2 \sigma\)</span> (two standard deviations on both sides of the mean), there contains 95.44% of the total area under the curve</p></li>
+<li><p>Between <span class="math inline">\(\mu - 3 \sigma\)</span> and <span class="math inline">\(\mu + 3 \sigma\)</span> (three standard deviations on both sides of the mean), there contains 99.72% of the total area under the curve</p></li>
+</ul>
+<p><img src="images/figure3-normal.png" class="img-fluid" style="width:90.0%"></p>
+<p>The importance of this is that, from previous discussion on continuous random variables in module 3, we know that the area under the probability density function is the probability. Thus, we can determine what probability certain outcomes have of occurring based on the standard deviations.</p>
+<p><br></p>
+<p>Furthermore, since the distribution of sample means takes the form of a normal distribution, and the distribution of sample means tells us the probability of getting some sample mean, <u>we can now tell how likely a sample mean is to occur if a sample was drawn from the population</u>.</p>
+<p>This goes back to the “luck” aspect of sampling. What if we are unlucky in sampling, and end up randomly drawing all the tall people? All the smartest people?</p>
+<ul>
+<li><p>Well, we can actually know how likely that we would pick such a sample!</p></li>
+<li><p>Just use the distribution of the sample means, and since it is normally distributed, we can find how many standard deviations it is from the mean, and thus, calculate how likely that sample is to occur!</p></li>
+<li><p>For example, if a certain sample mean is located 2 standard deviations above the mean, there is only a 2.14% chance that that sample mean would be that value or higher (see figure above)</p></li>
+</ul>
+<p><u>Thus, Central Limit Theorem allows us to account for the luck aspect of sampling</u>.</p>
+<p><br></p>
 </section>
-<section id="confidence-intervals" class="level3">
-<h3 class="anchored" data-anchor-id="confidence-intervals">3.4: Confidence Intervals</h3>
+<section id="z-scores-and-probability" class="level3">
+<h3 class="anchored" data-anchor-id="z-scores-and-probability">1.3: Z-Scores and Probability</h3>
+<p>A Z-score, also called the standard score, is <u>how many standard deviations a point is away from the mean</u>. For example, a point 2 standard deviations away from the mean <span class="math inline">\(\mu + 2\sigma\)</span> has a z score of 2 - since it is 2 standard deviations away.</p>
+<p>Z-score is basically a generalisation of the 68-95-99 rule. In that rule, we can only know the probabilities under the normal distribution for neat values of 1 standard deviation, 2 standard deviations, and 3 standard deviations. Z-scores can take any value - such as 1.96 standard deviations.</p>
+<p>Calculating the z-score of a point is very simple. Let us say you have a variable <span class="math inline">\(X\)</span>, and you get some point <span class="math inline">\(x\)</span>. You want to find the z score of <span class="math inline">\(x\)</span> as follows:</p>
+<p><span class="math display">\[
+z = (x - E[X]) / \sigma
+\]</span></p>
+<p>Intuitively, you just subtract the mean from your value, then divide by the standard deviation to find the number of standard deviations away from the mean your value is.</p>
+<p><br></p>
+<p>Now you have the z-score, how do you find the probability of such a value occurring? What we do is we consult a z-table - which matches z-scores to probabilities.</p>
+<ul>
+<li>The reason we do this is because while there is a rule for each z-score and its associated probabilities, there is no easy function to change a z-score into a probability. Thus, we use a table.</li>
+</ul>
+<p><a href="https://math.arizona.edu/~rsims/ma464/standardnormaltable.pdf">Here</a> is a link to a z-score table. Note that the z-score tables only show the area to the left of the z-score point, or in other words, the chance of that value or something lower occuring.</p>
+<ul>
+<li><p>If you want to find the probability of that value or something higher occurring, then do <span class="math inline">\(1 -\)</span> the probability.</p></li>
+<li><p>Why does this work? Well, the total area under a normal distribution should equal 1 (since total probability is 1). Thus, if we are given the left side, the right side must be the remaining part.</p></li>
+</ul>
+<p><br></p>
+</section>
+<section id="t-distributions" class="level3">
+<h3 class="anchored" data-anchor-id="t-distributions">1.4: T-Distributions</h3>
+<p>The t-distribution is a distribution very similar to that of a normal curve, with the bell-shape, however, it has a shorter peak, and thicker tails.</p>
+<ul>
+<li>It is basically a normal distribution, but designed to account for smaller sample sizes</li>
+</ul>
+<p>T-distributions are used when our sample size is too small to meet the Central Limit Theorem, and our population underneath is not normally distributed. T-distributions are also used in the t-Difference of Means test, which we will explore later.</p>
+<p><br></p>
+<p>Unlike the normal distribution, which has the parameters of mean <span class="math inline">\(\mu\)</span> and standard deviation <span class="math inline">\(\sigma\)</span>, the t-Distribution only has one parameter - degrees of freedom <span class="math inline">\(DF\)</span></p>
+<ul>
+<li>We will talk about how to calculate <span class="math inline">\(DF\)</span> when we use the t-distribution in statistical tests. It is usually the number of observations in a sample <span class="math inline">\(n\)</span> minus the number of variables involved (typically 1 or 2).</li>
+</ul>
+<p>Just know in general, when <span class="math inline">\(DF\)</span> becomes higher, the tails become thinner and the peak becomes higher. When <span class="math inline">\(DF\)</span> becomes lower, the tails become thicker and the peak becomes lower.</p>
+<ul>
+<li>Around 30 <span class="math inline">\(DF\)</span>, the t-test approximates a standard normal distribution. This is why we generally switch the Central Limit Theorem to the t-Distribution under 30 sample size.</li>
+</ul>
+<p><br></p>
+<p>Just like how normal distributions have a z-score which is associated with some probability, t-Distributions have a t-value which is also associated with some probability</p>
+<ul>
+<li>This allows us to do some statistical tests, as we will see later.</li>
+</ul>
 <p><br></p>
 <hr>
 <p><a href="https://politicalscience.github.io/#section-1-statistical-methods">Section Homepage</a></p>
@@ -117,17 +250,40 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="chapter-2-hypothesis-testing" class="level1">
 <h1>Chapter 2: Hypothesis Testing</h1>
+<section id="hypothesis-testing" class="level3">
+<h3 class="anchored" data-anchor-id="hypothesis-testing">2.1: Hypothesis Testing</h3>
+<p>Hypothesis testing allows us to test, well, hypothesis. In statistics, we adopt a principle similar to “innocent until proven guilty” in English Law. In statistics, this basically means that we do not assume any relationship between variables or any significant difference, until we can comfortable reject the assumption that the “status-quo” is incorrect.</p>
+<ul>
+<li><p>For example, if you are arguing that two things are different, in statistics, we cannot conclude that they are different, until we have <u>rejected</u> “beyond a reasonable doubt” (usually 95% confidence) that the two are the same</p></li>
+<li><p>For example, if you argue that two variables are related in some way, we cannot conclude they are related until we have <u>rejected</u>, with 95% confidence, that the two do not have a relationship</p></li>
+</ul>
+<p><br></p>
+<p>Let us put all that into statistical terms:</p>
+<p>The <u>null hypothesis</u> is what we call the assumption that there is no difference/relationship - it is basically the “status-quo”. It is often labeled as <span class="math inline">\(H_0\)</span></p>
+<p>The <u>alternate hypothesis</u> is the hypothesis we are trying to prove. It is often labeled as <span class="math inline">\(H_1\)</span></p>
+<p>So, in statistical terms, <u>we assume the null hypothesis (status-quo) is true, unless we are 95% confident we can reject the null hypothesis, and only then, can we conclude that the alternate hypothesis is true</u>.</p>
+<p>We will discuss what 95% confidence means when we do a difference-of-means test later.</p>
+<p><br></p>
+<p>Of course, with 95% confidence, we will have errors. There are two types of errors:</p>
+<ol type="1">
+<li><u>Type-I error</u>: this is when the null hypothesis is actually correct in the real world, but we accidentally reject it.</li>
+<li><u>Type-II error</u>: This is when the null hypothesis is actually wrong in the real world, but we accidentally do not reject it</li>
+</ol>
+<p>You might ask, why 95%? Well, it is just convention in the social sciences. Other fields may have different confidence levels - for example, in drug trials, it is much much higher - since it would be a disaster to approve a faulty drug.</p>
+<ul>
+<li>There is nothing special about 95%, in fact many argue it is a bad measure. After all, what makes something magically better being 95% confident than 94% confident?</li>
+</ul>
+<p><br></p>
+</section>
 <section id="difference-of-means-test" class="level3">
-<h3 class="anchored" data-anchor-id="difference-of-means-test">2.1: Difference of Means Test</h3>
+<h3 class="anchored" data-anchor-id="difference-of-means-test">2.2: Difference of Means Test</h3>
 </section>
 <section id="programming-difference-of-means" class="level3">
-<h3 class="anchored" data-anchor-id="programming-difference-of-means">2.2: Programming: Difference of Means</h3>
-</section>
-<section id="chi-squared-test" class="level3">
-<h3 class="anchored" data-anchor-id="chi-squared-test">2.3: Chi-Squared Test</h3>
-</section>
-<section id="programming-chi-squared-test" class="level3">
-<h3 class="anchored" data-anchor-id="programming-chi-squared-test">2.4: Programming: Chi-Squared Test</h3>
+<h3 class="anchored" data-anchor-id="programming-difference-of-means">2.3: Programming: Difference of Means</h3>
+<p>We will execute this difference of means test in 3 different applications: R, Python, and Stata</p>
+<p><strong>In R:</strong></p>
+<p><strong>In Python:</strong></p>
+<p><strong>In Stata:</strong></p>
 <p><br></p>
 <hr>
 <p><a href="https://politicalscience.github.io/#section-1-statistical-methods">Section Homepage</a></p>
