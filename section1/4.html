@@ -92,7 +92,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#covariance" id="toc-covariance" class="nav-link" data-scroll-target="#covariance">3.1: Covariance</a></li>
   <li><a href="#correlation-coefficient" id="toc-correlation-coefficient" class="nav-link" data-scroll-target="#correlation-coefficient">3.2: Correlation Coefficient</a></li>
-  <li><a href="#best-linear-estimator" id="toc-best-linear-estimator" class="nav-link" data-scroll-target="#best-linear-estimator">3.3: Best Linear Estimator</a></li>
+  <li><a href="#best-linear-predictor" id="toc-best-linear-predictor" class="nav-link" data-scroll-target="#best-linear-predictor">3.3: Best Linear Predictor</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -181,7 +181,7 @@ window.Quarto = {
 <li><p>If the sample size condition is not met, and the population is not normally distributed, we cannot use central limit theorem. The t-distribution may be of more use here.</p></li>
 </ul>
 <p><br></p>
-<p><u>The Central Limit Theorem is arguably, the most important part of statistical inference</u>. Why? If we recall from module 3, the normal distribution has some key properties, which are very useful for statistical inference purposes.</p>
+<p><u>The Central Limit Theorem is arguably, the most important part of statistical inference</u>. Why? If we recall from <a href="https://politicalscience.github.io/section0/3.html">module 3</a>, the normal distribution has some key properties, which are very useful for statistical inference purposes.</p>
 <p>If we recall, the normal distribution has the 68-95-99.7 rule:</p>
 <ul>
 <li><p>Between <span class="math inline">\(\mu - \sigma\)</span> and <span class="math inline">\(\mu + \sigma\)</span> (one standard deviation on both sides of the mean), there contains 68.26% of the total area under the curve</p></li>
@@ -317,12 +317,9 @@ Cov(X,Y) = \sigma_{XY} = \frac{\sum (X_i - E[X])(Y_i - E[Y])}{n}
 <p>These are the parts of the equation:</p>
 <ul>
 <li>In our data, we have many different pairs of data points <span class="math inline">\((X_i, Y_i)\)</span></li>
-</ul>
-<!-- -->
-<ul>
-<li><p><span class="math inline">\(X_i\)</span> is some point of <span class="math inline">\(X\)</span>, while <span class="math inline">\(E[X]\)</span> is the mean of <span class="math inline">\(X\)</span>. Same goes for <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(E[Y]\)</span></p></li>
-<li><p>Thus, <span class="math inline">\(X_i - E[X]\)</span> is the distance between any point <span class="math inline">\(X_i\)</span> and its mean <span class="math inline">\(E[X]\)</span>. Same goes for <span class="math inline">\(Y_i - E[Y]\)</span></p></li>
-<li><p><span class="math inline">\(n\)</span> is the number of observations in our data.</p></li>
+<li><span class="math inline">\(X_i\)</span> is some point of <span class="math inline">\(X\)</span>, while <span class="math inline">\(E[X]\)</span> is the mean of <span class="math inline">\(X\)</span>. Same goes for <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(E[Y]\)</span></li>
+<li>Thus, <span class="math inline">\(X_i - E[X]\)</span> is the distance between any point <span class="math inline">\(X_i\)</span> and its mean <span class="math inline">\(E[X]\)</span>. Same goes for <span class="math inline">\(Y_i - E[Y]\)</span></li>
+<li><span class="math inline">\(n\)</span> is the number of observations in our data.</li>
 </ul>
 <p><br></p>
 <p><u>We can interpret the sign of the covariance</u></p>
@@ -367,8 +364,44 @@ Corr(X,Y) = r = \rho= \frac{Cov(X,Y)}{\sigma_X \sigma_Y}
 <p>The r-squared value will become especially important as we dive into regression - especially multivariate models, since the r-squared value can tell us generally how “good” our models are at predicting <span class="math inline">\(Y\)</span> from <span class="math inline">\(X\)</span></p>
 <p><br></p>
 </section>
-<section id="best-linear-estimator" class="level3">
-<h3 class="anchored" data-anchor-id="best-linear-estimator">3.3: Best Linear Estimator</h3>
+<section id="best-linear-predictor" class="level3">
+<h3 class="anchored" data-anchor-id="best-linear-predictor">3.3: Best Linear Predictor</h3>
+<p>While correlation coefficient tells us the strength of the correlation, it doesn’t tell us anything about the magnitude of the relationship. For example, if <span class="math inline">\(X\)</span> increases by 1, how much does <span class="math inline">\(Y\)</span> increase by?</p>
+<ul>
+<li>Magnitude is quite important - after all, even if two values are very highly correlated, if an increase in <span class="math inline">\(X\)</span> only leads to a miniscule increase in <span class="math inline">\(Y\)</span>, this might not be very important for understanding the world</li>
+</ul>
+<p><br></p>
+<p>A way to estimate the magnitude of the relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> is the <u>best linear predictor</u>. The best linear predictor is a linear function <span class="math inline">\(Y = \alpha + \beta X\)</span> that best predicts <span class="math inline">\(Y\)</span> with values of <span class="math inline">\(X\)</span></p>
+<ul>
+<li><p>Essentially, it is a best fit line to our correlation</p></li>
+<li><p>If you need a refresher on how linear equations work, see <a href="https://politicalscience.github.io/section0/1.html#linear-equations-and-slope">Module 1, Chapter 1, Lesson 3</a></p></li>
+</ul>
+<p>For example, the figure below shows a best fit line for a set of data:</p>
+<p><img src="figures/4-bestfit.png" class="img-fluid" style="width:70.0%"></p>
+<p><br></p>
+<p>We know the best fit linear prediction line takes the form <span class="math inline">\(Y = \alpha + \beta X\)</span>. But what value should the y-intercept <span class="math inline">\(\alpha\)</span> and the slope <span class="math inline">\(\beta\)</span> be?</p>
+<ul>
+<li>For example, in the figure above, why not draw a line that is slightly steeper? or draw a line a little lower?</li>
+</ul>
+<p>Well, the way we find the best fit line is quite intuitive - we want to reduce the error between our line, and the actual data points.</p>
+<p>The “error”, also called the residual, is basically, how far away is our line from the points in the data. It is the actual <span class="math inline">\(Y\)</span> value from our dataset, minus the predicted <span class="math inline">\(Y\)</span> value from our linear equation for any given point <span class="math inline">\((x, y)\)</span>. Mathematically, it is <span class="math inline">\(y_i - \hat{y}_i\)</span>. For example, take the figure below, which shows the errors for every point in a dataset for 3 different best fit lines:</p>
+<p><img src="figures/4-residuals.png" class="img-fluid" style="width:100.0%"></p>
+<p>Essentially, we want to find the y-intercept <span class="math inline">\(\alpha\)</span> and slope <span class="math inline">\(\beta\)</span> of a linear line that <u>minimises the sum of squared errors</u>.</p>
+<p>The sum of squared errors (also called the residual sum of squares) is exactly what is sounds like. You take the errors (every red line in the figure above), and square them. Then you sum all of them up. Mathematically:</p>
+<p><span class="math display">\[
+RSS = \sum(y_i - \hat{y}_i)^2
+\]</span></p>
+<p>Why do we want to minimise the sum of squared errors? Well, the reason we square them is to get rid of the negative signs. This is because, the negative errors will simply cancel out the positive errors. But, we don’t want that - we want some measure of the total amount of error. Thus, the square makes all the negatives positive, which allows us to measure the magnitude of the errors, not the direction.</p>
+<p><br></p>
+<p>Well, now that we know we want to minimise the sum of squared errors, how do we actually get the slope <span class="math inline">\(\beta\)</span> and y-intercept <span class="math inline">\(\alpha\)</span> for our linear model?</p>
+<ul>
+<li><p>We of course, could try thousands/millions of different lines, and see which one has the lowest sum of squares</p></li>
+<li><p>Or, we can use a mathematical estimator to estimate the optimal <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\alpha\)</span></p></li>
+</ul>
+<p>The most common estimator of the slope <span class="math inline">\(\beta\)</span> and y-intercept <span class="math inline">\(\alpha\)</span> is called the <u>Ordinary Least Squares (OLS) Estimator</u>. We will start with this estimator, and the linear model as a whole, in the next module.</p>
+<p><br></p>
+<hr>
+<p><a href="https://politicalscience.github.io/#section-1-statistical-methods">Section Homepage</a></p>
 </section>
 </section>
 
