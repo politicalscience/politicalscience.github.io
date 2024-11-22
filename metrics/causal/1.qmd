@@ -8,7 +8,7 @@ format:
           sidebar-width: 300px
           body-width: 750px
           margin-width: 250px
-          gutter-width: 2.5em
+          gutter-width: 2em
         fontsize: 11.5pt
         theme: yeti
         toc: TRUE
@@ -21,9 +21,13 @@ format:
 
 This chapter will introduce the idea of causal effects and causation. We will explore what a causal effect is, how to theoretically identify causal effects, and the dangers of using correlation as causation.
 
-Topics: Correlation and Causation, Potential Outcomes and Causal Effects
+Topics: Potential Outcomes Framework, Causal Estimands, Properties of Estimators, Naive Estimator, Selection Bias, Confounding Variables
 
 <br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
 
 # 1.1: Correlation and Causation
 
@@ -86,6 +90,8 @@ Before we start discussing methods to eliminate the effect of third variables an
 <br />
 
 ------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
 
 # 1.2: Potential Outcomes and Causal Effects
 
@@ -153,6 +159,8 @@ Thus, the treatment $D$ will have $\tau$ effect on outcome $y$ for unit $i$
 <br />
 
 ------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
 
 # 1.3: Observed Outcomes and the Stable Unit Treatment Value Assumption
 
@@ -237,11 +245,13 @@ In what situations is SUTVA typically violated?
 
 ------------------------------------------------------------------------
 
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
 # 1.4: Causal Estimands
 
 We introduced how the individual treatment effect of $D \rightarrow y$ for any unit $i$ is $\tau_i = y_{1i} - y_{0i}$. However, there is an issue - we do not know the two parallel worlds.
 
--   As we discussed in section 1.3, we can only observe one of the two parallel worlds.
+-   As we discussed in [section 1.3](https://politicalscience.github.io/metrics/causal/1.html#observed-outcomes-and-the-stable-unit-treatment-value-assumption), we can only observe one of the two parallel worlds.
 
 Thus, we can never actually find (or estimate) the individual treatment effect. We need another **estimand**. An **estimand** is the true value of something in the real world, that we will try to estimate with an estimator.
 
@@ -257,7 +267,7 @@ The "key" estimand in causal inference is the Average Treatment Effect:
 The **Average Treatment Effect (ATE)** is the average of all individual treatment effects:
 
 $$
-\tau_{ATE} \ = \ \mathbb{E}[\tau_i] \ = \ \mathbb{E}[y_{1i} - y_{0i}] \ = \ \frac{1}{n} \left( \sum y_{1i} - \sum y_{0i} \right)
+\tau_{ATE} \ = \ \mathbb{E}[\tau_i] \ = \ \bar{y}_{1i} - \bar{y}_{0i}
 $$
 :::
 
@@ -282,7 +292,7 @@ For example, maybe we think that a certain educational treatment will benefit wo
 The **Conditional Average Treatment Effect (CATE)** is the treatment effect of units, given they have some other variable $x$ value.
 
 $$
-\tau_{CATE} = \mathbb{E}[y_{1i} - y_{0i} \ | \ x \ ]
+\tau_{CATE} = \mathbb{E}[y_{1i} - y_{0i} \ | \ x \ ] 
 $$
 
 <br />
@@ -292,18 +302,20 @@ We can also estimate the causal effect on only the treatment or control groups.
 The **average treatment effect on the treated (ATT)** is the average treatment effect of only units who received the treatment $D_i = 1$:
 
 $$
-\tau_{ATT} = \mathbb{E} [y_{1i} - y_{0i} \ | \ D_i = 1]
+\tau_{ATT} = \mathbb{E} [y_{1i} - y_{0i} \ | \ D_i = 1] = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
 $$
 
 The **average treatment effect on the controls (ATC)** is the average treatment effect of only units who did not receive the treatment $D_i = 0$:
 
 $$
-\tau_{ATC} = \mathbb{E} [y_{1i} - y_{0i} \ | \ D_i = 0]
+\tau_{ATC} = \mathbb{E} [y_{1i} - y_{0i} \ | \ D_i = 0] = \bar{y}_{1i, \ D_i = 0} - \bar{y}_{0i, \ D_i = 0}
 $$
 
 <br />
 
 ------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
 
 # 1.4: Properties of Estimators - Unbiasdness and Consistency
 
@@ -356,6 +368,122 @@ Ideally, we want an estimator that is both **unbiased** and **consistent**. This
 
 ------------------------------------------------------------------------
 
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
 # 1.5: The Naive Estimator and Proof Correlation is not Causation
 
 The **naive estimator** is an estimator that only compares the observed outcomes, without any comparison to the counterfactual potential outcomes.
+
+So essentially, we compare the observed treatment group outcomes and the observed control group outcomes:
+
+$$
+\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
+$$
+
+This is what many people do when trying to find a causal effect. The naive estimator is also similar to a measure of correlation.
+
+<br />
+
+However, **the naive estimator is a bad idea**. Remember, treatment effects are supposed to be comparing the two potential outcomes [of the same unit]{.underline}. We are supposed to compare $y_{1i}$ to $y_{0i}$.
+
+-   However, the naive estimator does not do that. Instead, it is comparing the observed outcomes of the treatment group versus the different control group.
+
+So essentially, it is comparing the potential outcomes of [different]{.underline} units.
+
+-   But what is the issue with this?
+-   Well, if you compare the potential outcome of two different units (let us call them $A$ and $B$), you are comparing $y_{1A}$ and $y_{1b}$.
+-   However, what if units $A$ and $B$ are different in some way even before the treatment? Their outcomes $y$ may differ not due to the treatment $D$, but due to some underlying difference between units $A$ and $B$.
+-   Thus, we are introducing some **bias** - the differences between unit $A$ and $B$ are being included in our causal estimate, when they should not be, since the differences between $A$ and $B$ may not be due to $D$.
+
+<br />
+
+We can prove this mathematically. We start with the naive estimator:
+
+$$
+\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
+$$
+
+Then, we do a little algebra trick - we add a new term to this equation, then subtract that same term. The two new terms thus cancel each other out to 0:
+
+$$
+\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
+$$
+
+Now, let us re-arrange this equation:
+
+$$
+\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
+$$
+
+We can see the first two terms are equal to the average treatment effect on the treated (ATT). Thus, we can rewrite the naive estimator:
+
+$$
+\hat{\tau}_{\text{naive}} = \tau_{ATT} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
+$$
+
+If we look at the final result, we can divide it into two parts:
+
+1.  The ATT $\tau_{ATT}$
+2.  The extra bit: $\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}$, which we call **selection bias**. Intuitively, it is the difference [prior to treatment]{.underline} between the control and treatment groups. This results in our naive estimator being biased.
+
+We will go into detail on selection bias in the next section.
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 1.6: Selection Bias and Confounding Variables
+
+### Selection Bias
+
+As we just established, the naive estimator contains **selection bias** $\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}$. This is the difference [prior to treatment]{.underline} between the control and treatment groups.
+
+::: callout-note
+## Example: Hospital and Health
+
+For example, if we are measuring the question *does going to the hospital make you more healthy*, and we simply measured the outcomes of people who went to the hospital and did not go to the hospital, we might see that in general, people who did not go to the hospital are healthier!
+
+-   Does this mean that going to the hospital makes you unhealthier? No! It is because more unhealthy people choose to go to the hospital in the first place. Thus, the hospital has generally more unhealthy individuals in it. The hospital might perform miracles on these people, but they are still not as healthy as the healthy people who did not need to go to the hospital.
+
+-   The differences between the people who chose to go to the hospital versus the people who did not go to the hospital explains the differences in our outcome, not the actual treatment that the hospital provided.
+:::
+
+Thus, selection bias can be thought of as when our treatment and control groups are fundamentally different and unequal prior to treatment.
+
+-   And when we use the naive estimator (or correlation), we pick up this bias in our estimates.
+
+### Confounding Variables
+
+Selection bias is caused by confounding variables.
+
+::: callout-tip
+## Definition: Confounding Variable
+
+A **confounder** or **confounding variable** is a variable that is causes differences in the treatment and control groups.
+
+Confounding variables result in selection bias, and are why correlation does not equal causation. In order to accurately calculate causal effects, we need to find some way to eliminate the effect of confounding variables.
+:::
+
+For example, look at the figure below:
+
+![](figures/1-1.png){fig-align="center" width="40%"}
+
+In this figure, $D$ is the treatment, and $C$ is the confounding variable that affects whether or not a unit gets the treatment $D$ or not.
+
+When we calculate the naive estimate (or correlation), our causal estimate captures both the direct effect $D \rightarrow Y$, but also the effect of $D \leftrightarrow C \rightarrow O \rightarrow Y$, since $D$ and $C$ are correlated.
+
+-   This second effect $D \leftrightarrow C \rightarrow O \rightarrow Y$ is called the **backdoor path**.
+
+However, the actual causal effect of treatment $D$ on $Y$ is only the section of $D \rightarrow Y$, and does not include the backdoor path. So, we need to find some way to only look at $D \rightarrow Y$, and eliminate/partial out the effect of the back door.
+
+<br />
+
+To make an accurate causal effect estimate, we must get rid of confounding variables, selection bias, and the backdoor path. How do we do this? The best method is randomisation, which we will cover in the next chapter.
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
