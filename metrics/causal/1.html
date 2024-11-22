@@ -34,8 +34,22 @@ ul.task-list li input[type="checkbox"] {
 <link href="1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: true
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -68,12 +82,29 @@ window.Quarto = {
 
 <body>
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Chapter 1: Introduction to Causal Estimation and Inference</h1>
+            <p class="subtitle lead">Econometric Methods (for Social Scientists)</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
 <div id="quarto-sidebar-toc-left" class="sidebar toc-left">
   <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
     <h2 id="toc-title">Chapter 1: Introduction to Causal Estimation and Inference</h2>
    
-  <ul>
+  <ul class="collapse">
   <li><a href="#correlation-and-causation" id="toc-correlation-and-causation" class="nav-link active" data-scroll-target="#correlation-and-causation">1.1: Correlation and Causation</a></li>
   <li><a href="#potential-outcomes-and-causal-effects" id="toc-potential-outcomes-and-causal-effects" class="nav-link" data-scroll-target="#potential-outcomes-and-causal-effects">1.2: Potential Outcomes and Causal Effects</a></li>
   <li><a href="#observed-outcomes-and-the-stable-unit-treatment-value-assumption" id="toc-observed-outcomes-and-the-stable-unit-treatment-value-assumption" class="nav-link" data-scroll-target="#observed-outcomes-and-the-stable-unit-treatment-value-assumption">1.3: Observed Outcomes and the Stable Unit Treatment Value Assumption</a></li>
@@ -86,26 +117,10 @@ window.Quarto = {
 </div>
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
 </div>
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Chapter 1: Introduction to Causal Estimation and Inference</h1>
-<p class="subtitle lead">Econometric Methods (for Social Scientists)</p>
-</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
 
 
 <p>This chapter will introduce the idea of causal effects and causation. We will explore what a causal effect is, how to theoretically identify causal effects, and the dangers of using correlation as causation.</p>
@@ -127,8 +142,8 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="correlation-is-not-causation">Correlation is not Causation</h3>
 <p>Variables are <strong>correlated</strong> with each other, if one variable changing is associated with another variable changing on average.</p>
 <ul>
-<li>For example, if <span class="math inline">\(x\)</span> increases, the average <span class="math inline">\(y\)</span> value increases, then <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> are correlated.</li>
-<li>The opposite is also true: if <span class="math inline">\(x\)</span> increases, the average <span class="math inline">\(y\)</span> value decreases, then <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> are correlated.</li>
+<li>For example, if <span class="math inline">x</span> increases, the average <span class="math inline">y</span> value increases, then <span class="math inline">x</span> and <span class="math inline">y</span> are correlated.</li>
+<li>The opposite is also true: if <span class="math inline">x</span> increases, the average <span class="math inline">y</span> value decreases, then <span class="math inline">x</span> and <span class="math inline">y</span> are correlated.</li>
 </ul>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -140,19 +155,19 @@ Definition: Sources of Correlation
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>There are three main reasons why two variables <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> may be correlated:</p>
+<p>There are three main reasons why two variables <span class="math inline">x</span> and <span class="math inline">y</span> may be correlated:</p>
 <ol type="1">
-<li>There is a causal effect of <span class="math inline">\(x\)</span> on <span class="math inline">\(y\)</span></li>
-<li>A third variable, <span class="math inline">\(w\)</span>, causes both <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> to change (so there is no direct effect of <span class="math inline">\(x\)</span> on <span class="math inline">\(y\)</span>)</li>
-<li>There is a causal effect of <span class="math inline">\(y\)</span> on <span class="math inline">\(x\)</span></li>
+<li>There is a causal effect of <span class="math inline">x</span> on <span class="math inline">y</span></li>
+<li>A third variable, <span class="math inline">w</span>, causes both <span class="math inline">x</span> and <span class="math inline">y</span> to change (so there is no direct effect of <span class="math inline">x</span> on <span class="math inline">y</span>)</li>
+<li>There is a causal effect of <span class="math inline">y</span> on <span class="math inline">x</span></li>
 </ol>
 <p>These causes can occur simultaneously at the same time. Thus, correlation is not causation, as correlation can be caused by other factors.</p>
 </div>
 </div>
 <p><br></p>
-<p>If our goal in econometrics is to find the causal effect of <span class="math inline">\(x \rightarrow y\)</span> (source #1 of correlation), we must eliminate the effects of the third variable <span class="math inline">\(w\)</span> (source #2 of correlation), and the reverse causality effect <span class="math inline">\(y \rightarrow x\)</span> (source #3 of correlation).</p>
+<p>If our goal in econometrics is to find the causal effect of <span class="math inline">x \rightarrow y</span> (source #1 of correlation), we must eliminate the effects of the third variable <span class="math inline">w</span> (source #2 of correlation), and the reverse causality effect <span class="math inline">y \rightarrow x</span> (source #3 of correlation).</p>
 <ul>
-<li>Thus, we need some methods to eliminate sources #2 and #3 of correlation in order to accurately estimate the causal effect of <span class="math inline">\(x \rightarrow y\)</span>.</li>
+<li>Thus, we need some methods to eliminate sources #2 and #3 of correlation in order to accurately estimate the causal effect of <span class="math inline">x \rightarrow y</span>.</li>
 </ul>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -175,10 +190,10 @@ Example: Correlation is not Causation
 <h3 class="anchored" data-anchor-id="key-terminology">Key Terminology</h3>
 <p>Before we start discussing methods to eliminate the effect of third variables and reverse causality, we need to first understand what even is a causal effect. Let us define some key terminology:</p>
 <ul>
-<li>The variable which causes a causal effect is called the <strong>treatment</strong>, labelled <span class="math inline">\(D\)</span>.</li>
-<li>The variable which changes as a result of the change in <span class="math inline">\(D\)</span> is the <strong>outcome</strong>, labelled <span class="math inline">\(y\)</span>.</li>
-<li>Thus, our causal effect of interest is <span class="math inline">\(D \rightarrow y\)</span>.</li>
-<li>A third variable which causes both <span class="math inline">\(D\)</span> and <span class="math inline">\(y\)</span> is called a <strong>confounder</strong> or <strong>confounding variable</strong>, and is often labelled <span class="math inline">\(w\)</span> or <span class="math inline">\(c\)</span>.</li>
+<li>The variable which causes a causal effect is called the <strong>treatment</strong>, labelled <span class="math inline">D</span>.</li>
+<li>The variable which changes as a result of the change in <span class="math inline">D</span> is the <strong>outcome</strong>, labelled <span class="math inline">y</span>.</li>
+<li>Thus, our causal effect of interest is <span class="math inline">D \rightarrow y</span>.</li>
+<li>A third variable which causes both <span class="math inline">D</span> and <span class="math inline">y</span> is called a <strong>confounder</strong> or <strong>confounding variable</strong>, and is often labelled <span class="math inline">w</span> or <span class="math inline">c</span>.</li>
 </ul>
 <p><br></p>
 <hr>
@@ -189,7 +204,7 @@ Example: Correlation is not Causation
 <h1>1.2: Potential Outcomes and Causal Effects</h1>
 <section id="potential-outcomes-framework" class="level3">
 <h3 class="anchored" data-anchor-id="potential-outcomes-framework">Potential Outcomes Framework</h3>
-<p>A <strong>causal effect</strong> is a change in some feature of the world <span class="math inline">\(D\)</span> that directly causes a change in some feature of the world <span class="math inline">\(y\)</span>.</p>
+<p>A <strong>causal effect</strong> is a change in some feature of the world <span class="math inline">D</span> that directly causes a change in some feature of the world <span class="math inline">y</span>.</p>
 <p>Causal effects imply the existence of <strong>potential outcomes</strong>.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -201,22 +216,22 @@ Definition: Potential Outcomes
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Imagine that there are 2 parallel worlds that are exactly the same, and there is one unit/individual <span class="math inline">\(i\)</span> who exists in both worlds.</p>
-<p>Then, in one of the two worlds, unit <span class="math inline">\(i\)</span> gets the treatment <span class="math inline">\(D\)</span>, which causes a change in the outcome <span class="math inline">\(y\)</span>. In the other world, unit <span class="math inline">\(i\)</span> does not get the treatment <span class="math inline">\(D\)</span>, so there is no change in outcome <span class="math inline">\(y\)</span>.</p>
-<p>Since these 2 parallel worlds are identical <strong>except</strong> for the fact one world gets the treatment <span class="math inline">\(D\)</span> and the other does not, the difference in the world’s <span class="math inline">\(y\)</span> outcomes can only be the effect of treatment <span class="math inline">\(D\)</span>.</p>
-<p>The difference in the two world’s outcome <span class="math inline">\(y\)</span> is thus the <strong>causal effect</strong> of <span class="math inline">\(D\)</span> on <span class="math inline">\(y\)</span>.</p>
+<p>Imagine that there are 2 parallel worlds that are exactly the same, and there is one unit/individual <span class="math inline">i</span> who exists in both worlds.</p>
+<p>Then, in one of the two worlds, unit <span class="math inline">i</span> gets the treatment <span class="math inline">D</span>, which causes a change in the outcome <span class="math inline">y</span>. In the other world, unit <span class="math inline">i</span> does not get the treatment <span class="math inline">D</span>, so there is no change in outcome <span class="math inline">y</span>.</p>
+<p>Since these 2 parallel worlds are identical <strong>except</strong> for the fact one world gets the treatment <span class="math inline">D</span> and the other does not, the difference in the world’s <span class="math inline">y</span> outcomes can only be the effect of treatment <span class="math inline">D</span>.</p>
+<p>The difference in the two world’s outcome <span class="math inline">y</span> is thus the <strong>causal effect</strong> of <span class="math inline">D</span> on <span class="math inline">y</span>.</p>
 </div>
 </div>
 <p><br></p>
 <p>Let us represent these two parallel worlds more formally:</p>
 <ul>
-<li>The world where unit <span class="math inline">\(i\)</span> gets the treatment will be called the <strong>treatment state</strong>, and will take a value of <span class="math inline">\(D=1\)</span>.</li>
-<li>The world where unit <span class="math inline">\(i\)</span> does not get the treatment will be called the <strong>control state</strong>, and will take a value of <span class="math inline">\(D=0\)</span>.</li>
+<li>The world where unit <span class="math inline">i</span> gets the treatment will be called the <strong>treatment state</strong>, and will take a value of <span class="math inline">D=1</span>.</li>
+<li>The world where unit <span class="math inline">i</span> does not get the treatment will be called the <strong>control state</strong>, and will take a value of <span class="math inline">D=0</span>.</li>
 </ul>
-<p>Thus, the outcomes of unit <span class="math inline">\(i\)</span> in these 2 parallel worlds can be notated as <span class="math inline">\(y_{Di}\)</span>, where <span class="math inline">\(D\)</span> is the state of the world.</p>
+<p>Thus, the outcomes of unit <span class="math inline">i</span> in these 2 parallel worlds can be notated as <span class="math inline">y_{Di}</span>, where <span class="math inline">D</span> is the state of the world.</p>
 <ul>
-<li>In the <strong>treatment state</strong> <span class="math inline">\(D=1\)</span>, we will label the outcome of unit <span class="math inline">\(i\)</span> as <span class="math inline">\(y_{1i}\)</span></li>
-<li>In the <strong>control state</strong> <span class="math inline">\(D=0\)</span>, we will label the outcome of unit <span class="math inline">\(i\)</span> as <span class="math inline">\(y_{0i}\)</span>.</li>
+<li>In the <strong>treatment state</strong> <span class="math inline">D=1</span>, we will label the outcome of unit <span class="math inline">i</span> as <span class="math inline">y_{1i}</span></li>
+<li>In the <strong>control state</strong> <span class="math inline">D=0</span>, we will label the outcome of unit <span class="math inline">i</span> as <span class="math inline">y_{0i}</span>.</li>
 </ul>
 <p><br></p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -229,11 +244,11 @@ Example: Democracy and Economic Growth
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let us say we want to find if democracy causes better economic growth. Democracy is our treatment <span class="math inline">\(D\)</span>, and economic growth is our outcome <span class="math inline">\(y\)</span>.</p>
-<p>Country <span class="math inline">\(i\)</span> (for simplicity, let us say Canada) is one of the units. There are two parallel worlds:</p>
+<p>Let us say we want to find if democracy causes better economic growth. Democracy is our treatment <span class="math inline">D</span>, and economic growth is our outcome <span class="math inline">y</span>.</p>
+<p>Country <span class="math inline">i</span> (for simplicity, let us say Canada) is one of the units. There are two parallel worlds:</p>
 <ul>
-<li>In one parallel world, Canada is in the <strong>treatment state</strong> <span class="math inline">\(D=1\)</span>, meaning it is a democracy. Its outcome in this world would be its economic growth <span class="math inline">\(y_{1i}\)</span>.</li>
-<li>In the other parallel world, Canada is in the <strong>control state</strong> <span class="math inline">\(D=0\)</span>, meaning it is not a democracy. Its outcome in this world would be its economic growth <span class="math inline">\(y_{0i}\)</span>.</li>
+<li>In one parallel world, Canada is in the <strong>treatment state</strong> <span class="math inline">D=1</span>, meaning it is a democracy. Its outcome in this world would be its economic growth <span class="math inline">y_{1i}</span>.</li>
+<li>In the other parallel world, Canada is in the <strong>control state</strong> <span class="math inline">D=0</span>, meaning it is not a democracy. Its outcome in this world would be its economic growth <span class="math inline">y_{0i}</span>.</li>
 </ul>
 </div>
 </div>
@@ -241,7 +256,7 @@ Example: Democracy and Economic Growth
 </section>
 <section id="causal-effects" class="level3">
 <h3 class="anchored" data-anchor-id="causal-effects">Causal Effects</h3>
-<p>As we mentioned in the potential outcomes framework, the difference in the outcomes in the two parallel worlds must be the causal effect of <span class="math inline">\(D\)</span>, since everything else in the parallel worlds are identical.</p>
+<p>As we mentioned in the potential outcomes framework, the difference in the outcomes in the two parallel worlds must be the causal effect of <span class="math inline">D</span>, since everything else in the parallel worlds are identical.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -252,13 +267,13 @@ Definition: Individual Causal Effects
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Thus, the individual causal effect of <span class="math inline">\(D\)</span> on unit <span class="math inline">\(i\)</span> is the difference of outcomes <span class="math inline">\(y\)</span> in the treatment state and the control state. Mathematically:</p>
-<p><span class="math display">\[
+<p>Thus, the individual causal effect of <span class="math inline">D</span> on unit <span class="math inline">i</span> is the difference of outcomes <span class="math inline">y</span> in the treatment state and the control state. Mathematically:</p>
+<p><span class="math display">
 \tau_i = y_{1i} - y_{0i}
-\]</span></p>
+</span></p>
 </div>
 </div>
-<p>Thus, the treatment <span class="math inline">\(D\)</span> will have <span class="math inline">\(\tau\)</span> effect on outcome <span class="math inline">\(y\)</span> for unit <span class="math inline">\(i\)</span></p>
+<p>Thus, the treatment <span class="math inline">D</span> will have <span class="math inline">\tau</span> effect on outcome <span class="math inline">y</span> for unit <span class="math inline">i</span></p>
 <p><br></p>
 <hr>
 <p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
@@ -281,35 +296,35 @@ Definition: Observed Outcomes
 </div>
 <div class="callout-body-container callout-body">
 <p>Observed outcomes are a subset of potential outcomes that actually come true in the real world. Observed outcomes are given by the formula:</p>
-<p><span class="math display">\[
+<p><span class="math display">
 y_i = D_i \times y_{1i} + (1-D_i) \times y_{0i}
-\]</span></p>
+</span></p>
 <ul>
-<li>Where <span class="math inline">\(y_i\)</span> is the observed outcome, <span class="math inline">\(y_{1i}\)</span> is the potential outcome of the treatment state, and <span class="math inline">\(y_{0i}\)</span> is the potential outcome of the control state.</li>
-<li>Where <span class="math inline">\(D_i\)</span> represents what state unit <span class="math inline">\(i\)</span> is in, where <span class="math inline">\(D_i = 1\)</span> indicates unit <span class="math inline">\(i\)</span> is in the treatment state, and <span class="math inline">\(D_i = 0\)</span> indicates unit <span class="math inline">\(i\)</span> is in the control state.</li>
+<li>Where <span class="math inline">y_i</span> is the observed outcome, <span class="math inline">y_{1i}</span> is the potential outcome of the treatment state, and <span class="math inline">y_{0i}</span> is the potential outcome of the control state.</li>
+<li>Where <span class="math inline">D_i</span> represents what state unit <span class="math inline">i</span> is in, where <span class="math inline">D_i = 1</span> indicates unit <span class="math inline">i</span> is in the treatment state, and <span class="math inline">D_i = 0</span> indicates unit <span class="math inline">i</span> is in the control state.</li>
 </ul>
 </div>
 </div>
-<p>This formula might seem unintuitive. But we can plug in values of <span class="math inline">\(D_i\)</span> to understand what this formula means.</p>
-<p>What if unit <span class="math inline">\(i\)</span> is in the treatment state, <span class="math inline">\(D_i = 1\)</span>. Let us plug in <span class="math inline">\(D_i = 1\)</span> into the equation:</p>
-<p><span class="math display">\[
+<p>This formula might seem unintuitive. But we can plug in values of <span class="math inline">D_i</span> to understand what this formula means.</p>
+<p>What if unit <span class="math inline">i</span> is in the treatment state, <span class="math inline">D_i = 1</span>. Let us plug in <span class="math inline">D_i = 1</span> into the equation:</p>
+<p><span class="math display">
 \begin{split}
 y_i &amp; = D_i \times y_{1i} + (1-D_i) \times y_{0i} \\
 y_i &amp; = 1 \times y_{1i} + (1-1) \times y_{0i} \\
 y_i &amp; = y_{1i}
 \end{split}
-\]</span></p>
-<p>Thus, the observed outcome when unit <span class="math inline">\(i\)</span> is in the treatment state is <span class="math inline">\(y_{1i}\)</span>, which makes sense, since that is the potential outcome of the treatment state.</p>
+</span></p>
+<p>Thus, the observed outcome when unit <span class="math inline">i</span> is in the treatment state is <span class="math inline">y_{1i}</span>, which makes sense, since that is the potential outcome of the treatment state.</p>
 <p><br></p>
-<p>Similarly, what if unit <span class="math inline">\(i\)</span> is in the control state <span class="math inline">\(D_i = 0\)</span>. Let us plug in <span class="math inline">\(D_i = 0\)</span> into the equation:</p>
-<p><span class="math display">\[
+<p>Similarly, what if unit <span class="math inline">i</span> is in the control state <span class="math inline">D_i = 0</span>. Let us plug in <span class="math inline">D_i = 0</span> into the equation:</p>
+<p><span class="math display">
 \begin{split}
 y_i &amp; = D_i \times y_{1i} + (1-D_i) \times y_{0i} \\
 y_i &amp; = 0 \times y_{1i} + (1-0) \times y_{0i} \\
 y_i &amp; = y_{0i}
 \end{split}
-\]</span></p>
-<p>Thus, the observed outcome when unit <span class="math inline">\(i\)</span> is in the control state is <span class="math inline">\(y_{0i}\)</span>, which makes sense, since that is the potential outcome of the control state.</p>
+</span></p>
+<p>Thus, the observed outcome when unit <span class="math inline">i</span> is in the control state is <span class="math inline">y_{0i}</span>, which makes sense, since that is the potential outcome of the control state.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -320,8 +335,8 @@ Definition: Counterfactuals
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A counterfactual is the potential outcome that is not observed. For example, if in the real world, unit <span class="math inline">\(i\)</span> is observed to have received the treatment, then its counterfactual is the world where unit <span class="math inline">\(i\)</span> did not receive the treatment.</p>
-<p>Counterfactuals are important, because, if we remember, the individual causal effect is <span class="math inline">\(\tau_i = y_{1i} = y_{0i}\)</span>, which implies that we must know the counterfactual to find the causal effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(y\)</span>.</p>
+<p>A counterfactual is the potential outcome that is not observed. For example, if in the real world, unit <span class="math inline">i</span> is observed to have received the treatment, then its counterfactual is the world where unit <span class="math inline">i</span> did not receive the treatment.</p>
+<p>Counterfactuals are important, because, if we remember, the individual causal effect is <span class="math inline">\tau_i = y_{1i} = y_{0i}</span>, which implies that we must know the counterfactual to find the causal effect of <span class="math inline">D</span> on <span class="math inline">y</span>.</p>
 </div>
 </div>
 <p><br></p>
@@ -329,17 +344,17 @@ Definition: Counterfactuals
 <section id="stable-unit-treatment-value-observation" class="level3">
 <h3 class="anchored" data-anchor-id="stable-unit-treatment-value-observation">Stable Unit Treatment Value Observation</h3>
 <p>The stable unit treatment value assumption (SUTVA) is arguably the key assumption of causal inference.</p>
-<p>SUTVA states that given two units <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>, unit <span class="math inline">\(i\)</span> is not affected by the treatment assignment of unit <span class="math inline">\(j\)</span>. More intuitively, if unit <span class="math inline">\(j\)</span> is assigned to treatment, that has no effect on the outcomes of unit <span class="math inline">\(i\)</span>.</p>
-<p>Why is this important? Well, if unit <span class="math inline">\(j\)</span>’s treatment status affects unit <span class="math inline">\(i\)</span>, then unit <span class="math inline">\(i\)</span> would have more than 2 potential outcomes:</p>
+<p>SUTVA states that given two units <span class="math inline">i</span> and <span class="math inline">j</span>, unit <span class="math inline">i</span> is not affected by the treatment assignment of unit <span class="math inline">j</span>. More intuitively, if unit <span class="math inline">j</span> is assigned to treatment, that has no effect on the outcomes of unit <span class="math inline">i</span>.</p>
+<p>Why is this important? Well, if unit <span class="math inline">j</span>’s treatment status affects unit <span class="math inline">i</span>, then unit <span class="math inline">i</span> would have more than 2 potential outcomes:</p>
 <ul>
-<li>This is because unit <span class="math inline">\(i\)</span>’s outcomes would now not only depend on itself being assigned to treatment or control, but also unit <span class="math inline">\(j\)</span> being assigned to treatment or control.</li>
-<li>That means unit <span class="math inline">\(i\)</span> now has 4 potential outcomes. If unit <span class="math inline">\(i\)</span> is affected by other units other than <span class="math inline">\(j\)</span>, this will quickly multiply to an unmanageable number of potential outcomes.</li>
+<li>This is because unit <span class="math inline">i</span>’s outcomes would now not only depend on itself being assigned to treatment or control, but also unit <span class="math inline">j</span> being assigned to treatment or control.</li>
+<li>That means unit <span class="math inline">i</span> now has 4 potential outcomes. If unit <span class="math inline">i</span> is affected by other units other than <span class="math inline">j</span>, this will quickly multiply to an unmanageable number of potential outcomes.</li>
 </ul>
 <p>Thus, violating this assumption will basically make it impossible to calculate treatment effects.</p>
 <p><br></p>
 <p>In what situations is SUTVA typically violated?</p>
 <ol type="1">
-<li>Peer effects that result from contact between units <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>. For example, if you are testing the treatment of some new curriculum on student educational outcomes, and unit <span class="math inline">\(j\)</span> is assigned to treatment, unit <span class="math inline">\(j\)</span> might teach their friend unit <span class="math inline">\(i\)</span> some new things, even if unit <span class="math inline">\(i\)</span> was in the control group.</li>
+<li>Peer effects that result from contact between units <span class="math inline">i</span> and <span class="math inline">j</span>. For example, if you are testing the treatment of some new curriculum on student educational outcomes, and unit <span class="math inline">j</span> is assigned to treatment, unit <span class="math inline">j</span> might teach their friend unit <span class="math inline">i</span> some new things, even if unit <span class="math inline">i</span> was in the control group.</li>
 <li>Dilution/concentration effects that arise from a prevalence of a treatment. The best example is vaccines - if enough people get a vaccine for a disease, even people who do not get the vaccine are safer, since transmission is much more difficult.</li>
 </ol>
 <p><br></p>
@@ -349,7 +364,7 @@ Definition: Counterfactuals
 </section>
 <section id="causal-estimands" class="level1">
 <h1>1.4: Causal Estimands</h1>
-<p>We introduced how the individual treatment effect of <span class="math inline">\(D \rightarrow y\)</span> for any unit <span class="math inline">\(i\)</span> is <span class="math inline">\(\tau_i = y_{1i} - y_{0i}\)</span>. However, there is an issue - we do not know the two parallel worlds.</p>
+<p>We introduced how the individual treatment effect of <span class="math inline">D \rightarrow y</span> for any unit <span class="math inline">i</span> is <span class="math inline">\tau_i = y_{1i} - y_{0i}</span>. However, there is an issue - we do not know the two parallel worlds.</p>
 <ul>
 <li>As we discussed in <a href="https://politicalscience.github.io/metrics/causal/1.html#observed-outcomes-and-the-stable-unit-treatment-value-assumption">section 1.3</a>, we can only observe one of the two parallel worlds.</li>
 </ul>
@@ -368,35 +383,36 @@ Definition: Average Treatment Effect
 </div>
 <div class="callout-body-container callout-body">
 <p>The <strong>Average Treatment Effect (ATE)</strong> is the average of all individual treatment effects:</p>
-<p><span class="math display">\[
+<p><span class="math display">
 \tau_{ATE} \ = \ \mathbb{E}[\tau_i] \ = \ \bar{y}_{1i} - \bar{y}_{0i}
-\]</span></p>
+</span></p>
 </div>
 </div>
 <p>However, the ATE is not the only estimand we are interested in.</p>
 <p><br></p>
 <p>Sometimes, our treatment variables are continuous. For example, if we want to estimate how GDP affects democratisation, our treatment variable GDP is not binary.</p>
-<p>In cases of non-continuous treatment variables, we want to estimate the <strong>average causal effect</strong> (ACE)- the expected change in <span class="math inline">\(y\)</span> resulting from a one unit increase in <span class="math inline">\(D\)</span>:</p>
-<p><span class="math display">\[
-\tau_{ACE} = \mathbb{E}[y'(D)] \quad \text{where } y'(D) \text{ is the derivative of } y \text{ in respect to } D
-\]</span></p>
+<p>In cases of non-continuous treatment variables, we want to estimate the <strong>average causal effect</strong> (ACE)- the expected change in <span class="math inline">y</span> resulting from a one unit increase in <span class="math inline">D</span>:</p>
+<p><span class="math display">
+\tau_{ACE} = \mathbb{E}[y'(D)]
+</span></p>
+<p>Where <span class="math inline">y'(D)</span> is the derivative of <span class="math inline">y</span> in respect to <span class="math inline">D</span></p>
 <p><br></p>
 <p>Sometimes, we have reason to expect that the treatment effect may be different accross different categories of units.</p>
 <p>For example, maybe we think that a certain educational treatment will benefit women more than men, so the treatment effect will be higher for women than men.</p>
-<p>The <strong>Conditional Average Treatment Effect (CATE)</strong> is the treatment effect of units, given they have some other variable <span class="math inline">\(x\)</span> value.</p>
-<p><span class="math display">\[
+<p>The <strong>Conditional Average Treatment Effect (CATE)</strong> is the treatment effect of units, given they have some other variable <span class="math inline">x</span> value.</p>
+<p><span class="math display">
 \tau_{CATE} = \mathbb{E}[y_{1i} - y_{0i} \ | \ x \ ]
-\]</span></p>
+</span></p>
 <p><br></p>
 <p>We can also estimate the causal effect on only the treatment or control groups.</p>
-<p>The <strong>average treatment effect on the treated (ATT)</strong> is the average treatment effect of only units who received the treatment <span class="math inline">\(D_i = 1\)</span>:</p>
-<p><span class="math display">\[
+<p>The <strong>average treatment effect on the treated (ATT)</strong> is the average treatment effect of only units who received the treatment <span class="math inline">D_i = 1</span>:</p>
+<p><span class="math display">
 \tau_{ATT} = \mathbb{E} [y_{1i} - y_{0i} \ | \ D_i = 1] = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
-\]</span></p>
-<p>The <strong>average treatment effect on the controls (ATC)</strong> is the average treatment effect of only units who did not receive the treatment <span class="math inline">\(D_i = 0\)</span>:</p>
-<p><span class="math display">\[
+</span></p>
+<p>The <strong>average treatment effect on the controls (ATC)</strong> is the average treatment effect of only units who did not receive the treatment <span class="math inline">D_i = 0</span>:</p>
+<p><span class="math display">
 \tau_{ATC} = \mathbb{E} [y_{1i} - y_{0i} \ | \ D_i = 0] = \bar{y}_{1i, \ D_i = 0} - \bar{y}_{0i, \ D_i = 0}
-\]</span></p>
+</span></p>
 <p><br></p>
 <hr>
 <p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
@@ -408,30 +424,30 @@ Definition: Average Treatment Effect
 <p><br></p>
 <section id="unbiasedness" class="level3">
 <h3 class="anchored" data-anchor-id="unbiasedness">Unbiasedness</h3>
-<p>An estimator is <strong>unbiased</strong> if its estimates <span class="math inline">\(\hat{\theta}\)</span> are on average equal to the true estimand <span class="math inline">\(\theta\)</span>.</p>
-<p><span class="math display">\[
+<p>An estimator is <strong>unbiased</strong> if its estimates <span class="math inline">\hat{\theta}</span> are on average equal to the true estimand <span class="math inline">\theta</span>.</p>
+<p><span class="math display">
 \mathbb{E}[ \ \hat{\theta} \ ] = \theta
-\]</span></p>
-<p>Note: I use <span class="math inline">\(\theta\)</span> to represent any possible estimand, including the causal estimands from above.</p>
-<p>To better understand unbiasdness, take this example of archery. We have two archers, archer <span class="math inline">\(A\)</span> and archer <span class="math inline">\(B\)</span>.</p>
+</span></p>
+<p>Note: I use <span class="math inline">\theta</span> to represent any possible estimand, including the causal estimands from above.</p>
+<p>To better understand unbiasdness, take this example of archery. We have two archers, archer <span class="math inline">A</span> and archer <span class="math inline">B</span>.</p>
 <ul>
 <li>Both archers are very very accurate - as in they hit the same spot on the target every time they shoot.</li>
-<li>Archer <span class="math inline">\(A\)</span> gets the bullseye every single time.</li>
-<li>However, archer <span class="math inline">\(B\)</span>, while very consistently hitting the same spot, for some reason, keeps hitting 5 inches to the right of the bullseye.</li>
+<li>Archer <span class="math inline">A</span> gets the bullseye every single time.</li>
+<li>However, archer <span class="math inline">B</span>, while very consistently hitting the same spot, for some reason, keeps hitting 5 inches to the right of the bullseye.</li>
 </ul>
-<p>Thus, archer <span class="math inline">\(B\)</span> is biased - he is consistently and systematically hitting the wrong spot on the target. Similarly, if an estimate is consistently off by a certain value, then it is biased.</p>
+<p>Thus, archer <span class="math inline">B</span> is biased - he is consistently and systematically hitting the wrong spot on the target. Similarly, if an estimate is consistently off by a certain value, then it is biased.</p>
 <p><br></p>
 </section>
 <section id="consistency" class="level3">
 <h3 class="anchored" data-anchor-id="consistency">Consistency</h3>
-<p>However, an unbiased estimator is not good enough. Why? Take this example of another archer <span class="math inline">\(C\)</span>.</p>
+<p>However, an unbiased estimator is not good enough. Why? Take this example of another archer <span class="math inline">C</span>.</p>
 <ul>
-<li>Archer <span class="math inline">\(C\)</span> has good aim - he is aiming directly at the bullseye.</li>
-<li>However, archer <span class="math inline">\(C\)</span> is very inconsistent - he first hits a shot 5 inches to the left of the bullseye, then hits a shot 5 inches to the right of the bullseye. He keeps doing both of these things over and over again.</li>
-<li>Archer <span class="math inline">\(C\)</span> on average is actually hitting the bullseye, since his leftward and rightward errors cancel each other out.</li>
-<li>However, archer <span class="math inline">\(C\)</span> never actually hits the bullseye on any specific shot.</li>
+<li>Archer <span class="math inline">C</span> has good aim - he is aiming directly at the bullseye.</li>
+<li>However, archer <span class="math inline">C</span> is very inconsistent - he first hits a shot 5 inches to the left of the bullseye, then hits a shot 5 inches to the right of the bullseye. He keeps doing both of these things over and over again.</li>
+<li>Archer <span class="math inline">C</span> on average is actually hitting the bullseye, since his leftward and rightward errors cancel each other out.</li>
+<li>However, archer <span class="math inline">C</span> never actually hits the bullseye on any specific shot.</li>
 </ul>
-<p>Archer <span class="math inline">\(C\)</span> is an example of an unbiased, but very inconsistent estimator. On average, he is getting the right value of the estimate, but he is never that close on any specific estimate.</p>
+<p>Archer <span class="math inline">C</span> is an example of an unbiased, but very inconsistent estimator. On average, he is getting the right value of the estimate, but he is never that close on any specific estimate.</p>
 <ul>
 <li>More technically, an inconsistent estimator is one who has high <strong>variance</strong> in their estimates.</li>
 </ul>
@@ -449,43 +465,43 @@ Definition: Average Treatment Effect
 <h1>1.5: The Naive Estimator and Proof Correlation is not Causation</h1>
 <p>The <strong>naive estimator</strong> is an estimator that only compares the observed outcomes, without any comparison to the counterfactual potential outcomes.</p>
 <p>So essentially, we compare the observed treatment group outcomes and the observed control group outcomes:</p>
-<p><span class="math display">\[
+<p><span class="math display">
 \hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-\]</span></p>
+</span></p>
 <p>This is what many people do when trying to find a causal effect. The naive estimator is also similar to a measure of correlation.</p>
 <p><br></p>
-<p>However, <strong>the naive estimator is a bad idea</strong>. Remember, treatment effects are supposed to be comparing the two potential outcomes <u>of the same unit</u>. We are supposed to compare <span class="math inline">\(y_{1i}\)</span> to <span class="math inline">\(y_{0i}\)</span>.</p>
+<p>However, <strong>the naive estimator is a bad idea</strong>. Remember, treatment effects are supposed to be comparing the two potential outcomes <u>of the same unit</u>. We are supposed to compare <span class="math inline">y_{1i}</span> to <span class="math inline">y_{0i}</span>.</p>
 <ul>
 <li>However, the naive estimator does not do that. Instead, it is comparing the observed outcomes of the treatment group versus the different control group.</li>
 </ul>
 <p>So essentially, it is comparing the potential outcomes of <u>different</u> units.</p>
 <ul>
 <li>But what is the issue with this?</li>
-<li>Well, if you compare the potential outcome of two different units (let us call them <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>), you are comparing <span class="math inline">\(y_{1A}\)</span> and <span class="math inline">\(y_{1b}\)</span>.</li>
-<li>However, what if units <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are different in some way even before the treatment? Their outcomes <span class="math inline">\(y\)</span> may differ not due to the treatment <span class="math inline">\(D\)</span>, but due to some underlying difference between units <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>.</li>
-<li>Thus, we are introducing some <strong>bias</strong> - the differences between unit <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are being included in our causal estimate, when they should not be, since the differences between <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> may not be due to <span class="math inline">\(D\)</span>.</li>
+<li>Well, if you compare the potential outcome of two different units (let us call them <span class="math inline">A</span> and <span class="math inline">B</span>), you are comparing <span class="math inline">y_{1A}</span> and <span class="math inline">y_{1b}</span>.</li>
+<li>However, what if units <span class="math inline">A</span> and <span class="math inline">B</span> are different in some way even before the treatment? Their outcomes <span class="math inline">y</span> may differ not due to the treatment <span class="math inline">D</span>, but due to some underlying difference between units <span class="math inline">A</span> and <span class="math inline">B</span>.</li>
+<li>Thus, we are introducing some <strong>bias</strong> - the differences between unit <span class="math inline">A</span> and <span class="math inline">B</span> are being included in our causal estimate, when they should not be, since the differences between <span class="math inline">A</span> and <span class="math inline">B</span> may not be due to <span class="math inline">D</span>.</li>
 </ul>
 <p><br></p>
 <p>We can prove this mathematically. We start with the naive estimator:</p>
-<p><span class="math display">\[
+<p><span class="math display">
 \hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-\]</span></p>
+</span></p>
 <p>Then, we do a little algebra trick - we add a new term to this equation, then subtract that same term. The two new terms thus cancel each other out to 0:</p>
-<p><span class="math display">\[
+<p><span class="math display">
 \hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
-\]</span></p>
+</span></p>
 <p>Now, let us re-arrange this equation:</p>
-<p><span class="math display">\[
+<p><span class="math display">
 \hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-\]</span></p>
+</span></p>
 <p>We can see the first two terms are equal to the average treatment effect on the treated (ATT). Thus, we can rewrite the naive estimator:</p>
-<p><span class="math display">\[
+<p><span class="math display">
 \hat{\tau}_{\text{naive}} = \tau_{ATT} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-\]</span></p>
+</span></p>
 <p>If we look at the final result, we can divide it into two parts:</p>
 <ol type="1">
-<li>The ATT <span class="math inline">\(\tau_{ATT}\)</span></li>
-<li>The extra bit: <span class="math inline">\(\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}\)</span>, which we call <strong>selection bias</strong>. Intuitively, it is the difference <u>prior to treatment</u> between the control and treatment groups. This results in our naive estimator being biased.</li>
+<li>The ATT <span class="math inline">\tau_{ATT}</span></li>
+<li>The extra bit: <span class="math inline">\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}</span>, which we call <strong>selection bias</strong>. Intuitively, it is the difference <u>prior to treatment</u> between the control and treatment groups. This results in our naive estimator being biased.</li>
 </ol>
 <p>We will go into detail on selection bias in the next section.</p>
 <p><br></p>
@@ -496,7 +512,7 @@ Definition: Average Treatment Effect
 <h1>1.6: Selection Bias and Confounding Variables</h1>
 <section id="selection-bias" class="level3">
 <h3 class="anchored" data-anchor-id="selection-bias">Selection Bias</h3>
-<p>As we just established, the naive estimator contains <strong>selection bias</strong> <span class="math inline">\(\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}\)</span>. This is the difference <u>prior to treatment</u> between the control and treatment groups.</p>
+<p>As we just established, the naive estimator contains <strong>selection bias</strong> <span class="math inline">\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}</span>. This is the difference <u>prior to treatment</u> between the control and treatment groups.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -542,12 +558,12 @@ Definition: Confounding Variable
 <p><img src="figures/1-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
 </figure>
 </div>
-<p>In this figure, <span class="math inline">\(D\)</span> is the treatment, and <span class="math inline">\(C\)</span> is the confounding variable that affects whether or not a unit gets the treatment <span class="math inline">\(D\)</span> or not.</p>
-<p>When we calculate the naive estimate (or correlation), our causal estimate captures both the direct effect <span class="math inline">\(D \rightarrow Y\)</span>, but also the effect of <span class="math inline">\(D \leftrightarrow C \rightarrow O \rightarrow Y\)</span>, since <span class="math inline">\(D\)</span> and <span class="math inline">\(C\)</span> are correlated.</p>
+<p>In this figure, <span class="math inline">D</span> is the treatment, and <span class="math inline">C</span> is the confounding variable that affects whether or not a unit gets the treatment <span class="math inline">D</span> or not.</p>
+<p>When we calculate the naive estimate (or correlation), our causal estimate captures both the direct effect <span class="math inline">D \rightarrow Y</span>, but also the effect of <span class="math inline">D \leftrightarrow C \rightarrow O \rightarrow Y</span>, since <span class="math inline">D</span> and <span class="math inline">C</span> are correlated.</p>
 <ul>
-<li>This second effect <span class="math inline">\(D \leftrightarrow C \rightarrow O \rightarrow Y\)</span> is called the <strong>backdoor path</strong>.</li>
+<li>This second effect <span class="math inline">D \leftrightarrow C \rightarrow O \rightarrow Y</span> is called the <strong>backdoor path</strong>.</li>
 </ul>
-<p>However, the actual causal effect of treatment <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span> is only the section of <span class="math inline">\(D \rightarrow Y\)</span>, and does not include the backdoor path. So, we need to find some way to only look at <span class="math inline">\(D \rightarrow Y\)</span>, and eliminate/partial out the effect of the back door.</p>
+<p>However, the actual causal effect of treatment <span class="math inline">D</span> on <span class="math inline">Y</span> is only the section of <span class="math inline">D \rightarrow Y</span>, and does not include the backdoor path. So, we need to find some way to only look at <span class="math inline">D \rightarrow Y</span>, and eliminate/partial out the effect of the back door.</p>
 <p><br></p>
 <p>To make an accurate causal effect estimate, we must get rid of confounding variables, selection bias, and the backdoor path. How do we do this? The best method is randomisation, which we will cover in the next chapter.</p>
 <p><br></p>
