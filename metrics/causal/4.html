@@ -172,12 +172,12 @@ window.Quarto = {
 <section id="the-multiple-linear-regression-model" class="level1">
 <h1>4.1: The Multiple Linear Regression Model</h1>
 <p>Before we start, make sure you have a strong understanding of all aspects of the simple linear regression model covered in <a href="https://politicalscience.github.io/metrics/causal/1.html">chapter 1</a>.</p>
-<p>One of the issues with simple linear regression is that it only measures the correlation/relationship between <span class="math inline">x</span> and <span class="math inline">y</span>. Simple linear regression can only be used for causal estimation when used in randomised controlled experiments.</p>
+<p>One of the issues with simple linear regression is that it often only measures the correlation/relationship between <span class="math inline">x</span> and <span class="math inline">y</span>. Simple linear regression can only be used for causal estimation when used in randomised controlled experiments.</p>
 <p><br></p>
 <p>However, in the social sciences, randomisation is often not possible.</p>
-<p>Linear regression allows us to estimate a model with both our treatment and outcome variables, as well as a series of <strong>control</strong> variables.</p>
+<p>Multiple linear regression allows us to estimate a model with both our treatment and outcome variables, as well as a series of <strong>control</strong> variables.</p>
 <ul>
-<li>We will explore the idea of “controlling” in later in section 4.4.</li>
+<li>We will explore the idea of “controlling” in later in <a href="https://politicalscience.github.io/metrics/causal/4.html#regression-anatomy-theory-and-coefficient-interpretation">section 4.4</a>.</li>
 </ul>
 <p>In theory, by including every single confounding variable as a control variable in our regression model, we can partial out the effect of confounders and find the average treatment effect.</p>
 <ul>
@@ -221,8 +221,8 @@ y_i = \beta_0 + \beta_1x_{1i} + ... + \beta_k x_{ki} + u_i
 </ul>
 <p>The other explanatory variables <span class="math inline">x_2, ..., x_k</span> are the confounding variables we want to control for.</p>
 <ul>
-<li><p>We will go into detail what “controlling for” means in section 4.4.</p></li>
-<li><p>We will also discuss how to select control variables in section 4.8.</p></li>
+<li>We will go into detail what “controlling for” means in <a href="https://politicalscience.github.io/metrics/causal/4.html#regression-anatomy-theory-and-coefficient-interpretation">section 4.4</a>.</li>
+<li>We will also discuss how to select control variables in <a href="https://politicalscience.github.io/metrics/causal/4.html#validity-of-using-ols-for-causal-estimation">section 4.8</a>.</li>
 </ul>
 <p><br></p>
 <p><br></p>
@@ -245,7 +245,7 @@ y_i = x_i'\beta + u_i, \text{ where }\beta = \begin{bmatrix}\beta_0 \\ \beta_1 \
 <li><p>The first element of the <span class="math inline">x_i</span> matrix is 1, since <span class="math inline">1 \times \beta_0</span> gives us the first parameter (intercept) in the linear model.</p></li>
 </ul>
 <p><br></p>
-<p>Since our data has <span class="math inline">n</span> number of observations <span class="math inline">i</span>, we can express this into vector form, with the <span class="math inline">X_i'</span> and <span class="math inline">\beta</span> being vectors within a vector.</p>
+<p>Since our data has <span class="math inline">n</span> number of observations <span class="math inline">i</span>, we can express this into vector form, with the <span class="math inline">x_i'</span> and <span class="math inline">\beta</span> being vectors within a vector.</p>
 <p><span class="math display">
 \begin{split}
 \begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} &amp; = \begin{pmatrix}x_1'\beta + u_1 \\ x_2'\beta + u_2 \\ \vdots \\ x_n'\beta + u_n\end{pmatrix} \\
@@ -274,9 +274,9 @@ Definition: Multiple Linear Regression with Linear Algebra
 y = X \beta + u, \text{ where } X = \begin{bmatrix}1 &amp; x_{21} &amp; \dots &amp; x_{k1} \\1 &amp; x_{22} &amp; \dots &amp; x_{k2} \\\vdots &amp; \vdots &amp; \vdots &amp; \vdots \\1 &amp; x_{2n} &amp; \dots &amp; x_{kn}\end{bmatrix}
 </span></p>
 <ul>
-<li><p>Where the notation for elements of <span class="math inline">X</span> is <span class="math inline">x_{ki}</span>, with <span class="math inline">i</span> being the unit of observation <span class="math inline">i = 1, \dots n</span>, and <span class="math inline">k</span> being the explanatory variables index.</p></li>
-<li><p>Where <span class="math inline">y</span> and <span class="math inline">u</span> are <span class="math inline">n \times 1</span> vectors (as seen above), and <span class="math inline">\beta</span> is a <span class="math inline">k \times 1</span> vector.</p></li>
-<li><p>The first row of <span class="math inline">X</span> is a vector of 1, which exists because these 1’s are multiplied with <span class="math inline">\beta_0</span> in our model.</p></li>
+<li>Where the notation for elements of <span class="math inline">X</span> is <span class="math inline">x_{ki}</span>, with <span class="math inline">i</span> being the unit of observation <span class="math inline">i = 1, \dots n</span>, and <span class="math inline">k</span> being the explanatory variables index.</li>
+<li>Where <span class="math inline">y</span> and <span class="math inline">u</span> are <span class="math inline">n \times 1</span> vectors (as seen above), and <span class="math inline">\beta</span> is a <span class="math inline">k \times 1</span> vector.</li>
+<li>The first column of <span class="math inline">X</span> is a vector of 1, which exists because these 1’s are multiplied with <span class="math inline">\beta_0</span> in our model.</li>
 </ul>
 </div>
 </div>
@@ -366,7 +366,7 @@ Definition: OLS Estimate of <span class="math inline">\hat\beta</span>
 <section id="regression-anatomy-theory-and-coefficient-interpretation" class="level1">
 <h1>4.4: Regression Anatomy Theory and Coefficient Interpretation</h1>
 <p>We talked about how multiple linear regression allows us to control for confounders. But what does that mean? How does it affect our interpretations of coefficients?</p>
-<p>The Regression Anatomy Theory, also called the Frisch–Waugh–Lovell (FWL) theorem, illustrates this concept. Take our standard multivariate regression:</p>
+<p>The Regression Anatomy Theory, also called the Frisch–Waugh–Lovell (FWL) theorem, illustrates this concept. Take our standard multiple linear regression:</p>
 <p><span class="math display">
 y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + ... + \beta_k x_{ki} + u_i
 </span></p>
@@ -430,7 +430,6 @@ Interpretation of Coefficients in Multiple Linear Regression
 <p>Intecept <span class="math inline">\beta_0</span> is the expected value of <span class="math inline">y</span> when all <span class="math inline">\overrightarrow{x} = 0</span>.</p>
 </div>
 </div>
-<p>Using the same procedure as in simple linear regression, we can run hypothesis tests on each coefficient for inference purposes (we will discuss causal inference with OLS in the next sections).</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -438,7 +437,7 @@ Interpretation of Coefficients in Multiple Linear Regression
 </section>
 <section id="gauss-markov-and-unbiasedness-of-the-ols-estimator" class="level1">
 <h1>4.5: Gauss-Markov and Unbiasedness of the OLS Estimator</h1>
-<p>An unbiased estimator, if we recall from section 1.3, means that over many different estimates, the expected value of all the estimates is the true parameter value: <span class="math inline">\mathbb{E}[\hat{\theta}_i] = \theta</span>.</p>
+<p>An unbiased estimator, if we recall from <a href="https://politicalscience.github.io/metrics/causal/2.html#properties-of-estimators---unbiasedness-and-consistency">section 2.5</a>, means that over many different estimates, the expected value of all the estimates is the true parameter value: <span class="math inline">\mathbb{E}[\hat{\theta}_i] = \theta</span>.</p>
 <p>Unbiasedness is desirable property of causal estimators.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -446,7 +445,7 @@ Interpretation of Coefficients in Multiple Linear Regression
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Gauss-Markov Theorem for Unbiasdness
+Definition: Gauss-Markov Theorem for Unbiasdness
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -516,8 +515,8 @@ Properties of Summation
 </span></p>
 <p>Thus, the ordinary least squares estimator is unbiased, given 3 conditions (linearity, variation in <span class="math inline">x</span>, zero-conditional mean) are met.</p>
 <ul>
-<li><u>If conditions are met, we have an unbiased estimator in OLS for causal estimation</u>.</li>
-<li><u>The key issue is assumption 3: Zero conditional mean <span class="math inline">\mathbb{E}[u | x] = 0</span></u>, which is the most easily violated of these assumptions. We will explore this in detail in section 4.7.</li>
+<li>If conditions are met, we have an unbiased estimator in OLS for causal estimation.</li>
+<li><u>The key issue is assumption 3: Zero conditional mean <span class="math inline">\mathbb{E}[u | x] = 0</span></u>, which is the most easily violated of these assumptions. We will explore this in detail in <a href="https://politicalscience.github.io/metrics/causal/4.html#omitted-variable-bias-and-endogeneity">section 4.7</a>.</li>
 </ul>
 <p><br></p>
 <p><br></p>
@@ -594,7 +593,7 @@ Definition: Gauss-Markov Theorem for Consistency
 </section>
 <section id="omitted-variable-bias-and-endogeneity" class="level1">
 <h1>4.7: Omitted Variable Bias and Endogeneity</h1>
-<p>In the last section, we discussed how the assumption of <strong>zero-conditional mean</strong> <span class="math inline">\mathbb{E}[u | x] = 0</span> is critical to the unbiasdness of OLS.</p>
+<p>In <a href="https://politicalscience.github.io/metrics/causal/4.html#gauss-markov-and-unbiasedness-of-the-ols-estimator">section 4.5</a>, we discussed how the assumption of <strong>zero-conditional mean</strong> <span class="math inline">\mathbb{E}[u | x] = 0</span> is critical to the unbiasdness of OLS.</p>
 <ul>
 <li>This assumption is also called <strong>exogeneity</strong>.</li>
 </ul>
@@ -604,7 +603,7 @@ Definition: Gauss-Markov Theorem for Consistency
 <p><span class="math display">
 \begin{split}y_i &amp; = \beta_0^S + \beta_1^SD_i + u_i^S \quad \text{short} \\y_i &amp; = \beta_0 + \beta_1D_i + \beta_2x_i + u_i \quad \text{long}\end{split}
 </span></p>
-<p>Now consider an auxiliary regression, where the omitted variable <span class="math inline">X</span> is the outcome variable, and <span class="math inline">D_i</span> is the explanatory variable:</p>
+<p>Now consider an auxiliary regression, where the omitted variable <span class="math inline">x</span> is the outcome variable, and <span class="math inline">D_i</span> is the explanatory variable:</p>
 <p><span class="math display">
 x_i = \delta_0 + \delta_1 D_i + v_i
 </span></p>
@@ -616,9 +615,9 @@ x_i = \delta_0 + \delta_1 D_i + v_i
 <p><span class="math display">
 \begin{split}y_i &amp; = \beta_0 + \beta_1D_i + \beta_2x_i + u_i \\y_i &amp; = \beta_0 + \beta_1 D_i + \beta_2(\delta_0 + \delta_1D_i + v_i) + u_i \\y_i &amp; = \beta_0 + \beta_1 D_i + \beta_2 \delta_0 + \beta_2 \delta_1 D_i + \beta_2v_i + u_i \\y_i &amp; = \beta_0 + \beta_2 \delta_0 + (\beta_1 + \beta_2 \delta_1)D_i + \beta_2v_i + u_i\end{split}
 </span></p>
-<p>We have “recreated” the short regression with one variable <span class="math inline">D</span>.</p>
+<p>We have “recreated” the short regression with one variable <span class="math inline">D</span>. We can see in this recreation, the coefficient of <span class="math inline">D_i</span> is <span class="math inline">\beta_1 + \beta_2 \delta_1</span>.</p>
 <ul>
-<li>That means coefficient <span class="math inline">\beta_1^S = \beta_1 + \beta_2 \delta_1</span>.</li>
+<li>Since this is a recreation of the “short” regression, that means coefficient <span class="math inline">\beta_1^S = \beta_1 + \beta_2 \delta_1</span>.</li>
 </ul>
 <p>The difference between the short regression coefficient <span class="math inline">\beta_1^S</span>, and the original long regression coefficient <span class="math inline">\beta_1</span>, is <span class="math inline">\beta_2 \delta_1</span>.</p>
 <ul>
@@ -647,13 +646,13 @@ Definition: Endogeneity
 <div class="callout-body-container callout-body">
 <p>Endogeneity is when a regressor <span class="math inline">x</span> is correlated with the error term <span class="math inline">u_i</span>.</p>
 <ul>
-<li><p>This frequently occurs due to <strong>omitted variable bias</strong>.</p></li>
-<li><p>The explanatory variable that is correlated with the error term is called an <strong>endogenous variable</strong>.</p></li>
+<li>This frequently occurs due to <strong>omitted variable bias</strong>.</li>
+<li>The explanatory variable that is correlated with the error term is called an <strong>endogenous variable</strong>.</li>
 </ul>
 <p>When endogeneity exists, the assumption of zero-conditional mean/exogeneity <span class="math inline">\mathbb{E}[u | x] = 0</span> is violated.</p>
 <ul>
-<li><p>This means that OLS estimates are no longer unbiased.</p></li>
-<li><p><u>That means, when endoeneity is present, accurate causal estimation with OLS is not possible.</u></p></li>
+<li>This means that OLS estimates are no longer unbiased.</li>
+<li><u>That means, when endoeneity is present, accurate causal estimation with OLS is not possible.</u></li>
 </ul>
 </div>
 </div>
@@ -714,7 +713,7 @@ Warnings!
 </ul>
 <p>Reverse causality can be ruled out. Multiple regression does not eliminate possible causal effect <span class="math inline">y \rightarrow x</span>.</p>
 <ul>
-<li>We can eliminiate reverse causality with either a strong causal theory that explains why reverse causality is not possible, or with further methods like quasi-experimental methods and instrumental variables.</li>
+<li>We can eliminiate reverse causality with either a convincing causal “story” that explains why reverse causality is not possible, or with further methods like quasi-experimental methods and instrumental variables.</li>
 </ul>
 </div>
 </div>

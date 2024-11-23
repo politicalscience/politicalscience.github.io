@@ -36,15 +36,15 @@ Topics: Multiple Linear Regression, OLS with Linear Algebra, Regression Anatomy,
 
 Before we start, make sure you have a strong understanding of all aspects of the simple linear regression model covered in [chapter 1](https://politicalscience.github.io/metrics/causal/1.html).
 
-One of the issues with simple linear regression is that it only measures the correlation/relationship between $x$ and $y$. Simple linear regression can only be used for causal estimation when used in randomised controlled experiments.
+One of the issues with simple linear regression is that it often only measures the correlation/relationship between $x$ and $y$. Simple linear regression can only be used for causal estimation when used in randomised controlled experiments.
 
 <br />
 
 However, in the social sciences, randomisation is often not possible.
 
-Linear regression allows us to estimate a model with both our treatment and outcome variables, as well as a series of **control** variables.
+Multiple linear regression allows us to estimate a model with both our treatment and outcome variables, as well as a series of **control** variables.
 
--   We will explore the idea of "controlling" in later in section 4.4.
+-   We will explore the idea of "controlling" in later in [section 4.4](https://politicalscience.github.io/metrics/causal/4.html#regression-anatomy-theory-and-coefficient-interpretation).
 
 In theory, by including every single confounding variable as a control variable in our regression model, we can partial out the effect of confounders and find the average treatment effect.
 
@@ -88,9 +88,8 @@ In our model, $x_1$ is typically the treatment variable we are concerned with.
 
 The other explanatory variables $x_2, ..., x_k$ are the confounding variables we want to control for.
 
--   We will go into detail what "controlling for" means in section 4.4.
-
--   We will also discuss how to select control variables in section 4.8.
+-   We will go into detail what "controlling for" means in [section 4.4](https://politicalscience.github.io/metrics/causal/4.html#regression-anatomy-theory-and-coefficient-interpretation).
+-   We will also discuss how to select control variables in [section 4.8](https://politicalscience.github.io/metrics/causal/4.html#validity-of-using-ols-for-causal-estimation).
 
 <br />
 
@@ -122,7 +121,7 @@ $$
 
 <br />
 
-Since our data has $n$ number of observations $i$, we can express this into vector form, with the $X_i'$ and $\beta$ being vectors within a vector.
+Since our data has $n$ number of observations $i$, we can express this into vector form, with the $x_i'$ and $\beta$ being vectors within a vector.
 
 $$
 \begin{split}
@@ -152,10 +151,8 @@ y = X \beta + u, \text{ where } X = \begin{bmatrix}1 & x_{21} & \dots & x_{k1} \
 $$
 
 -   Where the notation for elements of $X$ is $x_{ki}$, with $i$ being the unit of observation $i = 1, \dots n$, and $k$ being the explanatory variables index.
-
 -   Where $y$ and $u$ are $n \times 1$ vectors (as seen above), and $\beta$ is a $k \times 1$ vector.
-
--   The first row of $X$ is a vector of 1, which exists because these 1's are multiplied with $\beta_0$ in our model.
+-   The first column of $X$ is a vector of 1, which exists because these 1's are multiplied with $\beta_0$ in our model.
 :::
 
 The point of expressing the model in linear algebra is that it makes the estimation process far easier, as we will see in the next section.
@@ -267,7 +264,7 @@ $$
 
 We talked about how multiple linear regression allows us to control for confounders. But what does that mean? How does it affect our interpretations of coefficients?
 
-The Regression Anatomy Theory, also called the Frisch–Waugh–Lovell (FWL) theorem, illustrates this concept. Take our standard multivariate regression:
+The Regression Anatomy Theory, also called the Frisch–Waugh–Lovell (FWL) theorem, illustrates this concept. Take our standard multiple linear regression:
 
 $$
 y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + ... + \beta_k x_{ki} + u_i
@@ -338,8 +335,6 @@ Thus, the interpretation of $\beta_1$, or any $\beta_j$ multiplied to $x_j$, is:
 Intecept $\beta_0$ is the expected value of $y$ when all $\overrightarrow{x} = 0$.
 :::
 
-Using the same procedure as in simple linear regression, we can run hypothesis tests on each coefficient for inference purposes (we will discuss causal inference with OLS in the next sections).
-
 <br />
 
 <br />
@@ -350,12 +345,12 @@ Using the same procedure as in simple linear regression, we can run hypothesis t
 
 # 4.5: Gauss-Markov and Unbiasedness of the OLS Estimator
 
-An unbiased estimator, if we recall from section 1.3, means that over many different estimates, the expected value of all the estimates is the true parameter value: $\mathbb{E}[\hat{\theta}_i] = \theta$.
+An unbiased estimator, if we recall from [section 2.5](https://politicalscience.github.io/metrics/causal/2.html#properties-of-estimators---unbiasedness-and-consistency), means that over many different estimates, the expected value of all the estimates is the true parameter value: $\mathbb{E}[\hat{\theta}_i] = \theta$.
 
 Unbiasedness is desirable property of causal estimators.
 
 ::: callout-tip
-## Gauss-Markov Theorem for Unbiasdness
+## Definition: Gauss-Markov Theorem for Unbiasdness
 
 The **Gauss-Markov Theorem** states that the ordinary least squares estimator is **unbiased** under 3 conditions:
 
@@ -430,8 +425,8 @@ $$
 
 Thus, the ordinary least squares estimator is unbiased, given 3 conditions (linearity, variation in $x$, zero-conditional mean) are met.
 
--   [If conditions are met, we have an unbiased estimator in OLS for causal estimation]{.underline}.
--   [The key issue is assumption 3: Zero conditional mean $\mathbb{E}[u | x] = 0$]{.underline}, which is the most easily violated of these assumptions. We will explore this in detail in section 4.7.
+-   If conditions are met, we have an unbiased estimator in OLS for causal estimation.
+-   [The key issue is assumption 3: Zero conditional mean $\mathbb{E}[u | x] = 0$]{.underline}, which is the most easily violated of these assumptions. We will explore this in detail in [section 4.7](https://politicalscience.github.io/metrics/causal/4.html#omitted-variable-bias-and-endogeneity).
 
 <br />
 
@@ -507,7 +502,7 @@ Note: not meeting homoscedasticity **does not bias** OLS estimates. It only make
 
 # 4.7: Omitted Variable Bias and Endogeneity
 
-In the last section, we discussed how the assumption of **zero-conditional mean** $\mathbb{E}[u | x] = 0$ is critical to the unbiasdness of OLS.
+In [section 4.5](https://politicalscience.github.io/metrics/causal/4.html#gauss-markov-and-unbiasedness-of-the-ols-estimator), we discussed how the assumption of **zero-conditional mean** $\mathbb{E}[u | x] = 0$ is critical to the unbiasdness of OLS.
 
 -   This assumption is also called **exogeneity**.
 
@@ -521,7 +516,7 @@ $$
 \begin{split}y_i & = \beta_0^S + \beta_1^SD_i + u_i^S \quad \text{short} \\y_i & = \beta_0 + \beta_1D_i + \beta_2x_i + u_i \quad \text{long}\end{split}
 $$
 
-Now consider an auxiliary regression, where the omitted variable $X$ is the outcome variable, and $D_i$ is the explanatory variable:
+Now consider an auxiliary regression, where the omitted variable $x$ is the outcome variable, and $D_i$ is the explanatory variable:
 
 $$
 x_i = \delta_0 + \delta_1 D_i + v_i
@@ -537,9 +532,9 @@ $$
 \begin{split}y_i & = \beta_0 + \beta_1D_i + \beta_2x_i + u_i \\y_i & = \beta_0 + \beta_1 D_i + \beta_2(\delta_0 + \delta_1D_i + v_i) + u_i \\y_i & = \beta_0 + \beta_1 D_i + \beta_2 \delta_0 + \beta_2 \delta_1 D_i + \beta_2v_i + u_i \\y_i & = \beta_0 + \beta_2 \delta_0 + (\beta_1 + \beta_2 \delta_1)D_i + \beta_2v_i + u_i\end{split}
 $$
 
-We have "recreated" the short regression with one variable $D$.
+We have "recreated" the short regression with one variable $D$. We can see in this recreation, the coefficient of $D_i$ is $\beta_1 + \beta_2 \delta_1$.
 
--   That means coefficient $\beta_1^S = \beta_1 + \beta_2 \delta_1$.
+-   Since this is a recreation of the "short" regression, that means coefficient $\beta_1^S = \beta_1 + \beta_2 \delta_1$.
 
 The difference between the short regression coefficient $\beta_1^S$, and the original long regression coefficient $\beta_1$, is $\beta_2 \delta_1$.
 
@@ -563,13 +558,11 @@ Why is this an issue?
 Endogeneity is when a regressor $x$ is correlated with the error term $u_i$.
 
 -   This frequently occurs due to **omitted variable bias**.
-
 -   The explanatory variable that is correlated with the error term is called an **endogenous variable**.
 
 When endogeneity exists, the assumption of zero-conditional mean/exogeneity $\mathbb{E}[u | x] = 0$ is violated.
 
 -   This means that OLS estimates are no longer unbiased.
-
 -   [That means, when endoeneity is present, accurate causal estimation with OLS is not possible.]{.underline}
 :::
 
@@ -621,7 +614,7 @@ We do not have any measurement issues with our variables (everything is accurate
 
 Reverse causality can be ruled out. Multiple regression does not eliminate possible causal effect $y \rightarrow x$.
 
--   We can eliminiate reverse causality with either a strong causal theory that explains why reverse causality is not possible, or with further methods like quasi-experimental methods and instrumental variables.
+-   We can eliminiate reverse causality with either a convincing causal "story" that explains why reverse causality is not possible, or with further methods like quasi-experimental methods and instrumental variables.
 :::
 
 <br />
