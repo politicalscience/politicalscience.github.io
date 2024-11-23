@@ -1,5 +1,5 @@
 ---
-title: "Chapter 2: Randomised Controlled Trials as the Gold Standard"
+title: "Chapter 2: Introduction to Causal Relationships and Causal Effects"
 subtitle: "Econometric Methods (for Social Scientists)"
 format:
     html:
@@ -15,16 +15,16 @@ format:
         toc-depth: 2
         toc-location: left
         toc-expand: true
-        toc-title: "Chapter 2: Randomised Controlled Trials as the Gold Standard"
+        toc-title: "Chapter 2: Introduction to Causal Relationships and Causal Effects"
         mainfont: "Computer Modern"
         title-block-banner: true
         classoption: fleqn
         html-math-method: katex
 ---
 
-This chapter discusses the best way of estimating causal effects - randomised controlled trials. We will explore why random assignment is so powerful, how to estimate causal effects with the difference-in-means estimator, and the limitations of randomised controlled trials.
+This chapter will introduce the idea of causal effects and causation. We will explore what a causal effect is, how to theoretically identify causal effects, and the dangers of using correlation as causation.
 
-Topics: Random Assignment, Difference-in-Means Estimator, Standard Errors, Hypothesis Testing, Confidence Intervals, Stratified Experiments
+Topics: Potential Outcomes Framework, Causal Estimands, Properties of Estimators, Naive Estimator, Selection Bias, Confounding Variables
 
 <br />
 
@@ -32,110 +32,413 @@ Topics: Random Assignment, Difference-in-Means Estimator, Standard Errors, Hypot
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 2.1: Random Assignment and Confounders
+# 2.1: Correlation and Causation
 
-The **assignment mechanism** is how we decide which observations receive treatment $D$.
+### Correlation is not Causation
 
-In [section 1.6](https://politicalscience.github.io/metrics/causal/1.html#selection-bias-and-confounding-variables), we discussed how confounder $C$ affects which observations get the treatment, which introduces selection bias.
-
-![](figures/1-1.png){fig-align="center" width="40%"}
-
-We can address this confounder $C$ and eliminate the backdoor path $D \leftrightarrow C \rightarrow O \rightarrow Y$ by randomly assigning units into either treatment or control. With random assignment, the randomness determines who gets the treatment, not confounder $C$:
-
-![](figures/2-1.png){fig-align="center" width="40%"}
-
-With random assignment mechanism $R$, now units are assigned to control randomly, not based on the confounder $C$. Thus, $C$ and $D$ should no longer be correlated, thus removing the backdoor effect, selection bias, and the influence of confounder $C$.
+We defined what correlation was in section 1.1. For review, these are the sources of correlation:
 
 ::: callout-tip
-## Definition: Random Assignment
+## Definition: Sources of Correlation
 
-With random assignment ,selection bias and the influence of confounder $C$ is eliminated. Thus, the control group and treatment group should be similar, as every observation has an equal chance of being selected into either group.
+There are three main reasons why two variables $x$ and $y$ may be correlated:
 
-If the control and treatment groups are similar, the potential outcomes should be independent of treatment and control groups. Thus, the following statements are ture:
+1.  There is a causal effect of $x$ on $y$
+2.  A third variable, $w$, causes both $x$ and $y$ to change (so there is no direct effect of $x$ on $y$)
+3.  There is a causal effect of $y$ on $x$
 
-$$
-\begin{split}
-\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \\
-\bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
-\end{split}
-$$
+These causes can occur simultaneously at the same time. Thus, correlation is not causation, as correlation can be caused by other factors.
 :::
 
 <br />
 
+If our goal in econometrics is to find the causal effect of $x \rightarrow y$ (source #1 of correlation), we must eliminate the effects of the third variable $w$ (source #2 of correlation), and the reverse causality effect $y \rightarrow x$ (source #3 of correlation).
+
+-   Thus, we need some methods to eliminate sources #2 and #3 of correlation in order to accurately estimate the causal effect of $x \rightarrow y$.
+
+::: callout-note
+## Example: Correlation is not Causation
+
+In the United States, *Ice Cream Sales* and *Number of Fatal Shark Attacks* are highly correlated variables. Does this mean that selling ice cream **causes** fatal shark attacks? No!
+
+The reason this relationship exists is because of another variable - the *weather*. The weather (when sunny), causes both ice cream sales to rise, as well as causing more people to go to the beach, which then increases the number of fatal shark attacks.
+
+This is a clear example of how correlation is not causation.
+:::
+
+<br />
+
+### Key Terminology
+
+Before we start discussing methods to eliminate the effect of third variables and reverse causality, we need to first understand what even is a causal effect. Let us define some key terminology:
+
+-   The variable which causes a causal effect is called the **treatment**, labelled $D$ (sometimes $x$, but we often use $D$ in a causal setting).
+-   The variable which changes as a result of the change in $D$ is the **outcome**, labelled $y$.
+-   Thus, our causal effect of interest is $D \rightarrow y$.
+-   A third variable which causes both $D$ and $y$ is called a **confounder** or **confounding variable**, and is often labelled $w$ or $c$.
+
+<br />
+
 <br />
 
 ------------------------------------------------------------------------
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 2.2: Difference-in-Means Estimator for Causal Effects
+# 2.2: Potential Outcomes and Causal Effects
 
-Since random assignment removes the effect of confounders, that means there is no more selection bias. Thus, we can use the naive estimator (now called the difference-in-means estimator) to estimate the causal effect.
+### Potential Outcomes Framework
 
-Let us show this mathematically. Recall the naive estimator:
+A **causal effect** is a change in some feature of the world $D$ that directly causes a change in some feature of the world $y$. Causal effects imply the existence of **potential outcomes**.
+
+::: callout-tip
+## Definition: Potential Outcomes
+
+Imagine that there are 2 parallel worlds that are exactly the same, and there is one unit/individual $i$ who exists in both worlds.
+
+Then, in one of the two worlds, unit $i$ gets the treatment $D$, which causes a change in the outcome $y$. In the other world, unit $i$ does not get the treatment $D$, so there is no change in outcome $y$.
+
+Since these 2 parallel worlds are identical **except** for the fact one world gets the treatment $D$ and the other does not, the difference in the world's $y$ outcomes can only be the effect of treatment $D$.
+
+The difference in the two world's outcome $y$ is thus the **causal effect** of $D$ on $y$.
+:::
+
+<br />
+
+Let us represent these two parallel worlds more formally:
+
+-   The parallel world where unit $i$ gets the treatment will be called the **treatment state**, and will take a value of $D=1$.
+-   The parallel world where unit $i$ does not get the treatment will be called the **control state**, and will take a value of $D=0$.
+
+Thus, the outcomes of unit $i$ in these 2 parallel worlds can be notated as $y_{Di}$, where $D$ is the state of the world.
+
+-   In the **treatment state** $D=1$, we will label the outcome of unit $i$ as $y_{1i}$
+-   In the **control state** $D=0$, we will label the outcome of unit $i$ as $y_{0i}$.
+
+<br />
+
+::: callout-note
+## Example: Democracy and Economic Growth
+
+Let us say we want to find if democracy causes better economic growth. Democracy is our treatment $D$, and economic growth is our outcome $y$.
+
+Country $i$ (for simplicity, let us say Canada) is one of the units. There are two parallel worlds:
+
+-   In one parallel world, Canada is in the **treatment state** $D=1$, meaning it is a democracy. Its outcome in this world would be its economic growth $y_{1i}$.
+-   In the other parallel world, Canada is in the **control state** $D=0$, meaning it is not a democracy. Its outcome in this world would be its economic growth $y_{0i}$.
+:::
+
+<br />
+
+### Causal Effects
+
+As we mentioned in the potential outcomes framework, the difference in the outcomes in the two parallel worlds must be the causal effect of $D$, since everything else in the parallel worlds are identical.
+
+::: callout-tip
+## Definition: Individual Causal Effects
+
+Thus, the individual causal effect of $D$ on unit $i$ is the difference of outcomes $y$ in the treatment state and the control state. Mathematically:
+
+$$
+\tau_i = y_{1i} - y_{0i}
+$$
+:::
+
+Thus, the treatment $D$ will have $\tau_i$ effect on outcome $y$ for unit $i$
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 2.3: Observed Outcomes and the Stable Unit Treatment Value Assumption
+
+### Observed Outcomes
+
+Of course, in real life, we do not have parallel worlds. We only observe one of these parallel worlds.
+
+For example, in the real world, we know Canada is a democracy. We do not observe the parallel world that Canada is a dictatorship. Thus, we also only have one of Canada's potential outcomes, while the other is unobservable.
+
+::: callout-tip
+## Definition: Observed Outcomes
+
+Observed outcomes are a subset of potential outcomes that actually come true in the real world. Observed outcomes are given by the formula:
+
+$$
+y_i = D_i \times y_{1i} + (1-D_i) \times y_{0i}
+$$
+
+-   Where $y_i$ is the observed outcome, $y_{1i}$ is the potential outcome of the treatment state, and $y_{0i}$ is the potential outcome of the control state.
+-   Where $D_i$ represents what state unit $i$ is in, where $D_i = 1$ indicates unit $i$ is in the treatment state, and $D_i = 0$ indicates unit $i$ is in the control state.
+:::
+
+This formula might seem unintuitive. But we can plug in values of $D_i$ to understand what this formula means.
+
+What if unit $i$ is in the treatment state, $D_i = 1$. Let us plug in $D_i = 1$ into the equation:
+
+$$
+\begin{split}
+y_i & = D_i \times y_{1i} + (1-D_i) \times y_{0i} \\
+y_i & = 1 \times y_{1i} + (1-1) \times y_{0i} \\
+y_i & = y_{1i}
+\end{split}
+$$
+
+Thus, the observed outcome when unit $i$ is in the treatment state is $y_{1i}$, which makes sense, since that is the potential outcome of the treatment state.
+
+<br />
+
+Similarly, what if unit $i$ is in the control state $D_i = 0$. Let us plug in $D_i = 0$ into the equation:
+
+$$
+\begin{split}
+y_i & = D_i \times y_{1i} + (1-D_i) \times y_{0i} \\
+y_i & = 0 \times y_{1i} + (1-0) \times y_{0i} \\
+y_i & = y_{0i}
+\end{split}
+$$
+
+Thus, the observed outcome when unit $i$ is in the control state is $y_{0i}$, which makes sense, since that is the potential outcome of the control state.
+
+::: callout-tip
+## Definition: Counterfactuals
+
+A counterfactual is the potential outcome that is not observed. For example, if in the real world, unit $i$ is observed to have received the treatment, then its counterfactual is the world where unit $i$ did not receive the treatment.
+
+Counterfactuals are important, because, if we remember, the individual causal effect is $\tau_i = y_{1i} = y_{0i}$, which implies that we must know the counterfactual to find the causal effect of $D$ on $y$.
+:::
+
+<br />
+
+### Sampling and Observed Outcomes
+
+We discussed a little about sampling in section 1.6. We can actually think about sampling in terms of observed outcomes.
+
+-   Our population is all of the potential outcomes covered in section 2.2.
+
+-   Our sample is the observed outcomes that are realised in the real world.
+
+This will become useful when we run hypothesis testing for causal inference.
+
+<br />
+
+### Stable Unit Treatment Value Observation
+
+The stable unit treatment value assumption (SUTVA) is arguably the key assumption of causal inference.
+
+SUTVA states that given two units $i$ and $j$, unit $i$ is not affected by the treatment assignment of unit $j$. More intuitively, if unit $j$ is assigned to treatment, that has no effect on the outcomes of unit $i$.
+
+Why is this important? Well, if unit $j$'s treatment status affects unit $i$, then unit $i$ would have more than 2 potential outcomes:
+
+-   This is because unit $i$'s outcomes would now not only depend on itself being assigned to treatment or control, but also unit $j$ being assigned to treatment or control.
+-   That means unit $i$ now has 4 potential outcomes. If unit $i$ is affected by other units other than $j$, this will quickly multiply to an unmanageable number of potential outcomes.
+
+Thus, violating this assumption will basically make it impossible to calculate treatment effects.
+
+<br />
+
+In what situations is SUTVA typically violated?
+
+1.  Peer effects that result from contact between units $i$ and $j$. For example, if you are testing the treatment of some new curriculum on student educational outcomes, and unit $j$ is assigned to treatment, unit $j$ might teach their friend unit $i$ some new things, even if unit $i$ was in the control group.
+2.  Dilution/concentration effects that arise from a prevalence of a treatment. The best example is vaccines - if enough people get a vaccine for a disease, even people who do not get the vaccine are safer, since transmission is much more difficult.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 2.4: Causal Estimands
+
+We introduced how the individual treatment effect of $D \rightarrow y$ for any unit $i$ is $\tau_i = y_{1i} - y_{0i}$. However, there is an issue - we do not know the two parallel worlds.
+
+-   As we discussed in [section 1.3](https://politicalscience.github.io/metrics/causal/1.html#observed-outcomes-and-the-stable-unit-treatment-value-assumption), we can only observe one of the two parallel worlds.
+
+Thus, we can never actually find (or estimate) the individual treatment effect. We need another **estimand**. An **estimand** is the true value of something in the real world, that we will try to estimate with an estimator.
+
+This course will focus on introducing many new estimators to try to estimate these estimands. However, before we start estimating, we have to know what we are trying to estimate. What are the estimands we can use, if individual treatment effect is not possible?
+
+<br />
+
+The "key" estimand in causal inference is the Average Treatment Effect:
+
+::: callout-tip
+## Definition: Average Treatment Effect
+
+The **Average Treatment Effect (ATE)** is the average of all individual treatment effects:
+
+$$
+\text{ATE} \ = \ \mathbb{E}[\tau_i] \ = \ \bar{y}_{1i} - \bar{y}_{0i}
+$$
+
+Where the bar over the $y$ represents mean.
+:::
+
+However, the ATE is not the only estimand we are interested in.
+
+<br />
+
+Sometimes, our treatment variables are continuous. For example, if we want to estimate how GDP affects democratisation, our treatment variable GDP is not binary.
+
+In cases of non-continuous treatment variables, we want to estimate the **average causal effect** (ACE)- the expected change in $y$ resulting from a one unit increase in $D$:
+
+$$
+\text{ACE} = \mathbb{E}[y'(D)]
+$$
+
+Where $y'(D)$ is the derivative of $y$ in respect to $D$
+
+<br />
+
+Sometimes, we have reason to expect that the treatment effect may be different accross different categories of units.
+
+For example, maybe we think that a certain educational treatment will benefit women more than men, so the treatment effect will be higher for women than men.
+
+The **Conditional Average Treatment Effect (CATE)** is the treatment effect of units, given they have some other variable $x$ value.
+
+$$
+\text{CATE} = \mathbb{E}[ \tau_i | x_i ] 
+$$
+
+<br />
+
+We can also estimate the causal effect on only the treatment or control groups.
+
+The **average treatment effect on the treated (ATT)** is the average treatment effect of only units who received the treatment $D_i = 1$:
+
+$$
+\text{ATT} = \mathbb{E} [\tau_i | D_i = 1] = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
+$$
+
+The **average treatment effect on the controls (ATC)** is the average treatment effect of only units who did not receive the treatment $D_i = 0$:
+
+$$
+\text{ATC} = \mathbb{E} [\tau_i|D_i = 0] = \bar{y}_{1i, \ D_i = 0} - \bar{y}_{0i, \ D_i = 0}
+$$
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 2.5: Properties of Estimators - Unbiasedness and Consistency
+
+The above causal estimands are not directly calculable, since we cannot observe both potential outcomes. Thus, we need an **estimator** to estimate the causal estimands.
+
+Estimators have two key properties: unbiasdness and consistency.
+
+<br />
+
+### Unbiasedness
+
+An estimator is **unbiased** if its estimates $\hat{\theta}$ are on average equal to the true estimand $\theta$.
+
+$$
+\mathbb{E}[ \ \hat{\theta} \ ] = \theta
+$$
+
+Note: I use $\theta$ to represent any possible estimand, including the causal estimands from above.
+
+To better understand unbiasdness, take this example of archery. We have two archers, archer $A$ and archer $B$.
+
+-   Both archers are very very accurate - as in they hit the same spot on the target every time they shoot.
+-   Archer $A$ gets the bullseye every single time.
+-   However, archer $B$, while very consistently hitting the same spot, for some reason, keeps hitting 5 inches to the right of the bullseye.
+
+Thus, archer $B$ is biased - he is consistently and systematically hitting the wrong spot on the target. Similarly, if an estimate is consistently off by a certain value, then it is biased.
+
+<br />
+
+### Consistency
+
+However, an unbiased estimator is not good enough. Why? Take this example of another archer $C$.
+
+-   Archer $C$ has good aim - he is aiming directly at the bullseye.
+-   However, archer $C$ is very inconsistent - he first hits a shot 5 inches to the left of the bullseye, then hits a shot 5 inches to the right of the bullseye. He keeps doing both of these things over and over again.
+-   Archer $C$ on average is actually hitting the bullseye, since his leftward and rightward errors cancel each other out.
+-   However, archer $C$ never actually hits the bullseye on any specific shot.
+
+Archer $C$ is an example of an unbiased, but very inconsistent estimator. On average, he is getting the right value of the estimate, but he is never that close on any specific estimate.
+
+-   More technically, an inconsistent estimator is one who has high **variance** in their estimates.
+
+<br />
+
+Ideally, [we want an estimator that is both **unbiased** and **consistent**]{.underline}. This would mean that their average estimates are equal to the true estimand, and that each estimate is relatively close to the true estimand with low variance.
+
+-   So, an archer than on average, hits the bullseye, and is generally not too far off from the bullseye on any sepcific shot.
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 2.6: The Naive Estimator and Proof Correlation is not Causation
+
+The **naive estimator** is an estimator that only compares the observed outcomes, without any comparison to the counterfactual potential outcomes.
+
+So essentially, we compare the observed treatment group outcomes and the observed control group outcomes:
+
+$$
+\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
+$$
+
+This is what many people do when trying to find a causal effect. The naive estimator is also similar to a measure of correlation.
+
+<br />
+
+However, [**the naive estimator is a bad idea**]{.underline}. Remember, treatment effects are supposed to be comparing the two potential outcomes [of the same unit]{.underline}. We are supposed to compare $y_{1i}$ to $y_{0i}$.
+
+-   However, the naive estimator does not do that. Instead, it is comparing the observed outcomes of the treatment group versus the different control group.
+
+So essentially, it is comparing the potential outcomes of [different]{.underline} units.
+
+-   But what is the issue with this?
+-   Well, if you compare the potential outcome of two different units (let us call them $A$ and $B$), you are comparing $y_{1A}$ and $y_{1b}$.
+-   However, what if units $A$ and $B$ are different in some way even before the treatment? Their outcomes $y$ may differ not due to the treatment $D$, but due to some underlying difference between units $A$ and $B$.
+-   Thus, we are introducing some **bias** - the differences between unit $A$ and $B$ are being included in our causal estimate, when they should not be, since the differences between $A$ and $B$ may not be due to $D$.
+
+<br />
+
+We can prove this mathematically. We start with the naive estimator:
 
 $$
 \hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
 $$
 
-Given the assumption of randomisation, we established in the last section, we know:
+Then, we do a little algebra trick - we add a new term to this equation, then subtract that same term. The two new terms thus cancel each other out to 0:
 
 $$
-\begin{split}
-\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \\
-\bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
-\end{split}
+\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
 $$
 
-Thus, we know the following is true:
+Now, let us re-arrange this equation:
 
 $$
-\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} \approx  \bar{y}_{1i} - \bar{y}_{0i}
+\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
 $$
 
-We know that the ATE is defined as $\bar{y}_{1i} - \bar{y}_{0i}$. Thus, our naive estimator (now called the difference in means estimator) estimates the average treatment effect of $D$ on $y$.
-
-<br />
-
-We can rewrite this equation in a nicer, easier to read format:
-
-::: callout-tip
-## Definition: Difference-in-Means Estimator
-
-The estimate of the average treatment effect of a randomised controlled trial is:
+We can see the first two terms are equal to the average treatment effect on the treated (ATT). Thus, we can rewrite the naive estimator:
 
 $$
-\widehat{ATE} = \bar{y}_t - \bar{y}_c
+\hat{\tau} = \text{ATT} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
 $$
 
-Where $\bar{y}_t$ is the average $y$ value in the treatment group, and $\bar{y}_c$ is the average $y$ value in the control group.
+If we look at the final result, we can divide it into two parts:
 
-Thus, the causal effect of $D$ on $y$ is simply the **difference-in-means** of the two groups.
-:::
+1.  The ATT (see [section 1.4](https://politicalscience.github.io/metrics/causal/1.html#causal-estimands))
+2.  The extra bit: $\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}$, which we call **selection bias**. Intuitively, it is the difference [prior to treatment]{.underline} between the control and treatment groups. This results in our naive estimator being biased.
 
-Or in other words, to calculate the average treatment effect of a randomised experiment, we:
-
-1.  Calculate $\bar y_t$, which is done by finding the average $y$ value in the treatment group
-2.  Calculate $\bar{y}_c$, which is done by finding the average $y$ value in the control group
-3.  Find the difference $\bar{y}_t - \bar{y}_c$ and we have our estimate of the average treatment effect.
-
-<br />
-
-::: callout-warning
-## Interpretation Warning!
-
-For this estimate of the ATE to be true, there must be random assignment of treatment, and the treatment and control groups must be similar to each other on all confounding variables.
-:::
-
-If this assumption is violated (either due to lack of random assignment, or failure of randomisation), we can no longer estimate the causal effects with the difference-in-means estimator.
-
--   This is because if the control and treatment groups are not similar to each other on all confounders, there is the possibility of selection bias in our difference-in-means estimator.
--   We will discuss how to check for this assumption in section in [section 2.6](https://politicalscience.github.io/metrics/causal/2.html#balance-tables-to-verify-the-assumptions-of-randomisation).
-
-Finally, note that we can also use a different estimator, the OLS estimator (with simple linear regression), to get the same final estimate. We will discuss this in [chapter 3](https://politicalscience.github.io/metrics/causal/3.html).
-
-<br />
+We will go into detail on selection bias in the next section.
 
 <br />
 
@@ -143,487 +446,63 @@ Finally, note that we can also use a different estimator, the OLS estimator (wit
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 2.3: Uncertainty in Estimates and Standard Errors
+# 2.7: Selection Bias and Confounding Variables
 
-### Uncertainty in our Estimates
+### Selection Bias
 
-Remember how we randomly assigned units to treatment or control?
-
--   What if we ran the experiment again?
--   The treatment and control groups would very likely not be exactly the same, and thus, we would get a slightly different causal effect.
-
-Thus, we have some uncertainty with our causal estimate - re-running the experiment might result in a different answer. The ATE we have calculated is only our specific sample average treatment effect (SATE), notated $\widehat{ATE}$.
-
--   Why "sample"? Well, through random assignment, you are basically “randomly sampling” potential outcomes - since randomly choosing one unit to be in treatment/control means not seeing the other counterfactual potential outcome.
-
-Thus, we need some mechanism to account for sampling variability and how rerunning the experiment might result in different results. We do this with sampling distributions and standard errors.
-
-<br />
-
-### Sampling Distribution
-
-Imagine that we take a sample from a population (or some random assignment mechanism). Then, we find the average treatment effect of the sample $\widehat{ATE}$.
-
-That is a sample estimate, which is often notated $\hat{\theta}$. (I use $\hat{\theta}$, since this idea of uncertainty can be applied to any estimate, not just average treatment effect).
-
-Then, let us take another sample from the same population (or do another random assignment), and find the sample estimate. This will be slightly different than the first sample, since we are randomly sampling. That is another sample estimate.
-
-We keep taking samples from the same population (more random assignments), and getting more and more sample estimates.
-
-<br />
-
-Now, let us plot all our sample estimates $\hat{\theta}$ into a histogram or density plot. The $x$ axis labels all the possible sample estimates $\hat{\theta}$ we have gotten above, and the $y$ axis is how frequently a specific sample estimate occurs.
-
-The result is a distribution, just like a random variable distribution. That distribution is the **sampling distribution**.
-
-According to c**entral limit theorem**, the sampling distribution approximates that of a normal distribu- tion (or t-distribution if our sample size is small). We know that a normal distribution is defined by two parameters - mean and variance.
-
-<br />
-
-### Standard Errors
-
-Our sampling distribution has a variance, which is basically how spread out the variable is. Variance for a variable $x$ is defined as:
-
-$$
-Var(x) = \mathbb{E}[(x_i -\bar{x})^2] = \sigma^2 
-$$
-
-Standard deviation is the square root of variance.
-
-$$
-sd(x) = \sqrt{Var(x)} = \sigma
-$$
-
-These formulas are divided by $\sqrt{n}$ when we consider the variability of a sample average.
-
-$$
-sd(\hat{x}) = \frac{\sigma}{\sqrt{n}} = \frac{\sqrt{\mathbb{E}[(x_i - \bar{x})^2]}}{\sqrt{n}}
-$$
-
-The standard deviation of our sampling distribution is called the **standard error** of our estimate. Our sampling distribution of $\hat{\tau}$, if we remember, is a difference-in-means. So, we have to find the standard deviation of a difference-in-means of variables.
-
-::: callout-tip
-## Definition: Standard Error for Difference in Means
-
-The standard error is the standard deviation of the sampling distribution. It is often notated $se(\hat{\theta})$.
-
-The standard error for a difference-in-means is as follows:
-
-$$
-\begin{split}
-\widehat{se}(\hat{\tau}) & = \sqrt{ \frac{\sigma_t}{n_t} + \frac{\sigma_c}{n_c} } \\
-& = \sqrt{ \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 1]}{n_t} + \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 0]}{n_c}}
-\end{split}
-$$
-
-Where $n_t$ is the number of observations in the treatment group, $n_c$ is the number of observations in the control group.
-:::
-
-This standard error tells us the preciseness of our estimates - how much variability is there in our estimates given the random sampling uncertainty.
-
--   We will use the standard error to test if our causal estimates are truly a result of a causal relationship, or just a product of random chance.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-[Course Homepage](https://politicalscience.github.io/metrics/)
-
-# 2.4: Hypothesis Tests and Causal Inference
-
-### Intuition of Hypothesis Tests
-
-We know there is some uncertainty with our sample estimate, as defined by the standard error. So, how do we know if we actually have a causal effect with this uncertainty?
-
-What we do is hypothesis testing: a way to test, given a certain level of uncertainty, whether or not we believe there is a causal effect.
-
-We start off with the status-quo "old theory", and try to disprove it.
-
--   This is called the **null hypothesis**, typically notated $H_0$.
--   For causal inference, our null hypothesis is typically that *there is no causal effect of* $D$ on $y$. We notate this as $H_0 : \theta = 0$.
-
-The new theory we are trying to prove is called the **alternate hypothesis**.
-
--   For causal inference, our alternate hypothesis is typically that *there is a causal effect of* $D$ on $y$. We notate this as $H_1 : \theta ≠ 0$.
-
-[We assume that the null hypothesis is true, unless we are 95% confident that we can reject the null hypothesis, and only then, can we accept the alternative hypothesis.]{.underline}
-
-<br />
-
-### Conducting a Hypothesis Test
-
-We start a hypothesis test by notating our hypotheses:
-
-$$
-H_0 : \theta =0 \quad \text{and} \quad H_1: \theta ≠ 0
-$$
-
-Next, we have to find a t-test statistic.
-
-::: callout-tip
-## Definition: T-test Statistic
-
-The t-test statistic tells us how far our estimate $\hat{\theta}$ is from the null hypothesis value of $\theta_0 = 0$. This distance is expressed in terms of standard errors of the estimate.
-
-$$
-t= \frac{\hat{\theta} - \theta_0}{\widehat{se}(\hat{\theta})}
-$$
-
-Note, since $\theta_0 = 0$, we technically do not need it in the equation. However, sometimes (very rarely), you may have a reason to test a different null hypothesis, so then you would plug in a different value for $\theta_0$.
-:::
-
-<br />
-
-After we have a test statistic, we need to consult a t-distribution.
-
--   For a difference-in-means estimator, we should consult the t-distribution with $n-2$ degrees of freedom (degrees of freedom are the sole parameter of the t-distribution).
-
-Once we have this t-distribution, start from the centre of the t-distribution, and go *t-test-statistic* number of standard deviations away from the centre towards both directions.
-
-Then, at the point we have ended up, calculate the probability (area under the curve) of a t-test statistic equal or even more extreme could occur (we will not do this manually, the computer will do this). The figure below shows this probability:
-
-![](figures/2-2.jpeg){fig-align="center" width="50%"}
-
-The shaded area is the probability of a t-test statistic equal to or even more extreme could occur, given the null hypothesis is true. This is the p-value.
-
-::: callout-tip
-## Definition: P-Value
-
-The p-value is the probability of a t-test statistic equal to or even more extreme could occur, given the null hypothesis is true.
-
-If this is less than 0.05 (5%), that means the null hypothesis has a very low chance of being true, so we reject the null hypothesis as no longer true.
-
--   So, if the p-value is above 0.05, there is a above 5% chance that the null hypothesis is true. This is too high for our liking, so we cannot reject the null hypothesis, and we cannot conclude any causal effect of $D$ on $y$.
-
--   If the p-value is less than 0.05, there is less than a 5% chance that the null hypothesis is true. In econometrics, we thus reject the null hypothesis, and conclude that there is a causal effect of $D$ on $y$.
-
-[So very simply, if the p-value is less than 0.05, we can conclude that there is a causal effect of $D$ on $y$. If not, we cannot conclude this.]{.underline}
-:::
-
-Thus, the hypothesis test allows us to test if, under uncertainty due to randomisation, if we actually have a causal effect of $D$ on $y$.
-
-<br />
-
-### Types of Errors
-
-Of course, with 95% confidence, there is a chance we incorrectly conclude a causal effect. These are called errors. There are two types of errors.
-
-1.  **Type I error**, also called a **false positive**. This occurs when we reject the null hypothesis, even though the null hypothesis is actually true.
-2.  **Type II error**, also called a **false negative**. This occurs when we fail to reject the null hypothesis, even though the null hypothesis is actually false.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-[Course Homepage](https://politicalscience.github.io/metrics/)
-
-# 2.5: Confidence Intervals and Plausible Values of the Causal Effect
-
-With a hypothesis test, we have either concluded that we have, or do not have, a causal relationship between $D$ and $y$.
-
-However, whether a causal relationship exists or not is not the only thing we care about. We also care about the **size/magnitude** of the causal relationship.
-
--   After all, if $D$ causes $y$ to increase by 0.00000001 units, who actually cares? The causal effect might as well not exist.
-
-We have a causal estimate $\hat{\theta} = \hat{\tau}_{ATE}$ already. However, the issue, as we described in section 2.3, is that if we run another random assignment, we will get a slightly different causal estimate.
-
-So how do we account for this issue? We can do this with **confidence intervals**.
-
-::: callout-tip
-## Definition: Confidence Intervals
-
-Confidence Intervals are intervals of plausible true $\theta$ values given our sample estimate $\hat{\theta}$. We create this interval by adding "buffer" to each side of our sample estimate.
-
-The lower and upper bounds of this 95% confidence interval is:
-
-$$
-\hat{\theta} ± 1.96 \widehat{se}(\hat{\theta})
-$$
-
-The reason for the 1.96 is that in a normal distribution, 1.96 standard deviations above and below the mean contains 95% of the area under the distribution.
-
--   This can slightly change if our sample size is less than 30, where we will use a t-distribution instead. The computer can help us calculate this.
-
-The 95% confidence interval means that, if we were to run random sample after random sample, 95% of the confidence intervals generated from each sample's estimates, would contain the true value of $\theta$.
-:::
-
-The "key" thing about confidence intervals is if the interval contains the number 0. This is because if 0 is in the interval, that means 0 is a plausible value of $\theta$.
-
--   Remember, when $\theta = 0$, that means there is no causal effect of $D$ on $y$.
--   That means if 0 is included in the interval, we cannot conclude a causal relationship exists between $D$ and $y$.
--   However, we do not need to worry too much about this, since a hypothesis test and a 95% confidence interval give the same results. If a hypothesis test fails to reject the null, 0 will be included in the confidence interval. If a hypothesis test rejects the null, 0 will not be included in the confidence interval.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-[Course Homepage](https://politicalscience.github.io/metrics/)
-
-# 2.6: Balance Tables to Verify the Assumptions of Randomisation
-
-If the treatment and control groups are not similar (in regard to key confounding variable values), our difference-in-means estimator will be biased with selection bias.
-
-Why is this? Well, if our treatment and control groups are not similar, then the following assumptions will not be met, which are critical in eliminating selection bias:
-
-$$
-\begin{split}
-\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \\
-\bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
-\end{split}
-$$
-
-Thus, we need to be confident this assumption is met.
-
-For researchers, this is especially important, since they need to show that their results are valid. Thus researchers will often show a **balance table** before or after their estimation process.
-
-A balance table is essentially a table that shows the average difference in values of confounders in both treatment and control groups. For example, below is a balance table:
-
-![](figures/2-3.png){fig-align="center" width="80%"}
-
-The key row to look at is the *treatment-control* row.
-
--   The numbers not in parentheses the difference between treatment and control for the corresponding confounder.
--   The numbers in parentheses are the standard errors of the estimated difference.
--   Stars (see legend below the table) show significance of a t-test (we will discuss this in the next section).
-
-If no treatment-control for key confounders is significantly different (no stars), then randomisation has suceeded, and indeed, our control and treatment group are similar.
-
--   In the balance table above, there are no stars in the *treatment-control* row, so our treatment and control groups are similar to each other, and our assumptions are likely to be met.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-[Course Homepage](https://politicalscience.github.io/metrics/)
-
-# 2.7: Blocking and Stratified Experiments
-
-Blocking, also called stratified experiments, is an extension of randomised experiments to ensure that randomisation does not fail.
-
-Imagine that you have four units in your experiment that you have to assign to treatment/control.
-
--   Their pre-treatment outcomes are $y_{0i} = \{2,2,8,8\}$.
--   This means you have a $1/3$ chance of ending up with the random assignment of $\{2,2\}$ in one group and $\{8,8\}$ in another group.
--   That would not be good - since clearly the treatment and control groups in that situation would be very different from each other, introducing selection bias.
-
-<br />
-
-With **blocking/stratified experiments**, we can prevent this from happening.
-
-The procedure is as follows:
-
-1.  Before randomisation, separate your sample of $N$ units into $J$ subgroups
-2.  Within each subgroup, randomly assign units to treatment and control group (essentially, smaller randomised experiments within a bigger experiment).
-
-<br />
+As we just established, the naive estimator contains **selection bias** $\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}$. This is the difference [prior to treatment]{.underline} between the control and treatment groups.
 
 ::: callout-note
-## Example of Blocking
+## Example: Hospital and Health
 
-With out previous example of pre-treatment outcomes being $y_{0i} = \{2,2,8,8\}$, we could divide these observations into $J=2$ subgroups.
+For example, if we are measuring the question *does going to the hospital make you more healthy*, and we simply measured the outcomes of people who went to the hospital and did not go to the hospital, we might see that in general, people who did not go to the hospital are healthier!
 
-1.  Subgroup 1 would be $\{2, 2\}$
-2.  Subgroup 2 would be $\{8, 8\}$
+-   Does this mean that going to the hospital makes you unhealthier? No! It is because more unhealthy people choose to go to the hospital in the first place. Thus, the hospital has generally more unhealthy individuals in it. The hospital might perform miracles on these people, but they are still not as healthy as the healthy people who did not need to go to the hospital.
 
-Then, within each subgroup, randomly assign one observation to control, and the other to treatment.
-
-Thus, we are guaranteed to get at least one unit from each subgroup into both our treatment and control groups, minimising the chance randomisation fails.
+-   The differences between the people who chose to go to the hospital versus the people who did not go to the hospital explains the differences in our outcome, not the actual treatment that the hospital provided.
 :::
 
-<br />
+Thus, selection bias can be thought of as when our treatment and control groups are fundamentally different and unequal prior to treatment.
 
-To estimate our effects for blocking experiments, we will have to take the weighted average of each subgroup’s average treatment effect (ATE), with the weights being the proportion of units each group accounts for:
-
-$$
-\tau_{ATE} = \sum\limits_{j=1}^J \frac{N_j}{N}\tau_j
-$$
-
-Where $N$ is the total number of observations, $J$ is the total number of subgroups, $j$ is one of the subgroups, $N_j$ is the number of units within subgroup $j$, and $\tau_j$ is the ATE of subgroup $j$.
+-   And when we use the naive estimator (or correlation), we pick up this bias in our estimates.
 
 <br />
 
-<br />
+### Confounding Variables
 
-------------------------------------------------------------------------
+Selection bias is caused by confounding variables.
 
-[Course Homepage](https://politicalscience.github.io/metrics/)
+::: callout-tip
+## Definition: Confounding Variable
 
-# 2.8: Validity and Issues with Randomised Controlled Trials
+A **confounder** or **confounding variable** is a variable that is causes differences in the treatment and control groups.
 
-Randomisation, when it works, is magical - it can help us obtain the best estimates of causal effects that are possible.
+Confounding variables result in selection bias, and are why correlation does not equal causation. In order to accurately calculate causal effects, we need to find some way to eliminate the effect of confounding variables.
+:::
 
-But, randomised controlled trials do have several issues that can affect our validity of our estimates and conclusions:
+For example, look at the figure below:
 
-1.  **Failure of randomisation**: if for some reason, randomisation does not result in control and treatment groups being similar, we cannot accurately estimate the average treatment effect. Blocking should help us deal with this, but it is still possible for randomisation to fail.
-2.  **Non-Compliance**: Sometimes, despite assigning certain units to treatment or control, the units do not comply and do the opposite (i.e. people assigned to control still take the treatment). This is a huge issue since researchers are not gods - we cannot force people to take treatment. The biggest threat non-compliance creates is that perhaps, a confounder is causing certain units to be more likely to not comply. We will deal with this issue in the later parts of this book with Instrumental Variables.
-3.  **Attrition**: sometimes, it is not possible to measure the outcomes of some people in a study, either due to people moving away, passing away, or refusing to answer surveys or have their measurements be taken. This once again is an issue - since perhaps a confounding variable is causing this issue.
+![](figures/1-1.png){fig-align="center" width="40%"}
 
-<br />
+In this figure, $D$ is the treatment, and $C$ is the confounding variable that affects whether or not a unit gets the treatment $D$ or not.
 
-However, the biggest issue with randomised controlled trials is the impracticality and infeasability of them in many situations, especially in social science research.
+When we calculate the naive estimate (or correlation), our causal estimate captures both the direct effect $D \rightarrow Y$, but also the effect of $D \leftrightarrow C \rightarrow O \rightarrow Y$, since $D$ and $C$ are correlated.
 
--   For example, let us say you want to run an experiment on how democracy affects economic growth.
--   It is nearly impossible to randomly assign countries to be a democracy. First, if you assign, for example, Russia to be a democracy, you have no power to make them actually follow through with your study. Second, there are ethical concerns about randomly allocating millions to democracy or autocracy.
+-   This second effect $D \leftrightarrow C \rightarrow O \rightarrow Y$ is called the **backdoor path**.
 
-Another major issue is that even when experiments are theoretically feasible, they can be too expensive to implement. Randomised Controlled Trials are extremely expensive even when they are possible to run.
-
-<br />
-
-Thus, we will need to introduce ways to address for confounders and estimate causal effects for the vast majority of cases where we will not be able to run a randomised controlled trial.
-
-The rest of the part 1 of this course focuses on these techniques. A brief overview of them:
-
--   **Simple Linear Regression** will not be of much use for this, as it typically only is feasible in ideal random situations, however, it is the core that many further methods build on, and can help us explore continuous treatment variables.
-
--   **Multiple Linear Regression**, in theory, can control for confounding variables. However, the limitation of this is that for an accurate estimation, all possible confounding variables (including unobservable or unmeasureable) confounders have to be included to prevent bias, which is very infeasible most of the time.
-
--   **Instrumental Variables Estimator**, in theory, can deal with both non-compliance and confounders, however, there are also drawbacks to this method that we will cover later.
-
--   Q**uasi-experimental methods**, like regression discontinuity and differences-in- differences are the most popular methods of causal inference today, and can deal with many of the weaknesses of other approaches.
-
--   **Maximum Likelihood Estimation** deals better than regression with binary outcome variables in some situations, but like regression, all possible confounders have to be included to prevent bias, which is very infeasible most of the time.
-
--   **Selection on Observables** methods including matching, subclassification, and weighting, are excellent in specific situations, but fail to deal with unobservable confounders.
+However, the actual causal effect of treatment $D$ on $Y$ is only the section of $D \rightarrow Y$, and does not include the backdoor path. So, we need to find some way to only look at $D \rightarrow Y$, and eliminate/partial out the effect of the back door.
 
 <br />
+
+To make an accurate causal effect estimate, we must get rid of confounding variables, selection bias, and the backdoor path. How do we do this?
+
+There are many many methods to eliminate the effect of confounding variables.
+
+-   The best method is randomisation, which we will cover in the next chapter.
+-   After we cover randomisation, we will cover methods to eliminate confounding variables when randomisation is not possible, including multiple linear regression, instrumental variables, selection on observables, quasi-experimental methods, and many more.
 
 <br />
 
 ------------------------------------------------------------------------
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
-
-# Implementation in R
-
-The packages we will need for this are:
-
-```{r, message = FALSE}
-library(tidyverse)
-library(fixest)
-library(texreg)
-```
-
-```{r, echo = FALSE, message = FALSE}
-setwd("/Users/kevinli/Documents/GitHub/politicalscience.github.io/metrics/causal")
-```
-
-<br />
-
-## Difference-in-Means Estimator
-
-There are two ways to estimate the difference in means.
-
-First, we can follow the mathematical formula $\hat{\tau}_{ATE} = \bar{y}_t - \bar{y}_c$ by finding the means of the treatment and control group, then finding the difference:
-
-```{r, eval = FALSE}
-# group by treatment (1 or 0), find mean y
-ate <- mydata %>%
-  group_by(treatment) %>%
-  summarise(mean = mean(y, na.rm = TRUE), .groups = 'drop')
-
-# that creates a tibble, 1st col is treated status, 2nd col is mean.
-# 1st row is treated = 0, 2nd row is treated = 1
-
-#difference
-ate[2,2] - ate[1,2]
-```
-
-For example:
-
-```{r}
-ate <- dta %>%
-  group_by(treat_invite) %>%
-  summarise(mean = mean(pct_missing, na.rm = TRUE), .groups = 'drop')
-
-ate[2,2] - ate[1,2]
-```
-
-<br />
-
-Alternatively, we can use regression to estimate the difference-in-means estimator (which will be covered in the next chapter):
-
--   The argument *se = "hetero"* tells R to calculate heteroscedasticity-robust standard errors, which will be discussed later in chapter 4. Just know it is standard to do so.
-
-```{r, eval = FALSE}
-ate <- feols(y ~ treatment, data = mydata, se = "hetero")
-summary(ate)
-```
-
-For example:
-
-```{r, message = FALSE}
-ate <- feols(pct_missing ~ treat_invite, data = dta, se = "hetero")
-summary(ate)
-```
-
-We can see the output estimate of *treat_invite* is the same as the example above using the difference-in-means estimator.
-
-<br >
-
-## Hypothesis Testing in Experiments
-
-For hypothesis testing in R, we use the regression estimator (again, will be covered in chapter 3).
-
-```{r, eval = FALSE}
-ate <- feols(y ~ treatment, data = mydata, se = "hetero")
-summary(ate)
-```
-
-For example:
-
-```{r, message = FALSE}
-ate <- feols(pct_missing ~ treat_invite, data = dta, se = "hetero")
-summary(ate)
-```
-
-We can see that the output of *treat_invite* does not have stars, and its p-value is 0.48131, which is way above the rejection threshold of 0.05. Thus, it is not statistically significant.
-
--   We can also see the t-value is calculated here if you need it.
-
-<br />
-
-## Confidence Intervals in Experiments
-
-For confidence intervals in R, we first run a regression (see above), then use the *confint* command:
-
-```{r, eval = FALSE}
-confint(ate)
-```
-
-For example:
-
-```{r}
-confint(ate)
-```
-
-Here in the *treat_invite* row, we can see the lower and upper bounds of the 95% confidence interval for the difference-in-means estimator.
-
-<br />
-
-## Balance Tables
-
-(Once again, chapter 3 will make things clearer). To create a balance table, you first run multiple regressions where the output variable is the covariate, and the explanatory variable is the treatment variable. Then, we use the *screenreg()* funtion or *texreg()* function to create a balance table.
-
-For example:
-
-```{r, message = FALSE}
-m1 <- feols(head_edu ~ treat_invite, data = dta, se = "hetero")
-m2 <- feols(mosques ~ treat_invite, data = dta, se = "hetero")
-m3 <- feols(pct_poor ~ treat_invite, data = dta, se = "hetero")
-m4 <- feols(total_budget ~ treat_invite, data = dta, se = "hetero")
-
-screenreg(l = list(m1, m2, m3, m4),
-  custom.model.names = c("Village Head Education", "Mosques per 1,000", "Prop. of Households in Poverty", "Total Budget"),
-  custom.coef.names = c("Intercept", "Treatment"),
-  digits = 3, include.rsquared = FALSE, include.adjrs = FALSE)
-```
-
-We can see we have a balance table here. If you prefer a latex output (which can be put into a document), then change *screenreg()* to *texreg()*.

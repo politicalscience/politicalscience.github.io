@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Chapter 1: Causal Relationships and Causal Effects</title>
+<title>Chapter 1: Relationships Between Variables and Basics of Regression</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -85,7 +119,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Chapter 1: Causal Relationships and Causal Effects</h1>
+      <h1 class="title">Chapter 1: Relationships Between Variables and Basics of Regression</h1>
             <p class="subtitle lead">Econometric Methods (for Social Scientists)</p>
                       </div>
   </div>
@@ -102,16 +136,22 @@ window.Quarto = {
   </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
 <div id="quarto-sidebar-toc-left" class="sidebar toc-left">
   <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
-    <h2 id="toc-title">Chapter 1: Causal Relationships and Causal Effects</h2>
+    <h2 id="toc-title">Chapter 1: Relationships Between Variables and Basics of Regression</h2>
    
   <ul class="collapse">
-  <li><a href="#correlation-and-causation" id="toc-correlation-and-causation" class="nav-link active" data-scroll-target="#correlation-and-causation">1.1: Correlation and Causation</a></li>
-  <li><a href="#potential-outcomes-and-causal-effects" id="toc-potential-outcomes-and-causal-effects" class="nav-link" data-scroll-target="#potential-outcomes-and-causal-effects">1.2: Potential Outcomes and Causal Effects</a></li>
-  <li><a href="#observed-outcomes-and-the-stable-unit-treatment-value-assumption" id="toc-observed-outcomes-and-the-stable-unit-treatment-value-assumption" class="nav-link" data-scroll-target="#observed-outcomes-and-the-stable-unit-treatment-value-assumption">1.3: Observed Outcomes and the Stable Unit Treatment Value Assumption</a></li>
-  <li><a href="#causal-estimands" id="toc-causal-estimands" class="nav-link" data-scroll-target="#causal-estimands">1.4: Causal Estimands</a></li>
-  <li><a href="#properties-of-estimators---unbiasedness-and-consistency" id="toc-properties-of-estimators---unbiasedness-and-consistency" class="nav-link" data-scroll-target="#properties-of-estimators---unbiasedness-and-consistency">1.4: Properties of Estimators - Unbiasedness and Consistency</a></li>
-  <li><a href="#the-naive-estimator-and-proof-correlation-is-not-causation" id="toc-the-naive-estimator-and-proof-correlation-is-not-causation" class="nav-link" data-scroll-target="#the-naive-estimator-and-proof-correlation-is-not-causation">1.5: The Naive Estimator and Proof Correlation is not Causation</a></li>
-  <li><a href="#selection-bias-and-confounding-variables" id="toc-selection-bias-and-confounding-variables" class="nav-link" data-scroll-target="#selection-bias-and-confounding-variables">1.6: Selection Bias and Confounding Variables</a></li>
+  <li><a href="#correlations-and-measuring-relationships-between-variables" id="toc-correlations-and-measuring-relationships-between-variables" class="nav-link active" data-scroll-target="#correlations-and-measuring-relationships-between-variables">1.1: Correlations and Measuring Relationships Between Variables</a></li>
+  <li><a href="#the-simple-linear-regression-model" id="toc-the-simple-linear-regression-model" class="nav-link" data-scroll-target="#the-simple-linear-regression-model">1.2: The Simple Linear Regression Model</a></li>
+  <li><a href="#fitted-values-and-the-sum-of-squared-errors" id="toc-fitted-values-and-the-sum-of-squared-errors" class="nav-link" data-scroll-target="#fitted-values-and-the-sum-of-squared-errors">1.3: Fitted Values and the Sum of Squared Errors</a></li>
+  <li><a href="#mathematics-of-the-ordinary-least-squares-estimator" id="toc-mathematics-of-the-ordinary-least-squares-estimator" class="nav-link" data-scroll-target="#mathematics-of-the-ordinary-least-squares-estimator">1.4: Mathematics of the Ordinary Least Squares Estimator</a></li>
+  <li><a href="#interpretation-of-ols-coefficient-estimates" id="toc-interpretation-of-ols-coefficient-estimates" class="nav-link" data-scroll-target="#interpretation-of-ols-coefficient-estimates">1.5: Interpretation of OLS Coefficient Estimates</a></li>
+  <li><a href="#uncertainty-and-standard-errors" id="toc-uncertainty-and-standard-errors" class="nav-link" data-scroll-target="#uncertainty-and-standard-errors">1.6: Uncertainty and Standard Errors</a></li>
+  <li><a href="#hypothesis-testing-and-statistical-inference" id="toc-hypothesis-testing-and-statistical-inference" class="nav-link" data-scroll-target="#hypothesis-testing-and-statistical-inference">1.7: Hypothesis Testing and Statistical Inference</a></li>
+  <li><a href="#implementation-in-r" id="toc-implementation-in-r" class="nav-link" data-scroll-target="#implementation-in-r">Implementation in R</a>
+  <ul class="collapse">
+  <li><a href="#simple-linear-regression" id="toc-simple-linear-regression" class="nav-link" data-scroll-target="#simple-linear-regression">Simple Linear Regression</a></li>
+  <li><a href="#categorical-explanatory-variables" id="toc-categorical-explanatory-variables" class="nav-link" data-scroll-target="#categorical-explanatory-variables">Categorical Explanatory Variables</a></li>
+  <li><a href="#creating-regression-tables" id="toc-creating-regression-tables" class="nav-link" data-scroll-target="#creating-regression-tables">Creating Regression Tables</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -123,13 +163,13 @@ window.Quarto = {
 
 
 
-<p>This chapter will introduce the idea of causal effects and causation. We will explore what a causal effect is, how to theoretically identify causal effects, and the dangers of using correlation as causation.</p>
-<p>Topics: Potential Outcomes Framework, Causal Estimands, Properties of Estimators, Naive Estimator, Selection Bias, Confounding Variables</p>
+<p>This chapter introduces regression, the key technique used in econometrics and statistics to measure relationships between variables. We will explore the basics of regression, including how the model is specified, the coefficients of the model, the estimation process, and statistical inference techniques.</p>
+<p>Topics: Correlation, Simple Linear Regression, Ordinary Least Squares Estimator, Interpretation of Coefficients, Standard Errors, Hypothesis Testing</p>
 <p><br></p>
 <hr>
 <p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
-<section id="correlation-and-causation" class="level1">
-<h1>1.1: Correlation and Causation</h1>
+<section id="correlations-and-measuring-relationships-between-variables" class="level1">
+<h1>1.1: Correlations and Measuring Relationships Between Variables</h1>
 <p>Econometrics is the field of using data to answer economic and social science questions. While econometrics was initially developed for economic questions, it has become widely applied to other social sciences.</p>
 <p>Econometrics is often concerned with causal questions:</p>
 <ul>
@@ -167,417 +207,779 @@ Definition: Sources of Correlation
 <li>A third variable, <span class="math inline">w</span>, causes both <span class="math inline">x</span> and <span class="math inline">y</span> to change (so there is no direct effect of <span class="math inline">x</span> on <span class="math inline">y</span>)</li>
 <li>There is a causal effect of <span class="math inline">y</span> on <span class="math inline">x</span></li>
 </ol>
-<p>These causes can occur simultaneously at the same time. Thus, correlation is not causation, as correlation can be caused by other factors.</p>
+<p>These causes can occur simultaneously at the same time. Thus, <u>correlation is not causation</u>, as correlation can be caused by other factors.</p>
 </div>
 </div>
-<p><br></p>
-<p>If our goal in econometrics is to find the causal effect of <span class="math inline">x \rightarrow y</span> (source #1 of correlation), we must eliminate the effects of the third variable <span class="math inline">w</span> (source #2 of correlation), and the reverse causality effect <span class="math inline">y \rightarrow x</span> (source #3 of correlation).</p>
-<ul>
-<li>Thus, we need some methods to eliminate sources #2 and #3 of correlation in order to accurately estimate the causal effect of <span class="math inline">x \rightarrow y</span>.</li>
-</ul>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Example: Correlation is not Causation
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>In the United States, <em>Ice Cream Sales</em> and <em>Number of Fatal Shark Attacks</em> are highly correlated variables. Does this mean that selling ice cream <strong>causes</strong> fatal shark attacks? No!</p>
-<p>The reason this relationship exists is because of another variable - the <em>weather</em>. The weather (when sunny), causes both ice cream sales to rise, as well as causing more people to go to the beach, which then increases the number of fatal shark attacks.</p>
-<p>This is a clear example of how correlation is not causation.</p>
-</div>
-</div>
+<p>However, while correlation is not causation, we still need to understand correlation before we study causation.</p>
 <p><br></p>
 </section>
-<section id="key-terminology" class="level3">
-<h3 class="anchored" data-anchor-id="key-terminology">Key Terminology</h3>
-<p>Before we start discussing methods to eliminate the effect of third variables and reverse causality, we need to first understand what even is a causal effect. Let us define some key terminology:</p>
-<ul>
-<li>The variable which causes a causal effect is called the <strong>treatment</strong>, labelled <span class="math inline">D</span>.</li>
-<li>The variable which changes as a result of the change in <span class="math inline">D</span> is the <strong>outcome</strong>, labelled <span class="math inline">y</span>.</li>
-<li>Thus, our causal effect of interest is <span class="math inline">D \rightarrow y</span>.</li>
-<li>A third variable which causes both <span class="math inline">D</span> and <span class="math inline">y</span> is called a <strong>confounder</strong> or <strong>confounding variable</strong>, and is often labelled <span class="math inline">w</span> or <span class="math inline">c</span>.</li>
-</ul>
-<p><br></p>
-<p><br></p>
-<hr>
-<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
-</section>
-</section>
-<section id="potential-outcomes-and-causal-effects" class="level1">
-<h1>1.2: Potential Outcomes and Causal Effects</h1>
-<section id="potential-outcomes-framework" class="level3">
-<h3 class="anchored" data-anchor-id="potential-outcomes-framework">Potential Outcomes Framework</h3>
-<p>A <strong>causal effect</strong> is a change in some feature of the world <span class="math inline">D</span> that directly causes a change in some feature of the world <span class="math inline">y</span>.</p>
-<p>Causal effects imply the existence of <strong>potential outcomes</strong>.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Definition: Potential Outcomes
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Imagine that there are 2 parallel worlds that are exactly the same, and there is one unit/individual <span class="math inline">i</span> who exists in both worlds.</p>
-<p>Then, in one of the two worlds, unit <span class="math inline">i</span> gets the treatment <span class="math inline">D</span>, which causes a change in the outcome <span class="math inline">y</span>. In the other world, unit <span class="math inline">i</span> does not get the treatment <span class="math inline">D</span>, so there is no change in outcome <span class="math inline">y</span>.</p>
-<p>Since these 2 parallel worlds are identical <strong>except</strong> for the fact one world gets the treatment <span class="math inline">D</span> and the other does not, the difference in the world’s <span class="math inline">y</span> outcomes can only be the effect of treatment <span class="math inline">D</span>.</p>
-<p>The difference in the two world’s outcome <span class="math inline">y</span> is thus the <strong>causal effect</strong> of <span class="math inline">D</span> on <span class="math inline">y</span>.</p>
-</div>
-</div>
-<p><br></p>
-<p>Let us represent these two parallel worlds more formally:</p>
-<ul>
-<li>The parallel world where unit <span class="math inline">i</span> gets the treatment will be called the <strong>treatment state</strong>, and will take a value of <span class="math inline">D=1</span>.</li>
-<li>The parallel world where unit <span class="math inline">i</span> does not get the treatment will be called the <strong>control state</strong>, and will take a value of <span class="math inline">D=0</span>.</li>
-</ul>
-<p>Thus, the outcomes of unit <span class="math inline">i</span> in these 2 parallel worlds can be notated as <span class="math inline">y_{Di}</span>, where <span class="math inline">D</span> is the state of the world.</p>
-<ul>
-<li>In the <strong>treatment state</strong> <span class="math inline">D=1</span>, we will label the outcome of unit <span class="math inline">i</span> as <span class="math inline">y_{1i}</span></li>
-<li>In the <strong>control state</strong> <span class="math inline">D=0</span>, we will label the outcome of unit <span class="math inline">i</span> as <span class="math inline">y_{0i}</span>.</li>
-</ul>
-<p><br></p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Example: Democracy and Economic Growth
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Let us say we want to find if democracy causes better economic growth. Democracy is our treatment <span class="math inline">D</span>, and economic growth is our outcome <span class="math inline">y</span>.</p>
-<p>Country <span class="math inline">i</span> (for simplicity, let us say Canada) is one of the units. There are two parallel worlds:</p>
-<ul>
-<li>In one parallel world, Canada is in the <strong>treatment state</strong> <span class="math inline">D=1</span>, meaning it is a democracy. Its outcome in this world would be its economic growth <span class="math inline">y_{1i}</span>.</li>
-<li>In the other parallel world, Canada is in the <strong>control state</strong> <span class="math inline">D=0</span>, meaning it is not a democracy. Its outcome in this world would be its economic growth <span class="math inline">y_{0i}</span>.</li>
-</ul>
-</div>
-</div>
-<p><br></p>
-</section>
-<section id="causal-effects" class="level3">
-<h3 class="anchored" data-anchor-id="causal-effects">Causal Effects</h3>
-<p>As we mentioned in the potential outcomes framework, the difference in the outcomes in the two parallel worlds must be the causal effect of <span class="math inline">D</span>, since everything else in the parallel worlds are identical.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Definition: Individual Causal Effects
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Thus, the individual causal effect of <span class="math inline">D</span> on unit <span class="math inline">i</span> is the difference of outcomes <span class="math inline">y</span> in the treatment state and the control state. Mathematically:</p>
-<p><span class="math display">
-\tau_i = y_{1i} - y_{0i}
-</span></p>
-</div>
-</div>
-<p>Thus, the treatment <span class="math inline">D</span> will have <span class="math inline">\tau_i</span> effect on outcome <span class="math inline">y</span> for unit <span class="math inline">i</span></p>
-<p><br></p>
-<p><br></p>
-<hr>
-<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
-</section>
-</section>
-<section id="observed-outcomes-and-the-stable-unit-treatment-value-assumption" class="level1">
-<h1>1.3: Observed Outcomes and the Stable Unit Treatment Value Assumption</h1>
-<section id="observed-outcomes" class="level3">
-<h3 class="anchored" data-anchor-id="observed-outcomes">Observed Outcomes</h3>
-<p>Of course, in real life, we do not have parallel worlds. We only observe one of these parallel worlds.</p>
-<p>For example, in the real world, we know Canada is a democracy. We do not observe the parallel world that Canada is a dictatorship. Thus, we also only have one of Canada’s potential outcomes, while the other is unobservable.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Definition: Observed Outcomes
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Observed outcomes are a subset of potential outcomes that actually come true in the real world. Observed outcomes are given by the formula:</p>
-<p><span class="math display">
-y_i = D_i \times y_{1i} + (1-D_i) \times y_{0i}
-</span></p>
-<ul>
-<li>Where <span class="math inline">y_i</span> is the observed outcome, <span class="math inline">y_{1i}</span> is the potential outcome of the treatment state, and <span class="math inline">y_{0i}</span> is the potential outcome of the control state.</li>
-<li>Where <span class="math inline">D_i</span> represents what state unit <span class="math inline">i</span> is in, where <span class="math inline">D_i = 1</span> indicates unit <span class="math inline">i</span> is in the treatment state, and <span class="math inline">D_i = 0</span> indicates unit <span class="math inline">i</span> is in the control state.</li>
-</ul>
-</div>
-</div>
-<p>This formula might seem unintuitive. But we can plug in values of <span class="math inline">D_i</span> to understand what this formula means.</p>
-<p>What if unit <span class="math inline">i</span> is in the treatment state, <span class="math inline">D_i = 1</span>. Let us plug in <span class="math inline">D_i = 1</span> into the equation:</p>
-<p><span class="math display">
-\begin{split}
-y_i &amp; = D_i \times y_{1i} + (1-D_i) \times y_{0i} \\
-y_i &amp; = 1 \times y_{1i} + (1-1) \times y_{0i} \\
-y_i &amp; = y_{1i}
-\end{split}
-</span></p>
-<p>Thus, the observed outcome when unit <span class="math inline">i</span> is in the treatment state is <span class="math inline">y_{1i}</span>, which makes sense, since that is the potential outcome of the treatment state.</p>
-<p><br></p>
-<p>Similarly, what if unit <span class="math inline">i</span> is in the control state <span class="math inline">D_i = 0</span>. Let us plug in <span class="math inline">D_i = 0</span> into the equation:</p>
-<p><span class="math display">
-\begin{split}
-y_i &amp; = D_i \times y_{1i} + (1-D_i) \times y_{0i} \\
-y_i &amp; = 0 \times y_{1i} + (1-0) \times y_{0i} \\
-y_i &amp; = y_{0i}
-\end{split}
-</span></p>
-<p>Thus, the observed outcome when unit <span class="math inline">i</span> is in the control state is <span class="math inline">y_{0i}</span>, which makes sense, since that is the potential outcome of the control state.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Definition: Counterfactuals
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A counterfactual is the potential outcome that is not observed. For example, if in the real world, unit <span class="math inline">i</span> is observed to have received the treatment, then its counterfactual is the world where unit <span class="math inline">i</span> did not receive the treatment.</p>
-<p>Counterfactuals are important, because, if we remember, the individual causal effect is <span class="math inline">\tau_i = y_{1i} = y_{0i}</span>, which implies that we must know the counterfactual to find the causal effect of <span class="math inline">D</span> on <span class="math inline">y</span>.</p>
-</div>
-</div>
-<p><br></p>
-</section>
-<section id="stable-unit-treatment-value-observation" class="level3">
-<h3 class="anchored" data-anchor-id="stable-unit-treatment-value-observation">Stable Unit Treatment Value Observation</h3>
-<p>The stable unit treatment value assumption (SUTVA) is arguably the key assumption of causal inference.</p>
-<p>SUTVA states that given two units <span class="math inline">i</span> and <span class="math inline">j</span>, unit <span class="math inline">i</span> is not affected by the treatment assignment of unit <span class="math inline">j</span>. More intuitively, if unit <span class="math inline">j</span> is assigned to treatment, that has no effect on the outcomes of unit <span class="math inline">i</span>.</p>
-<p>Why is this important? Well, if unit <span class="math inline">j</span>’s treatment status affects unit <span class="math inline">i</span>, then unit <span class="math inline">i</span> would have more than 2 potential outcomes:</p>
-<ul>
-<li>This is because unit <span class="math inline">i</span>’s outcomes would now not only depend on itself being assigned to treatment or control, but also unit <span class="math inline">j</span> being assigned to treatment or control.</li>
-<li>That means unit <span class="math inline">i</span> now has 4 potential outcomes. If unit <span class="math inline">i</span> is affected by other units other than <span class="math inline">j</span>, this will quickly multiply to an unmanageable number of potential outcomes.</li>
-</ul>
-<p>Thus, violating this assumption will basically make it impossible to calculate treatment effects.</p>
-<p><br></p>
-<p>In what situations is SUTVA typically violated?</p>
-<ol type="1">
-<li>Peer effects that result from contact between units <span class="math inline">i</span> and <span class="math inline">j</span>. For example, if you are testing the treatment of some new curriculum on student educational outcomes, and unit <span class="math inline">j</span> is assigned to treatment, unit <span class="math inline">j</span> might teach their friend unit <span class="math inline">i</span> some new things, even if unit <span class="math inline">i</span> was in the control group.</li>
-<li>Dilution/concentration effects that arise from a prevalence of a treatment. The best example is vaccines - if enough people get a vaccine for a disease, even people who do not get the vaccine are safer, since transmission is much more difficult.</li>
-</ol>
-<p><br></p>
-<p><br></p>
-<hr>
-<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
-</section>
-</section>
-<section id="causal-estimands" class="level1">
-<h1>1.4: Causal Estimands</h1>
-<p>We introduced how the individual treatment effect of <span class="math inline">D \rightarrow y</span> for any unit <span class="math inline">i</span> is <span class="math inline">\tau_i = y_{1i} - y_{0i}</span>. However, there is an issue - we do not know the two parallel worlds.</p>
-<ul>
-<li>As we discussed in <a href="https://politicalscience.github.io/metrics/causal/1.html#observed-outcomes-and-the-stable-unit-treatment-value-assumption">section 1.3</a>, we can only observe one of the two parallel worlds.</li>
-</ul>
-<p>Thus, we can never actually find (or estimate) the individual treatment effect. We need another <strong>estimand</strong>. An <strong>estimand</strong> is the true value of something in the real world, that we will try to estimate with an estimator.</p>
-<p>This course will focus on introducing many new estimators to try to estimate these estimands. However, before we start estimating, we have to know what we are trying to estimate. What are the estimands we can use, if individual treatment effect is not possible?</p>
-<p><br></p>
-<p>The “key” estimand in causal inference is the Average Treatment Effect:</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Definition: Average Treatment Effect
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The <strong>Average Treatment Effect (ATE)</strong> is the average of all individual treatment effects:</p>
-<p><span class="math display">
-\text{ATE} \ = \ \mathbb{E}[\tau_i] \ = \ \bar{y}_{1i} - \bar{y}_{0i}
-</span></p>
-<p>Where the bar over the <span class="math inline">y</span> represents mean.</p>
-</div>
-</div>
-<p>However, the ATE is not the only estimand we are interested in.</p>
-<p><br></p>
-<p>Sometimes, our treatment variables are continuous. For example, if we want to estimate how GDP affects democratisation, our treatment variable GDP is not binary.</p>
-<p>In cases of non-continuous treatment variables, we want to estimate the <strong>average causal effect</strong> (ACE)- the expected change in <span class="math inline">y</span> resulting from a one unit increase in <span class="math inline">D</span>:</p>
-<p><span class="math display">
-\text{ACE} = \mathbb{E}[y'(D)]
-</span></p>
-<p>Where <span class="math inline">y'(D)</span> is the derivative of <span class="math inline">y</span> in respect to <span class="math inline">D</span></p>
-<p><br></p>
-<p>Sometimes, we have reason to expect that the treatment effect may be different accross different categories of units.</p>
-<p>For example, maybe we think that a certain educational treatment will benefit women more than men, so the treatment effect will be higher for women than men.</p>
-<p>The <strong>Conditional Average Treatment Effect (CATE)</strong> is the treatment effect of units, given they have some other variable <span class="math inline">x</span> value.</p>
-<p><span class="math display">
-\text{CATE} = \mathbb{E}[ \tau_i | x_i ]
-</span></p>
-<p><br></p>
-<p>We can also estimate the causal effect on only the treatment or control groups.</p>
-<p>The <strong>average treatment effect on the treated (ATT)</strong> is the average treatment effect of only units who received the treatment <span class="math inline">D_i = 1</span>:</p>
-<p><span class="math display">
-\text{ATT} = \mathbb{E} [\tau_i | D_i = 1] = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
-</span></p>
-<p>The <strong>average treatment effect on the controls (ATC)</strong> is the average treatment effect of only units who did not receive the treatment <span class="math inline">D_i = 0</span>:</p>
-<p><span class="math display">
-\text{ATC} = \mathbb{E} [\tau_i|D_i = 0] = \bar{y}_{1i, \ D_i = 0} - \bar{y}_{0i, \ D_i = 0}
-</span></p>
-<p><br></p>
-<p><br></p>
-<hr>
-<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
-</section>
-<section id="properties-of-estimators---unbiasedness-and-consistency" class="level1">
-<h1>1.4: Properties of Estimators - Unbiasedness and Consistency</h1>
-<p>The above causal estimands are not directly calculable, since we cannot observe both potential outcomes. Thus, we need an <strong>estimator</strong> to estimate the causal estimands.</p>
-<p>Estimators have two key properties: unbiasdness and consistency.</p>
-<p><br></p>
-<section id="unbiasedness" class="level3">
-<h3 class="anchored" data-anchor-id="unbiasedness">Unbiasedness</h3>
-<p>An estimator is <strong>unbiased</strong> if its estimates <span class="math inline">\hat{\theta}</span> are on average equal to the true estimand <span class="math inline">\theta</span>.</p>
-<p><span class="math display">
-\mathbb{E}[ \ \hat{\theta} \ ] = \theta
-</span></p>
-<p>Note: I use <span class="math inline">\theta</span> to represent any possible estimand, including the causal estimands from above.</p>
-<p>To better understand unbiasdness, take this example of archery. We have two archers, archer <span class="math inline">A</span> and archer <span class="math inline">B</span>.</p>
-<ul>
-<li>Both archers are very very accurate - as in they hit the same spot on the target every time they shoot.</li>
-<li>Archer <span class="math inline">A</span> gets the bullseye every single time.</li>
-<li>However, archer <span class="math inline">B</span>, while very consistently hitting the same spot, for some reason, keeps hitting 5 inches to the right of the bullseye.</li>
-</ul>
-<p>Thus, archer <span class="math inline">B</span> is biased - he is consistently and systematically hitting the wrong spot on the target. Similarly, if an estimate is consistently off by a certain value, then it is biased.</p>
-<p><br></p>
-</section>
-<section id="consistency" class="level3">
-<h3 class="anchored" data-anchor-id="consistency">Consistency</h3>
-<p>However, an unbiased estimator is not good enough. Why? Take this example of another archer <span class="math inline">C</span>.</p>
-<ul>
-<li>Archer <span class="math inline">C</span> has good aim - he is aiming directly at the bullseye.</li>
-<li>However, archer <span class="math inline">C</span> is very inconsistent - he first hits a shot 5 inches to the left of the bullseye, then hits a shot 5 inches to the right of the bullseye. He keeps doing both of these things over and over again.</li>
-<li>Archer <span class="math inline">C</span> on average is actually hitting the bullseye, since his leftward and rightward errors cancel each other out.</li>
-<li>However, archer <span class="math inline">C</span> never actually hits the bullseye on any specific shot.</li>
-</ul>
-<p>Archer <span class="math inline">C</span> is an example of an unbiased, but very inconsistent estimator. On average, he is getting the right value of the estimate, but he is never that close on any specific estimate.</p>
-<ul>
-<li>More technically, an inconsistent estimator is one who has high <strong>variance</strong> in their estimates.</li>
-</ul>
-<p><br></p>
-<p>Ideally, <u>we want an estimator that is both <strong>unbiased</strong> and <strong>consistent</strong></u>. This would mean that their average estimates are equal to the true estimand, and that each estimate is relatively close to the true estimand with low variance.</p>
-<ul>
-<li>So, an archer than on average, hits the bullseye, and is generally not too far off from the bullseye on any sepcific shot.</li>
-</ul>
-<p><br></p>
-<hr>
-<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
-</section>
-</section>
-<section id="the-naive-estimator-and-proof-correlation-is-not-causation" class="level1">
-<h1>1.5: The Naive Estimator and Proof Correlation is not Causation</h1>
-<p>The <strong>naive estimator</strong> is an estimator that only compares the observed outcomes, without any comparison to the counterfactual potential outcomes.</p>
-<p>So essentially, we compare the observed treatment group outcomes and the observed control group outcomes:</p>
-<p><span class="math display">
-\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-</span></p>
-<p>This is what many people do when trying to find a causal effect. The naive estimator is also similar to a measure of correlation.</p>
-<p><br></p>
-<p>However, <u><strong>the naive estimator is a bad idea</strong></u>. Remember, treatment effects are supposed to be comparing the two potential outcomes <u>of the same unit</u>. We are supposed to compare <span class="math inline">y_{1i}</span> to <span class="math inline">y_{0i}</span>.</p>
-<ul>
-<li>However, the naive estimator does not do that. Instead, it is comparing the observed outcomes of the treatment group versus the different control group.</li>
-</ul>
-<p>So essentially, it is comparing the potential outcomes of <u>different</u> units.</p>
-<ul>
-<li>But what is the issue with this?</li>
-<li>Well, if you compare the potential outcome of two different units (let us call them <span class="math inline">A</span> and <span class="math inline">B</span>), you are comparing <span class="math inline">y_{1A}</span> and <span class="math inline">y_{1b}</span>.</li>
-<li>However, what if units <span class="math inline">A</span> and <span class="math inline">B</span> are different in some way even before the treatment? Their outcomes <span class="math inline">y</span> may differ not due to the treatment <span class="math inline">D</span>, but due to some underlying difference between units <span class="math inline">A</span> and <span class="math inline">B</span>.</li>
-<li>Thus, we are introducing some <strong>bias</strong> - the differences between unit <span class="math inline">A</span> and <span class="math inline">B</span> are being included in our causal estimate, when they should not be, since the differences between <span class="math inline">A</span> and <span class="math inline">B</span> may not be due to <span class="math inline">D</span>.</li>
-</ul>
-<p><br></p>
-<p>We can prove this mathematically. We start with the naive estimator:</p>
-<p><span class="math display">
-\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-</span></p>
-<p>Then, we do a little algebra trick - we add a new term to this equation, then subtract that same term. The two new terms thus cancel each other out to 0:</p>
-<p><span class="math display">
-\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
-</span></p>
-<p>Now, let us re-arrange this equation:</p>
-<p><span class="math display">
-\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-</span></p>
-<p>We can see the first two terms are equal to the average treatment effect on the treated (ATT). Thus, we can rewrite the naive estimator:</p>
-<p><span class="math display">
-\hat{\tau} = \text{ATT} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-</span></p>
-<p>If we look at the final result, we can divide it into two parts:</p>
-<ol type="1">
-<li>The ATT (see <a href="https://politicalscience.github.io/metrics/causal/1.html#causal-estimands">section 1.4</a>)</li>
-<li>The extra bit: <span class="math inline">\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}</span>, which we call <strong>selection bias</strong>. Intuitively, it is the difference <u>prior to treatment</u> between the control and treatment groups. This results in our naive estimator being biased.</li>
-</ol>
-<p>We will go into detail on selection bias in the next section.</p>
-<p><br></p>
-<hr>
-<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
-</section>
-<section id="selection-bias-and-confounding-variables" class="level1">
-<h1>1.6: Selection Bias and Confounding Variables</h1>
-<section id="selection-bias" class="level3">
-<h3 class="anchored" data-anchor-id="selection-bias">Selection Bias</h3>
-<p>As we just established, the naive estimator contains <strong>selection bias</strong> <span class="math inline">\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}</span>. This is the difference <u>prior to treatment</u> between the control and treatment groups.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Example: Hospital and Health
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>For example, if we are measuring the question <em>does going to the hospital make you more healthy</em>, and we simply measured the outcomes of people who went to the hospital and did not go to the hospital, we might see that in general, people who did not go to the hospital are healthier!</p>
-<ul>
-<li><p>Does this mean that going to the hospital makes you unhealthier? No! It is because more unhealthy people choose to go to the hospital in the first place. Thus, the hospital has generally more unhealthy individuals in it. The hospital might perform miracles on these people, but they are still not as healthy as the healthy people who did not need to go to the hospital.</p></li>
-<li><p>The differences between the people who chose to go to the hospital versus the people who did not go to the hospital explains the differences in our outcome, not the actual treatment that the hospital provided.</p></li>
-</ul>
-</div>
-</div>
-<p>Thus, selection bias can be thought of as when our treatment and control groups are fundamentally different and unequal prior to treatment.</p>
-<ul>
-<li>And when we use the naive estimator (or correlation), we pick up this bias in our estimates.</li>
-</ul>
-<p><br></p>
-</section>
-<section id="confounding-variables" class="level3">
-<h3 class="anchored" data-anchor-id="confounding-variables">Confounding Variables</h3>
-<p>Selection bias is caused by confounding variables.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Definition: Confounding Variable
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A <strong>confounder</strong> or <strong>confounding variable</strong> is a variable that is causes differences in the treatment and control groups.</p>
-<p>Confounding variables result in selection bias, and are why correlation does not equal causation. In order to accurately calculate causal effects, we need to find some way to eliminate the effect of confounding variables.</p>
-</div>
-</div>
-<p>For example, look at the figure below:</p>
+<section id="measuring-relationships-between-variables" class="level3">
+<h3 class="anchored" data-anchor-id="measuring-relationships-between-variables">Measuring Relationships Between Variables</h3>
+<p>How can we explore the relationship between a continuous <span class="math inline">x</span> variable and a continuous <span class="math inline">y</span> variable?</p>
+<p>One way to explore the relationship is with a best-fit line. A best-fit line is useful, since the <strong>slope</strong> of the best-fit line represents the change in <span class="math inline">y</span> for every unit change in <span class="math inline">x</span>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="figures/1-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
+<p><img src="figures/3-3.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
 </figure>
 </div>
-<p>In this figure, <span class="math inline">D</span> is the treatment, and <span class="math inline">C</span> is the confounding variable that affects whether or not a unit gets the treatment <span class="math inline">D</span> or not.</p>
-<p>When we calculate the naive estimate (or correlation), our causal estimate captures both the direct effect <span class="math inline">D \rightarrow Y</span>, but also the effect of <span class="math inline">D \leftrightarrow C \rightarrow O \rightarrow Y</span>, since <span class="math inline">D</span> and <span class="math inline">C</span> are correlated.</p>
+<p>In the figure above, we have plotted a number of observations, and implemented a best-fit line in red. The graph here introduces some common terminology:</p>
 <ul>
-<li>This second effect <span class="math inline">D \leftrightarrow C \rightarrow O \rightarrow Y</span> is called the <strong>backdoor path</strong>.</li>
+<li>The <strong>independent variable</strong>, also called the <strong>explanatory variable</strong> or <strong>treatment variable</strong>, is the variable that we believe is doing the causing. It is typically notated <span class="math inline">x</span>.</li>
+<li>The <strong>dependent variable</strong>, also called the <strong>response variable</strong> or <strong>outcome variable</strong>, is the variable that is affected by a change in the independent variable. The dependent variable is typically notated with <span class="math inline">y</span>.</li>
 </ul>
-<p>However, the actual causal effect of treatment <span class="math inline">D</span> on <span class="math inline">Y</span> is only the section of <span class="math inline">D \rightarrow Y</span>, and does not include the backdoor path. So, we need to find some way to only look at <span class="math inline">D \rightarrow Y</span>, and eliminate/partial out the effect of the back door.</p>
+<p>We know from algebra that a linear equation takes the form <span class="math inline">y=mx+b</span>. The slope <span class="math inline">m</span> describes the rate of change of <span class="math inline">y</span> for a one unit change in <span class="math inline">x</span>.</p>
+<ul>
+<li>Thus, the slope is a measurement of the relationship between <span class="math inline">x</span> and <span class="math inline">y</span>.</li>
+</ul>
+<p>Thus, if we can fit a best-fit line to our data, we can look at the slope, and determine the <strong>relationship</strong> between <span class="math inline">x</span> and <span class="math inline">y</span>.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note how I have been using the word <strong>relationship</strong>, not causal effect.</p>
+<p>Relationship is the measure of correlation. Correlation is not causation!</p>
+<ul>
+<li>This chapter is focused on correlation, and we will explore causation in later chapters.</li>
+</ul>
+</div>
+</div>
 <p><br></p>
-<p>To make an accurate causal effect estimate, we must get rid of confounding variables, selection bias, and the backdoor path. How do we do this? The best method is randomisation, which we will cover in the next chapter.</p>
+<p><br></p>
+<hr>
+<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
+</section>
+</section>
+<section id="the-simple-linear-regression-model" class="level1">
+<h1>1.2: The Simple Linear Regression Model</h1>
+<p>How can we fit a best-fit line in order to find the relationship between <span class="math inline">x</span> and <span class="math inline">y</span>? The main way to do this is with the <strong>simple linear regression model</strong>.</p>
+<p>First, what is a <strong>regression model</strong>? <u>A regression model is the specification of the conditional distribution of <span class="math inline">y</span>, given <span class="math inline">x</span>.</u></p>
+<p>A distribution (random variable) says that there are multiple potential values of <span class="math inline">y</span>.</p>
+<ul>
+<li>For example, if <span class="math inline">x</span> is age, and <span class="math inline">y</span> is income, a distribution of income <span class="math inline">y</span> says that not all individuals make the same amount of money.</li>
+<li>If you select someone at random, the probability of selecting someone with a specific income <span class="math inline">y_i</span> will depend on the probability distribution of income.</li>
+</ul>
+<p>A conditional distribution says that the distribution of <span class="math inline">y</span> is conditional (depends on) the value of <span class="math inline">x</span>.</p>
+<ul>
+<li>For example, if <span class="math inline">x</span> is age, and <span class="math inline">y</span> is income, a conditional distribution of income <span class="math inline">y</span> on age <span class="math inline">x</span> says that depending on the age <span class="math inline">x</span> of an individual, the probability distribution of income <span class="math inline">y</span> will change.</li>
+<li>This makes sense - if the probability distribution of <span class="math inline">y</span> is not affected at all by the value of <span class="math inline">x</span>, then clearly <span class="math inline">x</span> is not related to <span class="math inline">y</span>.</li>
+</ul>
+<p><br></p>
+<p>The linear regression model focuses on the <strong>expected value</strong> of the conditional distribution, notated <span class="math inline">\mathbb{E}[y_i | x_i]</span>.</p>
+<ul>
+<li>The expected value, also known as the mean, is the “best guess” of <span class="math inline">y</span> (since <span class="math inline">y</span> is a probability distribution with many values).</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: Simple Linear Regression
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The simple linear regression model takes the following form:</p>
+<p><span class="math display">
+\mathbb{E}[y_i | x_i] = \beta_0 + \beta_1 x_i
+</span></p>
+<ul>
+<li>Where we have <span class="math inline">n</span> number of observations in our data, <span class="math inline">i</span> being any one of them, and each observation has an <span class="math inline">x</span> and <span class="math inline">y</span> value <span class="math inline">(x_i, y_i)</span>.</li>
+<li>Where <span class="math inline">\mathbb{E}[y_i | x_i]</span> is the expected value of the conditional distribution of <span class="math inline">y_i|x_i</span>. That distribution has a variance <span class="math inline">Var(y_i | x_i) = \sigma^2</span>.</li>
+<li>Where <span class="math inline">\beta_0</span> (intercept) and <span class="math inline">\beta_1</span> (slope) are coefficients of the model that need to be estimated.</li>
+</ul>
+<p>We can also write the simple linear regression model in respect to a specific <span class="math inline">y_i</span> value, rather than the expected value:</p>
+<p><span class="math display">
+y_i = \beta_0 + \beta_1 x_i + u_i
+</span></p>
+<ul>
+<li>Where we have <span class="math inline">n</span> number of observations in our data, <span class="math inline">i</span> being any one of them, and each observation has an <span class="math inline">x</span> and <span class="math inline">y</span> value <span class="math inline">(x_i, y_i)</span>.</li>
+<li>Where <span class="math inline">\beta_0</span> (intercept) and <span class="math inline">\beta_1</span> (slope) are coefficients of the model that need to be estimated.</li>
+<li>Where <span class="math inline">u_i</span> is the error term. Remember, <span class="math inline">y_i</span> is any value in the conditional distribution <span class="math inline">y_i|x_i</span>, so it may not be exactly at the expected value of the conditional distribution. Thus, we have to add an error term to account for this distribution, where <span class="math inline">\mathbb{E}[u_i] = 0</span> and <span class="math inline">Var[u_i] = \sigma^2</span>.</li>
+</ul>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+<hr>
+<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
+</section>
+<section id="fitted-values-and-the-sum-of-squared-errors" class="level1">
+<h1>1.3: Fitted Values and the Sum of Squared Errors</h1>
+<section id="fitted-values-and-best-fit-lines" class="level3">
+<h3 class="anchored" data-anchor-id="fitted-values-and-best-fit-lines">Fitted Values and Best-Fit Lines</h3>
+<p>We have discussed the form a simple linear regression takes. However, this is not the best-fit line: we still need to estimate the coefficients <span class="math inline">\beta_0</span> (intercept) and <span class="math inline">\beta_1</span> (slope) in order to create a best-fit line.</p>
+<ul>
+<li><p>The estimates of <span class="math inline">\beta_0</span> and <span class="math inline">\beta_1</span> that we obtain will be denoted with a hat ^: <span class="math inline">\hat\beta_0</span> and <span class="math inline">\hat\beta_1</span>.</p></li>
+<li><p>We will discuss the estimation process in the next section.</p></li>
+</ul>
+<p>Once we have obtained our estimates of the coefficients, we will have a <strong>best-fit line</strong>, also called a <strong>fitted-values</strong> model:</p>
+<p><span class="math display">
+\hat{y} = \hat\beta_0 + \hat\beta_1x_i
+</span></p>
+<ul>
+<li>Where <span class="math inline">\hat{y}</span> are the predicted values of <span class="math inline">y</span> based on our best-fit line.</li>
+<li>Where <span class="math inline">\hat\beta_0</span> and <span class="math inline">\hat\beta_1</span> are our estimates for the true coefficients <span class="math inline">\beta_0</span> and <span class="math inline">\beta_1</span>.</li>
+<li>Note that the error term <span class="math inline">u_i</span> disappears. This is because the average value of <span class="math inline">u_i</span> is <span class="math inline">\mathbb{E} [u_i] = 0</span>, so we do not need to include the term.</li>
+</ul>
+<p>We can use the fitted values in two ways:</p>
+<ol type="1">
+<li>The <span class="math inline">\hat\beta_1</span>, which is the estimate of <span class="math inline">\beta_1</span> (slope), tells us the relationship between <span class="math inline">x</span> and <span class="math inline">y</span>.</li>
+<li>The equation outputs a prediction <span class="math inline">\hat y</span>, so we can use the fitted values to make predictions. We will focus on prediction in later parts of the course.</li>
+</ol>
+<p><br></p>
+</section>
+<section id="sum-of-squared-errors" class="level3">
+<h3 class="anchored" data-anchor-id="sum-of-squared-errors">Sum of Squared Errors</h3>
+<p>We want to fit a best-fit line that is accurate. So, we want to find the <span class="math inline">\beta_0</span> (intercept) and <span class="math inline">\beta_1</span> (slope) values that will best fit our observed dataset.</p>
+<p>One way we can fit an accurate line is to find the best-fit line that minimises the sum of squared errors.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: Sum of Squared Errors
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The sum of squared errors (SSE) is as follows:</p>
+<p><span class="math display">
+\begin{split}
+SSE &amp; = \sum\limits_{i=1}^n (y_i - \hat y_i)^2 \\
+&amp; = \sum\limits_{i=1}^n (y_i - \hat\beta_0 - \hat\beta_1 x_i)^2
+\end{split}
+</span></p>
+<ul>
+<li><p>The sum of squared errors is exactly as it sounds. Find the error, the distance between the actual <span class="math inline">y_i</span> and predicted <span class="math inline">\hat y</span>, which is <span class="math inline">y_i - \hat y</span>, then square that error <span class="math inline">(y_i - \hat y_i)^2</span>, then sum up for all observations <span class="math inline">i</span> in the data.</p></li>
+<li><p>We get the second equation by substituting in the fitted values model (discussed in the last section), where <span class="math inline">\hat{y} = \hat\beta_0 + \hat\beta_1x_i</span>.</p></li>
+</ul>
+<p>The <strong>Ordinary Least Squares (OLS) Estimator</strong> estimates the coefficients <span class="math inline">\beta_0</span> and <span class="math inline">\beta_1</span> by finding the values of <span class="math inline">\beta_0</span> and <span class="math inline">\beta_1</span> that result in the line with the smallest sum of squared errors.</p>
+</div>
+</div>
+<p><br></p>
+<p>A common question is: why are the errors squared?.</p>
+<ul>
+<li>This is because we are only concerened with the <strong>size/magnitude</strong> of errors, not the direction of errors.</li>
+<li>A simple subtraction to obtain errors would include negative errors (where the prediction <span class="math inline">\hat y</span> is higher than the actual <span class="math inline">y_i</span>), and positive errors (where the prediction <span class="math inline">\hat y</span> is lower than the actual <span class="math inline">y_i</span>).</li>
+<li>But we do not care if the error is above or below the true <span class="math inline">y_i</span>. We only care about the size.</li>
+<li>Thus, by squaring the errors, we get rid of the negatives and everything is positive.</li>
+</ul>
+<p>Then, why not absolute value? This is for a few reasons:</p>
+<ul>
+<li><p>Firstly, the absolute value function is not differentiable at the vertex. This is an issue, as we will see in the OLS estimation process, we need to take the derivative of the error function for minimisation purposes.</p></li>
+<li><p>Second, the OLS estimator with its squared errors has a few unique properties that make it very consistent and unbiased. We will focus on these in <a href="https://politicalscience.github.io/metrics/causal/4.html">chapter 4</a> when we discuss causal inference with regressions.</p></li>
+</ul>
+<p>In the next section, we will discuss the mathematics behind the OLS estimator.</p>
+<p><br></p>
+<p><br></p>
+<hr>
+<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
+</section>
+</section>
+<section id="mathematics-of-the-ordinary-least-squares-estimator" class="level1">
+<h1>1.4: Mathematics of the Ordinary Least Squares Estimator</h1>
+<p>As we discussed in the previous section, the Ordinary Least Squares Estimator estimates our coefficients <span class="math inline">\beta_0</span> (slope) and <span class="math inline">\beta_1</span> (intercept) by finding the values of <span class="math inline">\beta_0</span> and <span class="math inline">\beta_1</span> that minimise the sum of squared errors.</p>
+<p>We can describe the goal of OLS in a more mathematical way:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: Ordinary Least Squares (OLS) Estimator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The goal of the Ordinary Least Squares (OLS) Estimator is to find the values of <span class="math inline">\beta_0</span> and <span class="math inline">\beta_1</span> that make the following statement true:</p>
+<p><span class="math display">
+\begin{split}
+(\hat{\beta}_0, \hat{\beta}_1) &amp; = \arg \min\limits_{\hat{\beta}_0, \hat{\beta}_1} \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)^2 \\
+&amp; = \arg \min\limits_{\hat{\alpha}, \hat{\beta}} S(\hat{\beta}_0, \hat{\beta}_1)
+\end{split}
+</span></p>
+<p>Where function <span class="math inline">S</span> is the sum of squared errors.</p>
+</div>
+</div>
+<p><br></p>
+<p>How do we minimise <span class="math inline">S</span> (the function of the sum of squared errors)?</p>
+<ul>
+<li>From calculus, we know that a minimum/maximum of a function is where the derivative of the function is equal to 0.</li>
+</ul>
+<p>Thus, let us find the partial derivative of the function <span class="math inline">S</span> in respect to both <span class="math inline">\hat\beta_0</span> and <span class="math inline">\hat\beta_1</span>, and set them equal to 0. This is also called the <strong>first-order conditions</strong>.</p>
+<p><br></p>
+<section id="first-order-conditions" class="level3">
+<h3 class="anchored" data-anchor-id="first-order-conditions">First Order Conditions</h3>
+<p>First, let us find the partial derivative of <span class="math inline">S</span> in respect to <span class="math inline">\hat\beta_0</span>:</p>
+<p><span class="math display">
+\frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_0} = \frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_0} \left[ \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)^2 \right]
+</span></p>
+<p>First, ignore the summation. The partial derivative of the internal section, using chain rule, is the following:</p>
+<p><span class="math display">
+\frac{\partial}{\partial \hat{\beta}_0} \left[ (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)^2 \right] = -2(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)
+</span></p>
+<p>But how do we deal with the summation? We know that there is the sum rule of derivatives <span class="math inline">[f(x) + g(x)]' = f'(x) + g'(x)</span>. Thus, we know we just sum up the derivatives to get the derivative:</p>
+<p><span class="math display">
+\begin{split}
+\frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_0} &amp; = \sum\limits_{-i=1}^n \left[ -2(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) \right] \\
+&amp; = -2 \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)
+\end{split}
+</span></p>
+<p>To find the value of <span class="math inline">\hat\beta_0</span> that minimises <span class="math inline">S</span>, we set the derivative equal to 0. We can ignore the -2, since if the summation is equal to 0, the whole derivative will equal 0. Thus, the first order condition is:</p>
+<p><span class="math display">
+\sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
+</span></p>
+<p><br></p>
+<p>Now, let us do the same for <span class="math inline">\hat\beta_1</span>. Using the same steps as before</p>
+<p><span class="math display">
+\begin{split}
+\frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_1} &amp; = \sum\limits_{i=1}^n \left[ -2x_i(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) \right] \\
+&amp; = -2 \sum\limits_{i=1}^n x_i(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)
+\end{split}
+</span></p>
+<p>The first order condition for <span class="math inline">\hat\beta_1</span> will be (again, ignoring the -2 for the same reason as before):</p>
+<p><span class="math display">
+\sum\limits_{i=1}^n x_i(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
+</span></p>
+<p><br></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: First Order Conditions of OLS
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Thus, the first order conditions of OLS are:</p>
+<p><span class="math display">
+\begin{split}
+&amp; \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0 \\
+&amp; \sum\limits_{i=1}^n x_i (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
+\end{split}
+</span></p>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="solving-the-system-of-equations" class="level3">
+<h3 class="anchored" data-anchor-id="solving-the-system-of-equations">Solving the System of Equations</h3>
+<p>We now have our two first-order conditions. Now, we basically have a 2-equation system of equations, with 2 variables.</p>
+<ul>
+<li>We can solve this through substitution - in the first equation, solve for <span class="math inline">\hat\beta_0</span> in terms of <span class="math inline">\hat\beta_1</span>.</li>
+<li>Then, plug in <span class="math inline">\hat\beta_0</span> in terms of <span class="math inline">\hat\beta_1</span> into the second equation, thus making that a one-variable equation. We can solve that equation for <span class="math inline">\hat\beta_1</span>, then find <span class="math inline">\hat\beta_0</span>.</li>
+</ul>
+<p><br></p>
+<p>First, let us solve the first equation for <span class="math inline">\hat\beta_0</span> in terms of <span class="math inline">\hat\beta_1</span>:</p>
+<p><span class="math display">
+\begin{split}\sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) &amp; =  0 \\
+\sum\limits_{i=1}^n y_i - n \hat{\beta}_0 - \hat{\beta}_1 \sum\limits_{i=1}^n x_i &amp; = 0 \\
+-n\hat{\beta}_0 &amp;= -\sum\limits_{i=1}^n y_i + \hat{\beta}_1\sum\limits_{i=1}^nx_i \\
+\hat{\beta}_0 &amp; = \frac{1}{n} \sum\limits_{i=1}^n y_i - \frac{1}{n}\hat{\beta}_1 \sum\limits_{i=1}^n x_i \\
+&amp; = \bar{y} - \hat{\beta}_1 \bar{x}
+\end{split}
+</span></p>
+<p>Now, let us substitute our calculated <span class="math inline">\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}</span> into the <span class="math inline">\hat{\beta}_1</span> condition and solve: for <span class="math inline">\hat{\beta}_1</span>:</p>
+<p><span class="math display">
+\begin{split}0 &amp; = \sum\limits_{i=1}^n \left[ x_i(y_i - [\bar{y} - \hat{\beta}_1\bar{x}] - \hat{\beta}_1x_i) \right] \\
+&amp; = \sum\limits_{i=1}^n \left[ x_i(y_i - \bar{y} - \hat{\beta}_1 (x_i - \bar{x})) \right] \\
+&amp; = \sum\limits_{i=1}^n \left[ x_i(y_i - \bar{y}) - x_i \hat{\beta}_1(x_i - \bar{x}) \right] \\
+&amp; = \sum\limits_{i=1}^n x_i (y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^nx_i (x_i - \bar{x})\end{split}
+</span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Summation Properties
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>To help us solve this problem, note these 3 properties of summation:</p>
+<p><span class="math display">
+\begin{split}&amp; \sum\limits_{i=1}^n (x_i - \bar{x}) = 0 \\&amp; \sum\limits_{i=1}^n x_i(y_i - \bar{y}) = \sum\limits_{i=1}^n(x_i - \bar{x}) (y_i - \bar{y}) \\&amp; \sum\limits_{i=1}^n x_i(x_i - \bar{x}) = \sum\limits_{i=1}^n(x_i - \bar{x})^2\end{split}
+</span></p>
+</div>
+</div>
+<p>Knowing these properties of summation, we can transform what we had before into:</p>
+<p><span class="math display">
+\begin{split}
+0 &amp; = \sum\limits_{i=1}^n(x_i - \bar{x})(y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^n (x_i - \bar{x})^2 \\
+\hat{\beta}_1 \sum\limits_{i=1}^n (x_i - \bar{x})^2 &amp; = \sum\limits_{i=1}^n(x_i - \bar{x})(y_i - \bar{y}) \\
+\hat{\beta}_1 &amp; = \frac{\sum\limits_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum\limits_{i=1}^n(x_i - \bar{x})^2}
+\end{split}
+</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: OLS Estimate of Coefficient
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Thus, the OLS estimate <span class="math inline">\hat\beta_1</span> (slope) of the linear regression model is:</p>
+<p><span class="math display">
+\hat{\beta}_1 = \frac{\sum\limits_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum\limits_{i=1}^n(x_i - \bar{x})^2} = \frac{Cov(x, y)}{Var(x)} = \frac{\sigma_{xy}}{\sigma_x^2}
+</span></p>
+<p>This is also the expected change in <span class="math inline">y</span> given a one unit increase in <span class="math inline">x</span>.</p>
+<ul>
+<li>Remember, this is the <strong>relationship</strong> between <span class="math inline">x</span> and <span class="math inline">y</span>, <u><strong>not</strong> the causal effect</u>.</li>
+</ul>
+</div>
+</div>
+<p><br></p>
+<p>Of course, we still need to find <span class="math inline">\hat\beta_0</span> (the slope). We found that <span class="math inline">\hat\beta_0 = \bar{y} - \hat{\beta}_1 \bar{x}</span> earlier, so we just plug that in.</p>
+<p>And now, we have our estimates <span class="math inline">\hat\beta_0</span> and <span class="math inline">\hat\beta_1</span>, and thus we now have a best-fit line and an estimate of the relationship between <span class="math inline">x</span> and <span class="math inline">y</span>.</p>
+<p><br></p>
+<p><br></p>
+<hr>
+<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
+</section>
+</section>
+<section id="interpretation-of-ols-coefficient-estimates" class="level1">
+<h1>1.5: Interpretation of OLS Coefficient Estimates</h1>
+<p>We now have estimated <span class="math inline">\hat\beta_0</span> and <span class="math inline">\hat\beta_1</span>. But what do these actually mean in the context of the relationship between <span class="math inline">x</span> and <span class="math inline">y</span>?</p>
+<ul>
+<li>Let us start with <span class="math inline">\hat\beta_1</span>, which is the slope, the more important of the two coefficients.</li>
+</ul>
+<p><br></p>
+<section id="interpretation-of-hatbeta_1-for-continuous-x" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-of-hatbeta_1-for-continuous-x">Interpretation of <span class="math inline">\hat\beta_1</span> For Continuous <span class="math inline">x</span></h3>
+<p>We know that in a linear model, <span class="math inline">\mathbb{E}[y_i|x_i] = \beta_0 + \beta_1 x_i</span>, the coefficient <span class="math inline">\beta_1</span> is the slope.</p>
+<ul>
+<li>And the slope is the change in <span class="math inline">y</span> given a one unit increase in <span class="math inline">x</span>.</li>
+</ul>
+<p>Using this knowledge, we can interpret estimate <span class="math inline">\hat\beta_1</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretation of <span class="math inline">\hat\beta_1</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When <span class="math inline">x</span> increases by one unit, there is an expected <span class="math inline">\hat{\beta}_1</span> unit change in <span class="math inline">y</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Remember, this is the <strong>relationship</strong> between <span class="math inline">x</span> and <span class="math inline">y</span>, <u><strong>not</strong> the causal effect</u>.</p>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="interpretation-of-hatbeta_1-for-binary-x" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-of-hatbeta_1-for-binary-x">Interpretation of <span class="math inline">\hat\beta_1</span> for Binary <span class="math inline">x</span></h3>
+<p><strong>Binary explanatory</strong> variables are variables with 2 values, 0 and 1.</p>
+<ul>
+<li>Binary explanatory variables are extremely common in the social sciences. They can include things such as yes/no questions, treatment/control, true/false questions, voted/did not vote, etc.</li>
+</ul>
+<p>Binary explanatory variables will change the interpretations of our coefficients.</p>
+<p>We can “solve” for these interpretations. Assume <span class="math inline">x</span> has two categories <span class="math inline">x=0</span> and <span class="math inline">x=1</span>:</p>
+<p><span class="math display">
+\begin{split}
+&amp; \hat y_{i, \ x = 0} = \hat\beta_0 + \hat\beta_1(0) = \hat\beta_0 \\
+&amp; \hat y_{i, \ x = 1} = \hat\beta_0 + \hat\beta_1(1) = \hat\beta_0 + \hat\beta_1 \\
+&amp; \hat y_{i, \ x = 1} - \hat y_{i, \ x = 0} = (\hat\beta_0 + \hat\beta_1) - \hat\beta_0 = \hat\beta_1
+\end{split}
+</span></p>
+<p>Thus, we can interpret the coefficients as follows:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretation of Coefficient with a Binary Explanatory Variable
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When <span class="math inline">x</span> is a binary explanatory variable:</p>
+<ul>
+<li><span class="math inline">\hat\beta_0</span> is the expected value of <span class="math inline">y</span> given an observation in category <span class="math inline">x = 0</span></li>
+<li><span class="math inline">\hat\beta_0 + \hat\beta_1</span> is the expected value of <span class="math inline">y</span> given an observation in category <span class="math inline">x = 1</span></li>
+<li><span class="math inline">\hat\beta_1</span> is the expected difference in <span class="math inline">y</span> between the categories <span class="math inline">x=1</span> and <span class="math inline">x=0</span>.</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Remember, this is the <strong>relationship</strong> between <span class="math inline">x</span> and <span class="math inline">y</span>, <u><strong>not</strong> the causal effect</u>.</p>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="interpretation-of-hatbeta_0" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-of-hatbeta_0">Interpretation of <span class="math inline">\hat\beta_0</span></h3>
+<p>We know that in a linear model, <span class="math inline">\mathbb{E}[y_i|x_i] = \beta_0 + \beta_1 x_i</span>, the coefficient <span class="math inline">\beta_0</span> is the y-intercept.</p>
+<ul>
+<li>And the y-intercept is the change value of <span class="math inline">y</span> given <span class="math inline">x=0</span>.</li>
+</ul>
+<p>We can prove this mathematically:</p>
+<p><span class="math display">
+\begin{split}
+\hat y_{i, \ x_i = 0} &amp; = \hat\beta_0 + \hat\beta_1 x_i \\
+&amp; = \hat\beta_0 + \hat\beta_1(0) \\
+&amp; = \hat\beta_0
+\end{split}
+</span></p>
+<p>Thus, knowing this, we can interpret <span class="math inline">\hat\beta_0</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretation of <span class="math inline">\hat\beta_0</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When <span class="math inline">x=0</span>, the expected value of <span class="math inline">y</span> is <span class="math inline">\hat{\beta}_0</span></p>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="interpreting-beta_1-in-terms-of-standard-deviations" class="level3">
+<h3 class="anchored" data-anchor-id="interpreting-beta_1-in-terms-of-standard-deviations">Interpreting <span class="math inline">\beta_1</span> in Terms of Standard Deviations</h3>
+<p>Sometimes, it is hard to understand what changes in <span class="math inline">y</span> and <span class="math inline">x</span> mean in terms of units. For example, if we are measuring “democracy”, what does a 5 unit change in democracy mean? Is that a lot?</p>
+<p>We can add more relevant detail by expressing the change of <span class="math inline">y</span> and <span class="math inline">x</span> in standard deviations.</p>
+<p>How do we calculate this? Well, let us solve for the change in <span class="math inline">\hat{y}_i/\sigma_y</span> given <span class="math inline">x_i = x</span> and <span class="math inline">x = x + \sigma_X</span>. This will tell us how much <span class="math inline">\hat{y}</span> changes by given a increase of one standard deviation in <span class="math inline">x</span>:</p>
+<p><span class="math display">
+\begin{split}
+\frac{\hat y_{i, \ x_i = x + \sigma_x}}{\sigma_y} - \frac{\hat y_{i, \ x_i = x}}{\sigma_y} &amp; = \frac{\hat\beta_0 + \hat\beta_1 x_i}{\sigma_y} - \frac{\hat\beta_0 + \hat\beta_1 x_i}{\sigma_y} \\
+&amp; = \frac{\hat\beta_0 + \hat\beta_1 (x+\sigma_x) - (\hat\beta_0 + \hat\beta_1 (x))}{\sigma_y} \\
+&amp; = \frac{\hat\beta_0 - \hat\beta_0 + \hat\beta_1x - \hat\beta_1x+\hat\beta_1\sigma_x}{\sigma_y} \\
+&amp; = \frac{\hat\beta_1 \sigma_x}{\sigma_y}
+\end{split}
+</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretation in Terms of Standard Deviation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For a one-std. deviation increase in <span class="math inline">x</span>, there is an expected <span class="math inline">\hat{\beta}_1 \sigma_x / \sigma_y</span>-std. deviation change in <span class="math inline">Y</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Remember, this is the <strong>relationship</strong> between <span class="math inline">x</span> and <span class="math inline">y</span>, <u><strong>not</strong> the causal effect</u>.</p>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+<hr>
+<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
+</section>
+</section>
+<section id="uncertainty-and-standard-errors" class="level1">
+<h1>1.6: Uncertainty and Standard Errors</h1>
+<section id="samples-and-population" class="level3">
+<h3 class="anchored" data-anchor-id="samples-and-population">Samples and Population</h3>
+<p>In the real world, there is some true relationship value <span class="math inline">\beta_1</span> between <span class="math inline">x</span> and <span class="math inline">y</span> in the world.</p>
+<ul>
+<li>For example, there is a true <span class="math inline">\beta_1</span> value by which increasing education <span class="math inline">x</span> is associated with income <span class="math inline">y</span>.</li>
+</ul>
+<p>However, to get the true exact value of <span class="math inline">\beta_1</span>, we must have data on <strong>every single unit</strong> in the world.</p>
+<ul>
+<li>For example, to measure the true <span class="math inline">\beta_1</span> of the association between education <span class="math inline">x</span> and income <span class="math inline">y</span>, we would have to have data on all 8 billion people in the world.</li>
+<li>We call this group of every single unit in the world the <strong>population</strong>.</li>
+<li>Note: the population does not always have to be the whole world. For example, if we are only concerned with how education affects income in the USA, then we would only care about observations in the USA.</li>
+</ul>
+<p><br></p>
+<p>Obviously, that is not feasible. Instead, researchers use <strong>samples</strong> of the population.</p>
+<ul>
+<li>Samples are selected observations taken from the population.</li>
+<li>For example, we might take a sample of 1,000 individuals from the population in the world to measure the association between education <span class="math inline">x</span> and income <span class="math inline">y</span>.</li>
+</ul>
+<p>The best method of sampling is <strong>random sampling</strong>, This is when every unit in the population has an equal chance of being selected into your sample.</p>
+<ul>
+<li>Since every unit has the same probability of being in your sample, in theory, your sample should be <strong>representative</strong> of the population (i.e.&nbsp;very similar in characteristics to the population).</li>
+</ul>
+<p>If our sample is representative of the population, then we can use our <strong>sample</strong> to create an estimate <span class="math inline">\hat\beta_1</span> and use that estimate to estimate the true <span class="math inline">\beta_1</span> in the population.</p>
+<p><br></p>
+</section>
+<section id="intuition-of-uncertainty" class="level3">
+<h3 class="anchored" data-anchor-id="intuition-of-uncertainty">Intuition of Uncertainty</h3>
+<p>Imagine after we calculated <span class="math inline">\hat\beta_1</span> in our sample, we decide to take another sample. If we are random sampling (or almost any kind of sampling), we probably will not get the exact same units back into our sample.</p>
+<ul>
+<li>For example, if we take another sample of 1,000 individuals from the population, the new sample will not be the same as the old sample.</li>
+</ul>
+<p>This means that the next sample’s estimated <span class="math inline">\hat\beta_1</span> will be slightly different than the first one, since we have a slightly different sample.</p>
+<ul>
+<li>Thus, we have some uncertainty with our causal estimate - re-running the experiment might result in a different estimate of <span class="math inline">\hat\beta_1</span></li>
+</ul>
+<p>We need some mechanism to quantify this sampling variability and how rerunning the estimation might result in different results. We do this with sampling distributions and standard errors.</p>
+<p><br></p>
+<p>Imagine that we take a sample from a population (or some random assignment mechanism). Then, we estimate <span class="math inline">\hat\beta_1</span>.</p>
+<p>That is a sample estimate, which is often notated <span class="math inline">\hat{\theta}</span>. (I use <span class="math inline">\hat{\theta}</span>, since this idea of uncertainty can be applied to any estimate, not just <span class="math inline">\beta_1</span>).</p>
+<p>Then, let us take another sample from the same population (or do another random assignment), and find the sample estimate. This will be slightly different than the first sample, since we are randomly sampling. That is another sample estimate.</p>
+<p>We keep taking samples from the same population (more random assignments), and getting more and more sample estimates.</p>
+<p><br></p>
+<p>Now, let us plot all our sample estimates <span class="math inline">\hat{\theta}</span> into a histogram or density plot. The <span class="math inline">x</span> axis labels all the possible sample estimates <span class="math inline">\hat{\theta}</span> we have gotten above, and the <span class="math inline">y</span> axis is how frequently a specific sample estimate occurs.</p>
+<p>The result is a distribution, just like a random variable distribution. That distribution is the <strong>sampling distribution</strong>.</p>
+<p>According to <strong>central limit theorem</strong>, the sampling distribution approximates that of a normal distribu- tion (or t-distribution if our sample size is small). We know that a normal distribution is defined by two parameters - mean and variance.</p>
+<p><br></p>
+</section>
+<section id="standard-errors-of-ols-estimates" class="level3">
+<h3 class="anchored" data-anchor-id="standard-errors-of-ols-estimates">Standard Errors of OLS Estimates</h3>
+<p>The standard error is the standard deviation of the sampling distribution. It is often notated <span class="math inline">se(\hat{\theta})</span>.</p>
+<ul>
+<li>The standard error basically measures the variance (how spread out) our different sample estimates are.</li>
+<li>There is a variation of this called the <strong>robust standard errors</strong>. These are typically used by default. We will not worry too much about this until <a href="https://politicalscience.github.io/metrics/causal/4.html">chapter 4</a>.</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: Robust Standard Errors
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Robust standard errors for the coefficient <span class="math inline">\hat\beta_1</span> are:</p>
+<p><span class="math display">
+rse(\hat\beta_1) = \sqrt{ \frac{Var[(x_i - \mathbb{E}[ \ x_i]) \times \hat u_i \ ]}{n \times [Var(x_i)]^2} }
+</span></p>
+<p>We will discuss why these are called robust standard errors in <a href="https://politicalscience.github.io/metrics/causal/4.html">chapter 4</a>.</p>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+<hr>
+<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
+</section>
+</section>
+<section id="hypothesis-testing-and-statistical-inference" class="level1">
+<h1>1.7: Hypothesis Testing and Statistical Inference</h1>
+<p>We know there is some uncertainty with our sample estimate, as defined by the standard error. So, how do we know if we actually have a significant relationship with this uncertainty?</p>
+<ul>
+<li>For example, what if our <span class="math inline">\hat\beta_1</span> shows a relationship between <span class="math inline">x</span> and <span class="math inline">y</span> when the real <span class="math inline">\beta_1</span> of the population shows no relationship? After all, our <span class="math inline">\hat\beta_1</span> estimate could just be due to sampling luck.</li>
+</ul>
+<p>What we do is hypothesis testing: a way to test, given a certain level of uncertainty, whether or not we believe there is a causal effect.</p>
+<p>We start off with the status-quo “old theory”, and try to disprove it.</p>
+<ul>
+<li>This is called the <strong>null hypothesis</strong>, typically notated <span class="math inline">H_0</span>.</li>
+<li>For causal inference, our null hypothesis is typically that <em>there is relationship between</em> <span class="math inline">x</span> and <span class="math inline">y</span>. We notate this as <span class="math inline">H_0 : \beta_1 = 0</span>.</li>
+</ul>
+<p>The new theory we are trying to prove is called the <strong>alternate hypothesis</strong>.</p>
+<ul>
+<li>For causal inference, our alternate hypothesis is typically that <em>there is a relationship between</em> <span class="math inline">x</span> and <span class="math inline">y</span>. We notate this as <span class="math inline">H_1 : \beta_1 ≠ 0</span>.</li>
+</ul>
+<p><u>We assume that the null hypothesis is true, unless we are 95% confident that we can reject the null hypothesis, and only then, can we accept the alternative hypothesis.</u></p>
+<p><br></p>
+<section id="conducting-a-hypothesis-test" class="level3">
+<h3 class="anchored" data-anchor-id="conducting-a-hypothesis-test">Conducting a Hypothesis Test</h3>
+<p>We start a hypothesis test by notating our hypotheses:</p>
+<p><span class="math display">
+H_0 : \beta_1 = 0 \quad \text{and} \quad H_1: \beta_1 ≠ 0
+</span></p>
+<p>Next, we have to find a t-test statistic.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: T-test Statistic
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The t-test statistic tells us how far our estimate <span class="math inline">\hat{\beta}_1</span> is from the null hypothesis value of <span class="math inline">\mu_0 = 0</span>. This distance is expressed in terms of standard errors of the estimate.</p>
+<p><span class="math display">
+t= \frac{\hat{\beta}_1 - \mu_0}{\widehat{se}(\hat{\theta})}
+</span></p>
+<p>Note, since <span class="math inline">\mu_0 = 0</span>, we technically do not need it in the equation. However, sometimes (very rarely), you may have a reason to test a different null hypothesis, so then you would plug in a different value for <span class="math inline">\mu_0</span>.</p>
+</div>
+</div>
+<p><br></p>
+<p>After we have a test statistic, we need to consult a t-distribution.</p>
+<ul>
+<li>Specifically, we should consult the t-distribution with <span class="math inline">n-2</span> degrees of freedom (degrees of freedom are the sole parameter of the t-distribution).</li>
+</ul>
+<p>Once we have this t-distribution, start from the centre of the t-distribution, and go <em>t-test-statistic</em> number of standard deviations away from the centre towards both directions.</p>
+<p>Then, at the point we have ended up, calculate the probability (area under the curve) of a t-test statistic equal or even more extreme could occur (we will not do this manually, the computer will do this). The figure below shows this probability:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/2-2.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
+</figure>
+</div>
+<p>The shaded area is the probability of a t-test statistic equal to or even more extreme could occur, given the null hypothesis is true. This is the p-value.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: P-Value
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The p-value is the probability of a t-test statistic equal to or even more extreme could occur, given the null hypothesis is true.</p>
+<p>If this is less than 0.05 (5%), that means the null hypothesis has a very low chance of being true, so we reject the null hypothesis as no longer true.</p>
+<ul>
+<li><p>So, if the p-value is above 0.05, there is a above 5% chance that the null hypothesis is true. This is too high for our liking, so we cannot reject the null hypothesis, and we cannot conclude any relationship between <span class="math inline">x</span> and <span class="math inline">y</span>.</p></li>
+<li><p>If the p-value is less than 0.05, there is less than a 5% chance that the null hypothesis is true. In econometrics, we thus reject the null hypothesis, and conclude that there is a relationship between <span class="math inline">x</span> and <span class="math inline">y</span>.</p></li>
+</ul>
+<p><u>So very simply, if the p-value is less than 0.05, we can conclude that there is a causal effect of <span class="math inline">x</span> on <span class="math inline">y</span>. If not, we cannot conclude this.</u></p>
+</div>
+</div>
+<p>Thus, the hypothesis test allows us to test if, under uncertainty due to randomisation, if we actually have a causal effect of <span class="math inline">x</span> on <span class="math inline">y</span>.</p>
+<p><br></p>
+</section>
+<section id="types-of-errors" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-errors">Types of Errors</h3>
+<p>Of course, with 95% confidence, there is a chance we incorrectly conclude a causal effect. These are called errors. There are two types of errors.</p>
+<ol type="1">
+<li><strong>Type I error</strong>, also called a <strong>false positive</strong>. This occurs when we reject the null hypothesis, even though the null hypothesis is actually true.</li>
+<li><strong>Type II error</strong>, also called a <strong>false negative</strong>. This occurs when we fail to reject the null hypothesis, even though the null hypothesis is actually false.</li>
+</ol>
+<p><br></p>
+<p><br></p>
+<hr>
+<p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
+</section>
+</section>
+<section id="implementation-in-r" class="level1">
+<h1>Implementation in R</h1>
+<p>The packages we will need are:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(texreg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+<section id="simple-linear-regression" class="level2">
+<h2 class="anchored" data-anchor-id="simple-linear-regression">Simple Linear Regression</h2>
+<p>To run simple linear regression, we use the <em>feols()</em> function.</p>
+<ul>
+<li>The argument <em>se = “hetero”</em> tells R to calculate heteroscedasticity-robust standard errors, which will be discussed later in chapter 4. Just know it is standard to do so.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>modelname <span class="ot">&lt;-</span> <span class="fu">feols</span>(y <span class="sc">~</span> x, <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelname)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">feols</span>(pct_missing <span class="sc">~</span> treat_invite, <span class="at">data =</span> dta, <span class="at">se =</span> <span class="st">"hetero"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OLS estimation, Dep. Var.: pct_missing
+Observations: 477
+Standard-errors: Heteroskedasticity-robust 
+              Estimate Std. Error   t value  Pr(&gt;|t|)    
+(Intercept)   0.252106   0.026366  9.561612 &lt; 2.2e-16 ***
+treat_invite -0.023147   0.032845 -0.704753   0.48131    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 0.34285   Adj. R2: -0.001082</code></pre>
+</div>
+</div>
+<p>We can see the output estimate of <em>treat_invite</em>, our <span class="math inline">x</span> variable</p>
+<ul>
+<li>The row includes the estimate, the standard error, the t-test statistic, and the p-value. This gives all of the information we need to run linear regression and hypothesis tests.</li>
+</ul>
+<p><br></p>
+<p>We can also use the base-R <em>lm()</em> function, however, this does not calculate heteroscedasticity-robust standard errors (once again, will be discussed in chapter 4).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>modelname <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> mydata)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelname)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="categorical-explanatory-variables" class="level2">
+<h2 class="anchored" data-anchor-id="categorical-explanatory-variables">Categorical Explanatory Variables</h2>
+<p>To run a regression with a categorical explanatory variable, we must first look in R at the categorical variable.</p>
+<ul>
+<li>R treats <em>string</em> and <em>double</em> variables automatically as categorical variables, so we can just directly insert them into our regression like above.</li>
+<li>However, if our categorical variable is coded numerically, we must use the <em>as.factor()</em> function to coerce the variable into a categorical variable</li>
+</ul>
+<p>For example, below, variable <span class="math inline">x</span> is being coerced into a categorical variable</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>modelname <span class="ot">&lt;-</span> <span class="fu">feols</span>(y <span class="sc">~</span> <span class="fu">as.factor</span>(x), <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="creating-regression-tables" class="level2">
+<h2 class="anchored" data-anchor-id="creating-regression-tables">Creating Regression Tables</h2>
+<p>We can create regression tables using the <em>texreg()</em> or <em>screenreg()</em> functions.</p>
+<ul>
+<li><em>texreg()</em> produces LaTeX code that you can insert into a LaTeX document</li>
+<li><em>screenreg()</em> produces something that looks nice in a R document.</li>
+</ul>
+<p>The syntax is as follows (you can replace <em>screenreg()</em> with <em>texreg()</em> ):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">screenreg</span>(<span class="at">l =</span> <span class="fu">list</span>(modelname),</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.model.names =</span> <span class="fu">c</span>(<span class="st">"Outcome Variable Name"</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.coef.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"X Variable Name"</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">screenreg</span>(<span class="at">l =</span> <span class="fu">list</span>(model1),</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.model.names =</span> <span class="fu">c</span>(<span class="st">"Pct_Missing"</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.coef.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"Treatment"</span>),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+==================================
+                       Pct_Missing
+----------------------------------
+Intercept                0.252 ***
+                        (0.026)   
+Treatment               -0.023    
+                        (0.033)   
+----------------------------------
+Num. obs.              477        
+R^2 (full model)         0.001    
+R^2 (proj model)                  
+Adj. R^2 (full model)   -0.001    
+Adj. R^2 (proj model)             
+==================================
+*** p &lt; 0.001; ** p &lt; 0.01; * p &lt; 0.05</code></pre>
+</div>
+</div>
+<p><br></p>
 <p><br></p>
 <hr>
 <p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>

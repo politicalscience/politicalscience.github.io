@@ -1,5 +1,5 @@
 ---
-title: "Chapter 1: Causal Relationships and Causal Effects"
+title: "Chapter 1: Relationships Between Variables and Basics of Regression"
 subtitle: "Econometric Methods (for Social Scientists)"
 format:
     html:
@@ -15,16 +15,16 @@ format:
         toc-depth: 2
         toc-location: left
         toc-expand: true
-        toc-title: "Chapter 1: Causal Relationships and Causal Effects"
+        toc-title: "Chapter 1: Relationships Between Variables and Basics of Regression"
         mainfont: "Computer Modern"
         title-block-banner: true
         classoption: fleqn
         html-math-method: katex
 ---
 
-This chapter will introduce the idea of causal effects and causation. We will explore what a causal effect is, how to theoretically identify causal effects, and the dangers of using correlation as causation.
+This chapter introduces regression, the key technique used in econometrics and statistics to measure relationships between variables. We will explore the basics of regression, including how the model is specified, the coefficients of the model, the estimation process, and statistical inference techniques.
 
-Topics: Potential Outcomes Framework, Causal Estimands, Properties of Estimators, Naive Estimator, Selection Bias, Confounding Variables
+Topics: Correlation, Simple Linear Regression, Ordinary Least Squares Estimator, Interpretation of Coefficients, Standard Errors, Hypothesis Testing
 
 <br />
 
@@ -32,7 +32,7 @@ Topics: Potential Outcomes Framework, Causal Estimands, Properties of Estimators
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 1.1: Correlation and Causation
+# 1.1: Correlations and Measuring Relationships Between Variables
 
 Econometrics is the field of using data to answer economic and social science questions. While econometrics was initially developed for economic questions, it has become widely applied to other social sciences.
 
@@ -64,35 +64,41 @@ There are three main reasons why two variables $x$ and $y$ may be correlated:
 2.  A third variable, $w$, causes both $x$ and $y$ to change (so there is no direct effect of $x$ on $y$)
 3.  There is a causal effect of $y$ on $x$
 
-These causes can occur simultaneously at the same time. Thus, correlation is not causation, as correlation can be caused by other factors.
+These causes can occur simultaneously at the same time. Thus, [correlation is not causation]{.underline}, as correlation can be caused by other factors.
 :::
+
+However, while correlation is not causation, we still need to understand correlation before we study causation.
 
 <br />
 
-If our goal in econometrics is to find the causal effect of $x \rightarrow y$ (source #1 of correlation), we must eliminate the effects of the third variable $w$ (source #2 of correlation), and the reverse causality effect $y \rightarrow x$ (source #3 of correlation).
+### Measuring Relationships Between Variables
 
--   Thus, we need some methods to eliminate sources #2 and #3 of correlation in order to accurately estimate the causal effect of $x \rightarrow y$.
+How can we explore the relationship between a continuous $x$ variable and a continuous $y$ variable?
 
-::: callout-note
-## Example: Correlation is not Causation
+One way to explore the relationship is with a best-fit line. A best-fit line is useful, since the **slope** of the best-fit line represents the change in $y$ for every unit change in $x$.
 
-In the United States, *Ice Cream Sales* and *Number of Fatal Shark Attacks* are highly correlated variables. Does this mean that selling ice cream **causes** fatal shark attacks? No!
+![](figures/3-3.png){fig-align="center" width="45%"}
 
-The reason this relationship exists is because of another variable - the *weather*. The weather (when sunny), causes both ice cream sales to rise, as well as causing more people to go to the beach, which then increases the number of fatal shark attacks.
+In the figure above, we have plotted a number of observations, and implemented a best-fit line in red. The graph here introduces some common terminology:
 
-This is a clear example of how correlation is not causation.
+-   The **independent variable**, also called the **explanatory variable** or **treatment variable**, is the variable that we believe is doing the causing. It is typically notated $x$.
+-   The **dependent variable**, also called the **response variable** or **outcome variable**, is the variable that is affected by a change in the independent variable. The dependent variable is typically notated with $y$.
+
+We know from algebra that a linear equation takes the form $y=mx+b$. The slope $m$ describes the rate of change of $y$ for a one unit change in $x$.
+
+-   Thus, the slope is a measurement of the relationship between $x$ and $y$.
+
+Thus, if we can fit a best-fit line to our data, we can look at the slope, and determine the **relationship** between $x$ and $y$.
+
+::: callout-warning
+## Warning!
+
+Note how I have been using the word **relationship**, not causal effect.
+
+Relationship is the measure of correlation. Correlation is not causation!
+
+-   This chapter is focused on correlation, and we will explore causation in later chapters.
 :::
-
-<br />
-
-### Key Terminology
-
-Before we start discussing methods to eliminate the effect of third variables and reverse causality, we need to first understand what even is a causal effect. Let us define some key terminology:
-
--   The variable which causes a causal effect is called the **treatment**, labelled $D$.
--   The variable which changes as a result of the change in $D$ is the **outcome**, labelled $y$.
--   Thus, our causal effect of interest is $D \rightarrow y$.
--   A third variable which causes both $D$ and $y$ is called a **confounder** or **confounding variable**, and is often labelled $w$ or $c$.
 
 <br />
 
@@ -102,68 +108,51 @@ Before we start discussing methods to eliminate the effect of third variables an
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 1.2: Potential Outcomes and Causal Effects
+# 1.2: The Simple Linear Regression Model
 
-### Potential Outcomes Framework
+How can we fit a best-fit line in order to find the relationship between $x$ and $y$? The main way to do this is with the **simple linear regression model**.
 
-A **causal effect** is a change in some feature of the world $D$ that directly causes a change in some feature of the world $y$.
+First, what is a **regression model**? [A regression model is the specification of the conditional distribution of $y$, given $x$.]{.underline}
 
-Causal effects imply the existence of **potential outcomes**.
+A distribution (random variable) says that there are multiple potential values of $y$.
+
+-   For example, if $x$ is age, and $y$ is income, a distribution of income $y$ says that not all individuals make the same amount of money.
+-   If you select someone at random, the probability of selecting someone with a specific income $y_i$ will depend on the probability distribution of income.
+
+A conditional distribution says that the distribution of $y$ is conditional (depends on) the value of $x$.
+
+-   For example, if $x$ is age, and $y$ is income, a conditional distribution of income $y$ on age $x$ says that depending on the age $x$ of an individual, the probability distribution of income $y$ will change.
+-   This makes sense - if the probability distribution of $y$ is not affected at all by the value of $x$, then clearly $x$ is not related to $y$.
+
+<br />
+
+The linear regression model focuses on the **expected value** of the conditional distribution, notated $\mathbb{E}[y_i | x_i]$.
+
+-   The expected value, also known as the mean, is the "best guess" of $y$ (since $y$ is a probability distribution with many values).
 
 ::: callout-tip
-## Definition: Potential Outcomes
+## Definition: Simple Linear Regression
 
-Imagine that there are 2 parallel worlds that are exactly the same, and there is one unit/individual $i$ who exists in both worlds.
-
-Then, in one of the two worlds, unit $i$ gets the treatment $D$, which causes a change in the outcome $y$. In the other world, unit $i$ does not get the treatment $D$, so there is no change in outcome $y$.
-
-Since these 2 parallel worlds are identical **except** for the fact one world gets the treatment $D$ and the other does not, the difference in the world's $y$ outcomes can only be the effect of treatment $D$.
-
-The difference in the two world's outcome $y$ is thus the **causal effect** of $D$ on $y$.
-:::
-
-<br />
-
-Let us represent these two parallel worlds more formally:
-
--   The parallel world where unit $i$ gets the treatment will be called the **treatment state**, and will take a value of $D=1$.
--   The parallel world where unit $i$ does not get the treatment will be called the **control state**, and will take a value of $D=0$.
-
-Thus, the outcomes of unit $i$ in these 2 parallel worlds can be notated as $y_{Di}$, where $D$ is the state of the world.
-
--   In the **treatment state** $D=1$, we will label the outcome of unit $i$ as $y_{1i}$
--   In the **control state** $D=0$, we will label the outcome of unit $i$ as $y_{0i}$.
-
-<br />
-
-::: callout-note
-## Example: Democracy and Economic Growth
-
-Let us say we want to find if democracy causes better economic growth. Democracy is our treatment $D$, and economic growth is our outcome $y$.
-
-Country $i$ (for simplicity, let us say Canada) is one of the units. There are two parallel worlds:
-
--   In one parallel world, Canada is in the **treatment state** $D=1$, meaning it is a democracy. Its outcome in this world would be its economic growth $y_{1i}$.
--   In the other parallel world, Canada is in the **control state** $D=0$, meaning it is not a democracy. Its outcome in this world would be its economic growth $y_{0i}$.
-:::
-
-<br />
-
-### Causal Effects
-
-As we mentioned in the potential outcomes framework, the difference in the outcomes in the two parallel worlds must be the causal effect of $D$, since everything else in the parallel worlds are identical.
-
-::: callout-tip
-## Definition: Individual Causal Effects
-
-Thus, the individual causal effect of $D$ on unit $i$ is the difference of outcomes $y$ in the treatment state and the control state. Mathematically:
+The simple linear regression model takes the following form:
 
 $$
-\tau_i = y_{1i} - y_{0i}
+\mathbb{E}[y_i | x_i] = \beta_0 + \beta_1 x_i
 $$
-:::
 
-Thus, the treatment $D$ will have $\tau_i$ effect on outcome $y$ for unit $i$
+-   Where we have $n$ number of observations in our data, $i$ being any one of them, and each observation has an $x$ and $y$ value $(x_i, y_i)$.
+-   Where $\mathbb{E}[y_i | x_i]$ is the expected value of the conditional distribution of $y_i|x_i$. That distribution has a variance $Var(y_i | x_i) = \sigma^2$.
+-   Where $\beta_0$ (intercept) and $\beta_1$ (slope) are coefficients of the model that need to be estimated.
+
+We can also write the simple linear regression model in respect to a specific $y_i$ value, rather than the expected value:
+
+$$
+y_i = \beta_0 + \beta_1 x_i + u_i
+$$
+
+-   Where we have $n$ number of observations in our data, $i$ being any one of them, and each observation has an $x$ and $y$ value $(x_i, y_i)$.
+-   Where $\beta_0$ (intercept) and $\beta_1$ (slope) are coefficients of the model that need to be estimated.
+-   Where $u_i$ is the error term. Remember, $y_i$ is any value in the conditional distribution $y_i|x_i$, so it may not be exactly at the expected value of the conditional distribution. Thus, we have to add an error term to account for this distribution, where $\mathbb{E}[u_i] = 0$ and $Var[u_i] = \sigma^2$.
+:::
 
 <br />
 
@@ -173,335 +162,654 @@ Thus, the treatment $D$ will have $\tau_i$ effect on outcome $y$ for unit $i$
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 1.3: Observed Outcomes and the Stable Unit Treatment Value Assumption
+# 1.3: Fitted Values and the Sum of Squared Errors
 
-### Observed Outcomes
+### Fitted Values and Best-Fit Lines
 
-Of course, in real life, we do not have parallel worlds. We only observe one of these parallel worlds.
+We have discussed the form a simple linear regression takes. However, this is not the best-fit line: we still need to estimate the coefficients $\beta_0$ (intercept) and $\beta_1$ (slope) in order to create a best-fit line.
 
-For example, in the real world, we know Canada is a democracy. We do not observe the parallel world that Canada is a dictatorship. Thus, we also only have one of Canada's potential outcomes, while the other is unobservable.
+-   The estimates of $\beta_0$ and $\beta_1$ that we obtain will be denoted with a hat \^: $\hat\beta_0$ and $\hat\beta_1$.
+
+-   We will discuss the estimation process in the next section.
+
+Once we have obtained our estimates of the coefficients, we will have a **best-fit line**, also called a **fitted-values** model:
+
+$$
+\hat{y} = \hat\beta_0 + \hat\beta_1x_i
+$$
+
+-   Where $\hat{y}$ are the predicted values of $y$ based on our best-fit line.
+-   Where $\hat\beta_0$ and $\hat\beta_1$ are our estimates for the true coefficients $\beta_0$ and $\beta_1$.
+-   Note that the error term $u_i$ disappears. This is because the average value of $u_i$ is $\mathbb{E} [u_i] = 0$, so we do not need to include the term.
+
+We can use the fitted values in two ways:
+
+1.  The $\hat\beta_1$, which is the estimate of $\beta_1$ (slope), tells us the relationship between $x$ and $y$.
+2.  The equation outputs a prediction $\hat y$, so we can use the fitted values to make predictions. We will focus on prediction in later parts of the course.
+
+<br />
+
+### Sum of Squared Errors
+
+We want to fit a best-fit line that is accurate. So, we want to find the $\beta_0$ (intercept) and $\beta_1$ (slope) values that will best fit our observed dataset.
+
+One way we can fit an accurate line is to find the best-fit line that minimises the sum of squared errors.
 
 ::: callout-tip
-## Definition: Observed Outcomes
+## Definition: Sum of Squared Errors
 
-Observed outcomes are a subset of potential outcomes that actually come true in the real world. Observed outcomes are given by the formula:
-
-$$
-y_i = D_i \times y_{1i} + (1-D_i) \times y_{0i}
-$$
-
--   Where $y_i$ is the observed outcome, $y_{1i}$ is the potential outcome of the treatment state, and $y_{0i}$ is the potential outcome of the control state.
--   Where $D_i$ represents what state unit $i$ is in, where $D_i = 1$ indicates unit $i$ is in the treatment state, and $D_i = 0$ indicates unit $i$ is in the control state.
-:::
-
-This formula might seem unintuitive. But we can plug in values of $D_i$ to understand what this formula means.
-
-What if unit $i$ is in the treatment state, $D_i = 1$. Let us plug in $D_i = 1$ into the equation:
+The sum of squared errors (SSE) is as follows:
 
 $$
 \begin{split}
-y_i & = D_i \times y_{1i} + (1-D_i) \times y_{0i} \\
-y_i & = 1 \times y_{1i} + (1-1) \times y_{0i} \\
-y_i & = y_{1i}
+SSE & = \sum\limits_{i=1}^n (y_i - \hat y_i)^2 \\
+& = \sum\limits_{i=1}^n (y_i - \hat\beta_0 - \hat\beta_1 x_i)^2
 \end{split}
 $$
 
-Thus, the observed outcome when unit $i$ is in the treatment state is $y_{1i}$, which makes sense, since that is the potential outcome of the treatment state.
+-   The sum of squared errors is exactly as it sounds. Find the error, the distance between the actual $y_i$ and predicted $\hat y$, which is $y_i - \hat y$, then square that error $(y_i - \hat y_i)^2$, then sum up for all observations $i$ in the data.
+
+-   We get the second equation by substituting in the fitted values model (discussed in the last section), where $\hat{y} = \hat\beta_0 + \hat\beta_1x_i$.
+
+The **Ordinary Least Squares (OLS) Estimator** estimates the coefficients $\beta_0$ and $\beta_1$ by finding the values of $\beta_0$ and $\beta_1$ that result in the line with the smallest sum of squared errors.
+:::
 
 <br />
 
-Similarly, what if unit $i$ is in the control state $D_i = 0$. Let us plug in $D_i = 0$ into the equation:
+A common question is: why are the errors squared?.
+
+-   This is because we are only concerened with the **size/magnitude** of errors, not the direction of errors.
+-   A simple subtraction to obtain errors would include negative errors (where the prediction $\hat y$ is higher than the actual $y_i$), and positive errors (where the prediction $\hat y$ is lower than the actual $y_i$).
+-   But we do not care if the error is above or below the true $y_i$. We only care about the size.
+-   Thus, by squaring the errors, we get rid of the negatives and everything is positive.
+
+Then, why not absolute value? This is for a few reasons:
+
+-   Firstly, the absolute value function is not differentiable at the vertex. This is an issue, as we will see in the OLS estimation process, we need to take the derivative of the error function for minimisation purposes.
+
+-   Second, the OLS estimator with its squared errors has a few unique properties that make it very consistent and unbiased. We will focus on these in [chapter 4](https://politicalscience.github.io/metrics/causal/4.html) when we discuss causal inference with regressions.
+
+In the next section, we will discuss the mathematics behind the OLS estimator.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 1.4: Mathematics of the Ordinary Least Squares Estimator
+
+As we discussed in the previous section, the Ordinary Least Squares Estimator estimates our coefficients $\beta_0$ (slope) and $\beta_1$ (intercept) by finding the values of $\beta_0$ and $\beta_1$ that minimise the sum of squared errors.
+
+We can describe the goal of OLS in a more mathematical way:
+
+::: callout-tip
+## Definition: Ordinary Least Squares (OLS) Estimator
+
+The goal of the Ordinary Least Squares (OLS) Estimator is to find the values of $\beta_0$ and $\beta_1$ that make the following statement true:
 
 $$
 \begin{split}
-y_i & = D_i \times y_{1i} + (1-D_i) \times y_{0i} \\
-y_i & = 0 \times y_{1i} + (1-0) \times y_{0i} \\
-y_i & = y_{0i}
+(\hat{\beta}_0, \hat{\beta}_1) & = \arg \min\limits_{\hat{\beta}_0, \hat{\beta}_1} \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)^2 \\
+& = \arg \min\limits_{\hat{\alpha}, \hat{\beta}} S(\hat{\beta}_0, \hat{\beta}_1)
 \end{split}
 $$
 
-Thus, the observed outcome when unit $i$ is in the control state is $y_{0i}$, which makes sense, since that is the potential outcome of the control state.
-
-::: callout-tip
-## Definition: Counterfactuals
-
-A counterfactual is the potential outcome that is not observed. For example, if in the real world, unit $i$ is observed to have received the treatment, then its counterfactual is the world where unit $i$ did not receive the treatment.
-
-Counterfactuals are important, because, if we remember, the individual causal effect is $\tau_i = y_{1i} = y_{0i}$, which implies that we must know the counterfactual to find the causal effect of $D$ on $y$.
+Where function $S$ is the sum of squared errors.
 :::
 
 <br />
 
-### Stable Unit Treatment Value Observation
+How do we minimise $S$ (the function of the sum of squared errors)?
 
-The stable unit treatment value assumption (SUTVA) is arguably the key assumption of causal inference.
+-   From calculus, we know that a minimum/maximum of a function is where the derivative of the function is equal to 0.
 
-SUTVA states that given two units $i$ and $j$, unit $i$ is not affected by the treatment assignment of unit $j$. More intuitively, if unit $j$ is assigned to treatment, that has no effect on the outcomes of unit $i$.
-
-Why is this important? Well, if unit $j$'s treatment status affects unit $i$, then unit $i$ would have more than 2 potential outcomes:
-
--   This is because unit $i$'s outcomes would now not only depend on itself being assigned to treatment or control, but also unit $j$ being assigned to treatment or control.
--   That means unit $i$ now has 4 potential outcomes. If unit $i$ is affected by other units other than $j$, this will quickly multiply to an unmanageable number of potential outcomes.
-
-Thus, violating this assumption will basically make it impossible to calculate treatment effects.
+Thus, let us find the partial derivative of the function $S$ in respect to both $\hat\beta_0$ and $\hat\beta_1$, and set them equal to 0. This is also called the **first-order conditions**.
 
 <br />
 
-In what situations is SUTVA typically violated?
+### First Order Conditions
 
-1.  Peer effects that result from contact between units $i$ and $j$. For example, if you are testing the treatment of some new curriculum on student educational outcomes, and unit $j$ is assigned to treatment, unit $j$ might teach their friend unit $i$ some new things, even if unit $i$ was in the control group.
-2.  Dilution/concentration effects that arise from a prevalence of a treatment. The best example is vaccines - if enough people get a vaccine for a disease, even people who do not get the vaccine are safer, since transmission is much more difficult.
+First, let us find the partial derivative of $S$ in respect to $\hat\beta_0$:
+
+$$
+\frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_0} = \frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_0} \left[ \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)^2 \right]
+$$
+
+First, ignore the summation. The partial derivative of the internal section, using chain rule, is the following:
+
+$$
+\frac{\partial}{\partial \hat{\beta}_0} \left[ (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)^2 \right] = -2(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)
+$$
+
+But how do we deal with the summation? We know that there is the sum rule of derivatives $[f(x) + g(x)]' = f'(x) + g'(x)$. Thus, we know we just sum up the derivatives to get the derivative:
+
+$$
+\begin{split}
+\frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_0} & = \sum\limits_{-i=1}^n \left[ -2(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) \right] \\
+& = -2 \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)
+\end{split}
+$$
+
+To find the value of $\hat\beta_0$ that minimises $S$, we set the derivative equal to 0. We can ignore the -2, since if the summation is equal to 0, the whole derivative will equal 0. Thus, the first order condition is:
+
+$$
+\sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
+$$
 
 <br />
 
+Now, let us do the same for $\hat\beta_1$. Using the same steps as before
+
+$$
+\begin{split}
+\frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_1} & = \sum\limits_{i=1}^n \left[ -2x_i(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) \right] \\
+& = -2 \sum\limits_{i=1}^n x_i(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)
+\end{split}
+$$
+
+The first order condition for $\hat\beta_1$ will be (again, ignoring the -2 for the same reason as before):
+
+$$
+\sum\limits_{i=1}^n x_i(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
+$$
+
 <br />
-
-------------------------------------------------------------------------
-
-[Course Homepage](https://politicalscience.github.io/metrics/)
-
-# 1.4: Causal Estimands
-
-We introduced how the individual treatment effect of $D \rightarrow y$ for any unit $i$ is $\tau_i = y_{1i} - y_{0i}$. However, there is an issue - we do not know the two parallel worlds.
-
--   As we discussed in [section 1.3](https://politicalscience.github.io/metrics/causal/1.html#observed-outcomes-and-the-stable-unit-treatment-value-assumption), we can only observe one of the two parallel worlds.
-
-Thus, we can never actually find (or estimate) the individual treatment effect. We need another **estimand**. An **estimand** is the true value of something in the real world, that we will try to estimate with an estimator.
-
-This course will focus on introducing many new estimators to try to estimate these estimands. However, before we start estimating, we have to know what we are trying to estimate. What are the estimands we can use, if individual treatment effect is not possible?
-
-<br />
-
-The "key" estimand in causal inference is the Average Treatment Effect:
 
 ::: callout-tip
-## Definition: Average Treatment Effect
+## Definition: First Order Conditions of OLS
 
-The **Average Treatment Effect (ATE)** is the average of all individual treatment effects:
+Thus, the first order conditions of OLS are:
 
 $$
-\text{ATE} \ = \ \mathbb{E}[\tau_i] \ = \ \bar{y}_{1i} - \bar{y}_{0i}
+\begin{split}
+& \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0 \\
+& \sum\limits_{i=1}^n x_i (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
+\end{split}
 $$
-
-Where the bar over the $y$ represents mean.
 :::
 
-However, the ATE is not the only estimand we are interested in.
+<br />
+
+### Solving the System of Equations
+
+We now have our two first-order conditions. Now, we basically have a 2-equation system of equations, with 2 variables.
+
+-   We can solve this through substitution - in the first equation, solve for $\hat\beta_0$ in terms of $\hat\beta_1$.
+-   Then, plug in $\hat\beta_0$ in terms of $\hat\beta_1$ into the second equation, thus making that a one-variable equation. We can solve that equation for $\hat\beta_1$, then find $\hat\beta_0$.
 
 <br />
 
-Sometimes, our treatment variables are continuous. For example, if we want to estimate how GDP affects democratisation, our treatment variable GDP is not binary.
-
-In cases of non-continuous treatment variables, we want to estimate the **average causal effect** (ACE)- the expected change in $y$ resulting from a one unit increase in $D$:
+First, let us solve the first equation for $\hat\beta_0$ in terms of $\hat\beta_1$:
 
 $$
-\text{ACE} = \mathbb{E}[y'(D)]
+\begin{split}\sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) & =  0 \\
+\sum\limits_{i=1}^n y_i - n \hat{\beta}_0 - \hat{\beta}_1 \sum\limits_{i=1}^n x_i & = 0 \\
+-n\hat{\beta}_0 &= -\sum\limits_{i=1}^n y_i + \hat{\beta}_1\sum\limits_{i=1}^nx_i \\
+\hat{\beta}_0 & = \frac{1}{n} \sum\limits_{i=1}^n y_i - \frac{1}{n}\hat{\beta}_1 \sum\limits_{i=1}^n x_i \\
+& = \bar{y} - \hat{\beta}_1 \bar{x}
+\end{split}
 $$
 
-Where $y'(D)$ is the derivative of $y$ in respect to $D$
-
-<br />
-
-Sometimes, we have reason to expect that the treatment effect may be different accross different categories of units.
-
-For example, maybe we think that a certain educational treatment will benefit women more than men, so the treatment effect will be higher for women than men.
-
-The **Conditional Average Treatment Effect (CATE)** is the treatment effect of units, given they have some other variable $x$ value.
+Now, let us substitute our calculated $\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}$ into the $\hat{\beta}_1$ condition and solve: for $\hat{\beta}_1$:
 
 $$
-\text{CATE} = \mathbb{E}[ \tau_i | x_i ] 
+\begin{split}0 & = \sum\limits_{i=1}^n \left[ x_i(y_i - [\bar{y} - \hat{\beta}_1\bar{x}] - \hat{\beta}_1x_i) \right] \\
+& = \sum\limits_{i=1}^n \left[ x_i(y_i - \bar{y} - \hat{\beta}_1 (x_i - \bar{x})) \right] \\
+& = \sum\limits_{i=1}^n \left[ x_i(y_i - \bar{y}) - x_i \hat{\beta}_1(x_i - \bar{x}) \right] \\
+& = \sum\limits_{i=1}^n x_i (y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^nx_i (x_i - \bar{x})\end{split}
 $$
-
-<br />
-
-We can also estimate the causal effect on only the treatment or control groups.
-
-The **average treatment effect on the treated (ATT)** is the average treatment effect of only units who received the treatment $D_i = 1$:
-
-$$
-\text{ATT} = \mathbb{E} [\tau_i | D_i = 1] = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
-$$
-
-The **average treatment effect on the controls (ATC)** is the average treatment effect of only units who did not receive the treatment $D_i = 0$:
-
-$$
-\text{ATC} = \mathbb{E} [\tau_i|D_i = 0] = \bar{y}_{1i, \ D_i = 0} - \bar{y}_{0i, \ D_i = 0}
-$$
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-[Course Homepage](https://politicalscience.github.io/metrics/)
-
-# 1.4: Properties of Estimators - Unbiasedness and Consistency
-
-The above causal estimands are not directly calculable, since we cannot observe both potential outcomes. Thus, we need an **estimator** to estimate the causal estimands.
-
-Estimators have two key properties: unbiasdness and consistency.
-
-<br />
-
-### Unbiasedness
-
-An estimator is **unbiased** if its estimates $\hat{\theta}$ are on average equal to the true estimand $\theta$.
-
-$$
-\mathbb{E}[ \ \hat{\theta} \ ] = \theta
-$$
-
-Note: I use $\theta$ to represent any possible estimand, including the causal estimands from above.
-
-To better understand unbiasdness, take this example of archery. We have two archers, archer $A$ and archer $B$.
-
--   Both archers are very very accurate - as in they hit the same spot on the target every time they shoot.
--   Archer $A$ gets the bullseye every single time.
--   However, archer $B$, while very consistently hitting the same spot, for some reason, keeps hitting 5 inches to the right of the bullseye.
-
-Thus, archer $B$ is biased - he is consistently and systematically hitting the wrong spot on the target. Similarly, if an estimate is consistently off by a certain value, then it is biased.
-
-<br />
-
-### Consistency
-
-However, an unbiased estimator is not good enough. Why? Take this example of another archer $C$.
-
--   Archer $C$ has good aim - he is aiming directly at the bullseye.
--   However, archer $C$ is very inconsistent - he first hits a shot 5 inches to the left of the bullseye, then hits a shot 5 inches to the right of the bullseye. He keeps doing both of these things over and over again.
--   Archer $C$ on average is actually hitting the bullseye, since his leftward and rightward errors cancel each other out.
--   However, archer $C$ never actually hits the bullseye on any specific shot.
-
-Archer $C$ is an example of an unbiased, but very inconsistent estimator. On average, he is getting the right value of the estimate, but he is never that close on any specific estimate.
-
--   More technically, an inconsistent estimator is one who has high **variance** in their estimates.
-
-<br />
-
-Ideally, [we want an estimator that is both **unbiased** and **consistent**]{.underline}. This would mean that their average estimates are equal to the true estimand, and that each estimate is relatively close to the true estimand with low variance.
-
--   So, an archer than on average, hits the bullseye, and is generally not too far off from the bullseye on any sepcific shot.
-
-<br />
-
-------------------------------------------------------------------------
-
-[Course Homepage](https://politicalscience.github.io/metrics/)
-
-# 1.5: The Naive Estimator and Proof Correlation is not Causation
-
-The **naive estimator** is an estimator that only compares the observed outcomes, without any comparison to the counterfactual potential outcomes.
-
-So essentially, we compare the observed treatment group outcomes and the observed control group outcomes:
-
-$$
-\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-$$
-
-This is what many people do when trying to find a causal effect. The naive estimator is also similar to a measure of correlation.
-
-<br />
-
-However, [**the naive estimator is a bad idea**]{.underline}. Remember, treatment effects are supposed to be comparing the two potential outcomes [of the same unit]{.underline}. We are supposed to compare $y_{1i}$ to $y_{0i}$.
-
--   However, the naive estimator does not do that. Instead, it is comparing the observed outcomes of the treatment group versus the different control group.
-
-So essentially, it is comparing the potential outcomes of [different]{.underline} units.
-
--   But what is the issue with this?
--   Well, if you compare the potential outcome of two different units (let us call them $A$ and $B$), you are comparing $y_{1A}$ and $y_{1b}$.
--   However, what if units $A$ and $B$ are different in some way even before the treatment? Their outcomes $y$ may differ not due to the treatment $D$, but due to some underlying difference between units $A$ and $B$.
--   Thus, we are introducing some **bias** - the differences between unit $A$ and $B$ are being included in our causal estimate, when they should not be, since the differences between $A$ and $B$ may not be due to $D$.
-
-<br />
-
-We can prove this mathematically. We start with the naive estimator:
-
-$$
-\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-$$
-
-Then, we do a little algebra trick - we add a new term to this equation, then subtract that same term. The two new terms thus cancel each other out to 0:
-
-$$
-\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
-$$
-
-Now, let us re-arrange this equation:
-
-$$
-\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-$$
-
-We can see the first two terms are equal to the average treatment effect on the treated (ATT). Thus, we can rewrite the naive estimator:
-
-$$
-\hat{\tau} = \text{ATT} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
-$$
-
-If we look at the final result, we can divide it into two parts:
-
-1.  The ATT (see [section 1.4](https://politicalscience.github.io/metrics/causal/1.html#causal-estimands))
-2.  The extra bit: $\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}$, which we call **selection bias**. Intuitively, it is the difference [prior to treatment]{.underline} between the control and treatment groups. This results in our naive estimator being biased.
-
-We will go into detail on selection bias in the next section.
-
-<br />
-
-------------------------------------------------------------------------
-
-[Course Homepage](https://politicalscience.github.io/metrics/)
-
-# 1.6: Selection Bias and Confounding Variables
-
-### Selection Bias
-
-As we just established, the naive estimator contains **selection bias** $\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}$. This is the difference [prior to treatment]{.underline} between the control and treatment groups.
 
 ::: callout-note
-## Example: Hospital and Health
+## Summation Properties
 
-For example, if we are measuring the question *does going to the hospital make you more healthy*, and we simply measured the outcomes of people who went to the hospital and did not go to the hospital, we might see that in general, people who did not go to the hospital are healthier!
+To help us solve this problem, note these 3 properties of summation:
 
--   Does this mean that going to the hospital makes you unhealthier? No! It is because more unhealthy people choose to go to the hospital in the first place. Thus, the hospital has generally more unhealthy individuals in it. The hospital might perform miracles on these people, but they are still not as healthy as the healthy people who did not need to go to the hospital.
-
--   The differences between the people who chose to go to the hospital versus the people who did not go to the hospital explains the differences in our outcome, not the actual treatment that the hospital provided.
+$$
+\begin{split}& \sum\limits_{i=1}^n (x_i - \bar{x}) = 0 \\& \sum\limits_{i=1}^n x_i(y_i - \bar{y}) = \sum\limits_{i=1}^n(x_i - \bar{x}) (y_i - \bar{y}) \\& \sum\limits_{i=1}^n x_i(x_i - \bar{x}) = \sum\limits_{i=1}^n(x_i - \bar{x})^2\end{split}
+$$
 :::
 
-Thus, selection bias can be thought of as when our treatment and control groups are fundamentally different and unequal prior to treatment.
+Knowing these properties of summation, we can transform what we had before into:
 
--   And when we use the naive estimator (or correlation), we pick up this bias in our estimates.
-
-<br />
-
-### Confounding Variables
-
-Selection bias is caused by confounding variables.
+$$
+\begin{split}
+0 & = \sum\limits_{i=1}^n(x_i - \bar{x})(y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^n (x_i - \bar{x})^2 \\
+\hat{\beta}_1 \sum\limits_{i=1}^n (x_i - \bar{x})^2 & = \sum\limits_{i=1}^n(x_i - \bar{x})(y_i - \bar{y}) \\
+\hat{\beta}_1 & = \frac{\sum\limits_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum\limits_{i=1}^n(x_i - \bar{x})^2}
+\end{split}
+$$
 
 ::: callout-tip
-## Definition: Confounding Variable
+## Definition: OLS Estimate of Coefficient
 
-A **confounder** or **confounding variable** is a variable that is causes differences in the treatment and control groups.
+Thus, the OLS estimate $\hat\beta_1$ (slope) of the linear regression model is:
 
-Confounding variables result in selection bias, and are why correlation does not equal causation. In order to accurately calculate causal effects, we need to find some way to eliminate the effect of confounding variables.
+$$
+\hat{\beta}_1 = \frac{\sum\limits_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum\limits_{i=1}^n(x_i - \bar{x})^2} = \frac{Cov(x, y)}{Var(x)} = \frac{\sigma_{xy}}{\sigma_x^2}
+$$
+
+This is also the expected change in $y$ given a one unit increase in $x$.
+
+-   Remember, this is the **relationship** between $x$ and $y$, [**not** the causal effect]{.underline}.
 :::
-
-For example, look at the figure below:
-
-![](figures/1-1.png){fig-align="center" width="40%"}
-
-In this figure, $D$ is the treatment, and $C$ is the confounding variable that affects whether or not a unit gets the treatment $D$ or not.
-
-When we calculate the naive estimate (or correlation), our causal estimate captures both the direct effect $D \rightarrow Y$, but also the effect of $D \leftrightarrow C \rightarrow O \rightarrow Y$, since $D$ and $C$ are correlated.
-
--   This second effect $D \leftrightarrow C \rightarrow O \rightarrow Y$ is called the **backdoor path**.
-
-However, the actual causal effect of treatment $D$ on $Y$ is only the section of $D \rightarrow Y$, and does not include the backdoor path. So, we need to find some way to only look at $D \rightarrow Y$, and eliminate/partial out the effect of the back door.
 
 <br />
 
-To make an accurate causal effect estimate, we must get rid of confounding variables, selection bias, and the backdoor path. How do we do this? The best method is randomisation, which we will cover in the next chapter.
+Of course, we still need to find $\hat\beta_0$ (the slope). We found that $\hat\beta_0 = \bar{y} - \hat{\beta}_1 \bar{x}$ earlier, so we just plug that in.
+
+And now, we have our estimates $\hat\beta_0$ and $\hat\beta_1$, and thus we now have a best-fit line and an estimate of the relationship between $x$ and $y$.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 1.5: Interpretation of OLS Coefficient Estimates
+
+We now have estimated $\hat\beta_0$ and $\hat\beta_1$. But what do these actually mean in the context of the relationship between $x$ and $y$?
+
+-   Let us start with $\hat\beta_1$, which is the slope, the more important of the two coefficients.
+
+<br />
+
+### Interpretation of $\hat\beta_1$ For Continuous $x$
+
+We know that in a linear model, $\mathbb{E}[y_i|x_i] = \beta_0 + \beta_1 x_i$, the coefficient $\beta_1$ is the slope.
+
+-   And the slope is the change in $y$ given a one unit increase in $x$.
+
+Using this knowledge, we can interpret estimate $\hat\beta_1$.
+
+::: callout-tip
+## Interpretation of $\hat\beta_1$
+
+When $x$ increases by one unit, there is an expected $\hat{\beta}_1$ unit change in $y$.
+:::
+
+::: callout-warning
+## Warning!
+
+Remember, this is the **relationship** between $x$ and $y$, [**not** the causal effect]{.underline}.
+:::
+
+<br />
+
+### Interpretation of $\hat\beta_1$ for Binary $x$
+
+**Binary explanatory** variables are variables with 2 values, 0 and 1.
+
+-   Binary explanatory variables are extremely common in the social sciences. They can include things such as yes/no questions, treatment/control, true/false questions, voted/did not vote, etc.
+
+Binary explanatory variables will change the interpretations of our coefficients.
+
+We can "solve" for these interpretations. Assume $x$ has two categories $x=0$ and $x=1$:
+
+$$
+\begin{split}
+& \hat y_{i, \ x = 0} = \hat\beta_0 + \hat\beta_1(0) = \hat\beta_0 \\
+& \hat y_{i, \ x = 1} = \hat\beta_0 + \hat\beta_1(1) = \hat\beta_0 + \hat\beta_1 \\
+& \hat y_{i, \ x = 1} - \hat y_{i, \ x = 0} = (\hat\beta_0 + \hat\beta_1) - \hat\beta_0 = \hat\beta_1
+\end{split}
+$$
+
+Thus, we can interpret the coefficients as follows:
+
+::: callout-tip
+## Interpretation of Coefficient with a Binary Explanatory Variable
+
+When $x$ is a binary explanatory variable:
+
+-   $\hat\beta_0$ is the expected value of $y$ given an observation in category $x = 0$
+-   $\hat\beta_0 + \hat\beta_1$ is the expected value of $y$ given an observation in category $x = 1$
+-   $\hat\beta_1$ is the expected difference in $y$ between the categories $x=1$ and $x=0$.
+:::
+
+::: callout-warning
+## Warning!
+
+Remember, this is the **relationship** between $x$ and $y$, [**not** the causal effect]{.underline}.
+:::
+
+<br />
+
+### Interpretation of $\hat\beta_0$
+
+We know that in a linear model, $\mathbb{E}[y_i|x_i] = \beta_0 + \beta_1 x_i$, the coefficient $\beta_0$ is the y-intercept.
+
+-   And the y-intercept is the change value of $y$ given $x=0$.
+
+We can prove this mathematically:
+
+$$
+\begin{split}
+\hat y_{i, \ x_i = 0} & = \hat\beta_0 + \hat\beta_1 x_i \\
+& = \hat\beta_0 + \hat\beta_1(0) \\
+& = \hat\beta_0
+\end{split}
+$$
+
+Thus, knowing this, we can interpret $\hat\beta_0$.
+
+::: callout-tip
+## Interpretation of $\hat\beta_0$
+
+When $x=0$, the expected value of $y$ is $\hat{\beta}_0$
+:::
+
+<br />
+
+### Interpreting $\beta_1$ in Terms of Standard Deviations
+
+Sometimes, it is hard to understand what changes in $y$ and $x$ mean in terms of units. For example, if we are measuring "democracy", what does a 5 unit change in democracy mean? Is that a lot?
+
+We can add more relevant detail by expressing the change of $y$ and $x$ in standard deviations.
+
+How do we calculate this? Well, let us solve for the change in $\hat{y}_i/\sigma_y$ given $x_i = x$ and $x = x + \sigma_X$. This will tell us how much $\hat{y}$ changes by given a increase of one standard deviation in $x$:
+
+$$
+\begin{split}
+\frac{\hat y_{i, \ x_i = x + \sigma_x}}{\sigma_y} - \frac{\hat y_{i, \ x_i = x}}{\sigma_y} & = \frac{\hat\beta_0 + \hat\beta_1 x_i}{\sigma_y} - \frac{\hat\beta_0 + \hat\beta_1 x_i}{\sigma_y} \\
+& = \frac{\hat\beta_0 + \hat\beta_1 (x+\sigma_x) - (\hat\beta_0 + \hat\beta_1 (x))}{\sigma_y} \\
+& = \frac{\hat\beta_0 - \hat\beta_0 + \hat\beta_1x - \hat\beta_1x+\hat\beta_1\sigma_x}{\sigma_y} \\
+& = \frac{\hat\beta_1 \sigma_x}{\sigma_y}
+\end{split}
+$$
+
+::: callout-tip
+## Interpretation in Terms of Standard Deviation
+
+For a one-std. deviation increase in $x$, there is an expected $\hat{\beta}_1 \sigma_x / \sigma_y$-std. deviation change in $Y$.
+:::
+
+::: callout-warning
+## Warning!
+
+Remember, this is the **relationship** between $x$ and $y$, [**not** the causal effect]{.underline}.
+:::
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 1.6: Uncertainty and Standard Errors
+
+### Samples and Population
+
+In the real world, there is some true relationship value $\beta_1$ between $x$ and $y$ in the world.
+
+-   For example, there is a true $\beta_1$ value by which increasing education $x$ is associated with income $y$.
+
+However, to get the true exact value of $\beta_1$, we must have data on **every single unit** in the world.
+
+-   For example, to measure the true $\beta_1$ of the association between education $x$ and income $y$, we would have to have data on all 8 billion people in the world.
+-   We call this group of every single unit in the world the **population**.
+-   Note: the population does not always have to be the whole world. For example, if we are only concerned with how education affects income in the USA, then we would only care about observations in the USA.
+
+<br />
+
+Obviously, that is not feasible. Instead, researchers use **samples** of the population.
+
+-   Samples are selected observations taken from the population.
+-   For example, we might take a sample of 1,000 individuals from the population in the world to measure the association between education $x$ and income $y$.
+
+The best method of sampling is **random sampling**, This is when every unit in the population has an equal chance of being selected into your sample.
+
+-   Since every unit has the same probability of being in your sample, in theory, your sample should be **representative** of the population (i.e. very similar in characteristics to the population).
+
+If our sample is representative of the population, then we can use our **sample** to create an estimate $\hat\beta_1$ and use that estimate to estimate the true $\beta_1$ in the population.
+
+<br />
+
+### Intuition of Uncertainty
+
+Imagine after we calculated $\hat\beta_1$ in our sample, we decide to take another sample. If we are random sampling (or almost any kind of sampling), we probably will not get the exact same units back into our sample.
+
+-   For example, if we take another sample of 1,000 individuals from the population, the new sample will not be the same as the old sample.
+
+This means that the next sample's estimated $\hat\beta_1$ will be slightly different than the first one, since we have a slightly different sample.
+
+-   Thus, we have some uncertainty with our causal estimate - re-running the experiment might result in a different estimate of $\hat\beta_1$
+
+We need some mechanism to quantify this sampling variability and how rerunning the estimation might result in different results. We do this with sampling distributions and standard errors.
+
+<br />
+
+Imagine that we take a sample from a population (or some random assignment mechanism). Then, we estimate $\hat\beta_1$.
+
+That is a sample estimate, which is often notated $\hat{\theta}$. (I use $\hat{\theta}$, since this idea of uncertainty can be applied to any estimate, not just $\beta_1$).
+
+Then, let us take another sample from the same population (or do another random assignment), and find the sample estimate. This will be slightly different than the first sample, since we are randomly sampling. That is another sample estimate.
+
+We keep taking samples from the same population (more random assignments), and getting more and more sample estimates.
+
+<br />
+
+Now, let us plot all our sample estimates $\hat{\theta}$ into a histogram or density plot. The $x$ axis labels all the possible sample estimates $\hat{\theta}$ we have gotten above, and the $y$ axis is how frequently a specific sample estimate occurs.
+
+The result is a distribution, just like a random variable distribution. That distribution is the **sampling distribution**.
+
+According to **central limit theorem**, the sampling distribution approximates that of a normal distribu- tion (or t-distribution if our sample size is small). We know that a normal distribution is defined by two parameters - mean and variance.
+
+<br />
+
+### Standard Errors of OLS Estimates
+
+The standard error is the standard deviation of the sampling distribution. It is often notated $se(\hat{\theta})$.
+
+-   The standard error basically measures the variance (how spread out) our different sample estimates are.
+-   There is a variation of this called the **robust standard errors**. These are typically used by default. We will not worry too much about this until [chapter 4](https://politicalscience.github.io/metrics/causal/4.html).
+
+::: callout-tip
+## Definition: Robust Standard Errors
+
+Robust standard errors for the coefficient $\hat\beta_1$ are:
+
+$$
+rse(\hat\beta_1) = \sqrt{ \frac{Var[(x_i - \mathbb{E}[ \ x_i]) \times \hat u_i \ ]}{n \times [Var(x_i)]^2} }
+$$
+
+We will discuss why these are called robust standard errors in [chapter 4](https://politicalscience.github.io/metrics/causal/4.html).
+:::
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 1.7: Hypothesis Testing and Statistical Inference
+
+We know there is some uncertainty with our sample estimate, as defined by the standard error. So, how do we know if we actually have a significant relationship with this uncertainty?
+
+-   For example, what if our $\hat\beta_1$ shows a relationship between $x$ and $y$ when the real $\beta_1$ of the population shows no relationship? After all, our $\hat\beta_1$ estimate could just be due to sampling luck.
+
+What we do is hypothesis testing: a way to test, given a certain level of uncertainty, whether or not we believe there is a causal effect.
+
+We start off with the status-quo "old theory", and try to disprove it.
+
+-   This is called the **null hypothesis**, typically notated $H_0$.
+-   For causal inference, our null hypothesis is typically that *there is relationship between* $x$ and $y$. We notate this as $H_0 : \beta_1 = 0$.
+
+The new theory we are trying to prove is called the **alternate hypothesis**.
+
+-   For causal inference, our alternate hypothesis is typically that *there is a relationship between* $x$ and $y$. We notate this as $H_1 : \beta_1 ≠ 0$.
+
+[We assume that the null hypothesis is true, unless we are 95% confident that we can reject the null hypothesis, and only then, can we accept the alternative hypothesis.]{.underline}
+
+<br />
+
+### Conducting a Hypothesis Test
+
+We start a hypothesis test by notating our hypotheses:
+
+$$
+H_0 : \beta_1 = 0 \quad \text{and} \quad H_1: \beta_1 ≠ 0
+$$
+
+Next, we have to find a t-test statistic.
+
+::: callout-tip
+## Definition: T-test Statistic
+
+The t-test statistic tells us how far our estimate $\hat{\beta}_1$ is from the null hypothesis value of $\mu_0 = 0$. This distance is expressed in terms of standard errors of the estimate.
+
+$$
+t= \frac{\hat{\beta}_1 - \mu_0}{\widehat{se}(\hat{\theta})}
+$$
+
+Note, since $\mu_0 = 0$, we technically do not need it in the equation. However, sometimes (very rarely), you may have a reason to test a different null hypothesis, so then you would plug in a different value for $\mu_0$.
+:::
+
+<br />
+
+After we have a test statistic, we need to consult a t-distribution.
+
+-   Specifically, we should consult the t-distribution with $n-2$ degrees of freedom (degrees of freedom are the sole parameter of the t-distribution).
+
+Once we have this t-distribution, start from the centre of the t-distribution, and go *t-test-statistic* number of standard deviations away from the centre towards both directions.
+
+Then, at the point we have ended up, calculate the probability (area under the curve) of a t-test statistic equal or even more extreme could occur (we will not do this manually, the computer will do this). The figure below shows this probability:
+
+![](figures/2-2.jpeg){fig-align="center" width="50%"}
+
+The shaded area is the probability of a t-test statistic equal to or even more extreme could occur, given the null hypothesis is true. This is the p-value.
+
+::: callout-tip
+## Definition: P-Value
+
+The p-value is the probability of a t-test statistic equal to or even more extreme could occur, given the null hypothesis is true.
+
+If this is less than 0.05 (5%), that means the null hypothesis has a very low chance of being true, so we reject the null hypothesis as no longer true.
+
+-   So, if the p-value is above 0.05, there is a above 5% chance that the null hypothesis is true. This is too high for our liking, so we cannot reject the null hypothesis, and we cannot conclude any relationship between $x$ and $y$.
+
+-   If the p-value is less than 0.05, there is less than a 5% chance that the null hypothesis is true. In econometrics, we thus reject the null hypothesis, and conclude that there is a relationship between $x$ and $y$.
+
+[So very simply, if the p-value is less than 0.05, we can conclude that there is a causal effect of $x$ on $y$. If not, we cannot conclude this.]{.underline}
+:::
+
+Thus, the hypothesis test allows us to test if, under uncertainty due to randomisation, if we actually have a causal effect of $x$ on $y$.
+
+<br />
+
+### Types of Errors
+
+Of course, with 95% confidence, there is a chance we incorrectly conclude a causal effect. These are called errors. There are two types of errors.
+
+1.  **Type I error**, also called a **false positive**. This occurs when we reject the null hypothesis, even though the null hypothesis is actually true.
+2.  **Type II error**, also called a **false negative**. This occurs when we fail to reject the null hypothesis, even though the null hypothesis is actually false.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# Implementation in R
+
+The packages we will need are:
+
+```{r, message = FALSE}
+library(tidyverse)
+library(fixest)
+library(texreg)
+```
+
+```{r, echo = FALSE, message = FALSE}
+setwd("/Users/kevinli/Documents/GitHub/politicalscience.github.io/metrics/causal")
+dta <- read_csv("data/olken_data.csv")
+```
+
+<br />
+
+## Simple Linear Regression
+
+To run simple linear regression, we use the *feols()* function.
+
+-   The argument *se = "hetero"* tells R to calculate heteroscedasticity-robust standard errors, which will be discussed later in chapter 4. Just know it is standard to do so.
+
+```{r, eval = FALSE}
+modelname <- feols(y ~ x, data = mydata, se = "hetero")
+summary(modelname)
+```
+
+For example:
+
+```{r, message = FALSE}
+model1 <- feols(pct_missing ~ treat_invite, data = dta, se = "hetero")
+summary(model1)
+```
+
+We can see the output estimate of *treat_invite*, our $x$ variable
+
+-   The row includes the estimate, the standard error, the t-test statistic, and the p-value. This gives all of the information we need to run linear regression and hypothesis tests.
+
+<br >
+
+We can also use the base-R *lm()* function, however, this does not calculate heteroscedasticity-robust standard errors (once again, will be discussed in chapter 4).
+
+```{r, eval = FALSE}
+modelname <- lm(y ~ x, data = mydata)
+summary(modelname)
+```
+
+<br />
+
+## Categorical Explanatory Variables
+
+To run a regression with a categorical explanatory variable, we must first look in R at the categorical variable.
+
+-   R treats *string* and *double* variables automatically as categorical variables, so we can just directly insert them into our regression like above.
+-   However, if our categorical variable is coded numerically, we must use the *as.factor()* function to coerce the variable into a categorical variable
+
+For example, below, variable $x$ is being coerced into a categorical variable
+
+```{r, eval = FALSE}
+modelname <- feols(y ~ as.factor(x), data = mydata, se = "hetero")
+```
+
+<br />
+
+## Creating Regression Tables
+
+We can create regression tables using the *texreg()* or *screenreg()* functions.
+
+-   *texreg()* produces LaTeX code that you can insert into a LaTeX document
+-   *screenreg()* produces something that looks nice in a R document.
+
+The syntax is as follows (you can replace *screenreg()* with *texreg()* ):
+
+```{r, eval = FALSE}
+screenreg(l = list(modelname),
+  custom.model.names = c("Outcome Variable Name"),
+  custom.coef.names = c("Intercept", "X Variable Name"),
+  digits = 3)
+```
+
+For example:
+
+```{r}
+screenreg(l = list(model1),
+  custom.model.names = c("Pct_Missing"),
+  custom.coef.names = c("Intercept", "Treatment"),
+  digits = 3)
+```
+
+<br />
 
 <br />
 
