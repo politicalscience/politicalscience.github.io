@@ -197,9 +197,12 @@ Definition: Random Assignment
 </div>
 <div class="callout-body-container callout-body">
 <p>With random assignment ,selection bias and the influence of confounder <span class="math inline">C</span> is eliminated. Thus, the control group and treatment group should be similar, as every observation has an equal chance of being selected into either group.</p>
-<p>If the control and treatment groups are similar, the potential outcomes should be independent of treatment and control groups:</p>
+<p>If the control and treatment groups are similar, the potential outcomes should be independent of treatment and control groups. Thus, the following statements are ture:</p>
 <p><span class="math display">
-\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \quad \text{and} \quad \bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\begin{split}
+\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \\
+\bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\end{split}
 </span></p>
 </div>
 </div>
@@ -213,17 +216,20 @@ Definition: Random Assignment
 <p>Since random assignment removes the effect of confounders, that means there is no more selection bias. Thus, we can use the naive estimator (now called the difference-in-means estimator) to estimate the causal effect.</p>
 <p>Let us show this mathematically. Recall the naive estimator:</p>
 <p><span class="math display">
-\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
+\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
 </span></p>
 <p>Given the assumption of randomisation, we established in the last section, we know:</p>
 <p><span class="math display">
-\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \quad \text{and} \quad \bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\begin{split}
+\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \\
+\bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\end{split}
 </span></p>
 <p>Thus, we know the following is true:</p>
 <p><span class="math display">
-\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} \quad \approx \quad \hat{\tau}_{ATE} = \bar{y}_{1i} - \bar{y}_{0i}
+\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} \approx  \bar{y}_{1i} - \bar{y}_{0i}
 </span></p>
-<p>Thus, our naive estimator (now called the difference in means estimator) estimates the average treatment effect of <span class="math inline">D</span> on <span class="math inline">y</span>.</p>
+<p>We know that the ATE is defined as <span class="math inline">\bar{y}_{1i} - \bar{y}_{0i}</span>. Thus, our naive estimator (now called the difference in means estimator) estimates the average treatment effect of <span class="math inline">D</span> on <span class="math inline">y</span>.</p>
 <p><br></p>
 <p>We can rewrite this equation in a nicer, easier to read format:</p>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -238,7 +244,7 @@ Definition: Difference-in-Means Estimator
 <div class="callout-body-container callout-body">
 <p>The estimate of the average treatment effect of a randomised controlled trial is:</p>
 <p><span class="math display">
-\hat{\tau}_{ATE} = \bar{y}_t - \bar{y}_c
+\widehat{ATE} = \bar{y}_t - \bar{y}_c
 </span></p>
 <p>Where <span class="math inline">\bar{y}_t</span> is the average <span class="math inline">y</span> value in the treatment group, and <span class="math inline">\bar{y}_c</span> is the average <span class="math inline">y</span> value in the control group.</p>
 <p>Thus, the causal effect of <span class="math inline">D</span> on <span class="math inline">y</span> is simply the <strong>difference-in-means</strong> of the two groups.</p>
@@ -267,8 +273,9 @@ Interpretation Warning!
 <p>If this assumption is violated (either due to lack of random assignment, or failure of randomisation), we can no longer estimate the causal effects with the difference-in-means estimator.</p>
 <ul>
 <li>This is because if the control and treatment groups are not similar to each other on all confounders, there is the possibility of selection bias in our difference-in-means estimator.</li>
+<li>We will discuss how to check for this assumption in section in <a href="https://politicalscience.github.io/metrics/causal/2.html#balance-tables-to-verify-the-assumptions-of-randomisation">section 2.6</a>.</li>
 </ul>
-<p>Finally, note that we can also use a different estimator, the OLS estimator (with simple linear regression), to get the same final estimate. We will discuss this in chapter 3.</p>
+<p>Finally, note that we can also use a different estimator, the OLS estimator (with simple linear regression), to get the same final estimate. We will discuss this in <a href="https://politicalscience.github.io/metrics/causal/3.html">chapter 3</a>.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -283,16 +290,16 @@ Interpretation Warning!
 <li>What if we ran the experiment again?</li>
 <li>The treatment and control groups would very likely not be exactly the same, and thus, we would get a slightly different causal effect.</li>
 </ul>
-<p>Thus, we have some uncertainty with our causal estimate - re-running the experiment might result in a different answer. The ATE we have calculated is only our specific sample average treatment effect (SATE), often notated <span class="math inline">\hat{\tau}_{ATE}</span> or <span class="math inline">\widehat{ATE}</span>.</p>
+<p>Thus, we have some uncertainty with our causal estimate - re-running the experiment might result in a different answer. The ATE we have calculated is only our specific sample average treatment effect (SATE), notated <span class="math inline">\widehat{ATE}</span>.</p>
 <ul>
-<li>Why sample? Well, through random assignment, you are basically “randomly sampling” potential outcomes - since randomly choosing one unit to be in treatment/control means not seeing the other counterfactual potential outcome.</li>
+<li>Why “sample”? Well, through random assignment, you are basically “randomly sampling” potential outcomes - since randomly choosing one unit to be in treatment/control means not seeing the other counterfactual potential outcome.</li>
 </ul>
 <p>Thus, we need some mechanism to account for sampling variability and how rerunning the experiment might result in different results. We do this with sampling distributions and standard errors.</p>
 <p><br></p>
 </section>
 <section id="sampling-distribution" class="level3">
 <h3 class="anchored" data-anchor-id="sampling-distribution">Sampling Distribution</h3>
-<p>Imagine that we take a sample from a population (or some random assignment mechanism). Then, we find the average treatment effect of the sample <span class="math inline">\hat{\tau}_{ATE}</span>.</p>
+<p>Imagine that we take a sample from a population (or some random assignment mechanism). Then, we find the average treatment effect of the sample <span class="math inline">\widehat{ATE}</span>.</p>
 <p>That is a sample estimate, which is often notated <span class="math inline">\hat{\theta}</span>. (I use <span class="math inline">\hat{\theta}</span>, since this idea of uncertainty can be applied to any estimate, not just average treatment effect).</p>
 <p>Then, let us take another sample from the same population (or do another random assignment), and find the sample estimate. This will be slightly different than the first sample, since we are randomly sampling. That is another sample estimate.</p>
 <p>We keep taking samples from the same population (more random assignments), and getting more and more sample estimates.</p>
@@ -316,7 +323,7 @@ sd(x) = \sqrt{Var(x)} = \sigma
 <p><span class="math display">
 sd(\hat{x}) = \frac{\sigma}{\sqrt{n}} = \frac{\sqrt{\mathbb{E}[(x_i - \bar{x})^2]}}{\sqrt{n}}
 </span></p>
-<p>The standard deviation of our sampling distribution is called the <strong>standard error</strong> of our estimate. Our sampling distribution of <span class="math inline">\hat{\tau}</span>, if we remember, is a difference-in-means.</p>
+<p>The standard deviation of our sampling distribution is called the <strong>standard error</strong> of our estimate. Our sampling distribution of <span class="math inline">\hat{\tau}</span>, if we remember, is a difference-in-means. So, we have to find the standard deviation of a difference-in-means of variables.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -330,7 +337,10 @@ Definition: Standard Error for Difference in Means
 <p>The standard error is the standard deviation of the sampling distribution. It is often notated <span class="math inline">se(\hat{\theta})</span>.</p>
 <p>The standard error for a difference-in-means is as follows:</p>
 <p><span class="math display">
-\widehat{se}(\hat{\tau}) = \sqrt{ \frac{\sigma_t}{n_t} + \frac{\sigma_c}{n_c} } = \sqrt{ \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 1]}{n_t} + \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 0]}{n_c}}
+\begin{split}
+\widehat{se}(\hat{\tau}) &amp; = \sqrt{ \frac{\sigma_t}{n_t} + \frac{\sigma_c}{n_c} } \\
+&amp; = \sqrt{ \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 1]}{n_t} + \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 0]}{n_c}}
+\end{split}
 </span></p>
 <p>Where <span class="math inline">n_t</span> is the number of observations in the treatment group, <span class="math inline">n_c</span> is the number of observations in the control group.</p>
 </div>
@@ -440,7 +450,7 @@ Definition: P-Value
 <p>With a hypothesis test, we have either concluded that we have, or do not have, a causal relationship between <span class="math inline">D</span> and <span class="math inline">y</span>.</p>
 <p>However, whether a causal relationship exists or not is not the only thing we care about. We also care about the <strong>size/magnitude</strong> of the causal relationship.</p>
 <ul>
-<li>After all, if <span class="math inline">D</span> causes <span class="math inline">y</span> to increase by 0.000000000001 units, who actually cares? The causal effect might as well not exist.</li>
+<li>After all, if <span class="math inline">D</span> causes <span class="math inline">y</span> to increase by 0.00000001 units, who actually cares? The causal effect might as well not exist.</li>
 </ul>
 <p>We have a causal estimate <span class="math inline">\hat{\theta} = \hat{\tau}_{ATE}</span> already. However, the issue, as we described in section 2.3, is that if we run another random assignment, we will get a slightly different causal estimate.</p>
 <p>So how do we account for this issue? We can do this with <strong>confidence intervals</strong>.</p>
@@ -482,7 +492,10 @@ Definition: Confidence Intervals
 <p>If the treatment and control groups are not similar (in regard to key confounding variable values), our difference-in-means estimator will be biased with selection bias.</p>
 <p>Why is this? Well, if our treatment and control groups are not similar, then the following assumptions will not be met, which are critical in eliminating selection bias:</p>
 <p><span class="math display">
-\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \quad \text{and} \quad \bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\begin{split}
+\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \\
+\bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\end{split}
 </span></p>
 <p>Thus, we need to be confident this assumption is met.</p>
 <p>For researchers, this is especially important, since they need to show that their results are valid. Thus researchers will often show a <strong>balance table</strong> before or after their estimation process.</p>

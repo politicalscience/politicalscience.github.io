@@ -51,10 +51,13 @@ With random assignment mechanism $R$, now units are assigned to control randomly
 
 With random assignment ,selection bias and the influence of confounder $C$ is eliminated. Thus, the control group and treatment group should be similar, as every observation has an equal chance of being selected into either group.
 
-If the control and treatment groups are similar, the potential outcomes should be independent of treatment and control groups:
+If the control and treatment groups are similar, the potential outcomes should be independent of treatment and control groups. Thus, the following statements are ture:
 
 $$
-\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \quad \text{and} \quad \bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\begin{split}
+\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \\
+\bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\end{split}
 $$
 :::
 
@@ -73,22 +76,25 @@ Since random assignment removes the effect of confounders, that means there is n
 Let us show this mathematically. Recall the naive estimator:
 
 $$
-\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
+\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
 $$
 
 Given the assumption of randomisation, we established in the last section, we know:
 
 $$
-\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \quad \text{and} \quad \bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\begin{split}
+\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \\
+\bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\end{split}
 $$
 
 Thus, we know the following is true:
 
 $$
-\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} \quad \approx \quad \hat{\tau}_{ATE} = \bar{y}_{1i} - \bar{y}_{0i}
+\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} \approx  \bar{y}_{1i} - \bar{y}_{0i}
 $$
 
-Thus, our naive estimator (now called the difference in means estimator) estimates the average treatment effect of $D$ on $y$.
+We know that the ATE is defined as $\bar{y}_{1i} - \bar{y}_{0i}$. Thus, our naive estimator (now called the difference in means estimator) estimates the average treatment effect of $D$ on $y$.
 
 <br />
 
@@ -100,7 +106,7 @@ We can rewrite this equation in a nicer, easier to read format:
 The estimate of the average treatment effect of a randomised controlled trial is:
 
 $$
-\hat{\tau}_{ATE} = \bar{y}_t - \bar{y}_c
+\widehat{ATE} = \bar{y}_t - \bar{y}_c
 $$
 
 Where $\bar{y}_t$ is the average $y$ value in the treatment group, and $\bar{y}_c$ is the average $y$ value in the control group.
@@ -125,8 +131,9 @@ For this estimate of the ATE to be true, there must be random assignment of trea
 If this assumption is violated (either due to lack of random assignment, or failure of randomisation), we can no longer estimate the causal effects with the difference-in-means estimator.
 
 -   This is because if the control and treatment groups are not similar to each other on all confounders, there is the possibility of selection bias in our difference-in-means estimator.
+-   We will discuss how to check for this assumption in section in [section 2.6](https://politicalscience.github.io/metrics/causal/2.html#balance-tables-to-verify-the-assumptions-of-randomisation).
 
-Finally, note that we can also use a different estimator, the OLS estimator (with simple linear regression), to get the same final estimate. We will discuss this in chapter 3.
+Finally, note that we can also use a different estimator, the OLS estimator (with simple linear regression), to get the same final estimate. We will discuss this in [chapter 3](https://politicalscience.github.io/metrics/causal/3.html).
 
 <br />
 
@@ -145,9 +152,9 @@ Remember how we randomly assigned units to treatment or control?
 -   What if we ran the experiment again?
 -   The treatment and control groups would very likely not be exactly the same, and thus, we would get a slightly different causal effect.
 
-Thus, we have some uncertainty with our causal estimate - re-running the experiment might result in a different answer. The ATE we have calculated is only our specific sample average treatment effect (SATE), often notated $\hat{\tau}_{ATE}$ or $\widehat{ATE}$.
+Thus, we have some uncertainty with our causal estimate - re-running the experiment might result in a different answer. The ATE we have calculated is only our specific sample average treatment effect (SATE), notated $\widehat{ATE}$.
 
--   Why sample? Well, through random assignment, you are basically “randomly sampling” potential outcomes - since randomly choosing one unit to be in treatment/control means not seeing the other counterfactual potential outcome.
+-   Why "sample"? Well, through random assignment, you are basically “randomly sampling” potential outcomes - since randomly choosing one unit to be in treatment/control means not seeing the other counterfactual potential outcome.
 
 Thus, we need some mechanism to account for sampling variability and how rerunning the experiment might result in different results. We do this with sampling distributions and standard errors.
 
@@ -155,7 +162,7 @@ Thus, we need some mechanism to account for sampling variability and how rerunni
 
 ### Sampling Distribution
 
-Imagine that we take a sample from a population (or some random assignment mechanism). Then, we find the average treatment effect of the sample $\hat{\tau}_{ATE}$.
+Imagine that we take a sample from a population (or some random assignment mechanism). Then, we find the average treatment effect of the sample $\widehat{ATE}$.
 
 That is a sample estimate, which is often notated $\hat{\theta}$. (I use $\hat{\theta}$, since this idea of uncertainty can be applied to any estimate, not just average treatment effect).
 
@@ -193,7 +200,7 @@ $$
 sd(\hat{x}) = \frac{\sigma}{\sqrt{n}} = \frac{\sqrt{\mathbb{E}[(x_i - \bar{x})^2]}}{\sqrt{n}}
 $$
 
-The standard deviation of our sampling distribution is called the **standard error** of our estimate. Our sampling distribution of $\hat{\tau}$, if we remember, is a difference-in-means.
+The standard deviation of our sampling distribution is called the **standard error** of our estimate. Our sampling distribution of $\hat{\tau}$, if we remember, is a difference-in-means. So, we have to find the standard deviation of a difference-in-means of variables.
 
 ::: callout-tip
 ## Definition: Standard Error for Difference in Means
@@ -203,7 +210,10 @@ The standard error is the standard deviation of the sampling distribution. It is
 The standard error for a difference-in-means is as follows:
 
 $$
-\widehat{se}(\hat{\tau}) = \sqrt{ \frac{\sigma_t}{n_t} + \frac{\sigma_c}{n_c} } = \sqrt{ \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 1]}{n_t} + \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 0]}{n_c}}
+\begin{split}
+\widehat{se}(\hat{\tau}) & = \sqrt{ \frac{\sigma_t}{n_t} + \frac{\sigma_c}{n_c} } \\
+& = \sqrt{ \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 1]}{n_t} + \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 0]}{n_c}}
+\end{split}
 $$
 
 Where $n_t$ is the number of observations in the treatment group, $n_c$ is the number of observations in the control group.
@@ -317,7 +327,7 @@ With a hypothesis test, we have either concluded that we have, or do not have, a
 
 However, whether a causal relationship exists or not is not the only thing we care about. We also care about the **size/magnitude** of the causal relationship.
 
--   After all, if $D$ causes $y$ to increase by 0.000000000001 units, who actually cares? The causal effect might as well not exist.
+-   After all, if $D$ causes $y$ to increase by 0.00000001 units, who actually cares? The causal effect might as well not exist.
 
 We have a causal estimate $\hat{\theta} = \hat{\tau}_{ATE}$ already. However, the issue, as we described in section 2.3, is that if we run another random assignment, we will get a slightly different causal estimate.
 
@@ -362,7 +372,10 @@ If the treatment and control groups are not similar (in regard to key confoundin
 Why is this? Well, if our treatment and control groups are not similar, then the following assumptions will not be met, which are critical in eliminating selection bias:
 
 $$
-\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \quad \text{and} \quad \bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\begin{split}
+\bar{y}_{1i, \ D_i = 1} \approx \bar{y}_{1i, \ D_i = 0} \approx \bar{y}_{1i} \\
+\bar{y}_{0i, \ D_i = 1} \approx \bar{y}_{0i, \ D_i = 0} \approx \bar{y}_{0i}
+\end{split}
 $$
 
 Thus, we need to be confident this assumption is met.

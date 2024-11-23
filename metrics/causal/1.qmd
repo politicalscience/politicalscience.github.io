@@ -1,5 +1,5 @@
 ---
-title: "Chapter 1: Introduction to Causal Estimation and Inference"
+title: "Chapter 1: Causal Relationships and Causal Effects"
 subtitle: "Econometric Methods (for Social Scientists)"
 format:
     html:
@@ -15,7 +15,7 @@ format:
         toc-depth: 2
         toc-location: left
         toc-expand: true
-        toc-title: "Chapter 1: Introduction to Causal Estimation and Inference"
+        toc-title: "Chapter 1: Causal Relationships and Causal Effects"
         mainfont: "Computer Modern"
         title-block-banner: true
         classoption: fleqn
@@ -34,7 +34,7 @@ Topics: Potential Outcomes Framework, Causal Estimands, Properties of Estimators
 
 # 1.1: Correlation and Causation
 
-Econometrics is the field of using data to answer economic and social science questions. While econometric was initially developed for economic questions, it has become widely applied to other social sciences.
+Econometrics is the field of using data to answer economic and social science questions. While econometrics was initially developed for economic questions, it has become widely applied to other social sciences.
 
 Econometrics is often concerned with causal questions:
 
@@ -50,6 +50,10 @@ Variables are **correlated** with each other, if one variable changing is associ
 
 -   For example, if $x$ increases, the average $y$ value increases, then $x$ and $y$ are correlated.
 -   The opposite is also true: if $x$ increases, the average $y$ value decreases, then $x$ and $y$ are correlated.
+
+For example, the graphs below show correlations between variables:
+
+![](figures/1-2.webp){fig-align="center" width="70%"}
 
 ::: callout-tip
 ## Definition: Sources of Correlation
@@ -92,6 +96,8 @@ Before we start discussing methods to eliminate the effect of third variables an
 
 <br />
 
+<br />
+
 ------------------------------------------------------------------------
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
@@ -120,8 +126,8 @@ The difference in the two world's outcome $y$ is thus the **causal effect** of $
 
 Let us represent these two parallel worlds more formally:
 
--   The world where unit $i$ gets the treatment will be called the **treatment state**, and will take a value of $D=1$.
--   The world where unit $i$ does not get the treatment will be called the **control state**, and will take a value of $D=0$.
+-   The parallel world where unit $i$ gets the treatment will be called the **treatment state**, and will take a value of $D=1$.
+-   The parallel world where unit $i$ does not get the treatment will be called the **control state**, and will take a value of $D=0$.
 
 Thus, the outcomes of unit $i$ in these 2 parallel worlds can be notated as $y_{Di}$, where $D$ is the state of the world.
 
@@ -157,7 +163,9 @@ $$
 $$
 :::
 
-Thus, the treatment $D$ will have $\tau$ effect on outcome $y$ for unit $i$
+Thus, the treatment $D$ will have $\tau_i$ effect on outcome $y$ for unit $i$
+
+<br />
 
 <br />
 
@@ -246,6 +254,8 @@ In what situations is SUTVA typically violated?
 
 <br />
 
+<br />
+
 ------------------------------------------------------------------------
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
@@ -270,8 +280,10 @@ The "key" estimand in causal inference is the Average Treatment Effect:
 The **Average Treatment Effect (ATE)** is the average of all individual treatment effects:
 
 $$
-\tau_{ATE} \ = \ \mathbb{E}[\tau_i] \ = \ \bar{y}_{1i} - \bar{y}_{0i}
+\text{ATE} \ = \ \mathbb{E}[\tau_i] \ = \ \bar{y}_{1i} - \bar{y}_{0i}
 $$
+
+Where the bar over the $y$ represents mean.
 :::
 
 However, the ATE is not the only estimand we are interested in.
@@ -283,7 +295,7 @@ Sometimes, our treatment variables are continuous. For example, if we want to es
 In cases of non-continuous treatment variables, we want to estimate the **average causal effect** (ACE)- the expected change in $y$ resulting from a one unit increase in $D$:
 
 $$
-\tau_{ACE} = \mathbb{E}[y'(D)]
+\text{ACE} = \mathbb{E}[y'(D)]
 $$
 
 Where $y'(D)$ is the derivative of $y$ in respect to $D$
@@ -297,7 +309,7 @@ For example, maybe we think that a certain educational treatment will benefit wo
 The **Conditional Average Treatment Effect (CATE)** is the treatment effect of units, given they have some other variable $x$ value.
 
 $$
-\tau_{CATE} = \mathbb{E}[y_{1i} - y_{0i} \ | \ x \ ] 
+\text{CATE} = \mathbb{E}[ \tau_i | x_i ] 
 $$
 
 <br />
@@ -307,14 +319,16 @@ We can also estimate the causal effect on only the treatment or control groups.
 The **average treatment effect on the treated (ATT)** is the average treatment effect of only units who received the treatment $D_i = 1$:
 
 $$
-\tau_{ATT} = \mathbb{E} [y_{1i} - y_{0i} \ | \ D_i = 1] = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
+\text{ATT} = \mathbb{E} [\tau_i | D_i = 1] = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
 $$
 
 The **average treatment effect on the controls (ATC)** is the average treatment effect of only units who did not receive the treatment $D_i = 0$:
 
 $$
-\tau_{ATC} = \mathbb{E} [y_{1i} - y_{0i} \ | \ D_i = 0] = \bar{y}_{1i, \ D_i = 0} - \bar{y}_{0i, \ D_i = 0}
+\text{ATC} = \mathbb{E} [\tau_i|D_i = 0] = \bar{y}_{1i, \ D_i = 0} - \bar{y}_{0i, \ D_i = 0}
 $$
+
+<br />
 
 <br />
 
@@ -322,7 +336,7 @@ $$
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 1.4: Properties of Estimators - Unbiasdness and Consistency
+# 1.4: Properties of Estimators - Unbiasedness and Consistency
 
 The above causal estimands are not directly calculable, since we cannot observe both potential outcomes. Thus, we need an **estimator** to estimate the causal estimands.
 
@@ -365,7 +379,7 @@ Archer $C$ is an example of an unbiased, but very inconsistent estimator. On ave
 
 <br />
 
-Ideally, we want an estimator that is both **unbiased** and **consistent**. This would mean that their average estimates are equal to the true estimand, and that each estimate is relatively close to the true estimand with low variance.
+Ideally, [we want an estimator that is both **unbiased** and **consistent**]{.underline}. This would mean that their average estimates are equal to the true estimand, and that each estimate is relatively close to the true estimand with low variance.
 
 -   So, an archer than on average, hits the bullseye, and is generally not too far off from the bullseye on any sepcific shot.
 
@@ -389,7 +403,7 @@ This is what many people do when trying to find a causal effect. The naive estim
 
 <br />
 
-However, **the naive estimator is a bad idea**. Remember, treatment effects are supposed to be comparing the two potential outcomes [of the same unit]{.underline}. We are supposed to compare $y_{1i}$ to $y_{0i}$.
+However, [**the naive estimator is a bad idea**]{.underline}. Remember, treatment effects are supposed to be comparing the two potential outcomes [of the same unit]{.underline}. We are supposed to compare $y_{1i}$ to $y_{0i}$.
 
 -   However, the naive estimator does not do that. Instead, it is comparing the observed outcomes of the treatment group versus the different control group.
 
@@ -405,30 +419,30 @@ So essentially, it is comparing the potential outcomes of [different]{.underline
 We can prove this mathematically. We start with the naive estimator:
 
 $$
-\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
+\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
 $$
 
 Then, we do a little algebra trick - we add a new term to this equation, then subtract that same term. The two new terms thus cancel each other out to 0:
 
 $$
-\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
+\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1}
 $$
 
 Now, let us re-arrange this equation:
 
 $$
-\hat{\tau}_{\text{naive}} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
+\hat{\tau} = \bar{y}_{1i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 1} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
 $$
 
 We can see the first two terms are equal to the average treatment effect on the treated (ATT). Thus, we can rewrite the naive estimator:
 
 $$
-\hat{\tau}_{\text{naive}} = \tau_{ATT} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
+\hat{\tau} = \text{ATT} + \bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}
 $$
 
 If we look at the final result, we can divide it into two parts:
 
-1.  The ATT $\tau_{ATT}$
+1.  The ATT (see [section 1.4](https://politicalscience.github.io/metrics/causal/1.html#causal-estimands))
 2.  The extra bit: $\bar{y}_{0i, \ D_i = 1} - \bar{y}_{0i, \ D_i = 0}$, which we call **selection bias**. Intuitively, it is the difference [prior to treatment]{.underline} between the control and treatment groups. This results in our naive estimator being biased.
 
 We will go into detail on selection bias in the next section.
@@ -458,6 +472,8 @@ For example, if we are measuring the question *does going to the hospital make y
 Thus, selection bias can be thought of as when our treatment and control groups are fundamentally different and unequal prior to treatment.
 
 -   And when we use the naive estimator (or correlation), we pick up this bias in our estimates.
+
+<br />
 
 ### Confounding Variables
 
