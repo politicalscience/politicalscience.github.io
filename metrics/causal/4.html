@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -711,14 +745,122 @@ Warnings!
 </section>
 <section id="implementation-in-r" class="level1">
 <h1>Implementation in R</h1>
+<p>The packages we will need are:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(texreg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
 <section id="multiple-linear-regression-in-r" class="level2">
 <h2 class="anchored" data-anchor-id="multiple-linear-regression-in-r">Multiple Linear Regression in R</h2>
+<p>To run simple linear regression, we use the <em>feols()</em> function.</p>
+<ul>
+<li>The argument <em>se = “hetero”</em> tells R to calculate heteroscedasticity-robust standard errors, which will be discussed later in chapter 4. Just know it is standard to do so.</li>
+<li>We can add more explanatory variables by using + and then add more. We can reduce the number of explanatory variables down to one.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>modelname <span class="ot">&lt;-</span> <span class="fu">feols</span>(Y <span class="sc">~</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> X3, <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelname)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">feols</span>(pct_missing <span class="sc">~</span> treat_invite <span class="sc">+</span> head_edu <span class="sc">+</span> mosques <span class="sc">+</span> pct_poor,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> dta, <span class="at">se =</span> <span class="st">"hetero"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OLS estimation, Dep. Var.: pct_missing
+Observations: 472
+Standard-errors: Heteroskedasticity-robust 
+              Estimate Std. Error   t value   Pr(&gt;|t|)    
+(Intercept)   0.429443   0.089541  4.796047 2.1799e-06 ***
+treat_invite -0.026750   0.032667 -0.818872 4.1328e-01    
+head_edu     -0.005320   0.006128 -0.868103 3.8578e-01    
+mosques      -0.049943   0.018451 -2.706799 7.0424e-03 ** 
+pct_poor     -0.103641   0.073363 -1.412729 1.5840e-01    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 0.340276   Adj. R2: 0.013925</code></pre>
+</div>
+</div>
+<p>We can see the output estimate of the intercept and all the coefficients.</p>
+<ul>
+<li>These rows include the estimate, the standard error, the t-test statistic, and the p-value. This gives all of the information we need to run linear regression and hypothesis tests.</li>
+</ul>
+<p>For how to do categorical variables, consult chapter 1.</p>
+<p><br></p>
+<p>We can also use the base-R <em>lm()</em> function, however, this does not calculate heteroscedasticity-robust standard errors (once again, will be discussed in chapter 4).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>modelname <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2, <span class="at">data =</span> mydata)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelname)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
 </section>
 <section id="confidence-intervals" class="level2">
 <h2 class="anchored" data-anchor-id="confidence-intervals">Confidence Intervals</h2>
+<p>To see confidence intervals of all our coefficients, we can use the <em>confint()</em> function on our regression object:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(modelname)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For example, let us find the confidence intervals for our last model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   2.5 %       97.5 %
+(Intercept)   0.25348998  0.605396682
+treat_invite -0.09094173  0.037442062
+head_edu     -0.01736102  0.006721906
+mosques      -0.08620059 -0.013685913
+pct_poor     -0.24780279  0.040520175</code></pre>
+</div>
+</div>
+<p><br></p>
 </section>
 <section id="creating-regression-tables" class="level2">
 <h2 class="anchored" data-anchor-id="creating-regression-tables">Creating Regression Tables</h2>
+<p>We can create regression tables using the <em>texreg()</em> or <em>screenreg()</em> functions.</p>
+<ul>
+<li><em>texreg()</em> produces LaTeX code that you can insert into a LaTeX document</li>
+<li><em>screenreg()</em> produces something that looks nice in a R document.</li>
+</ul>
+<p>The syntax is as follows (you can replace <em>screenreg()</em> with <em>texreg()</em> ):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">screenreg</span>(<span class="at">l =</span> <span class="fu">list</span>(modelname),</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.model.names =</span> <span class="fu">c</span>(<span class="st">"Outcome Variable Name"</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.coef.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"X1 Variable Name"</span>, <span class="st">"X2 Variable Name"</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">screenreg</span>(<span class="at">l =</span> <span class="fu">list</span>(model1),</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.model.names =</span> <span class="fu">c</span>(<span class="st">"Pct_Missing"</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.coef.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"Treatment"</span>, <span class="st">"head_edu"</span>, <span class="st">"mosques"</span>, <span class="st">"pct-poor"</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+==================================
+                       Pct_Missing
+----------------------------------
+Intercept                0.429 ***
+                        (0.090)   
+Treatment               -0.027    
+                        (0.033)   
+head_edu                -0.005    
+                        (0.006)   
+mosques                 -0.050 ** 
+                        (0.018)   
+pct-poor                -0.104    
+                        (0.073)   
+----------------------------------
+Num. obs.              472        
+R^2 (full model)         0.022    
+R^2 (proj model)                  
+Adj. R^2 (full model)    0.014    
+Adj. R^2 (proj model)             
+==================================
+*** p &lt; 0.001; ** p &lt; 0.01; * p &lt; 0.05</code></pre>
+</div>
+</div>
 <p><br></p>
 <p><br></p>
 <hr>
