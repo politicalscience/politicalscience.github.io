@@ -1,0 +1,837 @@
+---
+title: "Chapter 3: Basics of Regression for Relationships Between Variables"
+subtitle: "Econometric Methods (for Social Scientists)"
+format:
+    html:
+        page-layout: article
+        grid:
+          sidebar-width: 300px
+          body-width: 750px
+          margin-width: 250px
+          gutter-width: 2em
+        fontsize: 12.5pt
+        theme: yeti
+        toc: TRUE
+        toc-depth: 2
+        toc-location: left
+        toc-expand: true
+        toc-title: "Chapter 3: Basics of Regression for Relationships Between Variables"
+        mainfont: "Computer Modern"
+        title-block-banner: true
+        classoption: fleqn
+        html-math-method: katex
+---
+
+This chapter introduces regression, the key technique used in econometrics and statistics to measure relationships between variables. We will explore the basics of regression, including how the model is specified, the coefficients of the model, and the estimation process.
+
+Topics: Simple Linear Regression, Ordinary Least Squares Estimator, Interpretation of Coefficients, Categorical Explanatory Variables, Hypothesis Testing
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 3.1: Regression and Relationships Between Variables
+
+So far, we have focused on binary treatment variables $D$, that can either be $D=0$ for the control group, or $D=1$ for the treatment group.
+
+However, a lot of the relationships we are interested in are not binary.
+
+-   For example, you might be interested in how someone’s income affects their likelihood to vote.
+-   Or how someone’s age affects their political beliefs.
+-   Or how a country’s GDP affects the chance a country becomes a democracy.
+-   Income, age, and GDP are all treatment variables that are not binary.
+
+<br />
+
+We typically notate continuous treatment variables as $x$ instead of $D$.
+
+How can we explore the relationship between a continuous $x$ variable and a continuous $y$ variable?
+
+One way to explore the relationship is with a best-fit line. A best-fit line is useful, since the **slope** of the best-fit line represents the change in $y$ for every unit change in $x$.
+
+![](figures/3-3.png){fig-align="center" width="45%"}
+
+In the figure above, we have plotted a number of observations, and implemented a best-fit line in red. The graph here introduces some common terminology:
+
+-   The **independent variable**, also called the **explanatory variable** or **treatment variable**, is the variable that we believe is doing the causing. It is typically notated $x$ (or $D$ if binary).
+-   The **dependent variable**, also called the **response variable** or **outcome variable**, is the variable that is affected by a change in the independent variable. The dependent variable is typically notated with $y$.
+
+We know from algebra that a linear equation takes the form $y=mx+b$. The slope $m$ describes the rate of change of $y$ for a one unit change in $x$.
+
+-   Thus, the slope is a measurement of the relationship between $x$ and $y$.
+
+Thus, if we can fit a best-fit line to our data, we can look at the slope, and determine the **relationship** between $x$ and $y$.
+
+::: callout-warning
+## Warning!
+
+Note how I have been using the word **relationship**, not causal effect.
+
+Relationship is the measure of correlation. As we established in [section 1.1](https://politicalscience.github.io/metrics/causal/1.html#correlation-and-causation), correlation is not causation.
+
+Only under specific circumstances can we use regression and best-fit lines to estimate causation. That will be the focus of the [next chapter](https://politicalscience.github.io/metrics/causal/4.html). This chapter focuses on the basics of regression (although we will briefly discuss causality).
+:::
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 3.2: The Simple Linear Regression Model
+
+How can we fit a best-fit line in order to find the relationship between $x$ and $y$? The main way to do this is with the **simple linear regression model**.
+
+First, what is a **regression model**? [A regression model is the specification of the conditional distribution of $y$, given $x$.]{.underline}
+
+A distribution (random variable) says that there are multiple potential values of $y$.
+
+-   For example, if $x$ is age, and $y$ is income, a distribution of income $y$ says that not all individuals make the same amount of money.
+-   If you select someone at random, the probability of selecting someone with a specific income $y_i$ will depend on the probability distribution of income.
+
+A conditional distribution says that the distribution of $y$ is conditional (depends on) the value of $x$.
+
+-   For example, if $x$ is age, and $y$ is income, a conditional distribution of income $y$ on age $x$ says that depending on the age $x$ of an individual, the probability distribution of income $y$ will change.
+-   This makes sense - if the probability distribution of $y$ is not affected at all by the value of $x$, then clearly $x$ is not causing any change in $y$.
+
+<br />
+
+The linear regression model focuses on the **expected value** of the conditional distribution, notated $\mathbb{E}[y_i | x_i]$.
+
+-   The expected value, also known as the mean, is the "best guess" of $y$ (since $y$ is a probability distribution with many values).
+
+::: callout-tip
+## Definition: Simple Linear Regression
+
+The simple linear regression model takes the following form:
+
+$$
+\mathbb{E}[y_i | x_i] = \beta_0 + \beta_1 x_i
+$$
+
+-   Where we have $n$ number of observations in our data, $i$ being any one of them, and each observation has an $x$ and $y$ value $(x_i, y_i)$.
+-   Where $\mathbb{E}[y_i | x_i]$ is the expected value of the conditional distribution of $y_i|x_i$. That distribution has a variance $Var(y_i | x_i) = \sigma^2$.
+-   Where $\beta_0$ (intercept) and $\beta_1$ (slope) are coefficients of the model that need to be estimated.
+
+We can also write the simple linear regression model in respect to a specific $y_i$ value, rather than the expected value:
+
+$$
+y_i = \beta_0 + \beta_1 x_i + u_i
+$$
+
+-   Where we have $n$ number of observations in our data, $i$ being any one of them, and each observation has an $x$ and $y$ value $(x_i, y_i)$.
+-   Where $\beta_0$ (intercept) and $\beta_1$ (slope) are coefficients of the model that need to be estimated.
+-   Where $u_i$ is the error term. Remember, $y_i$ is any value in the conditional distribution $y_i|x_i$, so it may not be exactly at the expected value of the conditional distribution. Thus, we have to add an error term to account for this distribution, where $\mathbb{E}[u_i] = 0$ and $Var[u_i] = \sigma^2$.
+:::
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 3.3: Fitted Values and the Sum of Squared Errors
+
+### Fitted Values and Best-Fit Lines
+
+We have discussed the form a simple linear regression takes. However, this is not the best-fit line: we still need to estimate the coefficients $\beta_0$ (intercept) and $\beta_1$ (slope) in order to create a best-fit line.
+
+-   The estimates of $\beta_0$ and $\beta_1$ that we obtain will be denoted with a hat \^: $\hat\beta_0$ and $\hat\beta_1$.
+
+-   We will discuss the estimation process in the next section.
+
+Once we have obtained our estimates of the coefficients, we will have a **best-fit line**, also called a **fitted-values** model:
+
+$$
+\hat{y} = \hat\beta_0 + \hat\beta_1x_i
+$$
+
+-   Where $\hat{y}$ are the predicted values of $y$ based on our best-fit line.
+-   Where $\hat\beta_0$ and $\hat\beta_1$ are our estimates for the true coefficients $\beta_0$ and $\beta_1$.
+-   Note that the error term $u_i$ disappears. This is because the average value of $u_i$ is $\mathbb{E} [u_i] = 0$, so we do not need to include the term.
+
+<br />
+
+### Sum of Squared Errors
+
+We want to fit a best-fit line that is accurate. So, we want to find the $\beta_0$ (intercept) and $\beta_1$ (slope) values that will best fit our observed dataset.
+
+One way we can fit an accurate line is to find the best-fit line that minimises the sum of squared errors.
+
+::: callout-tip
+## Definition: Sum of Squared Errors
+
+The sum of squared errors (SSE) is as follows:
+
+$$
+\begin{split}
+SSE & = \sum\limits_{i=1}^n (y_i - \hat y_i)^2 \\
+& = \sum\limits_{i=1}^n (y_i - \hat\beta_0 - \hat\beta_1 x_i)^2
+\end{split}
+$$
+
+-   The sum of squared errors is exactly as it sounds. Find the error, the distance between the actual $y_i$ and predicted $\hat y$, which is $y_i - \hat y$, then square that error $(y_i - \hat y_i)^2$, then sum up for all observations $i$ in the data.
+
+-   We get the second equation by substituting in the fitted values model (discussed in the last section), where $\hat{y} = \hat\beta_0 + \hat\beta_1x_i$.
+
+The **Ordinary Least Squares (OLS) Estimator** estimates the coefficients $\beta_0$ and $\beta_1$ by finding the values of $\beta_0$ and $\beta_1$ that result in the line with the smallest sum of squared errors.
+:::
+
+<br />
+
+A common question is: why are the errors squared?.
+
+-   This is because we are only concerened with the **size/magnitude** of errors, not the direction of errors.
+-   A simple subtraction to obtain errors would include negative errors (where the prediction $\hat y$ is higher than the actual $y_i$), and positive errors (where the prediction $\hat y$ is lower than the actual $y_i$).
+-   But we do not care if the error is above or below the true $y_i$. We only care about the size.
+-   Thus, by squaring the errors, we get rid of the negatives and everything is positive.
+
+Then, why not absolute value? This is for a few reasons:
+
+-   Firstly, the absolute value function is not differentiable at the vertex. This is an issue, as we will see in the OLS estimation process, we need to take the derivative of the error function for minimisation purposes.
+
+-   Second, the OLS estimator with its squared errors has a few unique properties that make it very consistent and unbiased. We will focus on these in [chapter 4](https://politicalscience.github.io/metrics/causal/4.html) when we discuss causal inference with regressions.
+
+In the next section, we will discuss the mathematics behind the OLS estimator.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 3.4: Mathematics of the Ordinary Least Squares Estimator
+
+As we discussed in the previous section, the Ordinary Least Squares Estimator estimates our coefficients $\beta_0$ (slope) and $\beta_1$ (intercept) by finding the values of $\beta_0$ and $\beta_1$ that minimise the sum of squared errors.
+
+We can describe the goal of OLS in a more mathematical way:
+
+::: callout-tip
+## Definition: Ordinary Least Squares (OLS) Estimator
+
+The goal of the Ordinary Least Squares (OLS) Estimator is to find the values of $\beta_0$ and $\beta_1$ that make the following statement true:
+
+$$
+\begin{split}
+(\hat{\beta}_0, \hat{\beta}_1) & = \arg \min\limits_{\hat{\beta}_0, \hat{\beta}_1} \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)^2 \\
+& = \arg \min\limits_{\hat{\alpha}, \hat{\beta}} S(\hat{\beta}_0, \hat{\beta}_1)
+\end{split}
+$$
+
+Where function $S$ is the sum of squared errors.
+:::
+
+<br />
+
+How do we minimise $S$ (the function of the sum of squared errors)?
+
+-   From calculus, we know that a minimum/maximum of a function is where the derivative of the function is equal to 0.
+
+Thus, let us find the partial derivative of the function $S$ in respect to both $\hat\beta_0$ and $\hat\beta_1$, and set them equal to 0. This is also called the **first-order conditions**.
+
+<br />
+
+### First Order Conditions
+
+First, let us find the partial derivative of $S$ in respect to $\hat\beta_0$:
+
+$$
+\frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_0} = \frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_0} \left[ \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)^2 \right]
+$$
+
+First, ignore the summation. The partial derivative of the internal section, using chain rule, is the following:
+
+$$
+\frac{\partial}{\partial \hat{\beta}_0} \left[ (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)^2 \right] = -2(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)
+$$
+
+But how do we deal with the summation? We know that there is the sum rule of derivatives $[f(x) + g(x)]' = f'(x) + g'(x)$. Thus, we know we just sum up the derivatives to get the derivative:
+
+$$
+\begin{split}
+\frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_0} & = \sum\limits_{-i=1}^n \left[ -2(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) \right] \\
+& = -2 \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)
+\end{split}
+$$
+
+To find the value of $\hat\beta_0$ that minimises $S$, we set the derivative equal to 0. We can ignore the -2, since if the summation is equal to 0, the whole derivative will equal 0. Thus, the first order condition is:
+
+$$
+\sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
+$$
+
+<br />
+
+Now, let us do the same for $\hat\beta_1$. Using the same steps as before
+
+$$
+\begin{split}
+\frac{\partial S(\hat{\beta}_0, \hat{\beta}_1)}{\partial \hat{\beta}_1} & = \sum\limits_{i=1}^n \left[ -2x_i(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) \right] \\
+& = -2 \sum\limits_{i=1}^n x_i(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)
+\end{split}
+$$
+
+The first order condition for $\hat\beta_1$ will be (again, ignoring the -2 for the same reason as before):
+
+$$
+\sum\limits_{i=1}^n x_i(y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
+$$
+
+<br />
+
+::: callout-note
+## Definition: First Order Conditions of OLS
+
+Thus, the first order conditions of OLS are:
+
+$$
+\begin{split}
+& \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0 \\
+& \sum\limits_{i=1}^n x_i (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
+\end{split}
+$$
+:::
+
+<br />
+
+### Solving the System of Equations
+
+We now have our two first-order conditions. Now, we basically have a 2-equation system of equations, with 2 variables.
+
+-   We can solve this through substitution - in the first equation, solve for $\hat\beta_0$ in terms of $\hat\beta_1$.
+-   Then, plug in $\hat\beta_0$ in terms of $\hat\beta_1$ into the second equation, thus making that a one-variable equation. We can solve that equation for $\hat\beta_1$, then find $\hat\beta_0$.
+
+<br />
+
+First, let us solve the first equation for $\hat\beta_0$ in terms of $\hat\beta_1$:
+
+$$
+\begin{split}\sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) & =  0 \\
+\sum\limits_{i=1}^n y_i - n \hat{\beta}_0 - \hat{\beta}_1 \sum\limits_{i=1}^n x_i & = 0 \\
+-n\hat{\beta}_0 &= -\sum\limits_{i=1}^n y_i + \hat{\beta}_1\sum\limits_{i=1}^nx_i \\
+\hat{\beta}_0 & = \frac{1}{n} \sum\limits_{i=1}^n y_i - \frac{1}{n}\hat{\beta}_1 \sum\limits_{i=1}^n x_i \\
+& = \bar{y} - \hat{\beta}_1 \bar{x}
+\end{split}
+$$
+
+Now, let us substitute our calculated $\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}$ into the $\hat{\beta}_1$ condition and solve: for $\hat{\beta}_1$:
+
+$$
+\begin{split}0 & = \sum\limits_{i=1}^n \left[ x_i(y_i - [\bar{y} - \hat{\beta}_1\bar{x}] - \hat{\beta}_1x_i) \right] \\
+& = \sum\limits_{i=1}^n \left[ x_i(y_i - \bar{y} - \hat{\beta}_1 (x_i - \bar{x})) \right] \\
+& = \sum\limits_{i=1}^n \left[ x_i(y_i - \bar{y}) - x_i \hat{\beta}_1(x_i - \bar{x}) \right] \\
+& = \sum\limits_{i=1}^n x_i (y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^nx_i (x_i - \bar{x})\end{split}
+$$
+
+::: callout-note
+## Summation Properties
+
+To help us solve this problem, note these 3 properties of summation:
+
+$$
+\begin{split}& \sum\limits_{i=1}^n (x_i - \bar{x}) = 0 \\& \sum\limits_{i=1}^n x_i(y_i - \bar{y}) = \sum\limits_{i=1}^n(x_i - \bar{x}) (y_i - \bar{y}) \\& \sum\limits_{i=1}^n x_i(x_i - \bar{x}) = \sum\limits_{i=1}^n(x_i - \bar{x})^2\end{split}
+$$
+:::
+
+Knowing these properties of summation, we can transform what we had before into:
+
+$$
+\begin{split}
+0 & = \sum\limits_{i=1}^n(x_i - \bar{x})(y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^n (x_i - \bar{x})^2 \\
+\hat{\beta}_1 \sum\limits_{i=1}^n (x_i - \bar{x})^2 & = \sum\limits_{i=1}^n(x_i - \bar{x})(y_i - \bar{y}) \\
+\hat{\beta}_1 & = \frac{\sum\limits_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum\limits_{i=1}^n(x_i - \bar{x})^2}
+\end{split}
+$$
+
+::: callout-tip
+## Definition: OLS Estimate of Coefficient
+
+Thus, the OLS estimate $\hat\beta_1$ (slope) of the linear regression model is:
+
+$$
+\hat{\beta}_1 = \frac{\sum\limits_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum\limits_{i=1}^n(x_i - \bar{x})^2} = \frac{Cov(x, y)}{Var(x)} = \frac{\sigma_{xy}}{\sigma_x^2}
+$$
+
+This is also the expected change in $y$ given a one unit increase in $x$.
+
+-   Remember, this is the **relationship**, not the causal effect. We will discuss causality later.
+:::
+
+<br />
+
+Of course, we still need to find $\hat\beta_0$ (the slope). We found that $\hat\beta_0 = \bar{y} - \hat{\beta}_1 \bar{x}$ earlier, so we just plug that in.
+
+And now, we have our estimates $\hat\beta_0$ and $\hat\beta_1$, and thus we now have a best-fit line and an estimate of the relationship between $x$ and $y$.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 3.5: Interpretation of OLS Coefficient Estimates
+
+We now have estimated $\hat\beta_0$ and $\hat\beta_1$. But what do these actually mean in the context of the relationship between $x$ and $y$?
+
+-   Let us start with $\hat\beta_1$, which is the slope, the more important of the two coefficients.
+
+<br />
+
+### Interpretation of $\hat\beta_1$
+
+We know that in a linear model, $\mathbb{E}[y_i|x_i] = \beta_0 + \beta_1 x_i$, the coefficient $\beta_1$ is the slope.
+
+-   And the slope is the change in $y$ given a one unit increase in $x$.
+
+Using this knowledge, we can interpret estimate $\hat\beta_1$.
+
+::: callout-tip
+## Interpretation of $\hat\beta_1$
+
+When $x$ increases by one unit, there is an expected $\hat{\beta}_1$ unit change in $y$.
+:::
+
+Again, this is the **relationship** between $x$ and $y$, not the causal effect.
+
+::: callout-warning
+## Warning!
+
+If, and only if, there is [random assignment]{.underline} into $x$, and randomisation is sucessful, we can claim a causal effect of $x$ on $y$.
+
+-   We will further discuss this in section 3.8
+
+If this condition is met, $\hat\beta_1$ is an estimate of the **average causal effect** of $x$ on $y$ for every one unit increase of $x$.
+
+-   However, remember from [section 2.4](https://politicalscience.github.io/metrics/causal/2.html#hypothesis-tests-and-causal-inference), that we still need to conduct **causal inference** and hypotheses tests to confirm this is a causal relationship in the face of uncertainty due to randomisation.
+:::
+
+<br />
+
+### Interpretation of $\hat\beta_0$
+
+We know that in a linear model, $\mathbb{E}[y_i|x_i] = \beta_0 + \beta_1 x_i$, the coefficient $\beta_0$ is the y-intercept.
+
+-   And the y-intercept is the change value of $y$ given $x=0$.
+
+We can prove this mathematically:
+
+$$
+\begin{split}
+\hat y_{i, \ x_i = 0} & = \hat\beta_0 + \hat\beta_1 x_i \\
+& = \hat\beta_0 + \hat\beta_1(0) \\
+& = \hat\beta_0
+\end{split}
+$$
+
+Thus, knowing this, we can interpret $\hat\beta_0$.
+
+::: callout-tip
+## Interpretation of $\hat\beta_0$
+
+When $x=0$, the expected value of $y$ is $\hat{\beta}_0$
+:::
+
+<br />
+
+### Interpreting $\beta_1$ in Terms of Standard Deviations
+
+Sometimes, it is hard to understand what changes in $y$ and $x$ mean in terms of units. For example, if we are measuring "democracy", what does a 5 unit change in democracy mean? Is that a lot?
+
+We can add more relevant detail by expressing the change of $y$ and $x$ in standard deviations.
+
+How do we calculate this? Well, let us solve for the change in $\hat{y}_i/\sigma_y$ given $x_i = x$ and $x = x + \sigma_X$. This will tell us how much $\hat{y}$ changes by given a increase of one standard deviation in $x$:
+
+$$
+\begin{split}
+\frac{\hat y_{i, \ x_i = x + \sigma_x}}{\sigma_y} - \frac{\hat y_{i, \ x_i = x}}{\sigma_y} & = \frac{\hat\beta_0 + \hat\beta_1 x_i}{\sigma_y} - \frac{\hat\beta_0 + \hat\beta_1 x_i}{\sigma_y} \\
+& = \frac{\hat\beta_0 + \hat\beta_1 (x+\sigma_x) - (\hat\beta_0 + \hat\beta_1 (x))}{\sigma_y} \\
+& = \frac{\hat\beta_0 - \hat\beta_0 + \hat\beta_1x - \hat\beta_1x+\hat\beta_1\sigma_x}{\sigma_y} \\
+& = \frac{\hat\beta_1 \sigma_x}{\sigma_y}
+\end{split}
+$$
+
+::: callout-tip
+## Interpretation in Terms of Standard Deviation
+
+For a one-std. deviation increase in $x$, there is an expected $\hat{\beta}_1 \sigma_x / \sigma_y$-std. deviation change in $Y$.
+:::
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 3.6: Categorical Explanatory Variables and Interpretation
+
+While we have focused on the fact that regression can help explain relationships with a continuous $x$, linear regression models can also estimate and model categorical $x$ variables.
+
+### Binary Explanatory Variables
+
+**Binary explanatory** variables are variables with 2 values, 0 and 1.
+
+-   For example, the treatment variable $D$ we focused on in [chapter 2](https://politicalscience.github.io/metrics/causal/2.html) is a binary explanatory variable.
+-   Binary explanatory variables are extremely common in the social sciences. They can include things such as yes/no questions, true/false questions, voted/did not vote, etc.
+
+Binary explanatory variables will change the interpretations of our coefficients.
+
+We can "solve" for these interpretations. Assume $x$ has two categories $x=0$ and $x=1$:
+
+$$
+\begin{split}
+& \hat y_{i, \ x = 0} = \hat\beta_0 + \hat\beta_1(0) = \hat\beta_0 \\
+& \hat y_{i, \ x = 1} = \hat\beta_0 + \hat\beta_1(1) = \hat\beta_0 + \hat\beta_1 \\
+& \hat y_{i, \ x = 1} - \hat y_{i, \ x = 0} = (\hat\beta_0 + \hat\beta_1) - \hat\beta_0 = \hat\beta_1
+\end{split}
+$$
+
+Thus, we can interpret the coefficients as follows:
+
+::: callout-tip
+## Interpretation of Coefficient with a Binary Explanatory Variable
+
+When $x$ is a binary explanatory variable:
+
+-   $\hat\beta_0$ is the expected value of $y$ given an observation in category $x = 0$
+-   $\hat\beta_0 + \hat\beta_1$ is the expected value of $y$ given an observation in category $x = 1$
+-   $\hat\beta_1$ is the expected difference in $y$ between the categories $x=1$ and $x=0$.
+:::
+
+Again, like before, this is the **relationship** between $x$ and $y$, not the causal effect.
+
+::: callout-warning
+## Warning!
+
+If, and only if, there is [random assignment]{.underline} into $x$, and randomisation is sucessful, we can claim a causal effect of $x$ on $y$.
+
+-   We will further discuss this in section 3.8
+
+If this condition is met, $\hat\beta_1$ is an estimate of the **average treatment effect** of $x$ on $y$ for every one unit increase of $x$.
+
+-   [This is equal to the ATE of randomised experiments with the difference-in-means estimator.]{.underline}
+-   However, remember from [section 2.4](https://politicalscience.github.io/metrics/causal/2.html#hypothesis-tests-and-causal-inference), that we still need to conduct **causal inference** and hypotheses tests to confirm this is a causal relationship in the face of uncertainty due to randomisation.
+:::
+
+<br />
+
+### Polytomous Categorical Variables
+
+A **categorical polytomous** variable is one with 3 or more categories. A classic example is the variable *country*, which has categories USA, Germany, UK, Australia, etc.
+
+How do we run a regression with polytomous explanatory variables? What happens is that we divide the variables into a set of binary variables (also called dummy variables).
+
+-   Dummy binary variables are created for all [except one]{.underline} of the categories in our variable. Each dummy variable has two values - 1 meaning the observation is in the category, and 0 meaning the observation is not in that category.
+-   The category without a dummy variable is the **reference/baseline** category. Essentially, when all other dummy variables are equal to 0, that is referring to the reference/baseline category (the intercept)
+
+::: callout-tip
+## Definition: Polytomous Explanatory Variable Regression
+
+Thus, a **polytomous explanatory variable** with $n$ number of categories in $x$, we would create $n-1$ dummy variables, and input it into a regression equation as follows:
+
+$$
+y_i = \beta_0 + \beta_{x=1}x_{x=1} + ... + \beta_{x=n-1}x_{x=n-1} + u_i
+$$
+
+Where $\beta_0$ is the mean of the reference category $n$, and the other categories $1, ..., n-1$ get their own dummy variable.
+:::
+
+<br />
+
+This might be a little confusing, so take an example:
+
+::: callout-note
+## Example of a Polytomous Explanatory Variable
+
+For example, take the following polytomous variable: *company*, which contains the categories *microsoft, google,* and *apple*. Let us create dummy variables for 2 of the 3 categories:
+
+-   *Google* will become the first dummy variable $x_g$. When $x_g = 1$, that observation is part of the *google* category. When $x_g = 0$, that observation is NOT a part of the *google* category.
+
+-   *Apple* will become the second dummy variable $x_a$. When $x_a = 1$, that observation is part of the *apple* category. When $x_a = 0$, that observation is NOT a part of the *apple* category.
+
+-   *Microsoft* will not get its own dummy variable. This is because when both *apple* and *microsoft* $x_g = x_a = 0$ that is referring to the *microsoft* category (observations not a part of either previous category).
+
+Mathematically, this is how it would be represented in a regression equation:
+
+$$
+\mathbb{E}[y] = \beta_0 + \beta_g x_g + \beta_a x_a
+$$
+
+To find the expected value of each category, we would do the following:
+
+$$
+\begin{split}
+\mathbb{E}[y|x = \text{Google}] & = \mathbb{E}[y|x_g = 1, x_a = 0] \\
+&= \beta_0 + \beta_g(1) + \beta_a(0) \\
+& = \beta_0 + \beta_g \\
+\mathbb{E}[y|x = \text{Apple}] & = \mathbb{E}[y|x_g = 0, x_a = 1] \\
+& = \beta_0 + \beta_g(0) + \beta_a(1) \\
+& = \beta_0 + \beta_a \\
+\mathbb{E}[y|x = \text{Microsoft}] & = \mathbb{E}[y|x_g = 0, x_a = 0] \\
+& = \beta_0 + \beta_g(0) + \beta_a(0) \\
+& = \beta_0\end{split}
+$$
+:::
+
+Thus, from these above equations, we can see the interpretation of the coefficients:
+
+-   $\beta_0$ is the expected value of the reference category, in this case, *microsoft*.
+
+-   $\beta_g$ is the expected $y$ difference between the *google* category and the reference category *microsoft*. The statistical significance of this coefficient (we will discuss this in the next section) would be a difference of means test between the two categories.
+
+-   $\beta_a$ is the expected $y$ difference between the *apple* category and the reference category *microsoft*. The statistical significance of this coefficient would be a difference of means test between the two categories.
+
+<br />
+
+We can generalise what we saw in the above example to the following interpretations of coefficients:
+
+::: callout-tip
+## Interpretation of Coefficients of a Polytomous Explanatory Variable
+
+$\beta_j$ is the expected difference in $y$ values between category $j$ and the baseline category.
+
+$\beta_0$ is the expected value of $y$ of the baseline category.
+:::
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 3.7: Hypothesis Testing of Coefficients
+
+### Hypothesis Testing
+
+We previously discussed the mechanics of hypothesis testing in [section 2.4](https://politicalscience.github.io/metrics/causal/2.html#hypothesis-tests-and-causal-inference). The mechanics are almost exactly the same.
+
+We know there is some uncertainty with our estimate $\hat\beta_1$, as defined by the standard error of $\hat\beta_1$. This is because of random selection/assignment. So, how do we know if we actually have a significant relationship between $x$ and $y$ with this uncertainty?
+
+What we do is hypothesis testing: a way to test, given a certain level of uncertainty, whether or not we believe there is a relationship between $x$ and $y$.
+
+For regression, our hypothesis tests are:
+
+-   $H_0: \beta_1 = 0$, which means that there is no relationship between $x$ and $y$ (since a slope of 0 would indicate 0 relationship)
+
+-   $H_1 : \beta_1 ≠ 0$, which means there is a relationship between $x$ and $y$.
+
+<br />
+
+We first find the t-test statistic, the same way we did in [section 2.4](https://politicalscience.github.io/metrics/causal/2.html#hypothesis-tests-and-causal-inference):
+
+$$
+t = \frac{\hat{\beta}_1 - 0} {\hat{se}(\hat{\beta}_j)}
+$$
+
+The t-test statistic tells us how far the estimate is from 0, in terms of standard errors of the estimate.
+
+Then, we have to consult a t-distribution (see [section 2.4](https://politicalscience.github.io/metrics/causal/2.html#hypothesis-tests-and-causal-inference)).
+
+-   We find the probability (area under the distribution) of a t-test statistic of ours, or more extreme, could occur.
+
+This is the p-value: how likely we are to get a test statistic at or more extreme than the one we got for our estimated $\hat\beta_1$, given the null hypothesis is true.
+
+-   So if the p-value is very high, there is a high chance that the null hypothesis is true.
+
+-   If the p-value is very low, then there is a low chance that the null hypothesis is true
+
+Generally, in the social sciences, if the p-value is less that 0.05 (5%), we can **reject the null hypothesis**, and conclude the alternate hypothesis.
+
+::: callout-warning
+## Warning!
+
+If our hypothesis test is significant, that means there is a relationship between $x$ and $y$.
+
+However, [it **does not mean** there is a **causal effect** of $x$ on $y$]{.underline}.
+
+-   We will further discuss this in section 3.8
+:::
+
+<br />
+
+### Confidence Intervals
+
+We previously discussed the mechanics of confidence intervals in [section 2.5](https://politicalscience.github.io/metrics/causal/2.html#confidence-intervals-and-plausible-values-of-the-causal-effect). The mechanics are almost exactly the same.
+
+Whether a relationship exists or not between $x$ and $y$ is not the only thing we care about. We also care about the **size/magnitude** of the causal relationship.
+
+We can calculate confidence intervals for our estimate $\hat\beta_1$ to consider plausible values of the relationship between $x$ and $y$.
+
+The 95% confidence interval has the following upper and lower bounds:
+
+$$
+\hat\beta ±1.96 \widehat{se}(\hat\beta)
+$$
+
+The 95% confidence interval means that, if we were to run random sample after random sample, 95% of the confidence intervals generated from each sample’s estimates, would contain the true value of $\beta_1$.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 3.8: Limitations of Causal Inference in Simple Linear Regression
+
+As I have mentioned many times before, regression is focused on the **relationship** between $x$ and $y$, not the causal effect of $x$ on $y$.
+
+Why are these two things not the same? For the same reason correlation is not causation. See [section 1.1](https://politicalscience.github.io/metrics/causal/1.html#correlation-and-causation) for more details on this.
+
+<br />
+
+The key issue with simple linear regression is confounding variables. Simple linear regression only contains $x$ and $y$, and does not consider the effect of confounders.
+
+-   But as we know from [section 1.6](https://politicalscience.github.io/metrics/causal/1.html#selection-bias-and-confounding-variables), confounders introduce selection bias, which makes our estimates unreliable.
+
+<br />
+
+Thus, simple linear regression is only causal when we have some other mechanism that takes care of confounding variables.
+
+That other mechanism is typically random assignment. If we are running a regression on an experiment that has had random assignment of treatment/control, then we can be confident that selection bias and confounders have been accounted for.
+
+-   See chapter 2 for more details on random assignment and why it works.
+
+-   This is the reason why throughout this entire chapter, I have emphasised that [only if random assignment of $x$ has occured, can we make causal claims with simple linear regression.]{.underline}
+
+<br />
+
+Of course, this limitation is very limiting, and makes simple linear regression almost useless except for very special cases.
+
+However, simple linear regression is important because it is the building block of multiple linear regression (and other methods).
+
+-   Multiple linear regression (covered in the next chatper) will allow us to add control variables to our regression, thus accounting for confounding variables.
+
+<br />
+
+The key lesson of this entire course on econometrics, and especially this chapter, is that we have to be careful when we make causal claims. We must be confident that confounding variables are accounted for.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# Implementation in R
+
+The packages we will need are:
+
+```{r, message = FALSE}
+library(tidyverse)
+library(fixest)
+library(texreg)
+```
+
+```{r, echo = FALSE, message = FALSE}
+setwd("/Users/kevinli/Documents/GitHub/politicalscience.github.io/metrics/causal")
+dta <- read_csv("data/olken_data.csv")
+```
+
+<br />
+
+## Simple Linear Regression
+
+To run simple linear regression, we use the *feols()* function.
+
+-   The argument *se = "hetero"* tells R to calculate heteroscedasticity-robust standard errors, which will be discussed later in chapter 4. Just know it is standard to do so.
+
+```{r, eval = FALSE}
+modelname <- feols(y ~ x, data = mydata, se = "hetero")
+summary(modelname)
+```
+
+For example:
+
+```{r, message = FALSE}
+model1 <- feols(pct_missing ~ treat_invite, data = dta, se = "hetero")
+summary(model1)
+```
+
+We can see the output estimate of *treat_invite*, our $x$ variable
+
+-   The row includes the estimate, the standard error, the t-test statistic, and the p-value. This gives all of the information we need to run linear regression and hypothesis tests.
+
+<br >
+
+We can also use the base-R *lm()* function, however, this does not calculate heteroscedasticity-robust standard errors (once again, will be discussed in chapter 4).
+
+```{r, eval = FALSE}
+modelname <- lm(y ~ x, data = mydata)
+summary(modelname)
+```
+
+<br />
+
+## Categorical Explanatory Variables
+
+To run a regression with a categorical explanatory variable, we must first look in R at the categorical variable.
+
+-   R treats *string* and *double* variables automatically as categorical variables, so we can just directly insert them into our regression like above.
+-   However, if our categorical variable is coded numerically, we must use the *as.factor()* function to coerce the variable into a categorical variable
+
+For example, below, variable $x$ is being coerced into a categorical variable
+
+```{r, eval = FALSE}
+modelname <- feols(y ~ as.factor(x), data = mydata, se = "hetero")
+```
+
+<br />
+
+## Confidence Intervals of Coefficients
+
+For confidence intervals in R, we first run a regression (see above), then use the *confint* command:
+
+```{r, eval = FALSE}
+confint(modelname)
+```
+
+For example:
+
+```{r}
+confint(model1)
+```
+
+Here in the *treat_invite* row, we can see the lower and upper bounds of the 95% confidence interval for the coefficient estimate.
+
+<br />
+
+## Creating Regression Tables
+
+We can create regression tables using the *texreg()* or *screenreg()* functions.
+
+-   *texreg()* produces LaTeX code that you can insert into a LaTeX document
+-   *screenreg()* produces something that looks nice in a R document.
+
+The syntax is as follows (you can replace *screenreg()* with *texreg()* ):
+
+```{r, eval = FALSE}
+screenreg(l = list(modelname),
+  custom.model.names = c("Outcome Variable Name"),
+  custom.coef.names = c("Intercept", "X Variable Name"),
+  digits = 3)
+```
+
+For example:
+
+```{r}
+screenreg(l = list(model1),
+  custom.model.names = c("Pct_Missing"),
+  custom.coef.names = c("Intercept", "Treatment"),
+  digits = 3)
+```
