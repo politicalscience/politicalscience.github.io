@@ -36,6 +36,8 @@ Topics: Multiple Linear Regression, OLS with Linear Algebra, Regression Anatomy,
 
 Before we start, make sure you have a strong understanding of all aspects of the simple linear regression model covered in [chapter 1](https://politicalscience.github.io/metrics/causal/1.html).
 
+-   Every topic covered in that chapter can be applied to Multiple Linear Regression, including categorical/polytomous explanatory variables, the linear probability model, and polynomial and logarithmic transformations.
+
 One of the issues with simple linear regression is that it often only measures the correlation/relationship between $x$ and $y$. Simple linear regression can only be used for causal estimation when used in randomised controlled experiments.
 
 <br />
@@ -332,7 +334,15 @@ Thus, the interpretation of $\beta_1$, or any $\beta_j$ multiplied to $x_j$, is:
 -   For every one unit increase in $x_j$, there is an expected $\beta_j$ increase in $y$, when controlling for all other explanatory variables.
 -   Thus, we have "controlled for" and "partialled out" the effect of confounders on $x_j$.
 
-Intecept $\beta_0$ is the expected value of $y$ when all $\overrightarrow{x} = 0$.
+For binary $x_j$ variables (such as treatment $D$), $\beta_j$ is the expected difference in $y$ between categories $x=1$ and $x=0$, when controlling for all other explanatory variables.
+
+&nbsp;
+
+Note: the $\beta_j$ interpretation is [not the same]{.underline} for the linear probability model, polytomous explanatory variables, polynomial transformations, and log transformations.
+
+-   For the interpretation of those, refer back to the interpretation of [chapter 1](https://politicalscience.github.io/metrics/causal/1.html), and add the phrase *"when controlling for all other explanatory variables"*.
+
+Intercept $\beta_0$ is the expected value of $y$ when all $\overrightarrow{x} = 0$.
 :::
 
 <br />
@@ -426,7 +436,7 @@ $$
 Thus, the ordinary least squares estimator is unbiased, given 3 conditions (linearity, variation in $x$, zero-conditional mean) are met.
 
 -   If conditions are met, we have an unbiased estimator in OLS for causal estimation.
--   [The key issue is assumption 3: Zero conditional mean $\mathbb{E}[u | x] = 0$]{.underline}, which is the most easily violated of these assumptions. We will explore this in detail in [section 4.7](https://politicalscience.github.io/metrics/causal/4.html#omitted-variable-bias-and-endogeneity).
+-   [The key issue is assumption 3: Zero conditional mean $\mathbb{E}[u | x] = 0$]{.underline}, which is the most easily violated of these assumptions. We will explore this in detail in the next section.
 
 <br />
 
@@ -436,73 +446,11 @@ Thus, the ordinary least squares estimator is unbiased, given 3 conditions (line
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 4.6: Causal Inference and Consistency of OLS under Gauss-Markov
+# 4.6: Omitted Variable Bias, Endogeneity, and Limitations of OLS for Causal Estimation
 
-### Causal Inference in Multiple Linear Regression
+### Omitted Variable Bias
 
-We can run hypothesis testing and confidence intervals in almost the same way as simple linear regression, as explained in [section 1.7](https://politicalscience.github.io/metrics/causal/1.html#hypothesis-testing-and-statistical-inference) (confidence intervals in [section 3.5](https://politicalscience.github.io/metrics/causal/3.html#causal-inference-hypothesis-tests-and-confidence-intervals)).
-
-The only difference is the standard error:
-
-$$
-se(\hat\beta_j) = \sqrt{\frac{Var(\hat{u_i})}{n \times Var(\widetilde{x_{ji}})}}
-$$
-
--   Where $\widetilde{x_{ji}}$ are the residuals from a regression of outcome variable $x_j$ on all other explanatory variables (as shown during section 4.4 on regression anatomy).
-
-<br />
-
-### Gauss-Markov and the Consistency of OLS
-
-We talked about unbiasedness of OLS under certain conditions. But as you probably remember, unbiasedness is not the only property of estimators that is important. Another is consistency.
-
--   Consistency is important, since low variance in estimates means smaller standard errors, which means higher precision and power in hypothesis testing.
-
-We previously introduced the Gauss-Markov Theorem, which said that estimates of OLS are unbiased given three assumptions are met.
-
--   However, there is an additional assumption, that when added to the previous assumptions, makes OLS the best linear unbiased estimator in terms of **consistency** (lowest variation in estimates):
-
-::: callout-tip
-## Definition: Gauss-Markov Theorem for Consistency
-
-The Gauss-Markov Theorem states that under 4 conditions, OLS is not only unbiased, but also the **most consistent linear estimator**. Thus, OLS is deemed BLUE (best linear unbiased estimator):
-
-1.  Linearity of Parameters.
-2.  Variation in $x$ (for simple regression) and non-perfect multicollinearity (for multiple regression).
-3.  Zero Conditional Mean
-4.  Homoscedasticity: variance of errors constant throughout the model: $Var(u|x) = \sigma^2$.
-:::
-
-<br />
-
-The additional assumption **homoscedasticity** is that the variance of the error term $u_i$ is constant, no matter the value of $x$.
-
-To evaluate this assumption, look at the plot of residuals/errors.
-
--   If errors show a pattern as $x$ changes (such as becoming larger or smaller), then homoscedasticity is violated, and we have **heteroscedasticity**.
-
-For example, see the figure below. The heteroscedasticity plot has a clear inconsistency in the variation of the residuals (small variance with lower $x$, larger variance with higher $x$).
-
-![](figures/4-1.png){fig-align="center" width="75%"}
-
-When we do not meet the assumption of homoscedasticity, we have to use heteroscedasticity-**robust** standard errors.
-
--   These account for our estimates less consistent, making the standard errors larger, thus harder to reject the null hypothesis).
--   These days in econometrics, we assume that homoscedasticity is violated, and almost always use robust standard errors by default (which we have been doing so far).
-
-Note: not meeting homoscedasticity **does not bias** OLS estimates. It only makes them less consistent.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-[Course Homepage](https://politicalscience.github.io/metrics/)
-
-# 4.7: Omitted Variable Bias and Endogeneity
-
-In [section 4.5](https://politicalscience.github.io/metrics/causal/4.html#gauss-markov-and-unbiasedness-of-the-ols-estimator), we discussed how the assumption of **zero-conditional mean** $\mathbb{E}[u | x] = 0$ is critical to the unbiasdness of OLS.
+In the previous section, we discussed how the assumption of **zero-conditional mean** $\mathbb{E}[u | x] = 0$ is critical to the unbiasdness of OLS.
 
 -   This assumption is also called **exogeneity**.
 
@@ -538,7 +486,7 @@ We have "recreated" the short regression with one variable $D$. We can see in th
 
 The difference between the short regression coefficient $\beta_1^S$, and the original long regression coefficient $\beta_1$, is $\beta_2 \delta_1$.
 
--   Or in other words, $\beta_2 \delta_1$, which is actually the effect of omitted $x$ on $y$, is being "tangled up" into the coefficient of the short regression $\beta_1^S$.
+-   Or in other words, $\beta_2 \delta_1$, which is actually some of the effect of omitted $x$ on $y$, is being "tangled up" into the coefficient of the short regression $\beta_1^S$.
 
 If $\beta_2 = 0$ (meaning no relationship between omitted $x_i$ and $y$), or $\delta_1 = 0$ (meaning no relationship between omitted $x_i$ and $D_i$), then difference $\beta_2 \delta_1 = 0$, thus there is no issue.
 
@@ -546,7 +494,9 @@ If $\beta_2 = 0$ (meaning no relationship between omitted $x_i$ and $y$), or $\d
 
 <br />
 
-Why is this an issue?
+### Endogeneity and Violation of Gauss-Markov Conditions
+
+Why is omitted variable bias (if non-zero) an issue?
 
 -   The omitted variable $x$'s effect is mostly subsumed into the error term $u_i^S$ of the short regression.
 -   But some bit of $x$ (that is correlated with $D$) is included in our coefficient (specifically, $\beta_2 \delta_1$).
@@ -568,15 +518,19 @@ When endogeneity exists, the assumption of zero-conditional mean/exogeneity $\ma
 
 <br />
 
+Endogeneity can also be caused by other factors, including measurement and reverse causality:
+
+-   If we have measurement error, endogeneity may also be introduced, and we will be unable to do causal inference. We will discuss some ways to deal with measurement problems in part 3 of the econometrics course.
+
+-   We can eliminiate reverse causality with either a convincing causal "story" that explains why reverse causality is not possible, or with further methods like quasi-experimental methods and instrumental variables.
+
+<br />
+
 <br />
 
 ------------------------------------------------------------------------
 
-[Course Homepage](https://politicalscience.github.io/metrics/)
-
-# 4.8: Validity of Using OLS for Causal Estimation
-
-In the last section, we established that omitted variable bias will often cause endogeneity, thus causing OLS to be biased. How do we prevent this from happening?
+# 4.7: Model Selection for Causal Estimation
 
 Recall, that omitted variable bias $\beta_2 \delta_1$ is only an issue when $\beta_2 \delta_1 ≠ 0$ (since 0 means no bias!). So when does this occur? First, let us figure out when there is no omitted variable bias:
 
@@ -589,6 +543,8 @@ Thus, omitted variable bias is only a problem when their is **both** a correlati
 
 [So, omitted variable bias only occurs when we fail to control for confounders!]{.underline}
 
+<br />
+
 ::: callout-tip
 ## Causal Interpretation of Regression
 
@@ -597,50 +553,223 @@ Thus, omitted variable bias is only a problem when their is **both** a correlati
 -   Often times, this is impossible, since many causal effects have unobservable or impossible to measure confounders.
 -   Thus, to deal with omitted variables and endogeneity when controlling for all confounders is not possible, we will need further techniques (such as instrumental variables).
 
+We must also be confident that reverse causality can be ruled out, and measurement error is not an issue.
+
+&nbsp;
+
 [When this is met, we can interpret $\beta_j$ of variable $x_j$ as the average causal effect of increasing $x_j$ by one unit on $y$.]{.underline}
 
--   And we can conduct hypothesis tests to confirm our causal inference.
-:::
-
-::: callout-warning
-## Warnings!
-
-Everything described above assumes the following:
-
-We do not have any measurement issues with our variables (everything is accurately measured).
-
--   If we have measurement error, endogeneity may also be introduced, and we will be unable to do causal inference.
--   We will discuss some ways to deal with measurement problems in part 3 of the econometrics course.
-
-Reverse causality can be ruled out. Multiple regression does not eliminate possible causal effect $y \rightarrow x$.
-
--   We can eliminiate reverse causality with either a convincing causal "story" that explains why reverse causality is not possible, or with further methods like quasi-experimental methods and instrumental variables.
+-   And then we can conduct hypothesis tests to confirm our causal inference.
 :::
 
 <br />
 
 Another important thing is that non-confounders (variables that do not correlate with both $D$ and $y$ ) do not introduce omitted variable bias or endogeneity.
 
--   However, including non-confounders as controls increases our standard error, which decreases the precision of our estimates (and makes it harder to reject the null hypothesis).
+-   However, including non-confounders as controls increases our standard error, which decreases the precision of our estimates (and makes it harder to reject the null hypothesis, we will discuss this in the next section).
 -   Thus, we should avoid including non-confounders in regression models, as they only make our estimates less consistent, without any benefit.
 
-Model selection (selecting what variables to include in our regression) is one of the most difficult things in causal inference.
+Model selection is one of the most difficult parts of causal inference.
 
--   We must be confident in selecting confounding variables as controls, without selecting non-confounding variables.
--   This is where domain knowledge - expertise of the field you are doing research in - becomes so important.
--   Only through domain knowledge, literature reviews, and intuition, will you be able to create good causal regression models.
+-   Good model selection is not only about econometric and statistical knowledge, but also about knowledge of the content in your discipline.
+-   Only through extensive reading and understanding of the literature, will you be able to make good choices in model selection.
 
 <br />
 
-The remainder of this part will introduce variations on the regression models we have seen, in order to deal with some of the limitations of causal inference with multiple linear regression.
+This chapter has focused on a lot of the limitations on OLS and multiple linear regression for causal estimation.
 
--   Extensions of linear regression models, including transformations, moderating effects, and fixed effects, can solve some small issues with linear regression.
+-   Well then, if we cannot use OLS, what should we use?
+-   The rest of this part of the course on causal estimation will introduce alternative methods to deal with issues regarding OLS estimation.
 
--   The important **instrumental variables estimator** deals with the issue of endogeneity biasing OLS estimates, and reverse causality.
+However, **before we move away from linear regression**, we still have two important concepts to cover!
 
--   We will also explore quasi-experimental methods which can solve some issues relating to endogeneity and reverse causality, especially when instrumental variables is too difficult to implement.
+1.  Causal Inference - remember, our estimates are just sample estimates, and in order to test if they truly are causal, we need to conduct hypothesis testing.
+2.  Interaction and conditional average treatment effects, which will be covered in the final section of the chapter.
 
--   Finally, we have some less common methods in casual inference these-days, including alternate regression models and selection on observables methods.
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 4.8: Causal Inference and Hypothesis Testing with Multiple Linear Regression
+
+### Homoscedasticity and Standard Errors
+
+Homoscedasticity is the property that the variance of errors are constant throughout the model:
+
+$$
+Var(u|x) = \sigma^2
+$$
+
+When this is violated, we say our model has **heteroscedasticity**.
+
+That is a little hard to understand. Let us intuitively explore this with a graph. Below are plots of residuals (errors) of the regression - essentially, we take the best fit line, and move it horizontal:
+
+![](figures/4-1.png){fig-align="center" width="75%"}
+
+The heteroscedasticity plot has a clear inconsistency in the variation of the residuals (small variance with lower $x$, larger variance with higher $x$).
+
+<br />
+
+Homoscedasticity is actually one of the Gauss-Markov conditions.
+
+-   We previously only discussed the Gauss-Markov Theorem in relation to unbiasedness.
+-   However, Gauss-Markov also states that with the unbiasdeness conditions + homoscedasticity, the variance of the OLS estimator is the lowest of all linear unbiased estimators. Thus, OLS is the **best linear unbiased estimator (BLUE)**.
+
+However, in reality, we don't really care about this. OLS is still a estimator with respectable variance (given a large enough sample size) even if this assumption is violated, it just is no longer "the best".
+
+<br />
+
+There is a more practical reason we care about homoscedasticity: When we do not meet the assumption, we have to use heteroscedasticity-**robust** standard errors.
+
+-   These account for our estimates less consistent, making the standard errors larger, thus harder to reject the null hypothesis).
+-   These days in econometrics, we assume that homoscedasticity is violated, and almost always use robust standard errors by default.
+
+<br />
+
+### Causal Inference in Multiple Linear Regression
+
+We can run hypothesis testing and confidence intervals in almost the same way as in randomised experiments and single linear regression, as explained in [section 3.4](https://politicalscience.github.io/metrics/causal/3.html#uncertainty-in-causal-estimates-and-standard-errors) and [section 3.5](https://politicalscience.github.io/metrics/causal/3.html#causal-inference-and-hypothesis-testing).
+
+The only two differences are the standard error and degrees of freedom.
+
+The robust standard error is as follows:
+
+$$
+se(\hat\beta_j) = \sqrt{\frac{Var(\hat{u_i})}{n \times Var(\widetilde{x_{ji}})}}
+$$
+
+-   Where $\widetilde{x_{ji}}$ are the residuals from a regression of outcome variable $x_j$ on all other explanatory variables (as shown during section 4.4 on regression anatomy).
+
+<br />
+
+With the standard error, we can calculate the t-statistic, and reference the t-distribution.
+
+-   However, we have to adjust the degrees of freedom parameter to $n-k-1$
+-   Where $n$ is the number of observations and $k$ is the number of explanatory variables.
+-   NOTE: this is different than the degrees of freedom with difference-in-means.
+
+Now, we can calculate the p-values:
+
+::: callout-tip
+## Interpretation of P-Values
+
+If the p-value of $\beta_j$ is above 0.05, there is a above 5% chance that the null hypothesis is true. This is too high for our liking, so we cannot reject the null hypothesis, and we cannot conclude any causal effect of $x_j$ on $y$.
+
+If the p-value of $\beta_j$ is less than 0.05, there is less than a 5% chance that the null hypothesis is true. In econometrics, we thus reject the null hypothesis, and conclude that there is a causal effect of $x_j$ on $y$.
+
+[So very simply, if the p-value of]{.underline} $\beta_j$ [is less than 0.05, we can conclude that there is a causal effect of $x_j$ on $y$. If not, we cannot conclude this.]{.underline}
+:::
+
+::: callout-warning
+## Key Warnings!
+
+If our causal estimate is biased (often due to Endogeneity), we cannot conclude a causal relationship with a hypothesis test
+
+Furthermore, the same interpretations do not apply to hypotheses tests on polynomial transformations and polytomous categorical variables. We will address this with an F-Test (see below).
+:::
+
+<br />
+
+### R-Squared and the F-Test of Multiple Coefficients
+
+As I just discussed, polynomial transformations and polytomous explanatory variable coefficients cannot be interpreted as the causal relationship between the variable and $y$.
+
+-   This is because these variables have multiple coefficients for the same variable.
+-   The $\beta$ coefficient for the squared term $x^2$ (or any other higher polynomial term) only shows if there is a significant non-linear relationship between $x$ and $y$, not the significance of the causal effect on $y$.
+-   The $\beta_j$ of category $j$ of a polytomous categorical variable does not show the significance of the causal effect of the polytomous categorical variable on $y$. It only shows the difference between category $j$ and the reference category.
+-   See [chapter 1](https://politicalscience.github.io/metrics/causal/1.html) for more detail on these topics.
+
+But what if we are interested in if these variables have a causal effect on $y$? How do we conduct statistical inference on these variables with multiple coefficients?
+
+<br />
+
+To do this, we first need to discuss the idea of the total sum of squares (TSS) and $R^2$.
+
+The total sum of squares is the total amount of sample variation in $y$:
+
+$$
+\begin{split}TSS & = \sum(Y_i - \bar{Y})^2 \\& = \sum (\hat{Y}_i - \bar{Y})^2 + \sum (Y_i - \hat{Y}_i)^2\end{split}
+$$
+
+-   Where TSS is the total sum of squares, and is formed of the sum of two components.
+-   Where $\sum (\hat{Y}_i - \bar{Y})^2$ is the model sum of squares (SSM). This represents the part of the variation of $Y$ that is explained by the model
+-   Where $\sum (Y_i - \hat{Y}_i)^2$ is the sum of squared errors SSE (that we used to fit the model). This represents the part of the variation of $Y$ that is not explained by the model (hence, why it is called error).
+
+<br />
+
+R-squared is one of the key summary statistics of our model.
+
+::: callout-tip
+## Definition: R-Squared
+
+R-squared $R^2$ is a measure of the percentage of variation in $Y$, that is explained by our model (with our chosen explanatory variables). The percentage of variation in $Y$ explained by our model would be:
+
+$$
+R^2 = \frac{SSM}{TSS} = \frac{\sum (\hat{Y}_i - \bar{Y})^2}{\sum(Y_i - \bar{Y})^2}
+$$
+:::
+
+<br />
+
+Now that we understand R-squared, we can move to the f-test, which allows us to test multiple coefficients at the same time.
+
+::: callout-tip
+## Definition: F-test of Nested Models
+
+The **F-test of Nested Models** allows us to compare different regression models.
+
+-   We use a smaller model as our null hypothesis, and a larger model (containing the smaller model) as our alternative hypothesis. More mathematically:
+
+$$
+\begin{split}
+M_0 : & \ \hat y = \hat\beta_0 + \hat\beta_1 X_1 + ... + \hat\beta_g X_g \\
+M_a : &  \ \hat y = \hat\beta_0 + \hat\beta_1 X_1 + ... + \hat\beta_g X_g + \hat\beta_{g+1} X_{g+1} + ... + \hat\beta_k X_k
+\end{split}
+$$
+
+For example, if you wanted to test the statistical significance of a polytomous explanatory variable, $M_0$ would be the model without it, and $M_a$ would be the model with the variable (and its multiple coefficients).
+
+Importantly, all explanatory variables in model $M_0$ must also be in $M_a$ (hence "nested").
+:::
+
+<br />
+
+The F-test uses the F-test statistic.
+
+-   This statistic compared the $R^2$ values of the two models.
+-   Let us say the $R^2$ value of $M_0$ is notated $R^2_0$, and the $R^2$ value of $M_a$ is notated as $R^2_a$.
+-   The F-test statistic essentially measures the difference $R^2_a - R^2_0$. If the difference is sufficiently large, that means the $M_a$ model has significantly more explanatory power than $M_0$.
+
+Mathematically, the F-test statistic is as follows, with $k_a$ being the number of explanatory variables in the alternate hypothesis:
+
+$$
+F = \frac{ R^2_{\text{change}} / df_{\text{change}} }{  (1 - R^2_a ) / [n - (k_a + 1)]}
+$$
+
+The sampling distribution of the F-statistic is the F distribution with parameters $k-a - k_0$ and $n-(k_a + 1)$ degrees of freedom. We then obtain the p-value from this distribution.
+
+The p-values of the F-statistic show the following:
+
+-   If the p-value is very small, that means $R^2_a$ is significantly larger than $R^2_0$. This is evidence against model $M_0$, and in favour of the larger model $M_a$.
+-   If the p-value is large, that means $R^2_a$ is not much larger than $R^2_0$. This means there is no evidence against $M_0$, and $M_a$ is not the statistically significantly better model.
+
+F-tests of nested models can help us test the significance of multiple coefficients at once.
+
+-   The null model $M_0$ will be the model without our coefficients
+
+-   The alternate model $M_a$ will be the model with all the coefficients we want to test together (so all of the coefficients of a polytomous variable, or polynomial variable, etc.).
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# 4.9: Interaction Terms and Conditional Average Treatment Effect
 
 <br />
 
@@ -746,6 +875,10 @@ screenreg(l = list(model1),
 ```
 
 <br />
+
+## F-Tests of Nested Models
+
+## Interaction Effects
 
 <br />
 
