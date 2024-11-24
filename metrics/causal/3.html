@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Chapter 3: Randomised Controlled Trials as the Gold Standard</title>
+<title>Chapter 3: Randomised Controlled Trials and Basics of Causal Inference</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -119,7 +119,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Chapter 3: Randomised Controlled Trials as the Gold Standard</h1>
+      <h1 class="title">Chapter 3: Randomised Controlled Trials and Basics of Causal Inference</h1>
             <p class="subtitle lead">Econometric Methods (for Social Scientists)</p>
                       </div>
   </div>
@@ -136,14 +136,14 @@ window.Quarto = {
   </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
 <div id="quarto-sidebar-toc-left" class="sidebar toc-left">
   <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
-    <h2 id="toc-title">Chapter 3: Randomised Controlled Trials as the Gold Standard</h2>
+    <h2 id="toc-title">Chapter 3: Randomised Controlled Trials and Basics of Causal Inference</h2>
    
   <ul class="collapse">
   <li><a href="#random-assignment-and-confounders" id="toc-random-assignment-and-confounders" class="nav-link active" data-scroll-target="#random-assignment-and-confounders">3.1: Random Assignment and Confounders</a></li>
   <li><a href="#difference-in-means-estimator-for-causal-effects" id="toc-difference-in-means-estimator-for-causal-effects" class="nav-link" data-scroll-target="#difference-in-means-estimator-for-causal-effects">3.2: Difference-in-Means Estimator for Causal Effects</a></li>
   <li><a href="#ordinary-least-squares-estimator-for-causal-effects" id="toc-ordinary-least-squares-estimator-for-causal-effects" class="nav-link" data-scroll-target="#ordinary-least-squares-estimator-for-causal-effects">3.3: Ordinary Least Squares Estimator for Causal Effects</a></li>
-  <li><a href="#uncertainty-in-estimates-and-standard-errors" id="toc-uncertainty-in-estimates-and-standard-errors" class="nav-link" data-scroll-target="#uncertainty-in-estimates-and-standard-errors">3.4: Uncertainty in Estimates and Standard Errors</a></li>
-  <li><a href="#causal-inference-hypothesis-tests-and-confidence-intervals" id="toc-causal-inference-hypothesis-tests-and-confidence-intervals" class="nav-link" data-scroll-target="#causal-inference-hypothesis-tests-and-confidence-intervals">3.5: Causal Inference, Hypothesis Tests and Confidence Intervals</a></li>
+  <li><a href="#uncertainty-in-causal-estimates-and-standard-errors" id="toc-uncertainty-in-causal-estimates-and-standard-errors" class="nav-link" data-scroll-target="#uncertainty-in-causal-estimates-and-standard-errors">3.4: Uncertainty in Causal Estimates and Standard Errors</a></li>
+  <li><a href="#causal-inference-and-hypothesis-testing" id="toc-causal-inference-and-hypothesis-testing" class="nav-link" data-scroll-target="#causal-inference-and-hypothesis-testing">3.5: Causal Inference and Hypothesis Testing</a></li>
   <li><a href="#balance-tables-to-verify-the-assumptions-of-randomisation" id="toc-balance-tables-to-verify-the-assumptions-of-randomisation" class="nav-link" data-scroll-target="#balance-tables-to-verify-the-assumptions-of-randomisation">3.6: Balance Tables to Verify the Assumptions of Randomisation</a></li>
   <li><a href="#blocking-and-stratified-experiments" id="toc-blocking-and-stratified-experiments" class="nav-link" data-scroll-target="#blocking-and-stratified-experiments">3.7: Blocking and Stratified Experiments</a></li>
   <li><a href="#validity-and-issues-with-randomised-controlled-trials" id="toc-validity-and-issues-with-randomised-controlled-trials" class="nav-link" data-scroll-target="#validity-and-issues-with-randomised-controlled-trials">3.8: Validity and Issues with Randomised Controlled Trials</a></li>
@@ -340,8 +340,8 @@ Warning!
 <hr>
 <p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
 </section>
-<section id="uncertainty-in-estimates-and-standard-errors" class="level1">
-<h1>3.4: Uncertainty in Estimates and Standard Errors</h1>
+<section id="uncertainty-in-causal-estimates-and-standard-errors" class="level1">
+<h1>3.4: Uncertainty in Causal Estimates and Standard Errors</h1>
 <section id="uncertainty-in-our-estimates" class="level3">
 <h3 class="anchored" data-anchor-id="uncertainty-in-our-estimates">Uncertainty in our Estimates</h3>
 <p>Remember how we randomly assigned units to treatment or control?</p>
@@ -353,17 +353,31 @@ Warning!
 <ul>
 <li>Why “sample”? Well, through random assignment, you are basically “randomly sampling” potential outcomes - since randomly choosing one unit to be in treatment/control means not seeing the other counterfactual potential outcome.</li>
 </ul>
-<p>Thus, we need some mechanism to account for sampling variability and how rerunning the experiment might result in different results. We do this with sampling distributions and standard errors, which we covered in <a href="https://politicalscience.github.io/metrics/causal/1.html#uncertainty-and-standard-errors">section 1.6</a>.</p>
+<p>Thus, we need some mechanism to account for sampling variability and how rerunning the experiment might result in different results.</p>
+<p><br></p>
+<p>Imagine that we take a sample from a population (or some random assignment mechanism). Then, we estimate <span class="math inline">\hat\tau</span>.</p>
+<p>That is a sample estimate, which is often notated <span class="math inline">\hat{\theta}</span>.</p>
+<ul>
+<li>I use <span class="math inline">\hat{\theta}</span>, since this idea of uncertainty can be applied to any estimation process, not just <span class="math inline">\hat\tau</span>.</li>
+<li>For example, everything discussed later applies to <span class="math inline">\hat\beta_1</span> estimates from OLS <span class="math inline">\hat\tau</span> estimates from difference-in-means, and many more estimates, so it just makes since to use <span class="math inline">\hat\theta</span> to represent any estimate.</li>
+</ul>
+<p>Then, let us take another sample from the same population (or do another random assignment), and find the sample estimate. This will be slightly different than the first sample, since we are randomly sampling. That is another sample estimate.</p>
+<p>We keep taking samples from the same population (more random assignments), and getting more and more sample estimates.</p>
+<p><br></p>
+<p>Now, let us plot all our sample estimates <span class="math inline">\hat{\theta}</span> into a histogram or density plot. The <span class="math inline">x</span> axis labels all the possible sample estimates <span class="math inline">\hat{\theta}</span> we have gotten above, and the <span class="math inline">y</span> axis is how frequently a specific sample estimate occurs.</p>
+<p>The result is a distribution, just like a random variable distribution. That distribution is the <strong>sampling distribution</strong>.</p>
+<p>According to the <strong>central limit theorem</strong>, the sampling distribution approximates that of a normal distribu- tion (or t-distribution if our sample size is small). We know that a normal distribution is defined by two parameters - mean and variance.</p>
 <p><br></p>
 </section>
 <section id="standard-errors" class="level3">
 <h3 class="anchored" data-anchor-id="standard-errors">Standard Errors</h3>
-<p>While we covered standard errors in <a href="https://politicalscience.github.io/metrics/causal/1.html#uncertainty-and-standard-errors">section 1.6</a>, things differ slightly with the difference-in-means estimator.</p>
-<p>Our sampling distribution has a variance, which is basically how spread out the variable is. Variance for a variable <span class="math inline">x</span> is defined as:</p>
+<p>The standard error is the standard deviation of the sampling distribution. It is often notated <span class="math inline">se(\hat{\theta})</span>.</p>
+<p>But first, what even is a standard deviation? And how do we calculate that for the sampling distribution? Let us quickly review:</p>
+<p>Our sampling distribution has a variance, which is basically how spread out the variable is. Variance for any variable <span class="math inline">x</span> is defined as:</p>
 <p><span class="math display">
 Var(x) = \mathbb{E}[(x_i -\bar{x})^2] = \sigma^2
 </span></p>
-<p>Standard deviation is the square root of variance.</p>
+<p>The standard deviation of any variable is the square root of variance.</p>
 <p><span class="math display">
 sd(x) = \sqrt{Var(x)} = \sigma
 </span></p>
@@ -371,7 +385,12 @@ sd(x) = \sqrt{Var(x)} = \sigma
 <p><span class="math display">
 sd(\hat{x}) = \frac{\sigma}{\sqrt{n}} = \frac{\sqrt{\mathbb{E}[(x_i - \bar{x})^2]}}{\sqrt{n}}
 </span></p>
-<p>The standard deviation of our sampling distribution is called the <strong>standard error</strong> of our estimate. Our sampling distribution of <span class="math inline">\hat{\tau}</span>, if we remember, is a difference-in-means. So, we have to find the standard deviation of a difference-in-means of variables.</p>
+<p>The standard deviation of our sampling distribution is called the <strong>standard error</strong> of our estimate.</p>
+<p>Our sampling distribution of <span class="math inline">\hat{\tau}</span>, if we remember, is a difference-in-sample-averages.</p>
+<ul>
+<li>So, we have to find the standard deviation of a difference-in-means of variables.</li>
+<li>This will involve adding together two sample average standard deviations (since we are combining the two distributions into one).</li>
+</ul>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -386,11 +405,12 @@ Definition: Standard Error for Difference in Means
 <p>The standard error for a difference-in-means is as follows:</p>
 <p><span class="math display">
 \begin{split}
-\widehat{se}(\hat{\tau}) &amp; = \sqrt{ \frac{\sigma_t}{n_t} + \frac{\sigma_c}{n_c} } \\
+\widehat{se}(\hat{\tau}) &amp; = \sqrt{ \frac{\sigma_t^2}{n_t} + \frac{\sigma_c^2}{n_c} } \\
 &amp; = \sqrt{ \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 1]}{n_t} + \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 0]}{n_c}}
 \end{split}
 </span></p>
 <p>Where <span class="math inline">n_t</span> is the number of observations in the treatment group, <span class="math inline">n_c</span> is the number of observations in the control group.</p>
+<p>Note: While the idea of standard errors applies to almost any estimator, the actual standard error formula may differ. This is only the standard error for a difference-in-means estimator.</p>
 </div>
 </div>
 <p>This standard error tells us the preciseness of our estimates - how much variability is there in our estimates given the random sampling uncertainty.</p>
@@ -398,14 +418,62 @@ Definition: Standard Error for Difference in Means
 <li>We will use the standard error to test if our causal estimates are truly a result of a causal relationship, or just a product of random chance.</li>
 </ul>
 <p><br></p>
+</section>
+<section id="confidence-intervals" class="level3">
+<h3 class="anchored" data-anchor-id="confidence-intervals">Confidence Intervals</h3>
+<p>We have a causal estimate <span class="math inline">\hat{\tau}_{ATE}</span> already. However, the issue, as we just described, is that if we run another random assignment, we will get a slightly different causal estimate.</p>
+<p>So how do we account for this issue? We can do this with <strong>confidence intervals</strong>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: Confidence Intervals
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Confidence Intervals are intervals of plausible true ATE values given our sample estimate <span class="math inline">\hat{\tau}</span>. We create this interval by adding “buffer” to each side of our sample estimate.</p>
+<p>The lower and upper bounds of this 95% confidence interval is:</p>
+<p><span class="math display">
+\hat{\tau} ± 1.96 \widehat{se}(\hat{\tau})
+</span></p>
+<p>The reason for the 1.96 is that in a normal distribution, 1.96 standard deviations above and below the mean contains 95% of the area under the distribution.</p>
+<ul>
+<li>This can slightly change if our sample size is less than 30, where we will use a t-distribution instead. The computer can help us calculate this.</li>
+</ul>
+<p>The 95% confidence interval means that, if we were to run random sample after random sample, 95% of the confidence intervals generated from each sample’s estimates, would contain the true value of the ATE.</p>
+</div>
+</div>
+<p><br></p>
 <p><br></p>
 <hr>
 <p><a href="https://politicalscience.github.io/metrics/">Course Homepage</a></p>
 </section>
 </section>
-<section id="causal-inference-hypothesis-tests-and-confidence-intervals" class="level1">
-<h1>3.5: Causal Inference, Hypothesis Tests and Confidence Intervals</h1>
-<p>We discussed the intuition of the hypothesis tests in <a href="https://politicalscience.github.io/metrics/causal/1.html#hypothesis-testing-and-statistical-inference">section 1.7</a>.</p>
+<section id="causal-inference-and-hypothesis-testing" class="level1">
+<h1>3.5: Causal Inference and Hypothesis Testing</h1>
+<section id="intuition-of-hypothesis-tests" class="level3">
+<h3 class="anchored" data-anchor-id="intuition-of-hypothesis-tests">Intuition of Hypothesis Tests</h3>
+<p>We know there is some uncertainty with our sample estimate, as defined by the standard error. So, how do we know if we actually have a causal effect with this uncertainty?</p>
+<ul>
+<li>For example, what if our <span class="math inline">\hat\tau</span> shows a relationship between <span class="math inline">D</span> and <span class="math inline">y</span> when the real <span class="math inline">\tau</span> of the population shows no relationship? After all, our <span class="math inline">\hat\tau</span> estimate could just be due to sampling variance.</li>
+</ul>
+<p>What we do is hypothesis testing: a way to test, given a certain level of uncertainty, whether or not we believe there is a causal effect.</p>
+<p>We start off with the status-quo “old theory”, and try to disprove it.</p>
+<ul>
+<li>This is called the <strong>null hypothesis</strong>, typically notated <span class="math inline">H_0</span>.</li>
+<li>For causal inference, our null hypothesis is typically that <em>there is relationship between</em> <span class="math inline">D</span> and <span class="math inline">y</span>. We notate this as <span class="math inline">H_0 : ATE = 0</span>.</li>
+</ul>
+<p>The new theory we are trying to prove is called the <strong>alternate hypothesis</strong>.</p>
+<ul>
+<li>For causal inference, our alternate hypothesis is typically that <em>there is a relationship between</em> <span class="math inline">D</span> and <span class="math inline">y</span>. We notate this as <span class="math inline">H_1 : ATE ≠ 0</span>.</li>
+</ul>
+<p><u>We assume that the null hypothesis is true, unless we are 95% confident that we can reject the null hypothesis, and only then, can we accept the alternative hypothesis.</u></p>
+<p><br></p>
+</section>
+<section id="implementing-hypotheses-tests" class="level3">
+<h3 class="anchored" data-anchor-id="implementing-hypotheses-tests">Implementing Hypotheses Tests</h3>
 <p>We start a hypothesis test by notating our hypotheses:</p>
 <p><span class="math display">
 H_0 : ATE =0 \quad \text{and} \quad H_1: ATE ≠ 0
@@ -429,7 +497,12 @@ t= \frac{\hat{\tau} - \mu_0}{\widehat{se}(\hat{\tau})}
 </div>
 </div>
 <p><br></p>
-<p>After we have a test statistic, we need to consult a t-distribution, and calculate the p-value. See <a href="https://politicalscience.github.io/metrics/causal/1.html#hypothesis-testing-and-statistical-inference">section 1.7</a> for more details on this.</p>
+<p>After we have a test statistic, we need to consult a t-distribution.</p>
+<ul>
+<li>Specifically, we should consult the t-distribution with <span class="math inline">n-2</span> degrees of freedom (degrees of freedom are the sole parameter of the t-distribution).</li>
+</ul>
+<p>Once we have this t-distribution, start from the centre of the t-distribution, and go <em>t-test-statistic</em> number of standard deviations away from the centre towards both directions.</p>
+<p>Then, at the point we have ended up, calculate the probability (area under the curve) of a t-test statistic equal or even more extreme could occur (we will not do this manually, the computer will do this). The figure below shows this probability:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="figures/2-2.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
@@ -457,43 +530,14 @@ Definition: P-Value
 </div>
 <p>Thus, the hypothesis test allows us to test if, under uncertainty due to randomisation, if we actually have a causal effect of <span class="math inline">D</span> on <span class="math inline">y</span>.</p>
 <p><br></p>
-<section id="confidence-intervals" class="level3">
-<h3 class="anchored" data-anchor-id="confidence-intervals">Confidence Intervals</h3>
-<p>With a hypothesis test, we have either concluded that we have, or do not have, a causal relationship between <span class="math inline">D</span> and <span class="math inline">y</span>.</p>
-<p>However, whether a causal relationship exists or not is not the only thing we care about. We also care about the <strong>size/magnitude</strong> of the causal relationship.</p>
-<ul>
-<li>After all, if <span class="math inline">D</span> causes <span class="math inline">y</span> to increase by 0.00000001 units, who actually cares? The causal effect might as well not exist.</li>
-</ul>
-<p>We have a causal estimate <span class="math inline">\hat{\tau}_{ATE}</span> already. However, the issue, as we described in <a href="https://politicalscience.github.io/metrics/causal/3.html#uncertainty-in-estimates-and-standard-errors">section 3.4</a>, is that if we run another random assignment, we will get a slightly different causal estimate.</p>
-<p>So how do we account for this issue? We can do this with <strong>confidence intervals</strong>.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Definition: Confidence Intervals
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Confidence Intervals are intervals of plausible true <span class="math inline">\tau</span> values given our sample estimate <span class="math inline">\hat{\tau}</span>. We create this interval by adding “buffer” to each side of our sample estimate.</p>
-<p>The lower and upper bounds of this 95% confidence interval is:</p>
-<p><span class="math display">
-\hat{\tau} ± 1.96 \widehat{se}(\hat{\tau})
-</span></p>
-<p>The reason for the 1.96 is that in a normal distribution, 1.96 standard deviations above and below the mean contains 95% of the area under the distribution.</p>
-<ul>
-<li>This can slightly change if our sample size is less than 30, where we will use a t-distribution instead. The computer can help us calculate this.</li>
-</ul>
-<p>The 95% confidence interval means that, if we were to run random sample after random sample, 95% of the confidence intervals generated from each sample’s estimates, would contain the true value of the ATE.</p>
-</div>
-</div>
-<p>The “key” thing about confidence intervals is if the interval contains the number 0. This is because if 0 is in the interval, that means 0 is a plausible value of the ATE.</p>
-<ul>
-<li>Remember, when <span class="math inline">ATE = 0</span>, that means there is no causal effect of <span class="math inline">D</span> on <span class="math inline">y</span>.</li>
-<li>That means if 0 is included in the interval, we cannot conclude a causal relationship exists between <span class="math inline">D</span> and <span class="math inline">y</span>.</li>
-<li>However, we do not need to worry too much about this, since a hypothesis test and a 95% confidence interval give the same results. If a hypothesis test fails to reject the null, 0 will be included in the confidence interval. If a hypothesis test rejects the null, 0 will not be included in the confidence interval.</li>
-</ul>
+</section>
+<section id="types-of-errors" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-errors">Types of Errors</h3>
+<p>Of course, with 95% confidence, there is a chance we incorrectly conclude a causal effect. These are called errors. There are two types of errors.</p>
+<ol type="1">
+<li><strong>Type I error</strong>, also called a <strong>false positive</strong>. This occurs when we reject the null hypothesis, even though the null hypothesis is actually true.</li>
+<li><strong>Type II error</strong>, also called a <strong>false negative</strong>. This occurs when we fail to reject the null hypothesis, even though the null hypothesis is actually false.</li>
+</ol>
 <p><br></p>
 <p><br></p>
 <hr>

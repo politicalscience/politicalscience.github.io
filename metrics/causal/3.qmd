@@ -1,5 +1,5 @@
 ---
-title: "Chapter 3: Randomised Controlled Trials as the Gold Standard"
+title: "Chapter 3: Randomised Controlled Trials and Basics of Causal Inference"
 subtitle: "Econometric Methods (for Social Scientists)"
 format:
     html:
@@ -15,7 +15,7 @@ format:
         toc-depth: 2
         toc-location: left
         toc-expand: true
-        toc-title: "Chapter 3: Randomised Controlled Trials as the Gold Standard"
+        toc-title: "Chapter 3: Randomised Controlled Trials and Basics of Causal Inference"
         mainfont: "Computer Modern"
         title-block-banner: true
         classoption: fleqn
@@ -197,7 +197,7 @@ This interpretation of simple linear regression ONLY works if there is a randomi
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 3.4: Uncertainty in Estimates and Standard Errors
+# 3.4: Uncertainty in Causal Estimates and Standard Errors
 
 ### Uncertainty in our Estimates
 
@@ -210,21 +210,44 @@ Thus, we have some uncertainty with our causal estimate - re-running the experim
 
 -   Why "sample"? Well, through random assignment, you are basically “randomly sampling” potential outcomes - since randomly choosing one unit to be in treatment/control means not seeing the other counterfactual potential outcome.
 
-Thus, we need some mechanism to account for sampling variability and how rerunning the experiment might result in different results. We do this with sampling distributions and standard errors, which we covered in [section 1.6](https://politicalscience.github.io/metrics/causal/1.html#uncertainty-and-standard-errors).
+Thus, we need some mechanism to account for sampling variability and how rerunning the experiment might result in different results.
+
+<br />
+
+Imagine that we take a sample from a population (or some random assignment mechanism). Then, we estimate $\hat\tau$.
+
+That is a sample estimate, which is often notated $\hat{\theta}$.
+
+-   I use $\hat{\theta}$, since this idea of uncertainty can be applied to any estimation process, not just $\hat\tau$.
+-   For example, everything discussed later applies to $\hat\beta_1$ estimates from OLS $\hat\tau$ estimates from difference-in-means, and many more estimates, so it just makes since to use $\hat\theta$ to represent any estimate.
+
+Then, let us take another sample from the same population (or do another random assignment), and find the sample estimate. This will be slightly different than the first sample, since we are randomly sampling. That is another sample estimate.
+
+We keep taking samples from the same population (more random assignments), and getting more and more sample estimates.
+
+<br />
+
+Now, let us plot all our sample estimates $\hat{\theta}$ into a histogram or density plot. The $x$ axis labels all the possible sample estimates $\hat{\theta}$ we have gotten above, and the $y$ axis is how frequently a specific sample estimate occurs.
+
+The result is a distribution, just like a random variable distribution. That distribution is the **sampling distribution**.
+
+According to the **central limit theorem**, the sampling distribution approximates that of a normal distribu- tion (or t-distribution if our sample size is small). We know that a normal distribution is defined by two parameters - mean and variance.
 
 <br />
 
 ### Standard Errors
 
-While we covered standard errors in [section 1.6](https://politicalscience.github.io/metrics/causal/1.html#uncertainty-and-standard-errors), things differ slightly with the difference-in-means estimator.
+The standard error is the standard deviation of the sampling distribution. It is often notated $se(\hat{\theta})$.
 
-Our sampling distribution has a variance, which is basically how spread out the variable is. Variance for a variable $x$ is defined as:
+But first, what even is a standard deviation? And how do we calculate that for the sampling distribution? Let us quickly review:
+
+Our sampling distribution has a variance, which is basically how spread out the variable is. Variance for any variable $x$ is defined as:
 
 $$
 Var(x) = \mathbb{E}[(x_i -\bar{x})^2] = \sigma^2 
 $$
 
-Standard deviation is the square root of variance.
+The standard deviation of any variable is the square root of variance.
 
 $$
 sd(x) = \sqrt{Var(x)} = \sigma
@@ -236,7 +259,12 @@ $$
 sd(\hat{x}) = \frac{\sigma}{\sqrt{n}} = \frac{\sqrt{\mathbb{E}[(x_i - \bar{x})^2]}}{\sqrt{n}}
 $$
 
-The standard deviation of our sampling distribution is called the **standard error** of our estimate. Our sampling distribution of $\hat{\tau}$, if we remember, is a difference-in-means. So, we have to find the standard deviation of a difference-in-means of variables.
+The standard deviation of our sampling distribution is called the **standard error** of our estimate.
+
+Our sampling distribution of $\hat{\tau}$, if we remember, is a difference-in-sample-averages.
+
+-   So, we have to find the standard deviation of a difference-in-means of variables.
+-   This will involve adding together two sample average standard deviations (since we are combining the two distributions into one).
 
 ::: callout-tip
 ## Definition: Standard Error for Difference in Means
@@ -247,17 +275,45 @@ The standard error for a difference-in-means is as follows:
 
 $$
 \begin{split}
-\widehat{se}(\hat{\tau}) & = \sqrt{ \frac{\sigma_t}{n_t} + \frac{\sigma_c}{n_c} } \\
+\widehat{se}(\hat{\tau}) & = \sqrt{ \frac{\sigma_t^2}{n_t} + \frac{\sigma_c^2}{n_c} } \\
 & = \sqrt{ \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 1]}{n_t} + \frac{\mathbb{E}[(y_i - \bar{y})^2 | D_i = 0]}{n_c}}
 \end{split}
 $$
 
 Where $n_t$ is the number of observations in the treatment group, $n_c$ is the number of observations in the control group.
+
+Note: While the idea of standard errors applies to almost any estimator, the actual standard error formula may differ. This is only the standard error for a difference-in-means estimator.
 :::
 
 This standard error tells us the preciseness of our estimates - how much variability is there in our estimates given the random sampling uncertainty.
 
 -   We will use the standard error to test if our causal estimates are truly a result of a causal relationship, or just a product of random chance.
+
+<br />
+
+### Confidence Intervals
+
+We have a causal estimate $\hat{\tau}_{ATE}$ already. However, the issue, as we just described, is that if we run another random assignment, we will get a slightly different causal estimate.
+
+So how do we account for this issue? We can do this with **confidence intervals**.
+
+::: callout-tip
+## Definition: Confidence Intervals
+
+Confidence Intervals are intervals of plausible true ATE values given our sample estimate $\hat{\tau}$. We create this interval by adding "buffer" to each side of our sample estimate.
+
+The lower and upper bounds of this 95% confidence interval is:
+
+$$
+\hat{\tau} ± 1.96 \widehat{se}(\hat{\tau})
+$$
+
+The reason for the 1.96 is that in a normal distribution, 1.96 standard deviations above and below the mean contains 95% of the area under the distribution.
+
+-   This can slightly change if our sample size is less than 30, where we will use a t-distribution instead. The computer can help us calculate this.
+
+The 95% confidence interval means that, if we were to run random sample after random sample, 95% of the confidence intervals generated from each sample's estimates, would contain the true value of the ATE.
+:::
 
 <br />
 
@@ -267,9 +323,30 @@ This standard error tells us the preciseness of our estimates - how much variabi
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 3.5: Causal Inference, Hypothesis Tests and Confidence Intervals
+# 3.5: Causal Inference and Hypothesis Testing
 
-We discussed the intuition of the hypothesis tests in [section 1.7](https://politicalscience.github.io/metrics/causal/1.html#hypothesis-testing-and-statistical-inference).
+### Intuition of Hypothesis Tests
+
+We know there is some uncertainty with our sample estimate, as defined by the standard error. So, how do we know if we actually have a causal effect with this uncertainty?
+
+-   For example, what if our $\hat\tau$ shows a relationship between $D$ and $y$ when the real $\tau$ of the population shows no relationship? After all, our $\hat\tau$ estimate could just be due to sampling variance.
+
+What we do is hypothesis testing: a way to test, given a certain level of uncertainty, whether or not we believe there is a causal effect.
+
+We start off with the status-quo "old theory", and try to disprove it.
+
+-   This is called the **null hypothesis**, typically notated $H_0$.
+-   For causal inference, our null hypothesis is typically that *there is relationship between* $D$ and $y$. We notate this as $H_0 : ATE = 0$.
+
+The new theory we are trying to prove is called the **alternate hypothesis**.
+
+-   For causal inference, our alternate hypothesis is typically that *there is a relationship between* $D$ and $y$. We notate this as $H_1 : ATE ≠ 0$.
+
+[We assume that the null hypothesis is true, unless we are 95% confident that we can reject the null hypothesis, and only then, can we accept the alternative hypothesis.]{.underline}
+
+<br />
+
+### Implementing Hypotheses Tests
 
 We start a hypothesis test by notating our hypotheses:
 
@@ -293,7 +370,13 @@ Note, since $\mu = 0$, we technically do not need it in the equation. However, s
 
 <br />
 
-After we have a test statistic, we need to consult a t-distribution, and calculate the p-value. See [section 1.7](https://politicalscience.github.io/metrics/causal/1.html#hypothesis-testing-and-statistical-inference) for more details on this.
+After we have a test statistic, we need to consult a t-distribution.
+
+-   Specifically, we should consult the t-distribution with $n-2$ degrees of freedom (degrees of freedom are the sole parameter of the t-distribution).
+
+Once we have this t-distribution, start from the centre of the t-distribution, and go *t-test-statistic* number of standard deviations away from the centre towards both directions.
+
+Then, at the point we have ended up, calculate the probability (area under the curve) of a t-test statistic equal or even more extreme could occur (we will not do this manually, the computer will do this). The figure below shows this probability:
 
 ![](figures/2-2.jpeg){fig-align="center" width="50%"}
 
@@ -317,41 +400,12 @@ Thus, the hypothesis test allows us to test if, under uncertainty due to randomi
 
 <br />
 
-### Confidence Intervals
+### Types of Errors
 
-With a hypothesis test, we have either concluded that we have, or do not have, a causal relationship between $D$ and $y$.
+Of course, with 95% confidence, there is a chance we incorrectly conclude a causal effect. These are called errors. There are two types of errors.
 
-However, whether a causal relationship exists or not is not the only thing we care about. We also care about the **size/magnitude** of the causal relationship.
-
--   After all, if $D$ causes $y$ to increase by 0.00000001 units, who actually cares? The causal effect might as well not exist.
-
-We have a causal estimate $\hat{\tau}_{ATE}$ already. However, the issue, as we described in [section 3.4](https://politicalscience.github.io/metrics/causal/3.html#uncertainty-in-estimates-and-standard-errors), is that if we run another random assignment, we will get a slightly different causal estimate.
-
-So how do we account for this issue? We can do this with **confidence intervals**.
-
-::: callout-tip
-## Definition: Confidence Intervals
-
-Confidence Intervals are intervals of plausible true $\tau$ values given our sample estimate $\hat{\tau}$. We create this interval by adding "buffer" to each side of our sample estimate.
-
-The lower and upper bounds of this 95% confidence interval is:
-
-$$
-\hat{\tau} ± 1.96 \widehat{se}(\hat{\tau})
-$$
-
-The reason for the 1.96 is that in a normal distribution, 1.96 standard deviations above and below the mean contains 95% of the area under the distribution.
-
--   This can slightly change if our sample size is less than 30, where we will use a t-distribution instead. The computer can help us calculate this.
-
-The 95% confidence interval means that, if we were to run random sample after random sample, 95% of the confidence intervals generated from each sample's estimates, would contain the true value of the ATE.
-:::
-
-The "key" thing about confidence intervals is if the interval contains the number 0. This is because if 0 is in the interval, that means 0 is a plausible value of the ATE.
-
--   Remember, when $ATE = 0$, that means there is no causal effect of $D$ on $y$.
--   That means if 0 is included in the interval, we cannot conclude a causal relationship exists between $D$ and $y$.
--   However, we do not need to worry too much about this, since a hypothesis test and a 95% confidence interval give the same results. If a hypothesis test fails to reject the null, 0 will be included in the confidence interval. If a hypothesis test rejects the null, 0 will not be included in the confidence interval.
+1.  **Type I error**, also called a **false positive**. This occurs when we reject the null hypothesis, even though the null hypothesis is actually true.
+2.  **Type II error**, also called a **false negative**. This occurs when we fail to reject the null hypothesis, even though the null hypothesis is actually false.
 
 <br />
 

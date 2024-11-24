@@ -1,5 +1,5 @@
 ---
-title: "Chapter 1: Relationships Between Variables and Basics of Regression"
+title: "Chapter 1: Relationships between Variables with Regression"
 subtitle: "Econometric Methods (for Social Scientists)"
 format:
     html:
@@ -15,16 +15,16 @@ format:
         toc-depth: 2
         toc-location: left
         toc-expand: true
-        toc-title: "Chapter 1: Relationships Between Variables and Basics of Regression"
+        toc-title: "Chapter 1: Relationships between Variables with Regression"
         mainfont: "Computer Modern"
         title-block-banner: true
         classoption: fleqn
         html-math-method: katex
 ---
 
-This chapter introduces regression, the key technique used in econometrics and statistics to measure relationships between variables. We will explore the basics of regression, including how the model is specified, the coefficients of the model, the estimation process, and statistical inference techniques.
+This chapter introduces regression, the key technique used in econometrics and statistics to measure relationships between variables. We will explore the basics of regression, including how the model is specified, the coefficients of the model, the estimation process, and transformations for non-linear relationships between variables.
 
-Topics: Correlation, Simple Linear Regression, Ordinary Least Squares Estimator, Interpretation of Coefficients, Standard Errors, Hypothesis Testing
+Topics: Correlation, Simple Linear Regression, Ordinary Least Squares Estimator, Interpretation of Coefficients, Polynomial and Log Transformations
 
 <br />
 
@@ -209,7 +209,7 @@ $$
 
 -   The sum of squared errors is exactly as it sounds. Find the error, the distance between the actual $y_i$ and predicted $\hat y$, which is $y_i - \hat y$, then square that error $(y_i - \hat y_i)^2$, then sum up for all observations $i$ in the data.
 
--   We get the second equation by substituting in the fitted values model (discussed in the last section), where $\hat{y} = \hat\beta_0 + \hat\beta_1x_i$.
+-   We get the second equation by substituting in the fitted values model (discussed in the previous section), where $\hat{y} = \hat\beta_0 + \hat\beta_1x_i$.
 
 The **Ordinary Least Squares (OLS) Estimator** estimates the coefficients $\beta_0$ and $\beta_1$ by finding the values of $\beta_0$ and $\beta_1$ that result in the line with the smallest sum of squared errors.
 :::
@@ -418,7 +418,7 @@ We now have estimated $\hat\beta_0$ and $\hat\beta_1$. But what do these actuall
 
 <br />
 
-### Interpretation of $\hat\beta_1$ For Continuous $x$
+### Interpretation of $\hat\beta_1$
 
 We know that in a linear model, $\mathbb{E}[y_i|x_i] = \beta_0 + \beta_1 x_i$, the coefficient $\beta_1$ is the slope.
 
@@ -438,43 +438,10 @@ When $x$ increases by one unit, there is an expected $\hat{\beta}_1$ unit change
 Remember, this is the **relationship** between $x$ and $y$, [**not** the causal effect]{.underline}.
 :::
 
-<br />
+Note that this interpretation of $\hat\beta_1$ only applies to continuous $x$ variables and continuous/ordinal $y$ variables.
 
-### Interpretation of $\hat\beta_1$ for Binary $x$
-
-**Binary explanatory** variables are variables with 2 values, 0 and 1.
-
--   Binary explanatory variables are extremely common in the social sciences. They can include things such as yes/no questions, treatment/control, true/false questions, voted/did not vote, etc.
-
-Binary explanatory variables will change the interpretations of our coefficients.
-
-We can "solve" for these interpretations. Assume $x$ has two categories $x=0$ and $x=1$:
-
-$$
-\begin{split}
-& \hat y_{i, \ x = 0} = \hat\beta_0 + \hat\beta_1(0) = \hat\beta_0 \\
-& \hat y_{i, \ x = 1} = \hat\beta_0 + \hat\beta_1(1) = \hat\beta_0 + \hat\beta_1 \\
-& \hat y_{i, \ x = 1} - \hat y_{i, \ x = 0} = (\hat\beta_0 + \hat\beta_1) - \hat\beta_0 = \hat\beta_1
-\end{split}
-$$
-
-Thus, we can interpret the coefficients as follows:
-
-::: callout-tip
-## Interpretation of Coefficient with a Binary Explanatory Variable
-
-When $x$ is a binary explanatory variable:
-
--   $\hat\beta_0$ is the expected value of $y$ given an observation in category $x = 0$
--   $\hat\beta_0 + \hat\beta_1$ is the expected value of $y$ given an observation in category $x = 1$
--   $\hat\beta_1$ is the expected difference in $y$ between the categories $x=1$ and $x=0$.
-:::
-
-::: callout-warning
-## Warning!
-
-Remember, this is the **relationship** between $x$ and $y$, [**not** the causal effect]{.underline}.
-:::
+-   If $x$ is categorical, see section 1.7 for interpretation.
+-   If $y$ is binary, see section 1.8 for interpretation.
 
 <br />
 
@@ -541,84 +508,199 @@ Remember, this is the **relationship** between $x$ and $y$, [**not** the causal 
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 1.6: Uncertainty and Standard Errors
+# 1.7: Binary and Categorical Explanatory Variables
 
-### Samples and Population
+### Interpretation of $\hat\beta_1$ for Binary $x$
 
-In the real world, there is some true relationship value $\beta_1$ between $x$ and $y$ in the world.
+**Binary explanatory** variables are variables with 2 values, 0 and 1.
 
--   For example, there is a true $\beta_1$ value by which increasing education $x$ is associated with income $y$.
+-   Binary explanatory variables are extremely common in the social sciences. They can include things such as yes/no questions, treatment/control, true/false questions, voted/did not vote, etc.
 
-However, to get the true exact value of $\beta_1$, we must have data on **every single unit** in the world.
+Binary explanatory variables will change the interpretations of our coefficients.
 
--   For example, to measure the true $\beta_1$ of the association between education $x$ and income $y$, we would have to have data on all 8 billion people in the world.
--   We call this group of every single unit in the world the **population**.
--   Note: the population does not always have to be the whole world. For example, if we are only concerned with how education affects income in the USA, then we would only care about observations in the USA.
+We can "solve" for these interpretations. Assume $x$ has two categories $x=0$ and $x=1$:
 
-<br />
+$$
+\begin{split}
+& \hat y_{i, \ x = 0} = \hat\beta_0 + \hat\beta_1(0) = \hat\beta_0 \\
+& \hat y_{i, \ x = 1} = \hat\beta_0 + \hat\beta_1(1) = \hat\beta_0 + \hat\beta_1 \\
+& \hat y_{i, \ x = 1} - \hat y_{i, \ x = 0} = (\hat\beta_0 + \hat\beta_1) - \hat\beta_0 = \hat\beta_1
+\end{split}
+$$
 
-Obviously, that is not feasible. Instead, researchers use **samples** of the population.
-
--   Samples are selected observations taken from the population.
--   For example, we might take a sample of 1,000 individuals from the population in the world to measure the association between education $x$ and income $y$.
-
-The best method of sampling is **random sampling**, This is when every unit in the population has an equal chance of being selected into your sample.
-
--   Since every unit has the same probability of being in your sample, in theory, your sample should be **representative** of the population (i.e. very similar in characteristics to the population).
-
-If our sample is representative of the population, then we can use our **sample** to create an estimate $\hat\beta_1$ and use that estimate to estimate the true $\beta_1$ in the population.
-
-<br />
-
-### Intuition of Uncertainty
-
-Imagine after we calculated $\hat\beta_1$ in our sample, we decide to take another sample. If we are random sampling (or almost any kind of sampling), we probably will not get the exact same units back into our sample.
-
--   For example, if we take another sample of 1,000 individuals from the population, the new sample will not be the same as the old sample.
-
-This means that the next sample's estimated $\hat\beta_1$ will be slightly different than the first one, since we have a slightly different sample.
-
--   Thus, we have some uncertainty with our causal estimate - re-running the experiment might result in a different estimate of $\hat\beta_1$
-
-We need some mechanism to quantify this sampling variability and how rerunning the estimation might result in different results. We do this with sampling distributions and standard errors.
-
-<br />
-
-Imagine that we take a sample from a population (or some random assignment mechanism). Then, we estimate $\hat\beta_1$.
-
-That is a sample estimate, which is often notated $\hat{\theta}$. (I use $\hat{\theta}$, since this idea of uncertainty can be applied to any estimate, not just $\beta_1$).
-
-Then, let us take another sample from the same population (or do another random assignment), and find the sample estimate. This will be slightly different than the first sample, since we are randomly sampling. That is another sample estimate.
-
-We keep taking samples from the same population (more random assignments), and getting more and more sample estimates.
-
-<br />
-
-Now, let us plot all our sample estimates $\hat{\theta}$ into a histogram or density plot. The $x$ axis labels all the possible sample estimates $\hat{\theta}$ we have gotten above, and the $y$ axis is how frequently a specific sample estimate occurs.
-
-The result is a distribution, just like a random variable distribution. That distribution is the **sampling distribution**.
-
-According to the **central limit theorem**, the sampling distribution approximates that of a normal distribu- tion (or t-distribution if our sample size is small). We know that a normal distribution is defined by two parameters - mean and variance.
-
-<br />
-
-### Standard Errors of OLS Estimates
-
-The standard error is the standard deviation of the sampling distribution. It is often notated $se(\hat{\theta})$.
-
--   The standard error basically measures the variance (how spread out) our different sample estimates are.
--   There is a variation of this called the **robust standard errors**. These are typically used by default. We will not worry too much about this until [chapter 4](https://politicalscience.github.io/metrics/causal/4.html).
+Thus, we can interpret the coefficients as follows:
 
 ::: callout-tip
-## Definition: Robust Standard Errors
+## Interpretation of Coefficient with a Binary Explanatory Variable
 
-Robust standard errors for the coefficient $\hat\beta_1$ are:
+When $x$ is a binary explanatory variable:
+
+-   $\hat\beta_0$ is the expected value of $y$ given an observation in category $x = 0$
+-   $\hat\beta_0 + \hat\beta_1$ is the expected value of $y$ given an observation in category $x = 1$
+-   $\hat\beta_1$ is the expected difference in $y$ between the categories $x=1$ and $x=0$.
+:::
+
+::: callout-warning
+## Warning!
+
+Remember, this is the **relationship** between $x$ and $y$, [**not** the causal effect]{.underline}.
+:::
+
+<br />
+
+### Polytomous Categorical Variables
+
+A **categorical polytomous** variable is one with 3 or more categories. A classic example is the variable *country*, which has categories USA, Germany, UK, Australia, etc.
+
+How do we run a regression with polytomous explanatory variables?
+
+-   What happens is that we divide the variables into a set of binary variables (also called dummy variables).
+
+-   Dummy binary variables are created for all [except one]{.underline} of the categories in our variable. Each dummy variable has two values - 1 meaning the observation is in the category, and 0 meaning the observation is not in that category.
+
+-   The category without a dummy variable is the **reference/baseline** category. Essentially, when all other dummy variables are equal to 0, that is referring to the reference/baseline category (the intercept)
+
+::: callout-tip
+## Definition: Linear Regression with a Polytomous Explanatory Variable
+
+Thus, a **polytomous explanatory variable** with $n$ number of categories in $x$, we would create $n-1$ dummy variables, and input it into a regression equation as follows:
 
 $$
-rse(\hat\beta_1) = \sqrt{ \frac{Var[(x_i - \mathbb{E}[ \ x_i]) \times \hat u_i \ ]}{n \times [Var(x_i)]^2} }
+\mathbb{E}[y] = \beta_0 + \beta_{x=1}x_{x=1} + ... + \beta_{x=n-1}x_{x=n-1}
 $$
 
-We will discuss why these are called robust standard errors in [chapter 4](https://politicalscience.github.io/metrics/causal/4.html).
+-   Where $\beta_0$ is the mean of the reference category $n$, and the other categories $1, ..., n-1$ get their own dummy variable.
+:::
+
+<br />
+
+::: callout-note
+## Example of Polytomous Categorical Variables
+
+For example, take the following polytomous variable: *company*, which contains the categories *microsoft, google,* and *apple*. Let us create dummy variables for 2 of the 3 categories:
+
+-   *Google* will become the first dummy variable $x_g$. When $x_g = 1$, that observation is part of the *google* category. When $x_g = 0$, that observation is NOT a part of the *google* category.
+-   *Apple* will become the second dummy variable $x_a$. When $x_a = 1$, that observation is part of the *apple* category. When $x_a = 0$, that observation is NOT a part of the *apple* category.
+-   *Microsoft* will not get its own dummy variable. This is because when both *apple* and *microsoft* $x_g = x_a = 0$ that is referring to the *microsoft* category (observations not a part of either previous category).
+
+Mathematically, this is how it would be represented in a regression equation:
+
+$$
+\mathbb{E}[y] = \beta_0 + \beta_g x_g + \beta_a x_a
+$$
+:::
+
+Continuing with the example, to find the expected value of each category, we would do the following:
+
+$$
+\begin{split}& \mathbb{E}[y|x = \text{Google}] = \mathbb{E}[y|x_g = 1, x_a = 0] = \beta_0 + \beta_g(1) + \beta_a(0) = \beta_0 + \beta_g \\& \mathbb{E}[y|x = \text{Apple}] = \mathbb{E}[y|x_g = 0, x_a = 1] = \beta_0 + \beta_g(0) + \beta_a(1) = \beta_0 + \beta_a \\& \mathbb{E}[y|x = \text{Microsoft}] = \mathbb{E}[y|x_g = 0, x_a = 0] = \beta_0 + \beta_g(0) + \beta_a(0) = \beta_0\end{split}
+$$
+
+Thus, from these above equations, we can see the interpretation of the coefficients:
+
+-   $\beta_0$ is the expected value of the reference category, in this case, *microsoft*.
+-   $\beta_g$ is the expected $y$ difference between the *google* category and the reference category *microsoft*. The statistical significance of this coefficient would be a difference of means test between the two categories.
+-   $\beta_a$ is the expected $y$ difference between the *apple* category and the reference category *microsoft*. The statistical significance of this coefficient would be a difference of means test between the two categories.
+
+<br />
+
+We can generalise this example to all polytomous variables:
+
+::: callout-tip
+## Interpretation of Polytomous Categorical Variables
+
+$\beta_j$ is the expected difference in $y$ values between category $j$ and the baseline category.
+
+$\beta_0$ is the expected value of $y$ of the baseline category.
+:::
+
+Additional note: The coefficient $p$-values of $\beta_j$ (discussed in section 2.7) are a difference-of-means test between two categories, and not a statistical significance test of the entire categorical variable.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+[Course Homepage](https://politicalscience.github.io/metrics/)
+
+# 1.8: Binary Outcome Variables and the Linear Probability Model
+
+Very often, we are trying to predict binary outcome variables.
+
+-   For example, we might be interested in how some $x$ causes someone to vote for or against some measure or politician.
+-   Or, we might be interested in how some $x$ causes some factor to be true or false.
+
+These are all binary outcome variables, where $y$ can only take two values, $y=1$ and $y=0$.
+
+<br />
+
+The linear model can be "transformed" slightly to deal with binary outcome variables.
+
+-   The difference is now, instead of the fitted value predicting $\hat y_i$, the model now predicts the probability of any observation $i$ being in in category $y=1$.
+-   This predicted probability is notated $\hat\pi_i$.
+
+::: callout-tip
+## Definition: Linear Probability Model
+
+The linear probability model is a variation of the linear regression model, where the outcome variable $y$ is a binary variable.
+
+$$
+\pi_i = \beta_0 + \beta_1x_i + u_i
+$$
+
+-   Where $\pi_i$ is the predicted probability of observation $i$ being in category $y=1$. This value is always between 0 and 1.
+-   Where $\beta_0$ and $\beta_1$ are coefficients that need to be estimated (in the same way as the standard linear model).
+:::
+
+Once we estimate $\beta_0$ and $\beta_1$, we get fitted probabilities:
+
+$$
+\hat\pi_i = \hat\beta_0 + \hat\beta_1 x_i
+$$
+
+-   We can interpret the coefficients (discussed below)
+-   We can also plug in the $x$ value of any observation $i$ to predict the probability $\hat\pi_i$ of that observation $i$ being in category $y=1$. To find the probability of category $y=0$, we simply do $1 - \hat\pi_i$ (because rules of probability).
+
+Final note: The Linear Probability model has a key issue - since a linear line $y=mx+b$ goes to $±∞$ on either side, that means that the predicted probabilities can be below 0 or above 1, which clearly violates probability rules.
+
+-   For relationships between $x$ and $y$, this is not a huge issue, since $\hat\beta_1$ still gives us a relatively good estimate (particularly when $x$ is binary).
+-   However, for prediction tasks, a logistic regression model (discussed later in the course) may be more suited for this task.
+
+<br />
+
+### Interpretation of Coefficients
+
+Interpretation of coefficients $\hat\beta_0$ and $\hat\beta_1$ that we estimate differ slightly when we are dealing with the linear probability model.
+
+<br />
+
+$\hat\beta_1$ is still the slope of our linear model. However, remember that our "output" is now $\hat\pi_i$, not $\hat y_i$. Thus, we have to adjust the interpretation as follows:
+
+::: callout-tip
+## Interpretation of $\hat\beta_1$
+
+When $x$ increases by one unit, there is an expected $\hat{\beta}_1$ change in the probability of an observation being in category $y=1$.
+
+-   We can also interpret this in terms of percent-chance, by multiplying $\hat\beta_1$ by 100.
+:::
+
+::: callout-warning
+## Warning!
+
+Remember, this is the **relationship** between $x$ and $y$, [**not** the causal effect]{.underline}.
+:::
+
+<br />
+
+$\hat\beta_0$ is still the intercept of our linear model. However, with the output being $\hat\pi_i$, not $\hat y_i$, we have to adjust our interpretation as follows:
+
+::: callout-tip
+## Interpretation of $\hat\beta_0$
+
+When $x=0$, the expected probability of an observation being in category $y=0$ is $\hat{\beta}_0$.
+
+-   We can also interpret this in terms of percent-chance, by multiplying $\hat\beta_0$ by 100.
 :::
 
 <br />
@@ -629,87 +711,163 @@ We will discuss why these are called robust standard errors in [chapter 4](https
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 1.7: Hypothesis Testing and Statistical Inference
+# 1.9: Polynomial and Logarithmic Transformations
 
-We know there is some uncertainty with our sample estimate, as defined by the standard error. So, how do we know if we actually have a significant relationship with this uncertainty?
+### Quadratic Polynomial Transformations
 
--   For example, what if our $\hat\beta_1$ shows a relationship between $x$ and $y$ when the real $\beta_1$ of the population shows no relationship? After all, our $\hat\beta_1$ estimate could just be due to sampling luck.
+Sometimes, a linear (straight-line) best-fit line is a poor description of a relationship.
 
-What we do is hypothesis testing: a way to test, given a certain level of uncertainty, whether or not we believe there is a causal effect.
-
-We start off with the status-quo "old theory", and try to disprove it.
-
--   This is called the **null hypothesis**, typically notated $H_0$.
--   For causal inference, our null hypothesis is typically that *there is relationship between* $x$ and $y$. We notate this as $H_0 : \beta_1 = 0$.
-
-The new theory we are trying to prove is called the **alternate hypothesis**.
-
--   For causal inference, our alternate hypothesis is typically that *there is a relationship between* $x$ and $y$. We notate this as $H_1 : \beta_1 ≠ 0$.
-
-[We assume that the null hypothesis is true, unless we are 95% confident that we can reject the null hypothesis, and only then, can we accept the alternative hypothesis.]{.underline}
-
-<br />
-
-### Conducting a Hypothesis Test
-
-We start a hypothesis test by notating our hypotheses:
-
-$$
-H_0 : \beta_1 = 0 \quad \text{and} \quad H_1: \beta_1 ≠ 0
-$$
-
-Next, we have to find a t-test statistic.
+We can model more flexible relationships that are not straight lines, by including a transformation of the variable $x$ that we are interested in.
 
 ::: callout-tip
-## Definition: T-test Statistic
+## Definition: Quadratic Transformation
 
-The t-test statistic tells us how far our estimate $\hat{\beta}_1$ is from the null hypothesis value of $\mu_0 = 0$. This distance is expressed in terms of standard errors of the estimate.
+Quadratic transformations of $x$ take the following form:
 
 $$
-t= \frac{\hat{\beta}_1 - \mu_0}{\widehat{se}(\hat{\beta}_1)}
+y_i = \beta_0 + \beta_1 x_i + \beta_2 x^2_i + u_i
 $$
-
-Note, since $\mu_0 = 0$, we technically do not need it in the equation. However, sometimes (very rarely), you may have a reason to test a different null hypothesis, so then you would plug in a different value for $\mu_0$.
 :::
 
 <br />
 
-After we have a test statistic, we need to consult a t-distribution.
+If you recall from high-school algebra, an equation that takes the form of $y = ax^2 + bx + c$ creates a *parabola*.
 
--   Specifically, we should consult the t-distribution with $n-2$ degrees of freedom (degrees of freedom are the sole parameter of the t-distribution).
+-   A true parabola has a domain of $(-∞, ∞)$.
+-   However, our model often does not need to do this. The best-fit parabola is only used for the range of plausible $x$ values, given the nature of our explanatory variable.
 
-Once we have this t-distribution, start from the centre of the t-distribution, and go *t-test-statistic* number of standard deviations away from the centre towards both directions.
+For example, if $x$ was age, a negative number would make no sense.
 
-Then, at the point we have ended up, calculate the probability (area under the curve) of a t-test statistic equal or even more extreme could occur (we will not do this manually, the computer will do this). The figure below shows this probability:
-
-![](figures/2-2.jpeg){fig-align="center" width="50%"}
-
-The shaded area is the probability of a t-test statistic equal to or even more extreme could occur, given the null hypothesis is true. This is the p-value.
-
-::: callout-tip
-## Definition: P-Value
-
-The p-value is the probability of a t-test statistic equal to or even more extreme could occur, given the null hypothesis is true.
-
-If this is less than 0.05 (5%), that means the null hypothesis has a very low chance of being true, so we reject the null hypothesis as no longer true.
-
--   So, if the p-value is above 0.05, there is a above 5% chance that the null hypothesis is true. This is too high for our liking, so we cannot reject the null hypothesis, and we cannot conclude any relationship between $x$ and $y$.
-
--   If the p-value is less than 0.05, there is less than a 5% chance that the null hypothesis is true. In econometrics, we thus reject the null hypothesis, and conclude that there is a relationship between $x$ and $y$.
-
-[So very simply, if the p-value is less than 0.05, we can conclude that there is a causal effect of $x$ on $y$. If not, we cannot conclude this.]{.underline}
-:::
-
-Thus, the hypothesis test allows us to test if, under uncertainty due to randomisation, if we actually have a causal effect of $x$ on $y$.
+-   Because the parabola's domain often exceeds our plausible range of $x$ values, the vertex of the parabola (where it changes directions) may not be in our data.
 
 <br />
 
-### Types of Errors
+We always include lower degree terms in our model.
 
-Of course, with 95% confidence, there is a chance we incorrectly conclude a causal effect. These are called errors. There are two types of errors.
+-   For example, in this quadratic (power 2) model, we also include the $x$ term without the square.
 
-1.  **Type I error**, also called a **false positive**. This occurs when we reject the null hypothesis, even though the null hypothesis is actually true.
-2.  **Type II error**, also called a **false negative**. This occurs when we fail to reject the null hypothesis, even though the null hypothesis is actually false.
+To fit a model like this, we simply do the same process of minimising the sum of squared errors.
+
+<br />
+
+How do we interpret the coefficients $\beta_1$ and $\beta_2$?
+
+::: callout-tip
+## Interpretation of Quadratic Transformations
+
+$\beta_1$'s value is no longer directly interpretable.
+
+$\beta_2$'s value also cannot be directly interpreted, but we can interpret some things:
+
+-   [If the coefficient of $\beta_2$ is statistically significant, we can conclude that there is a non-linear relationship between $X$ and $Y$]{.underline}. (we will discuss this in chapter 2).
+-   If $\beta_2$ is negative, the best-fit parabola will open downwards, and if $\beta_2$ is positive, the best-fit parabola will open upwards.
+:::
+
+If we want to interpret the magnitude of the model, we are best off using predicted values of $Y$ (obtained using the model equation above).
+
+<br />
+
+There is one more thing we can interpret with the quadratic transformation: the **vertex** of the best-fit parabola.
+
+-   The vertex, if we remember our algebra, is either the maximum or minimum point of a parabola.
+
+If we remember from calculus and optimisation, we can find the maximum and minimums through setting the derivative equal to 0.
+
+For the quadratic model, this is as follows - we first find the derivative, then set the derivative equal to 0:
+
+$$
+\begin{split}
+& \hat{y} = \hat{\beta}_0 + \hat{\beta}_1x + \hat{\beta}_2 x^2 \\
+& \frac{d \hat{y}}{dx} = 0 + \hat{\beta}_1 + 2\hat{\beta}_2x \\
+& 0 = \hat{\beta}_1 + 2 \hat{\beta}_2x \\
+& - \hat{\beta}_1 = 2 \hat{\beta}_2 x \\
+& x = \frac{-\hat{\beta}_1}{2 \hat{\beta}_2}\end{split}
+$$
+
+This point is useful, as it is either the maximum or minimum of our best-fit parabola.
+
+-   This means that at the $X$ value we calculate from this equation, we will either see the highest or lowest expected $Y$ value.
+
+<br />
+
+### General Polynomial Transformations
+
+While quadratic models are the most common polynomial transformation, we do not have to stop there.
+
+We can continue to add further polynomials (although anything beyond cubic is exceedingly rare):
+
+-   Cubic: $y_i = \beta_0 + \beta_1 x_i + \beta_2 x^2_i + \beta_3 x^3_i + u_i$
+-   Quartic: $y_i = \beta_0 + \beta_1 x_i + \beta_2 x^2_i + \beta_3 x^3_i + \beta_4 x^4_i + u_i$
+
+Each higher order coefficient, if statistically significant (we will discuss this in the next chapter), indicates that the relationship between $X$ and $Y$, is not of the previous highest power.
+
+-   For example, if the cubic term $\beta_3$ is statistically significant, we can reject a quadratic relationship between $X$ and $Y$
+
+Remember to always include the lower power monomials within our polynomial model.
+
+-   For example, if you have a quartic transformation, you must also have the linear, quadratic, and cubic terms.
+
+<br />
+
+### Logarithmic Transformations
+
+Logarithmic transformations are another form of non-linear transformations. These are commonly used for heavily skewed variables, such as when the explanatory variable is income, wealth, and so on.
+
+-   Heavily skewed distributions sometimes perform poorly in statistical tests, as we will discuss throughout this course.
+
+::: callout-tip
+## Definition: Logarithmic Transformation
+
+The logarithmic transformation of explanatory variable $x$ takes the following form:
+
+$$
+y_i = \beta_0 + \beta_1 \log(x_i) + u_i
+$$
+:::
+
+<br />
+
+**Interpretation** of the $\beta$ coefficient can be a little bit trickier for logarithmic transformations.
+
+-   We could interpret it in the same way we interpret linear regressions: given a one unit increase in the log of $X$, there is an expected $\beta$ change in $Y$.
+
+-   However, this issue is that this does not really say much - I mean, who knows what a *one unit increase in the log of* $X$ even means?
+
+With some properties of logarithms, we can actually create a more useful interpretation. Based on logarithm rules, we know the following to be true:
+
+$$
+\begin{split}\log(x) + A & = \log(x) + \log(e^A) \\& = \log(e^A \times x)\end{split}
+$$
+
+Now, let us plug this into our original regression model:
+
+$$
+\begin{split}
+y_{i, \ x_i = x} & = \beta_0 + \beta_1\log(x) \\
+y_{i, \ x_i = e^A + x} & = \beta_0 + \beta_1 \log(e^A \times x) \\
+& = \beta_0 + \beta_1[\log(x) + A] \\
+& = \beta_0 + \beta_1 A + \beta_1 \log(x)
+\end{split}
+$$
+
+Now find the difference between $y_{i, \ x_i = e^A + x}$ and $y_{i, \ x_i = x}$:
+
+$$
+\begin{split}
+y_{i, \ x_i = e^A + x} - y_{i, \ x_i = x} & = [\beta_0 + \beta_1 A + \beta_1\log(x)] - [\beta_0 + \beta_1\log(x)] \\
+y_{i, \ x_i = e^A + x} - y_{i, \ x_i = x} & = \beta A\end{split}
+$$
+
+Thus, we can seen that when we multiply $X$ by $e^A$, we get an expected $\beta A$ change in $Y$.
+
+-   We can make this interpretation more useful by purposely choosing some value $A$ that makes $e^A$ make more sense.
+-   For example, if $A = 0.095$, then $e^A = 1.1$, and multiplying by 1.1 is a 10% increase.
+
+::: callout-tip
+## Interpretation of Logarithmic Transformation
+
+When $X_j$ increases by 10%, there is a expected $0.095\beta_j$ unit change in $Y$
+:::
 
 <br />
 
@@ -783,6 +941,10 @@ modelname <- feols(y ~ as.factor(x), data = mydata, se = "hetero")
 ```
 
 <br />
+
+## Polynomial Transformations
+
+## Logarithmic Transformations
 
 ## Creating Regression Tables
 
