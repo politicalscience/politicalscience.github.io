@@ -1142,9 +1142,69 @@ RMSE: 0.34285   Adj. R2: -0.001082</code></pre>
 </section>
 <section id="polynomial-transformations" class="level2">
 <h2 class="anchored" data-anchor-id="polynomial-transformations">Polynomial Transformations</h2>
+<p>For polynomial transformations, we use the <em>I()</em> function within the <em>feols()</em> function.</p>
+<ul>
+<li>The first parameter of <em>I()</em> is the variable name, and the second parameter is the number of the highest polynomial.</li>
+</ul>
+<p>Below is the syntax for a cubic polynomial:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>modelname <span class="ot">&lt;-</span> <span class="fu">feols</span>(y <span class="sc">~</span> x <span class="sc">+</span> <span class="fu">I</span>(x<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(x<span class="sc">^</span><span class="dv">3</span>), <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">feols</span>(pct_missing <span class="sc">~</span> mosques <span class="sc">+</span> <span class="fu">I</span>(mosques<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(mosques<span class="sc">^</span><span class="dv">3</span>),</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> dta, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: 90 observations removed because of NA values (LHS: 90, RHS: 2).</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OLS estimation, Dep. Var.: pct_missing
+Observations: 477
+Standard-errors: Heteroskedasticity-robust 
+              Estimate Std. Error  t value   Pr(&gt;|t|)    
+(Intercept)   0.521879   0.066955  7.79451 4.1469e-14 ***
+mosques      -0.409515   0.102659 -3.98907 7.6844e-05 ***
+I(mosques^2)  0.142124   0.041802  3.39996 7.3102e-04 ***
+I(mosques^3) -0.013082   0.004303 -3.04012 2.4960e-03 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 0.33552   Adj. R2: 0.037213</code></pre>
+</div>
+</div>
+<p>We can see the 3 coefficients for the variable <em>mosques</em>, each for <span class="math inline">x</span>, <span class="math inline">x^2</span>, and <span class="math inline">x^3</span>.</p>
+<p><br></p>
 </section>
 <section id="logarithmic-transformations-1" class="level2">
 <h2 class="anchored" data-anchor-id="logarithmic-transformations-1">Logarithmic Transformations</h2>
+<p>For logarithmic transformations, we use the <em>log()</em> function within the <em>feols()</em> function.</p>
+<ul>
+<li>You can also create a separate variable of the <em>log()</em> of the original variable, and include it in the regression.</li>
+</ul>
+<p>The syntax is as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>modelname <span class="ot">&lt;-</span> <span class="fu">feols</span>(y <span class="sc">~</span> <span class="fu">log</span>(x), <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">feols</span>(pct_missing <span class="sc">~</span> <span class="fu">log</span>(mosques), <span class="at">data =</span> dta, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: 91 observations removed because of NA and infinite values (LHS: 90, RHS: 3).</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OLS estimation, Dep. Var.: pct_missing
+Observations: 476
+Standard-errors: Heteroskedasticity-robust 
+              Estimate Std. Error  t value   Pr(&gt;|t|)    
+(Intercept)   0.254757   0.016486 15.45267  &lt; 2.2e-16 ***
+log(mosques) -0.096105   0.025388 -3.78551 0.00017307 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 0.337505   Adj. R2: 0.028845</code></pre>
+</div>
+</div>
+<p><br></p>
 </section>
 <section id="creating-regression-tables" class="level2">
 <h2 class="anchored" data-anchor-id="creating-regression-tables">Creating Regression Tables</h2>
@@ -1155,17 +1215,17 @@ RMSE: 0.34285   Adj. R2: -0.001082</code></pre>
 </ul>
 <p>The syntax is as follows (you can replace <em>screenreg()</em> with <em>texreg()</em> ):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">screenreg</span>(<span class="at">l =</span> <span class="fu">list</span>(modelname),</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.model.names =</span> <span class="fu">c</span>(<span class="st">"Outcome Variable Name"</span>),</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.coef.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"X Variable Name"</span>),</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">screenreg</span>(<span class="at">l =</span> <span class="fu">list</span>(modelname),</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.model.names =</span> <span class="fu">c</span>(<span class="st">"Outcome Variable Name"</span>),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.coef.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"X Variable Name"</span>),</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>For example:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">screenreg</span>(<span class="at">l =</span> <span class="fu">list</span>(model1),</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.model.names =</span> <span class="fu">c</span>(<span class="st">"Pct_Missing"</span>),</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.coef.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"Treatment"</span>),</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">screenreg</span>(<span class="at">l =</span> <span class="fu">list</span>(model1),</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.model.names =</span> <span class="fu">c</span>(<span class="st">"Pct_Missing"</span>),</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.coef.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"Treatment"</span>),</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 ==================================

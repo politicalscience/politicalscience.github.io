@@ -944,7 +944,48 @@ modelname <- feols(y ~ as.factor(x), data = mydata, se = "hetero")
 
 ## Polynomial Transformations
 
+For polynomial transformations, we use the *I()* function within the *feols()* function.
+
+-   The first parameter of *I()* is the variable name, and the second parameter is the number of the highest polynomial.
+
+Below is the syntax for a cubic polynomial:
+
+```{r, eval = FALSE}
+modelname <- feols(y ~ x + I(x^2) + I(x^3), data = mydata, se = "hetero")
+```
+
+For example:
+
+```{r}
+model <- feols(pct_missing ~ mosques + I(mosques^2) + I(mosques^3),
+               data = dta, se = "hetero")
+summary(model)
+```
+
+We can see the 3 coefficients for the variable *mosques*, each for $x$, $x^2$, and $x^3$.
+
+<br />
+
 ## Logarithmic Transformations
+
+For logarithmic transformations, we use the *log()* function within the *feols()* function.
+
+-   You can also create a separate variable of the *log()* of the original variable, and include it in the regression.
+
+The syntax is as follows:
+
+```{r, eval = FALSE}
+modelname <- feols(y ~ log(x), data = mydata, se = "hetero")
+```
+
+For example:
+
+```{r}
+model <- feols(pct_missing ~ log(mosques), data = dta, se = "hetero")
+summary(model)
+```
+
+<br />
 
 ## Creating Regression Tables
 

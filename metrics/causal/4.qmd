@@ -15,7 +15,7 @@ format:
         toc-depth: 2
         toc-location: left
         toc-expand: true
-        toc-title: "Chapter 1: Relationships Between Variables and Basics of Regression"
+        toc-title: "Chapter 4: Causal Inference through Multiple Linear Regression"
         mainfont: "Computer Modern"
         title-block-banner: true
         classoption: fleqn
@@ -24,7 +24,7 @@ format:
 
 This chapter introduces multiple linear regression, which allows us to control for confounding variables. We will explore the multiple regression model, and what it means to control for a variable. Then, we will focus heavily on the Ordinary Least Squares (OLS) estimator, why it is a good estimator, and issues when it comes to causal inference.
 
-Topics: Multiple Linear Regression, OLS with Linear Algebra, Regression Anatomy, Gauss-Markov, Unbiasedness and Consistnecy of OLS, Omitted Variable Bias and Endogeneity.
+Topics: Multiple Linear Regression, OLS with Linear Algebra, Regression Anatomy, Gauss-Markov, Unbiasedness and Consistnecy of OLS, Omitted Variable Bias and Endogeneity, Hypothesis Testing and F-tests of Nested Models, Interaction Effects and Conditional Average Treatment Effect.
 
 <br />
 
@@ -38,13 +38,11 @@ Before we start, make sure you have a strong understanding of all aspects of the
 
 -   Every topic covered in that chapter can be applied to Multiple Linear Regression, including categorical/polytomous explanatory variables, the linear probability model, and polynomial and logarithmic transformations.
 
-One of the issues with simple linear regression is that it often only measures the correlation/relationship between $x$ and $y$. Simple linear regression can only be used for causal estimation when used in randomised controlled experiments.
-
 <br />
 
-However, in the social sciences, randomisation is often not possible.
+One of the issues with simple linear regression is that it often only measures the correlation/relationship between $x$ and $y$. Simple linear regression can only be used for causal estimation when used in randomised controlled experiments.
 
-Multiple linear regression allows us to estimate a model with both our treatment and outcome variables, as well as a series of **control** variables.
+However, in the social sciences, randomisation is often not possible. Multiple linear regression allows us to estimate a model with both our treatment and outcome variables, as well as a series of **control** variables.
 
 -   We will explore the idea of "controlling" in later in [section 4.4](https://politicalscience.github.io/metrics/causal/4.html#regression-anatomy-theory-and-coefficient-interpretation).
 
@@ -336,7 +334,7 @@ Thus, the interpretation of $\beta_1$, or any $\beta_j$ multiplied to $x_j$, is:
 
 For binary $x_j$ variables (such as treatment $D$), $\beta_j$ is the expected difference in $y$ between categories $x=1$ and $x=0$, when controlling for all other explanatory variables.
 
-&nbsp;
+ 
 
 Note: the $\beta_j$ interpretation is [not the same]{.underline} for the linear probability model, polytomous explanatory variables, polynomial transformations, and log transformations.
 
@@ -446,7 +444,7 @@ Thus, the ordinary least squares estimator is unbiased, given 3 conditions (line
 
 [Course Homepage](https://politicalscience.github.io/metrics/)
 
-# 4.6: Omitted Variable Bias, Endogeneity, and Limitations of OLS for Causal Estimation
+# 4.6: Omitted Variable Bias and Endogeneity
 
 ### Omitted Variable Bias
 
@@ -555,7 +553,7 @@ Thus, omitted variable bias is only a problem when their is **both** a correlati
 
 We must also be confident that reverse causality can be ruled out, and measurement error is not an issue.
 
-&nbsp;
+ 
 
 [When this is met, we can interpret $\beta_j$ of variable $x_j$ as the average causal effect of increasing $x_j$ by one unit on $y$.]{.underline}
 
@@ -771,6 +769,121 @@ F-tests of nested models can help us test the significance of multiple coefficie
 
 # 4.9: Interaction Terms and Conditional Average Treatment Effect
 
+### Interaction Effect
+
+Interactions, also called moderating effects, means that the effect of $D$ on $y$ is not constant, and depends on some third variable $x_j$.
+
+-   Essentially, $x_j$'s value changes the relationship between $D$ and $y$.
+
+For example, $y$ could be the chance of a civil war occurring, $D$ is the severity of an economic crash, and $x$ is the development level of a country.
+
+-   We could quite reasonably expect that in the effect of a economic crash on a chance of civil war would be significantly higher in developing nations rather than developed.
+
+-   Or in other words, the chance that a civil war occurs due to a economic crash is higher in countries like Venezuela, North Korea and Eritrea, compared to the relationship in Norway, Switzerland, and Denmark.
+
+-   Essentially, $D$'s effect on $y$ is affected by the value of $x$.
+
+::: callout-tip
+## Definition: Interaction Effects
+
+Interaction effects are represented by two variables being multiplied together in a regression equation. In the model below, $D$ and $x$ are interacting with each other:
+
+$$
+y_i = \beta_0 + \beta_1 D_i + \beta_2 x_i + \beta_3 D_i x_i
+$$
+
+Note: you can see in the above equation, $X_1$ and $X_2$ both are interacted, as well as have their own separate coefficients.
+
+-   We should always include both variables independently along with the interaction effect.
+
+Note: You can add other control variables to this regression.
+:::
+
+<br />
+
+We can mathematically show that the effect of $D$ on $y$ is not constant - and varies due to the value of $x$, by taking the partial derivative of $y$ in respect to $D$:
+
+$$
+\begin{split}
+\hat{y}_i  & = \hat{\beta}_0 + \hat{\beta}_1 D_i + \hat{\beta}_2 x_i + \hat{\beta}_3 D_i x_i \\
+ \frac{\partial \hat{y}_i}{\partial D_i} &= 0 + \hat{\beta}_1 + 0 + \hat{\beta}_3x_i \\
+& = \hat{\beta}_1 + \hat{\beta}_3x_i\end{split}
+$$
+
+Thus, the effect of $D$ on $y$ is $\hat\beta_1 + \hat\beta_3 x_i$, which is a function of $x_i$.
+
+<br />
+
+With these equations, we can interpret the coefficients of our model more generally.
+
+::: callout-tip
+## Interpretation of Interaction Effects
+
+$\hat{\beta}_1$ is the relationship between $D$ and $y$, given $x = 0$.
+
+$\hat{\beta}_2$ is the relationship between $x$ and $Y$, given $D = 0$.
+
+$\hat{\beta}_3$ represents two things.
+
+1.  For every one unit increase of $x$, the magnitude of the relationship between $D$ and $y$ changes by $\hat{\beta}_3$.
+2.  For every one unit increase of $D$, the magnitude of the relationship between $x$ and $y$ changes by $\hat{\beta}_3$.
+
+The coefficient $\beta_3$'s significance level tells us if there is a statistically significant interaction.
+
+-   If $\beta_3$ is not statistically significant, we can remove the interaction term.
+-   However, if $\beta_3$ is statistically significant, that means we have found two terms that interact.
+:::
+
+<br />
+
+### Conditional Average Treatment Effect
+
+If we recall from chapter 2, the **Conditional Average Treatment Effect (CATE)** is the treatment effect of units, given they have some other variable $x$ value.
+
+$$
+\text{CATE} = \mathbb{E}[ \tau_i | x_i ] 
+$$
+
+Thus, with interaction effects, we know that the Conditional Average Treatment Effect (CATE) of $D$ on $y$ can be calculated as following:
+
+$$
+\text{CATE} = \beta_1 + \beta_3 x_i
+$$
+
+::: callout-note
+## Example of Conditional Average Treatment Effect
+
+Let us take the example from earlier: $y$ is the chance of a civil war occurring, $D$ is the severity of an economic crash, and $x$ is the development level of a country:
+
+-   $x$ is a binary variable - either a country is developed ($x=1$), or developing ($x=0$).
+
+Using the formula:
+
+$\text{CATE} = \beta_1 + \beta_3 x_i$
+
+We can calculate the conditional average treatment effects of $D$ on $y$, given some value of $x$:
+
+When a country is a developing country $x=0$, the conditional average treatment effect of an economic crash $D$ on civil war $y$ is:
+
+$$
+\begin{split}
+\mathbb{E}[\tau|x_i = 0] & = \beta_1 + \beta_3 x_i \\
+& = \beta_1 + \beta_3(0) \\
+& = \beta_1
+\end{split}
+$$
+
+And when a country is a developed country $x=0$, the conditional average treatment effect of an economic crash $D$ on a civil war $y$ is:
+
+$$
+\begin{split}
+\mathbb{E}[\tau|x_i = 1] & = \beta_1 + \beta_3 x_i \\
+& = \beta_1 + \beta_3(1) \\
+& = \beta_1 + \beta_3
+\end{split}
+$$
+:::
+
 <br />
 
 <br />
@@ -878,7 +991,42 @@ screenreg(l = list(model1),
 
 ## F-Tests of Nested Models
 
+An F-test of nested models is very simple. Run two regressions, storing them into 2 objects. Then, use the *anova()* command:
+
+-   NOTE: You must use the base-r *lm()* command for these regressions, since F-tests only work with homoscedastic error terms.
+
+```{r, eval = FALSE}
+anova(null_model_name, alternate_mode_name)
+```
+
+```{r, message = FALSE}
+m0 <- lm(pct_missing ~ treat_invite + head_edu + pct_poor, data = dta)
+m1 <- lm(pct_missing ~ treat_invite + head_edu + mosques + pct_poor, data = dta)
+
+anova(m0, m1)
+```
+
+We can see the significance level of the second (alternate) model when compared to the null.
+
+<br />
+
 ## Interaction Effects
+
+To run interaction effects, simply add a \* in between the two variables you want to interact:
+
+```{r, eval = FALSE}
+modelname <- feols(y ~ x1*x2 + x3 + x4, data = mydata, se = "hetero")
+```
+
+For example:
+
+```{r}
+model <- feols(pct_missing ~ treat_invite*head_edu + mosques + pct_poor,
+                data = dta, se = "hetero")
+summary(model)
+```
+
+We can see there is an interacted term coefficient in the output.
 
 <br />
 
