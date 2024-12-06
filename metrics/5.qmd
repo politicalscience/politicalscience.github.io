@@ -45,7 +45,14 @@ $$
 \end{split}
 $$
 
-Important note, the residual $\hat u_i$ is different from the error $u_i$. Error $u_i$ is based on the true parameters $\beta_0$ and $\beta_1$, not our OLS estimates $\hat\beta_0$ and $\hat\beta_1$.
+Important note, the residual $\hat u_i$ is different from the error $u_i$:
+
+$$
+\begin{split}
+& u_i = y_i - \beta_0 - \beta_1 x_i \\
+& \hat u_i = y_i - \hat\beta_0 - \hat\beta_1 x_i
+\end{split}
+$$
 
 The figure below shows what a residual for a point looks like: the distance between the best fit line.
 
@@ -62,7 +69,14 @@ $$
 \end{split}
 $$
 
-We can plug in $\hat u_i = y_i - \hat\beta_0 - \hat\beta_1 x_i$ to obtain a few properties.
+We can plug in $\hat u_i = y_i - \hat\beta_0 - \hat\beta_1 x_i$ into the two conditions above to get:
+
+$$
+\begin{split}
+& \sum\limits_{i=1}^n \hat u_i = 0 \\
+& \sum\limits_{i=1}^n x_i \hat u_i = 0
+\end{split}
+$$
 
 <br />
 
@@ -75,7 +89,6 @@ $$
 $$
 
 -   This property ensures that the average value of $y_i$ in our data is the same as the average value of our predictions $\hat y_i$.
--   This also means that the OLS best-fit line always goes through the "middle" of the data.
 
 <br />
 
@@ -146,8 +159,6 @@ An unbiased estimator, if we recall from [section 2.8](https://politicalscience.
 
 Unbiasedness is desirable property of causal estimators. Is OLS Unbiased? The Gauss-Markov Theorem proves that OLS is unbiased when 4 conditions are met.
 
--   This section will be focused on the conditions. The next section will prove the unbiasedness of OLS under these conditions.
-
 ::: callout-tip
 ## Definition: Gauss-Markov Theorem
 
@@ -161,6 +172,8 @@ The Gauss-Markov Theorem states that under 4 conditions, the OLS estimator is an
 We will explore each condition in detail.
 :::
 
+This section will be focused on the conditions. The next section will prove the unbiasedness of OLS under these conditions.
+
 <br />
 
 ### Assumption SLR.1: Linearity
@@ -169,13 +182,34 @@ Assumption SLR.1 states that a model must be **linear in parameters**.
 
 This means that the parameters of the model $\beta_0$ and $\beta_1$ must not be multiplied together - they must be added together.
 
-Note: This does not mean that the actual regression line must be linear. We will explore how we can mantain linear parameters while having non-linear relationships in chapter 9.
+For example, the following is linear:
+
+$$
+y = \beta_0 + \beta_1 x
+$$
+
+While the following is not linear (since parameters are multiplied):
+
+$$
+y = \beta_0\beta_1x
+$$
+
+Note: This does not mean that the actual regression line must be linear - only the parameters/coefficients must not be multiplied, the variables can be. For example, the following model is still linear in parameters:
+
+$$
+y = \beta_0 + \beta_1 x^2
+$$
 
 <br />
 
 ### Assumption SLR.2: Random Sampling
 
 All observations in our sample are randomly sampled from the population.
+
+To meet this condition, two criteria must be met:
+
+-   Observations $i$ must be independent of each other - i.e. if you get $y_1$, that does not affect your chances of getting $y_2$.
+-   All observations $i$ must come from the same population.
 
 This assumption allows us to go from:
 
@@ -215,7 +249,11 @@ $$
 E(u|x) = 0 \text{ for all } x
 $$
 
-This also implies that the error term $u$ an $x$ are uncorrelated with each other (since no matter $x$, $u$ takes the same value 0). Thus:
+This also implies that the error term $u$ an $x$ are uncorrelated with each other.
+
+-   This is because if $u$ was correlated with $x$, it would not always be equal to 0 no matter the value of $x$.
+
+Since the correlation is 0, the covariance between $u$ and $x$ must also be 0:
 
 $$
 Cov(x,u) = 0
@@ -306,7 +344,11 @@ Now, let us play with the numerator more (note the properties of summation intro
 
 $$
 \begin{split}
-& = \sum\limits_{i=1}^n (x_i - \bar{x})y_i \\ & = \sum\limits_{i=1}^n(x_i - \bar{x})(\beta_0 + \beta_1 x_i + u_i) \\& = \beta_0 \sum\limits_{i=1}^n(x_i - \bar{x}) + \beta_1 \sum\limits_{i=1}^n(x_i - \bar{x}) x_i + \sum\limits_{i=1}^n (x_i - \bar{x}) u_i \\& = 0 + \beta_1 \sum\limits_{i=1}^n(x_i - \bar{x})^2 + \sum\limits_{i=1}^n(x_i - \bar{x})u_i\end{split}
+& = \sum\limits_{i=1}^n (x_i - \bar{x})y_i \\
+& = \sum\limits_{i=1}^n(x_i - \bar{x})(\beta_0 + \beta_1 x_i + u_i) \\
+& = \sum\limits_{i=1}^n(x_i - \bar{x}) \beta_0 + \sum\limits_{i=1}^n(x_i - \bar{x}) \beta_1  x_i + \sum\limits_{i=1}^n (x_i - \bar{x}) u_i \\
+& = \beta_0 \sum\limits_{i=1}^n(x_i - \bar{x}) + \beta_1 \sum\limits_{i=1}^n(x_i - \bar{x}) x_i + \sum\limits_{i=1}^n (x_i - \bar{x}) u_i \\
+& = 0 + \beta_1 \sum\limits_{i=1}^n(x_i - \bar{x})^2 + \sum\limits_{i=1}^n(x_i - \bar{x})u_i\end{split}
 $$
 
 Now, putting the numerator back into the equation, we simplify:
@@ -327,7 +369,7 @@ Since $w_i$ is a function of $x$, that means $\hat\beta_1$ is also a function of
 
 <br />
 
-Now we need to find the expectation $E(\beta_1)$. Thus, we have this equation:
+Now we need to find the expectation $E(\hat\beta_1)$. Thus, we have this equation:
 
 $$
 \begin{split}
@@ -368,7 +410,7 @@ $$
 
 <br />
 
-Now knowing this, we can complete the proof:
+Now knowing what $E(w_iu_i|x)$ is, let us plug it back into our equation:
 
 $$
 \begin{split}
@@ -378,7 +420,7 @@ E(\hat\beta_1|x) & = \beta_1 + \sum\limits_{i=1}^nE(w_iu_i|x) \\
 \end{split}
 $$
 
-But you might notice, we have solved for $E(\hat\beta_1 |x)$, and not $E (\hat\beta_1)$.
+However, we have solved for $E(\hat\beta_1 |x)$, and not $E (\hat\beta_1)$.
 
 This is where the **Law of Iterated Expectation**. The law says the following:
 
@@ -462,7 +504,7 @@ First of all, what even is the variance $Var(u)$ representing? It is the varianc
 
 In the figure above, you can see the variance (spread) of the error term $u_i$'s distribution is consistent, no matter the value of $x$. This means that homoscedasticity is met.
 
-When $Var(u)$ is not constant (and changes with the value of $x$, we have something called **heteroscedasticity**.
+When $Var(u)$ is not constant (and changes with the value of $x$, we have **heteroscedasticity**.
 
 The best way to identify if this assumption is met is to look at a plot of the residuals (errors). If the variance in the residuals is constnant, we have homoscedasticity. If not, we have heteroscedasticity.
 
@@ -486,7 +528,7 @@ Assuming Homoscedasticity is met, we know $Var(u|x) = \sigma^2$.
 
 -   When homoscedasticity is not met, nothing in this section applies. See chapter 8 for more information on how to do estimates when this is violated.
 
-What is variance? From [section 1.5](https://politicalscience.github.io/metrics/1.html#variance-and-standard-deviation), we know that variance is:
+What is variance? From [section 1.5](https://politicalscience.github.io/metrics/1.html#variance-and-standard-deviation), we know that the formula for variance is:
 
 $$
 E(x - \mu)^2

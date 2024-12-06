@@ -66,7 +66,17 @@ You might notice an extra term at the end of the equation $u_i$. This is called 
 -   Well, not all of our data points $(x_i, y_i)$ are going to be exactly on the straight line of best fit.
 -   The term $u_i$ represents the distance (in terms of units of $y$) of that actual point from the best-fit line.
 
-For example, take the figure below - not all points are on the best-fit line. $u_i$ represents the distance of points from the best fit line:
+Mathematically, we can solve for the value of $u_i$ for each observation of $u_i$ by solving for it from the regression equation:
+
+$$
+\begin{split}
+y_i & = \beta_0 + \beta_1x_i + u_i \\
+- u_i & = -y_i + \beta_0 + \beta_1 x_i \\
+u_i & = y_i - \beta_0 - \beta_1 x_i
+\end{split}
+$$
+
+This might not be too intuitive. An easier way is to visualise it with a figure. Take the figure below - not all points are on the best-fit line. $u_i$ represents the distance of points from the best fit line:
 
 ![](images/clipboard-1210742477.png){fig-align="center" width="55%"}
 
@@ -151,7 +161,11 @@ The question is, how do we do this? For example, which best-fit line is better b
 
 To fit a best-fit line, we obviously want the line to fit the data well - i.e. have minimal errors compared to the actual data.
 
-Thus, one way we can fit an accurate line is to find the best-fit line that minimises the sum of squared errors (SSE).
+-   What is an error? Recall that our original values of $y$ from the data for any observation $i$ are $y_i$.
+-   We also have predictions for the value of any observation from our best-fit line, labelled $\hat y_i$
+-   Thus naturally, the error is how far away our prediction $\hat y_i$ is from the true observed value $y_i$.
+
+One way we can fit an accurate line is to find the best-fit line that minimises the sum of squared errors (SSE).
 
 ::: callout-tip
 ## Definition: Sum of Squared Errors
@@ -194,7 +208,7 @@ A common question is why we square the errors, and don't use absolute values of 
 
 # 4.4: Mathematics of the Ordinary Least Squares Estimator
 
-The Ordinary Least Squares (OLS) Estimator estimates the coefficients $\beta_0$ and $\beta_1$ by finding the values of $\beta_0$ and $\beta_1$ that result in the line with the smallest sum of squared errors (as discussed in the last section).
+The Ordinary Least Squares (OLS) Estimator estimates the coefficients $\beta_0$ and $\beta_1$ by finding the values of $\hat\beta_0$ and $\hat\beta_1$ that result in the line with the smallest sum of squared errors (as discussed in the last section).
 
 We can describe the goal of OLS in a more mathematical way:
 
@@ -309,10 +323,13 @@ $$
 Now, let us substitute our calculated $\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}$ into the $\hat{\beta}_1$ condition and solve for $\hat{\beta}_1$:
 
 $$
-\begin{split}0 & = \sum\limits_{i=1}^n \left[ x_i(y_i - [\bar{y} - \hat{\beta}_1\bar{x}] - \hat{\beta}_1x_i) \right] \\
+\begin{split}
+0 & =\sum\limits_{i=1}^n x_i (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)  \\
+& = \sum\limits_{i=1}^n \left[ x_i(y_i - [\bar{y} - \hat{\beta}_1\bar{x}] - \hat{\beta}_1x_i) \right] \\
 & = \sum\limits_{i=1}^n \left[ x_i(y_i - \bar{y} - \hat{\beta}_1 (x_i - \bar{x})) \right] \\
 & = \sum\limits_{i=1}^n \left[ x_i(y_i - \bar{y}) - x_i \hat{\beta}_1(x_i - \bar{x}) \right] \\
-& = \sum\limits_{i=1}^n x_i (y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^nx_i (x_i - \bar{x})\end{split}
+& = \sum\limits_{i=1}^n x_i (y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^nx_i (x_i - \bar{x})
+\end{split}
 $$
 
 ::: callout-note
@@ -325,15 +342,18 @@ $$
 $$
 :::
 
-Knowing these properties of summation, we can transform what we had before into:
+Knowing these properties of summation, we can transform what we had before:
 
 $$
 \begin{split}
+0 & = \sum\limits_{i=1}^n x_i (y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^nx_i (x_i - \bar{x}) \\
 0 & = \sum\limits_{i=1}^n(x_i - \bar{x})(y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^n (x_i - \bar{x})^2 \\
 \hat{\beta}_1 \sum\limits_{i=1}^n (x_i - \bar{x})^2 & = \sum\limits_{i=1}^n(x_i - \bar{x})(y_i - \bar{y}) \\
 \hat{\beta}_1 & = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^n(x_i - \bar{x})^2}
 \end{split}
 $$
+
+Note that the numerator is equivalent to the formula of covariance $Cov(x,y)$, and the denominator is equal to the variance $Var(x)$.
 
 ::: callout-tip
 ## Definition: OLS Estimate of Coefficient
@@ -351,7 +371,7 @@ This is the expected change in $y$ given a one unit increase in $x$.
 
 <br />
 
-Of course, we still need to find $\hat\beta_0$ (the slope). We found that $\hat\beta_0 = \bar{y} - \hat{\beta}_1 \bar{x}$ earlier, so we just plug that in.
+Of course, we still need to find $\hat\beta_0$ (the slope). We found that $\hat\beta_0 = \bar{y} - \hat{\beta}_1 \bar{x}$ earlier, so we just plug our solution of $\hat\beta_1$ in.
 
 And now, we have our estimates $\hat\beta_0$ and $\hat\beta_1$, and thus we now have a best-fit line and an estimate of the relationship between $x$ and $y$.
 
@@ -492,6 +512,7 @@ $$
 \begin{split}
 SST & = \sum\limits_{i=1}^n (y_i - \bar y)^2 \\
 & = \sum\limits_{i=1}^n(y_i - \hat y_i+ \hat y_i - \bar y)^2 \\
+& = \sum\limits_{i=1}^n((y_i - \hat y_i)+ \hat y_i - \bar y)^2 \\
 & = \sum\limits_{i=1}^n[\hat u_i + \hat y_i - \bar y]^2 \\
 & = \sum\limits_{i=1}^n[\hat u_i^2 + \hat u_i \hat y_i - \hat u_i \bar y + \hat y_i \hat u_i + \hat y_i^2 - \hat y_i \bar y-\bar y \hat u_i -\bar y \hat  y_i+\hat y^2_i] \\
 & = \sum\limits_{i=1}^n[ \hat u_i^2 + 2 \hat u_i \hat y_i+ \hat y_i^2 - 2 \hat u_i \bar y - 2 \hat y_i \bar y + \bar y ^2]

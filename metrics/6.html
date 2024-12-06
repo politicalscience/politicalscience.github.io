@@ -145,7 +145,7 @@ Definition: Gauss-Markov Theorem
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The Gauss-Markov Theorem states that under 4 conditions, the OLS estimator is an unbiased estimator for <span class="math inline">\beta_1</span>.</p>
+<p>The Gauss-Markov Theorem states that under 4 conditions, the OLS estimator is unbiased for <span class="math inline">\beta_1</span>.</p>
 <ul>
 <li><strong>SLR.1 (Linearity in Parameters)</strong>: The parameters of the model are linear.</li>
 <li><strong>SLR.2 (Random Sampling)</strong>: All observations in our sample are randomly sampled from the population.</li>
@@ -182,7 +182,7 @@ Cov(x, u) = 0
 </ul>
 <p>The simplest way to address it is to include the extra variable <span class="math inline">w</span> into our regression as another explanatory variable.</p>
 <ul>
-<li>This way, <span class="math inline">w</span> is another explanatory variable along with <span class="math inline">x</span>, and is no longer in the error term <span class="math inline">u</span>, solving our issue!</li>
+<li>This way, <span class="math inline">w</span> is another explanatory variable along with <span class="math inline">x</span>, and is no longer in the error term <span class="math inline">u</span>, thus <span class="math inline">x</span> will not be correlated with <span class="math inline">u</span> anymore (assuming there are no other confounders).</li>
 </ul>
 <p>Multiple Linear Regression is a way to implement this solution - it allows us to include multiple explanatory variables in our regression model.</p>
 <p><br></p>
@@ -194,11 +194,12 @@ Cov(x, u) = 0
 <h1>6.2: The Multiple Linear Regression Model</h1>
 <p>Multiple linear regression is an extension of simple linear regression, that can help us deal with confounding variables.</p>
 <ul>
-<li>Multiple linear regression allows us to “control for the effect” of confounders. We will discuss this in section 6.5.</li>
+<li>Multiple linear regression allows us to “control for the effect” of confounders. We will discuss this in <a href="https://politicalscience.github.io/metrics/6.html#regression-anatomy-and-controlling-for-confounders">section 6.5</a>.</li>
 </ul>
 <p>The <strong>response variable</strong> (outcome variable) is notated <span class="math inline">y</span>, just like in single linear regression.</p>
 <p>The <strong>explanatory variable</strong>s are <span class="math inline">x_1, x_2, ..., x_k</span>. We sometimes also denote all explanatory variables as the vector <span class="math inline">\overrightarrow{x}</span>.</p>
 <ul>
+<li><span class="math inline">k</span> represents the total number of explanatory variables.</li>
 <li>Note: if you see the notation <span class="math inline">x_j</span>, that means any explanatory variable <span class="math inline">x_1, \dots , x_k</span>. The variable <span class="math inline">x_j</span> represents any individual coefficient (for generalisation purposes).</li>
 </ul>
 <p><br></p>
@@ -286,12 +287,17 @@ y_i = x_i'\beta + u_i, \text{ where }\beta = \begin{bmatrix}\beta_0 \\ \beta_1 \
 <li>Thus, when multiplying out, we get the same equation as the original multiple linear regression.</li>
 </ul>
 <p><br></p>
-<p>Since our data has <span class="math inline">n</span> number of observations <span class="math inline">i</span>, we can express this into vector form, with the <span class="math inline">x_i'</span> and <span class="math inline">\beta</span> being vectors within a vector.</p>
+<p>Note how we have the subscript <span class="math inline">i</span> representing each individual observation. With a vector, we can expand out these subscripts.</p>
+<ul>
+<li>For example, instead of <span class="math inline">y_i</span>, we could have a vector with <span class="math inline">y_1, y_2, \dots, y_n</span> (assuming we have <span class="math inline">n</span> observations).</li>
+<li>Same for <span class="math inline">x'_i</span>, which can be expanded into a vector of <span class="math inline">x_1', x_2', \dots x_n'</span>, and for the error term <span class="math inline">u_i</span>, which can be expanded into a vector of <span class="math inline">u_1, u_2, \dots, u_n</span>.</li>
+</ul>
+<p>Using this logic, we can obtain the following, with the <span class="math inline">x_i'</span> and <span class="math inline">\beta</span> being vectors within a vector:</p>
 <p><span class="math display">
 \begin{split}
 \begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} &amp; = \begin{pmatrix}x_1'\beta + u_1 \\ x_2'\beta + u_2 \\ \vdots \\ x_n'\beta + u_n\end{pmatrix} \\
 &amp; \\
-&amp; = \begin{pmatrix}x_1'\beta \\ x_2'\beta \\ \vdots \\ x_n'\beta\end{pmatrix} + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
+\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}&amp; = \begin{pmatrix}x_1'\beta \\ x_2'\beta \\ \vdots \\ x_n'\beta\end{pmatrix} + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
 \end{split}
 </span></p>
 <p>Since <span class="math inline">\beta</span> vector appears as a common factor for all observations <span class="math inline">i=1,...,n</span>, we can factor it out and have an equation:</p>
@@ -315,13 +321,24 @@ Definition: Multiple Linear Regression with Linear Algebra
 <div class="callout-body-container callout-body">
 <p>The multiple linear regression can be expressed in linear algebra as:</p>
 <p><span class="math display">
-y = X \beta + u, \text{ where } X = \begin{bmatrix}1 &amp; x_{21} &amp; \dots &amp; x_{k1} \\1 &amp; x_{22} &amp; \dots &amp; x_{k2} \\\vdots &amp; \vdots &amp; \vdots &amp; \vdots \\1 &amp; x_{2n} &amp; \dots &amp; x_{kn}\end{bmatrix}
+y = X \beta + u
+</span></p>
+<p>Where vector <span class="math inline">y</span> is equal to:</p>
+<p><span class="math display">
+y = \begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}
+</span></p>
+<p>Where matrix <span class="math inline">X</span> is equal to:</p>
+<p><span class="math display">
+X = \begin{bmatrix}1 &amp; x_{21} &amp; \dots &amp; x_{k1} \\1 &amp; x_{22} &amp; \dots &amp; x_{k2} \\\vdots &amp; \vdots &amp; \vdots &amp; \vdots \\1 &amp; x_{2n} &amp; \dots &amp; x_{kn}\end{bmatrix}
 </span></p>
 <ul>
 <li>Where the notation for elements of <span class="math inline">X</span> is <span class="math inline">x_{ki}</span>, with <span class="math inline">i</span> being the unit of observation <span class="math inline">i = 1, \dots n</span>, and <span class="math inline">k</span> being the explanatory variables index.</li>
-<li>Where <span class="math inline">y</span> and <span class="math inline">u</span> are <span class="math inline">n \times 1</span> vectors (as seen above), and <span class="math inline">\beta</span> is a <span class="math inline">k \times 1</span> vector.</li>
-<li>The first column of <span class="math inline">X</span> is a vector of 1, which exists because these 1’s are multiplied with <span class="math inline">\beta_0</span> in our model.</li>
+<li>The first column of <span class="math inline">X</span> is a vector of 1, which exists because these 1’s are multiplied with <span class="math inline">\beta_0</span> in our model (see below).</li>
 </ul>
+<p>Where vector <span class="math inline">\beta</span> is equal to:</p>
+<p><span class="math display">
+\beta = \begin{pmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{pmatrix}
+</span></p>
 </div>
 </div>
 <p>The point of expressing the model in linear algebra is that it makes the estimation process far easier, as we will see in the next section.</p>
@@ -434,12 +451,12 @@ Definition: OLS Estimate of <span class="math inline">\hat\beta</span>
 <section id="regression-anatomy-and-controlling-for-confounders" class="level1">
 <h1>6.5: Regression Anatomy and Controlling for Confounders</h1>
 <p>We talked about how multiple linear regression allows us to control for confounders. But what does that mean? How does it affect our interpretations of coefficients?</p>
-<p>The Regression Anatomy Theory, also called the Frisch–Waugh–Lovell (FWL) theorem, illustrates this concept. Take our standard multiple linear regression:</p>
+<p>The <strong>Regression Anatomy</strong> Theory, also called the <strong>Frisch–Waugh–Lovell (FWL)</strong> theorem, illustrates this concept. Take our standard multiple linear regression:</p>
 <p><span class="math display">
 y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + ... + \beta_k x_{ki} + u_i
 </span></p>
 <p><br></p>
-<p>Let us say we are interested in <span class="math inline">x_1</span> (this can be generalised to any explanatory variable <span class="math inline">x_j</span>). Let us make <span class="math inline">x_1</span> the outcome variable of a regression with <span class="math inline">x_2, ..., x_k</span>:</p>
+<p>Let us say we are interested in <span class="math inline">x_1</span> (this can be generalised to any explanatory variable <span class="math inline">x_j</span>). Let us make <span class="math inline">x_1</span> the outcome variable of a regression with explanatory variables <span class="math inline">x_2, ..., x_k</span>:</p>
 <p><span class="math display">
 x_{1i} = \gamma_0 + \gamma_1 x_{2i} + ... + \gamma_{k-1}x_{ki} + \widetilde{r_{1i}}
 </span></p>
@@ -449,10 +466,10 @@ x_{1i} = \gamma_0 + \gamma_1 x_{2i} + ... + \gamma_{k-1}x_{ki} + \widetilde{r_{1
 </ul>
 <p>The error term is <span class="math inline">\widetilde{r_{1i}}</span>, which represents the part of <span class="math inline">x_{1i}</span> that are uncorrelated to <span class="math inline">x_2, ..., x_k</span>.</p>
 <ul>
-<li>In other words, <span class="math inline">\widetilde{r_{1i}}</span> is the part of <span class="math inline">x_1</span> that cannot be explained by any other explanatory variable. (uncorrelated with them)</li>
+<li>In other words, <span class="math inline">\widetilde{r_{1i}}</span> is the part of <span class="math inline">x_1</span> that cannot be explained by any other explanatory variable <span class="math inline">x_2, ..., x_k</span>. (uncorrelated with them)</li>
 </ul>
 <p><br></p>
-<p>Now, take the regression of with outcome variable <span class="math inline">y</span>, with all explanatory variables except <span class="math inline">x_1</span>:</p>
+<p>Now, take the regression of with outcome variable <span class="math inline">y</span>, with all explanatory variables <u>except</u> <span class="math inline">x_1</span>:</p>
 <p><span class="math display">
 y_i = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \widetilde{y_i}
 </span></p>
@@ -594,7 +611,7 @@ Reminder: Regression Anatomy
 <div class="callout-body-container callout-body">
 <p>Remember, in the last section, we defined <span class="math inline">\widetilde{r_{ji}}</span> as the error term in a regression of <span class="math inline">x_j</span> on all other explanatory variables:</p>
 <p><span class="math display">
-x_{ji} = \gamma_0 + \gamma_1 x_{2i} + ... + \gamma_{k-1}x_{ki} + \widetilde{r_{ji}}
+x_{ji} = \gamma_0 + \gamma_1 x_{1i} + ... + \gamma_{k-1}x_{ki} + \widetilde{r_{ji}}
 </span></p>
 <p>Thus, <span class="math inline">\widetilde{r_{ji}}</span> is the part of <span class="math inline">x_j</span> uncorrelated with any other explanatory variable.</p>
 </div>

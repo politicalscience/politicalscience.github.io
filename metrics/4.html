@@ -169,7 +169,15 @@ y_i = \beta_0 + \beta_1 x_i + u_i
 <li>Well, not all of our data points <span class="math inline">(x_i, y_i)</span> are going to be exactly on the straight line of best fit.</li>
 <li>The term <span class="math inline">u_i</span> represents the distance (in terms of units of <span class="math inline">y</span>) of that actual point from the best-fit line.</li>
 </ul>
-<p>For example, take the figure below - not all points are on the best-fit line. <span class="math inline">u_i</span> represents the distance of points from the best fit line:</p>
+<p>Mathematically, we can solve for the value of <span class="math inline">u_i</span> for each observation of <span class="math inline">u_i</span> by solving for it from the regression equation:</p>
+<p><span class="math display">
+\begin{split}
+y_i &amp; = \beta_0 + \beta_1x_i + u_i \\
+- u_i &amp; = -y_i + \beta_0 + \beta_1 x_i \\
+u_i &amp; = y_i - \beta_0 - \beta_1 x_i
+\end{split}
+</span></p>
+<p>This might not be too intuitive. An easier way is to visualise it with a figure. Take the figure below - not all points are on the best-fit line. <span class="math inline">u_i</span> represents the distance of points from the best fit line:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-1210742477.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:55.0%"></p>
@@ -248,7 +256,12 @@ Definition: Fitted Values
 </figure>
 </div>
 <p>To fit a best-fit line, we obviously want the line to fit the data well - i.e.&nbsp;have minimal errors compared to the actual data.</p>
-<p>Thus, one way we can fit an accurate line is to find the best-fit line that minimises the sum of squared errors (SSE).</p>
+<ul>
+<li>What is an error? Recall that our original values of <span class="math inline">y</span> from the data for any observation <span class="math inline">i</span> are <span class="math inline">y_i</span>.</li>
+<li>We also have predictions for the value of any observation from our best-fit line, labelled <span class="math inline">\hat y_i</span></li>
+<li>Thus naturally, the error is how far away our prediction <span class="math inline">\hat y_i</span> is from the true observed value <span class="math inline">y_i</span>.</li>
+</ul>
+<p>One way we can fit an accurate line is to find the best-fit line that minimises the sum of squared errors (SSE).</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -296,7 +309,7 @@ SSE &amp; = \sum\limits_{i=1}^n (y_i - \hat y_i)^2 \\
 </section>
 <section id="mathematics-of-the-ordinary-least-squares-estimator" class="level1">
 <h1>4.4: Mathematics of the Ordinary Least Squares Estimator</h1>
-<p>The Ordinary Least Squares (OLS) Estimator estimates the coefficients <span class="math inline">\beta_0</span> and <span class="math inline">\beta_1</span> by finding the values of <span class="math inline">\beta_0</span> and <span class="math inline">\beta_1</span> that result in the line with the smallest sum of squared errors (as discussed in the last section).</p>
+<p>The Ordinary Least Squares (OLS) Estimator estimates the coefficients <span class="math inline">\beta_0</span> and <span class="math inline">\beta_1</span> by finding the values of <span class="math inline">\hat\beta_0</span> and <span class="math inline">\hat\beta_1</span> that result in the line with the smallest sum of squared errors (as discussed in the last section).</p>
 <p>We can describe the goal of OLS in a more mathematical way:</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -399,10 +412,13 @@ Definition: First Order Conditions of OLS
 </span></p>
 <p>Now, let us substitute our calculated <span class="math inline">\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}</span> into the <span class="math inline">\hat{\beta}_1</span> condition and solve for <span class="math inline">\hat{\beta}_1</span>:</p>
 <p><span class="math display">
-\begin{split}0 &amp; = \sum\limits_{i=1}^n \left[ x_i(y_i - [\bar{y} - \hat{\beta}_1\bar{x}] - \hat{\beta}_1x_i) \right] \\
+\begin{split}
+0 &amp; =\sum\limits_{i=1}^n x_i (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i)  \\
+&amp; = \sum\limits_{i=1}^n \left[ x_i(y_i - [\bar{y} - \hat{\beta}_1\bar{x}] - \hat{\beta}_1x_i) \right] \\
 &amp; = \sum\limits_{i=1}^n \left[ x_i(y_i - \bar{y} - \hat{\beta}_1 (x_i - \bar{x})) \right] \\
 &amp; = \sum\limits_{i=1}^n \left[ x_i(y_i - \bar{y}) - x_i \hat{\beta}_1(x_i - \bar{x}) \right] \\
-&amp; = \sum\limits_{i=1}^n x_i (y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^nx_i (x_i - \bar{x})\end{split}
+&amp; = \sum\limits_{i=1}^n x_i (y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^nx_i (x_i - \bar{x})
+\end{split}
 </span></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -420,14 +436,16 @@ Useful Properties of Summation
 </span></p>
 </div>
 </div>
-<p>Knowing these properties of summation, we can transform what we had before into:</p>
+<p>Knowing these properties of summation, we can transform what we had before:</p>
 <p><span class="math display">
 \begin{split}
+0 &amp; = \sum\limits_{i=1}^n x_i (y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^nx_i (x_i - \bar{x}) \\
 0 &amp; = \sum\limits_{i=1}^n(x_i - \bar{x})(y_i - \bar{y}) - \hat{\beta}_1 \sum\limits_{i=1}^n (x_i - \bar{x})^2 \\
 \hat{\beta}_1 \sum\limits_{i=1}^n (x_i - \bar{x})^2 &amp; = \sum\limits_{i=1}^n(x_i - \bar{x})(y_i - \bar{y}) \\
 \hat{\beta}_1 &amp; = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^n(x_i - \bar{x})^2}
 \end{split}
 </span></p>
+<p>Note that the numerator is equivalent to the formula of covariance <span class="math inline">Cov(x,y)</span>, and the denominator is equal to the variance <span class="math inline">Var(x)</span>.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -449,7 +467,7 @@ Definition: OLS Estimate of Coefficient
 </div>
 </div>
 <p><br></p>
-<p>Of course, we still need to find <span class="math inline">\hat\beta_0</span> (the slope). We found that <span class="math inline">\hat\beta_0 = \bar{y} - \hat{\beta}_1 \bar{x}</span> earlier, so we just plug that in.</p>
+<p>Of course, we still need to find <span class="math inline">\hat\beta_0</span> (the slope). We found that <span class="math inline">\hat\beta_0 = \bar{y} - \hat{\beta}_1 \bar{x}</span> earlier, so we just plug our solution of <span class="math inline">\hat\beta_1</span> in.</p>
 <p>And now, we have our estimates <span class="math inline">\hat\beta_0</span> and <span class="math inline">\hat\beta_1</span>, and thus we now have a best-fit line and an estimate of the relationship between <span class="math inline">x</span> and <span class="math inline">y</span>.</p>
 <p>Note: in the <a href="https://politicalscience.github.io/metrics/5.html">next chapter</a>, we will discuss if the OLS estimator is a good estimator or not. For now, we just care about the mechanics of the estimator.</p>
 <p><br></p>
@@ -602,6 +620,7 @@ y_i = \hat y_i + \hat u_i
 \begin{split}
 SST &amp; = \sum\limits_{i=1}^n (y_i - \bar y)^2 \\
 &amp; = \sum\limits_{i=1}^n(y_i - \hat y_i+ \hat y_i - \bar y)^2 \\
+&amp; = \sum\limits_{i=1}^n((y_i - \hat y_i)+ \hat y_i - \bar y)^2 \\
 &amp; = \sum\limits_{i=1}^n[\hat u_i + \hat y_i - \bar y]^2 \\
 &amp; = \sum\limits_{i=1}^n[\hat u_i^2 + \hat u_i \hat y_i - \hat u_i \bar y + \hat y_i \hat u_i + \hat y_i^2 - \hat y_i \bar y-\bar y \hat u_i -\bar y \hat  y_i+\hat y^2_i] \\
 &amp; = \sum\limits_{i=1}^n[ \hat u_i^2 + 2 \hat u_i \hat y_i+ \hat y_i^2 - 2 \hat u_i \bar y - 2 \hat y_i \bar y + \bar y ^2]

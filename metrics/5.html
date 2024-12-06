@@ -141,7 +141,13 @@ window.Quarto = {
 &amp; = y_i - \hat\beta_0 - \hat\beta_1 x_i
 \end{split}
 </span></p>
-<p>Important note, the residual <span class="math inline">\hat u_i</span> is different from the error <span class="math inline">u_i</span>. Error <span class="math inline">u_i</span> is based on the true parameters <span class="math inline">\beta_0</span> and <span class="math inline">\beta_1</span>, not our OLS estimates <span class="math inline">\hat\beta_0</span> and <span class="math inline">\hat\beta_1</span>.</p>
+<p>Important note, the residual <span class="math inline">\hat u_i</span> is different from the error <span class="math inline">u_i</span>:</p>
+<p><span class="math display">
+\begin{split}
+&amp; u_i = y_i - \beta_0 - \beta_1 x_i \\
+&amp; \hat u_i = y_i - \hat\beta_0 - \hat\beta_1 x_i
+\end{split}
+</span></p>
 <p>The figure below shows what a residual for a point looks like: the distance between the best fit line.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -156,7 +162,13 @@ window.Quarto = {
 &amp; \sum\limits_{i=1}^n x_i (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
 \end{split}
 </span></p>
-<p>We can plug in <span class="math inline">\hat u_i = y_i - \hat\beta_0 - \hat\beta_1 x_i</span> to obtain a few properties.</p>
+<p>We can plug in <span class="math inline">\hat u_i = y_i - \hat\beta_0 - \hat\beta_1 x_i</span> into the two conditions above to get:</p>
+<p><span class="math display">
+\begin{split}
+&amp; \sum\limits_{i=1}^n \hat u_i = 0 \\
+&amp; \sum\limits_{i=1}^n x_i \hat u_i = 0
+\end{split}
+</span></p>
 <p><br></p>
 <section id="property-1-sum-of-residuals-is-0" class="level3">
 <h3 class="anchored" data-anchor-id="property-1-sum-of-residuals-is-0">Property 1: Sum of Residuals is 0</h3>
@@ -166,7 +178,6 @@ window.Quarto = {
 </span></p>
 <ul>
 <li>This property ensures that the average value of <span class="math inline">y_i</span> in our data is the same as the average value of our predictions <span class="math inline">\hat y_i</span>.</li>
-<li>This also means that the OLS best-fit line always goes through the “middle” of the data.</li>
 </ul>
 <p><br></p>
 </section>
@@ -220,9 +231,6 @@ cov(x, \hat u) &amp; = \frac{1}{n}\sum\limits_{i=1}^n [(x_i - \bar x)(\hat u_i -
 <h1>5.2: Unbiasedness of OLS Under the Gauss-Markov Theorem</h1>
 <p>An unbiased estimator, if we recall from <a href="https://politicalscience.github.io/metrics/2.html#properties-of-estimators">section 2.8</a>, means that over many different estimates, the expected value of all the estimates is the true parameter value: <span class="math inline">E(\hat{\theta}_n) = \theta</span>.</p>
 <p>Unbiasedness is desirable property of causal estimators. Is OLS Unbiased? The Gauss-Markov Theorem proves that OLS is unbiased when 4 conditions are met.</p>
-<ul>
-<li>This section will be focused on the conditions. The next section will prove the unbiasedness of OLS under these conditions.</li>
-</ul>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -243,17 +251,34 @@ Definition: Gauss-Markov Theorem
 <p>We will explore each condition in detail.</p>
 </div>
 </div>
+<p>This section will be focused on the conditions. The next section will prove the unbiasedness of OLS under these conditions.</p>
 <p><br></p>
 <section id="assumption-slr.1-linearity" class="level3">
 <h3 class="anchored" data-anchor-id="assumption-slr.1-linearity">Assumption SLR.1: Linearity</h3>
 <p>Assumption SLR.1 states that a model must be <strong>linear in parameters</strong>.</p>
 <p>This means that the parameters of the model <span class="math inline">\beta_0</span> and <span class="math inline">\beta_1</span> must not be multiplied together - they must be added together.</p>
-<p>Note: This does not mean that the actual regression line must be linear. We will explore how we can mantain linear parameters while having non-linear relationships in chapter 9.</p>
+<p>For example, the following is linear:</p>
+<p><span class="math display">
+y = \beta_0 + \beta_1 x
+</span></p>
+<p>While the following is not linear (since parameters are multiplied):</p>
+<p><span class="math display">
+y = \beta_0\beta_1x
+</span></p>
+<p>Note: This does not mean that the actual regression line must be linear - only the parameters/coefficients must not be multiplied, the variables can be. For example, the following model is still linear in parameters:</p>
+<p><span class="math display">
+y = \beta_0 + \beta_1 x^2
+</span></p>
 <p><br></p>
 </section>
 <section id="assumption-slr.2-random-sampling" class="level3">
 <h3 class="anchored" data-anchor-id="assumption-slr.2-random-sampling">Assumption SLR.2: Random Sampling</h3>
 <p>All observations in our sample are randomly sampled from the population.</p>
+<p>To meet this condition, two criteria must be met:</p>
+<ul>
+<li>Observations <span class="math inline">i</span> must be independent of each other - i.e.&nbsp;if you get <span class="math inline">y_1</span>, that does not affect your chances of getting <span class="math inline">y_2</span>.</li>
+<li>All observations <span class="math inline">i</span> must come from the same population.</li>
+</ul>
 <p>This assumption allows us to go from:</p>
 <p><span class="math display">
 y = \beta_0 + \beta_1 x + u
@@ -283,7 +308,11 @@ y_i = \beta_0 + \beta_1 x_i + u_i
 <p><span class="math display">
 E(u|x) = 0 \text{ for all } x
 </span></p>
-<p>This also implies that the error term <span class="math inline">u</span> an <span class="math inline">x</span> are uncorrelated with each other (since no matter <span class="math inline">x</span>, <span class="math inline">u</span> takes the same value 0). Thus:</p>
+<p>This also implies that the error term <span class="math inline">u</span> an <span class="math inline">x</span> are uncorrelated with each other.</p>
+<ul>
+<li>This is because if <span class="math inline">u</span> was correlated with <span class="math inline">x</span>, it would not always be equal to 0 no matter the value of <span class="math inline">x</span>.</li>
+</ul>
+<p>Since the correlation is 0, the covariance between <span class="math inline">u</span> and <span class="math inline">x</span> must also be 0:</p>
 <p><span class="math display">
 Cov(x,u) = 0
 </span></p>
@@ -370,7 +399,11 @@ SLR.3 Variance in <span class="math inline">x</span>
 <p>Now, let us play with the numerator more (note the properties of summation introduced earlier):</p>
 <p><span class="math display">
 \begin{split}
-&amp; = \sum\limits_{i=1}^n (x_i - \bar{x})y_i \\ &amp; = \sum\limits_{i=1}^n(x_i - \bar{x})(\beta_0 + \beta_1 x_i + u_i) \\&amp; = \beta_0 \sum\limits_{i=1}^n(x_i - \bar{x}) + \beta_1 \sum\limits_{i=1}^n(x_i - \bar{x}) x_i + \sum\limits_{i=1}^n (x_i - \bar{x}) u_i \\&amp; = 0 + \beta_1 \sum\limits_{i=1}^n(x_i - \bar{x})^2 + \sum\limits_{i=1}^n(x_i - \bar{x})u_i\end{split}
+&amp; = \sum\limits_{i=1}^n (x_i - \bar{x})y_i \\
+&amp; = \sum\limits_{i=1}^n(x_i - \bar{x})(\beta_0 + \beta_1 x_i + u_i) \\
+&amp; = \sum\limits_{i=1}^n(x_i - \bar{x}) \beta_0 + \sum\limits_{i=1}^n(x_i - \bar{x}) \beta_1  x_i + \sum\limits_{i=1}^n (x_i - \bar{x}) u_i \\
+&amp; = \beta_0 \sum\limits_{i=1}^n(x_i - \bar{x}) + \beta_1 \sum\limits_{i=1}^n(x_i - \bar{x}) x_i + \sum\limits_{i=1}^n (x_i - \bar{x}) u_i \\
+&amp; = 0 + \beta_1 \sum\limits_{i=1}^n(x_i - \bar{x})^2 + \sum\limits_{i=1}^n(x_i - \bar{x})u_i\end{split}
 </span></p>
 <p>Now, putting the numerator back into the equation, we simplify:</p>
 <p><span class="math display">
@@ -386,7 +419,7 @@ SLR.3 Variance in <span class="math inline">x</span>
 </ul>
 <p>Since <span class="math inline">w_i</span> is a function of <span class="math inline">x</span>, that means <span class="math inline">\hat\beta_1</span> is also a function of <span class="math inline">x</span> (depends on the value of <span class="math inline">x</span>).</p>
 <p><br></p>
-<p>Now we need to find the expectation <span class="math inline">E(\beta_1)</span>. Thus, we have this equation:</p>
+<p>Now we need to find the expectation <span class="math inline">E(\hat\beta_1)</span>. Thus, we have this equation:</p>
 <p><span class="math display">
 \begin{split}
 E(\hat\beta_1|x) &amp; = E \left( \beta_1 + \sum\limits_{i=1}^n w_i u_i \bigg| x \right) \\
@@ -433,7 +466,7 @@ E(w_i u_i|X) = w_i E(u_i|x) = 0
 <li>This is only true when both Zero-Conditional Mean and Random Sampling are true.</li>
 </ul>
 <p><br></p>
-<p>Now knowing this, we can complete the proof:</p>
+<p>Now knowing what <span class="math inline">E(w_iu_i|x)</span> is, let us plug it back into our equation:</p>
 <p><span class="math display">
 \begin{split}
 E(\hat\beta_1|x) &amp; = \beta_1 + \sum\limits_{i=1}^nE(w_iu_i|x) \\
@@ -441,7 +474,7 @@ E(\hat\beta_1|x) &amp; = \beta_1 + \sum\limits_{i=1}^nE(w_iu_i|x) \\
 &amp; = \beta_1
 \end{split}
 </span></p>
-<p>But you might notice, we have solved for <span class="math inline">E(\hat\beta_1 |x)</span>, and not <span class="math inline">E (\hat\beta_1)</span>.</p>
+<p>However, we have solved for <span class="math inline">E(\hat\beta_1 |x)</span>, and not <span class="math inline">E (\hat\beta_1)</span>.</p>
 <p>This is where the <strong>Law of Iterated Expectation</strong>. The law says the following:</p>
 <p><span class="math display">
 E(x) = E[E(x|y)]
@@ -520,7 +553,7 @@ Var(u|x) = \sigma^2 \text{ for all } x
 </figure>
 </div>
 <p>In the figure above, you can see the variance (spread) of the error term <span class="math inline">u_i</span>’s distribution is consistent, no matter the value of <span class="math inline">x</span>. This means that homoscedasticity is met.</p>
-<p>When <span class="math inline">Var(u)</span> is not constant (and changes with the value of <span class="math inline">x</span>, we have something called <strong>heteroscedasticity</strong>.</p>
+<p>When <span class="math inline">Var(u)</span> is not constant (and changes with the value of <span class="math inline">x</span>, we have <strong>heteroscedasticity</strong>.</p>
 <p>The best way to identify if this assumption is met is to look at a plot of the residuals (errors). If the variance in the residuals is constnant, we have homoscedasticity. If not, we have heteroscedasticity.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -542,7 +575,7 @@ Var(u|x) = \sigma^2 \text{ for all } x
 <ul>
 <li>When homoscedasticity is not met, nothing in this section applies. See chapter 8 for more information on how to do estimates when this is violated.</li>
 </ul>
-<p>What is variance? From <a href="https://politicalscience.github.io/metrics/1.html#variance-and-standard-deviation">section 1.5</a>, we know that variance is:</p>
+<p>What is variance? From <a href="https://politicalscience.github.io/metrics/1.html#variance-and-standard-deviation">section 1.5</a>, we know that the formula for variance is:</p>
 <p><span class="math display">
 E(x - \mu)^2
 </span></p>

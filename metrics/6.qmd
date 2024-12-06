@@ -41,7 +41,7 @@ In [section 5.2](https://politicalscience.github.io/metrics/5.html#unbiasedness-
 ::: callout-tip
 ## Definition: Gauss-Markov Theorem
 
-The Gauss-Markov Theorem states that under 4 conditions, the OLS estimator is an unbiased estimator for $\beta_1$.
+The Gauss-Markov Theorem states that under 4 conditions, the OLS estimator is unbiased for $\beta_1$.
 
 -   **SLR.1 (Linearity in Parameters)**: The parameters of the model are linear.
 -   **SLR.2 (Random Sampling)**: All observations in our sample are randomly sampled from the population.
@@ -81,7 +81,7 @@ How do we address this violation of the Zero Conditional Mean resulting from the
 
 The simplest way to address it is to include the extra variable $w$ into our regression as another explanatory variable.
 
--   This way, $w$ is another explanatory variable along with $x$, and is no longer in the error term $u$, solving our issue!
+-   This way, $w$ is another explanatory variable along with $x$, and is no longer in the error term $u$, thus $x$ will not be correlated with $u$ anymore (assuming there are no other confounders).
 
 Multiple Linear Regression is a way to implement this solution - it allows us to include multiple explanatory variables in our regression model.
 
@@ -97,12 +97,13 @@ Multiple Linear Regression is a way to implement this solution - it allows us to
 
 Multiple linear regression is an extension of simple linear regression, that can help us deal with confounding variables.
 
--   Multiple linear regression allows us to "control for the effect" of confounders. We will discuss this in section 6.5.
+-   Multiple linear regression allows us to "control for the effect" of confounders. We will discuss this in [section 6.5](https://politicalscience.github.io/metrics/6.html#regression-anatomy-and-controlling-for-confounders).
 
 The **response variable** (outcome variable) is notated $y$, just like in single linear regression.
 
 The **explanatory variable**s are $x_1, x_2, ..., x_k$. We sometimes also denote all explanatory variables as the vector $\overrightarrow{x}$.
 
+-   $k$ represents the total number of explanatory variables.
 -   Note: if you see the notation $x_j$, that means any explanatory variable $x_1, \dots , x_k$. The variable $x_j$ represents any individual coefficient (for generalisation purposes).
 
 <br />
@@ -186,13 +187,18 @@ $$
 
 <br />
 
-Since our data has $n$ number of observations $i$, we can express this into vector form, with the $x_i'$ and $\beta$ being vectors within a vector.
+Note how we have the subscript $i$ representing each individual observation. With a vector, we can expand out these subscripts.
+
+-   For example, instead of $y_i$, we could have a vector with $y_1, y_2, \dots, y_n$ (assuming we have $n$ observations).
+-   Same for $x'_i$, which can be expanded into a vector of $x_1', x_2', \dots x_n'$, and for the error term $u_i$, which can be expanded into a vector of $u_1, u_2, \dots, u_n$.
+
+Using this logic, we can obtain the following, with the $x_i'$ and $\beta$ being vectors within a vector:
 
 $$
 \begin{split}
 \begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} & = \begin{pmatrix}x_1'\beta + u_1 \\ x_2'\beta + u_2 \\ \vdots \\ x_n'\beta + u_n\end{pmatrix} \\
 & \\
-& = \begin{pmatrix}x_1'\beta \\ x_2'\beta \\ \vdots \\ x_n'\beta\end{pmatrix} + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
+\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}& = \begin{pmatrix}x_1'\beta \\ x_2'\beta \\ \vdots \\ x_n'\beta\end{pmatrix} + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
 \end{split}
 $$
 
@@ -216,12 +222,29 @@ $$
 The multiple linear regression can be expressed in linear algebra as:
 
 $$
-y = X \beta + u, \text{ where } X = \begin{bmatrix}1 & x_{21} & \dots & x_{k1} \\1 & x_{22} & \dots & x_{k2} \\\vdots & \vdots & \vdots & \vdots \\1 & x_{2n} & \dots & x_{kn}\end{bmatrix}
+y = X \beta + u
+$$
+
+Where vector $y$ is equal to:
+
+$$
+y = \begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} 
+$$
+
+Where matrix $X$ is equal to:
+
+$$
+X = \begin{bmatrix}1 & x_{21} & \dots & x_{k1} \\1 & x_{22} & \dots & x_{k2} \\\vdots & \vdots & \vdots & \vdots \\1 & x_{2n} & \dots & x_{kn}\end{bmatrix}
 $$
 
 -   Where the notation for elements of $X$ is $x_{ki}$, with $i$ being the unit of observation $i = 1, \dots n$, and $k$ being the explanatory variables index.
--   Where $y$ and $u$ are $n \times 1$ vectors (as seen above), and $\beta$ is a $k \times 1$ vector.
--   The first column of $X$ is a vector of 1, which exists because these 1's are multiplied with $\beta_0$ in our model.
+-   The first column of $X$ is a vector of 1, which exists because these 1's are multiplied with $\beta_0$ in our model (see below).
+
+Where vector $\beta$ is equal to:
+
+$$
+\beta = \begin{pmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{pmatrix}
+$$
 :::
 
 The point of expressing the model in linear algebra is that it makes the estimation process far easier, as we will see in the next section.
@@ -349,7 +372,7 @@ $$
 
 We talked about how multiple linear regression allows us to control for confounders. But what does that mean? How does it affect our interpretations of coefficients?
 
-The Regression Anatomy Theory, also called the Frisch–Waugh–Lovell (FWL) theorem, illustrates this concept. Take our standard multiple linear regression:
+The **Regression Anatomy** Theory, also called the **Frisch–Waugh–Lovell (FWL)** theorem, illustrates this concept. Take our standard multiple linear regression:
 
 $$
 y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + ... + \beta_k x_{ki} + u_i
@@ -357,7 +380,7 @@ $$
 
 <br />
 
-Let us say we are interested in $x_1$ (this can be generalised to any explanatory variable $x_j$). Let us make $x_1$ the outcome variable of a regression with $x_2, ..., x_k$:
+Let us say we are interested in $x_1$ (this can be generalised to any explanatory variable $x_j$). Let us make $x_1$ the outcome variable of a regression with explanatory variables $x_2, ..., x_k$:
 
 $$
 x_{1i} = \gamma_0 + \gamma_1 x_{2i} + ... + \gamma_{k-1}x_{ki} + \widetilde{r_{1i}}
@@ -368,11 +391,11 @@ $$
 
 The error term is $\widetilde{r_{1i}}$, which represents the part of $x_{1i}$ that are uncorrelated to $x_2, ..., x_k$.
 
--   In other words, $\widetilde{r_{1i}}$ is the part of $x_1$ that cannot be explained by any other explanatory variable. (uncorrelated with them)
+-   In other words, $\widetilde{r_{1i}}$ is the part of $x_1$ that cannot be explained by any other explanatory variable $x_2, ..., x_k$. (uncorrelated with them)
 
 <br />
 
-Now, take the regression of with outcome variable $y$, with all explanatory variables except $x_1$:
+Now, take the regression of with outcome variable $y$, with all explanatory variables [except]{.underline} $x_1$:
 
 $$
 y_i = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \widetilde{y_i}
@@ -522,7 +545,7 @@ We know that in multiple linear regression, $\hat\beta_j$ is not the full relati
 Remember, in the last section, we defined $\widetilde{r_{ji}}$ as the error term in a regression of $x_j$ on all other explanatory variables:
 
 $$
-x_{ji} = \gamma_0 + \gamma_1 x_{2i} + ... + \gamma_{k-1}x_{ki} + \widetilde{r_{ji}}
+x_{ji} = \gamma_0 + \gamma_1 x_{1i} + ... + \gamma_{k-1}x_{ki} + \widetilde{r_{ji}}
 $$
 
 Thus, $\widetilde{r_{ji}}$ is the part of $x_j$ uncorrelated with any other explanatory variable.
