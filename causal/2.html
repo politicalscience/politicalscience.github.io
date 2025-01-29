@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Causal Frameworks and Estimands</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="2_files/libs/clipboard/clipboard.min.js"></script>
+<script src="2_files/libs/quarto-html/quarto.js"></script>
+<script src="2_files/libs/quarto-html/popper.min.js"></script>
+<script src="2_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="2_files/libs/quarto-html/anchor.min.js"></script>
+<link href="2_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="2_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="2_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="2_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="2_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: true
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Causal Frameworks and Estimands</h1>
+            <p class="subtitle lead">Applied Econometrics/Causal Inference</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#potential-outcomes-framework" id="toc-potential-outcomes-framework" class="nav-link active" data-scroll-target="#potential-outcomes-framework"><strong>Potential Outcomes Framework</strong></a>
+  <ul class="collapse">
+  <li><a href="#treatment-variables" id="toc-treatment-variables" class="nav-link" data-scroll-target="#treatment-variables">Treatment Variables</a></li>
+  <li><a href="#potential-outcomes" id="toc-potential-outcomes" class="nav-link" data-scroll-target="#potential-outcomes">Potential Outcomes</a></li>
+  <li><a href="#observed-outcomes-and-missing-data" id="toc-observed-outcomes-and-missing-data" class="nav-link" data-scroll-target="#observed-outcomes-and-missing-data">Observed Outcomes and “Missing Data”</a></li>
+  <li><a href="#stable-unit-treatment-value-assumption" id="toc-stable-unit-treatment-value-assumption" class="nav-link" data-scroll-target="#stable-unit-treatment-value-assumption">Stable Unit Treatment Value Assumption</a></li>
+  </ul></li>
+  <li><a href="#causal-estimands" id="toc-causal-estimands" class="nav-link" data-scroll-target="#causal-estimands"><strong>Causal Estimands</strong></a>
+  <ul class="collapse">
+  <li><a href="#individual-treatment-effect" id="toc-individual-treatment-effect" class="nav-link" data-scroll-target="#individual-treatment-effect">Individual Treatment Effect</a></li>
+  <li><a href="#average-treatment-effect-ate" id="toc-average-treatment-effect-ate" class="nav-link" data-scroll-target="#average-treatment-effect-ate">Average Treatment Effect (ATE)</a></li>
+  <li><a href="#average-treatment-effect-on-the-treated-att" id="toc-average-treatment-effect-on-the-treated-att" class="nav-link" data-scroll-target="#average-treatment-effect-on-the-treated-att">Average Treatment Effect on the Treated (ATT)</a></li>
+  <li><a href="#conditional-average-treatment-effect-cate" id="toc-conditional-average-treatment-effect-cate" class="nav-link" data-scroll-target="#conditional-average-treatment-effect-cate">Conditional Average Treatment Effect (CATE)</a></li>
+  </ul></li>
+  <li><a href="#selection-bias-and-confounders" id="toc-selection-bias-and-confounders" class="nav-link" data-scroll-target="#selection-bias-and-confounders"><strong>Selection Bias and Confounders</strong></a>
+  <ul class="collapse">
+  <li><a href="#naive-estimator-and-selection-bias" id="toc-naive-estimator-and-selection-bias" class="nav-link" data-scroll-target="#naive-estimator-and-selection-bias">Naive Estimator and Selection Bias</a></li>
+  <li><a href="#confounders" id="toc-confounders" class="nav-link" data-scroll-target="#confounders">Confounders</a></li>
+  <li><a href="#omitted-variable-bias-in-regression" id="toc-omitted-variable-bias-in-regression" class="nav-link" data-scroll-target="#omitted-variable-bias-in-regression">Omitted Variable Bias in Regression</a></li>
+  </ul></li>
+  <li><a href="#graphical-causal-frameworks" id="toc-graphical-causal-frameworks" class="nav-link" data-scroll-target="#graphical-causal-frameworks"><strong>Graphical Causal Frameworks</strong></a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>This chapter introduces the main causal frameworks (potential outcomes, causal graphs), the main causal estimands used in causal inference, and the idea of selection bias and confounders.</p>
+<hr>
+<section id="potential-outcomes-framework" class="level1">
+<h1><strong>Potential Outcomes Framework</strong></h1>
+<section id="treatment-variables" class="level3">
+<h3 class="anchored" data-anchor-id="treatment-variables">Treatment Variables</h3>
+<p>In causal inference, we are interested in how one variable <span class="math inline">D</span> causes some effect on some outcome variable <span class="math inline">Y</span>.</p>
+<p><span class="math inline">D</span> is our treatment variable. The indicator of treatment for each unit <span class="math inline">i</span> is <span class="math inline">D_i</span>.</p>
+<p><span class="math display">
+D_i = \begin{cases}
+1 \quad \text{if unit } i \text{ recieved the treatment} \\
+0 \quad \text{otherwise}
+\end{cases}
+</span></p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Further information on Treatment Variables
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Causal variables/treatments must occur before the outcome. A variable cannot cause something to occur in the past.</p>
+<p>Causal variables/treatments must be able to be manipulated (in order to imagine a world where the treatment did not occur).</p>
+<ul>
+<li>For example, <span class="math inline">D</span> cannot be sex assigned at birth, ethnicity, etc.</li>
+<li>For example, major global events (how did 9/11 cause the Arab spring?)</li>
+</ul>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="potential-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="potential-outcomes">Potential Outcomes</h3>
+<p>Imagine there are two hypothetical parallel worlds - one where unit <span class="math inline">i</span> receives the treatment <span class="math inline">D</span>, and one where unit <span class="math inline">i</span> does not receive the treatment <span class="math inline">D</span>. Everything else in these worlds is identical.</p>
+<p>Potential Outcomes for unit <span class="math inline">i</span> are denoted:</p>
+<p><span class="math display">
+Y_{di} =\begin{cases}
+&amp; Y_{1i} \quad \text{Outcome for unit } i \text{ when } D_i = 1 \\
+&amp; Y_{0i} \quad \text{Outcome for unit } i \text{ when } D_i = 0 \\
+\end{cases}
+</span></p>
+<p>Alternative notation includes <span class="math inline">Y_i(d), y_i^d</span>.</p>
+<p>For example, imagine we are interested in finding the effect of democracy <span class="math inline">D</span> on GDP growth <span class="math inline">Y</span>. Potential outcome <span class="math inline">Y_{1i}</span> is the potential GDP growth of country <span class="math inline">i</span> if they were a democracy, and outcome <span class="math inline">Y_{0i}</span> is the potential GDP growth of a country <span class="math inline">i</span> if they were not a democracy.</p>
+<p><br></p>
+</section>
+<section id="observed-outcomes-and-missing-data" class="level3">
+<h3 class="anchored" data-anchor-id="observed-outcomes-and-missing-data">Observed Outcomes and “Missing Data”</h3>
+<p>Of course, there is not two parallel worlds with 2 potential outcomes. In the real world, each unit <span class="math inline">i</span> either receives treatment <span class="math inline">D</span>, or does not. We do not observe the other potential outcome.</p>
+<p><span class="math inline">Y_i</span> is the observed outcome for unit <span class="math inline">i</span>. This is given by formula:</p>
+<p><span class="math display">
+Y_i = D_i \cdot Y_{1i} + (1-D_i) \cdot Y_{0i}
+</span></p>
+<p>If we plug in <span class="math inline">D_i = 0, 1</span>, we get the observed outcomes:</p>
+<p><span class="math display">
+Y_i = \begin{cases}
+Y_{1i} \quad \text{if } D_i = 1 \\
+Y_{0i} \quad \text{if } D_i = 0 \\
+\end{cases}
+</span></p>
+<p>Before the treatment (<em>A priori</em>), both potential outcomes could be observed.</p>
+<p>After the treatment, one is <strong>observed</strong>, and the other is <strong>counterfactual</strong>. For any given experiment, only one will ever be seen, and the counterfactual will never be seen (missing data problem).</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Neyman Urn Model
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Potential Outcomes can be visualised with the Neyman Urn Model.</p>
+<p>Before the treatment, we have a box (we cannot see) with both potential outcomes.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-802589608.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>Then, when we apply treatment, we stick our hand into the box that we cannot see, and pull out one observed outcome.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2975134148.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>We are essentially sampling from potential outcomes to get observed outcomes.</p>
+</div>
+</div>
+</div>
+<p>This missing data problem is called the <strong>fundamental problem of causal inference</strong>.</p>
+<p><br></p>
+</section>
+<section id="stable-unit-treatment-value-assumption" class="level3">
+<h3 class="anchored" data-anchor-id="stable-unit-treatment-value-assumption">Stable Unit Treatment Value Assumption</h3>
+<p>The above given observed and potential outcome frameworks depends on the Stable Unit Treatment Value Assumption (SUTVA).</p>
+<p><span class="math display">
+Y_{(D_1, D_2, \dots, D_N)i} = Y_{(D_1', D_2', \dots, D_N')i}
+</span></p>
+<ul>
+<li>Where <span class="math inline">D_1, D_2, \dots D_N</span> are the observed treatment status <span class="math inline">D_i</span> of all observations <span class="math inline">i = 1, \dots, N</span>.</li>
+<li>Where <span class="math inline">D_1', D_2', \dots, D_N'</span> are any alternative treatment status <span class="math inline">D_i</span> of all observations.</li>
+</ul>
+<p>Or more intuitively, the potential outcomes of unit <span class="math inline">i</span> only depends on their own treatment status, and no other unit’s treatment status. The treatment is also the same for everyone (treatment is stable and consistent)</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Examples of SUTVA Violations
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>Spill-over effects: If we are testing a new curriculum, one student <span class="math inline">j</span> getting the new curriculum may teach their friend <span class="math inline">i</span> the new curriculum, thus affecting the potential outcomes of <span class="math inline">i</span>.</p></li>
+<li><p>Contagion: If we are studying a disease, diseases can spread, so another unit <span class="math inline">j</span> getting a disease affects the potential outcomes of unit <span class="math inline">i</span>.</p></li>
+<li><p>Dilution: If we are studying vaccines - there is herd immunity - other people getting the vaccine also reduces our chances of getting the disease.</p></li>
+<li><p>Variable levels of treatment: If we are doing a drug trial, if some people got two doses, while others only got one dose. This is not a consistent treatment.</p></li>
+<li><p>Technical errors: If someone who is supposed to be treated accidentally is not treated. This is not a consistent treatment.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<p>When SUTVA is violated, potential outcomes become very messy, and we no longer have the neat framework as before.</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="causal-estimands" class="level1">
+<h1><strong>Causal Estimands</strong></h1>
+<section id="individual-treatment-effect" class="level3">
+<h3 class="anchored" data-anchor-id="individual-treatment-effect">Individual Treatment Effect</h3>
+<p>Remember the potential outcomes from parallel worlds <span class="math inline">Y_{1i}</span> and <span class="math inline">Y_{0i}</span>.</p>
+<p>Since these two parallel worlds are identical except for the fact one receives the treatment <span class="math inline">D</span> and the other does not, the causal effect of <span class="math inline">D</span> should logically be the difference between the potential outcomes of these two worlds.</p>
+<p>Thus, the individual treatment effect of a unit <span class="math inline">i</span> is:</p>
+<p><span class="math display">
+\tau_i = Y_{1i} - Y_{0i}
+</span></p>
+<p>This is the specific treatment effect for a specific unit <span class="math inline">i</span>. This cannot be observed, because we do not see both potential outcomes for the same unit <span class="math inline">i</span>.</p>
+<p>This is also very hard to estimate, as we cannot reliably fill in the missing potential outcome for any one unit <span class="math inline">i</span>. Thus, we almost never use individual treatment effects, and use group treatment effects.</p>
+<p><br></p>
+</section>
+<section id="average-treatment-effect-ate" class="level3">
+<h3 class="anchored" data-anchor-id="average-treatment-effect-ate">Average Treatment Effect (ATE)</h3>
+<p>ATE is a group-level causal estimand.</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Group-Level Causal Estimands
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Consider a population of units <span class="math inline">i = 1, \dots, N</span>.</p>
+<p>The population has potential outcomes represented in two (only partially observed) vectors:</p>
+<p><span class="math display">
+\begin{split}
+&amp; Y_1 = (Y_{11}, Y_{12}, \dots, Y_{1N}) \\
+&amp; Y_0 = (Y_{01}, Y_{02}, \dots, Y_{0N})
+\end{split}
+</span></p>
+<p>We compare these two vectors of potential outcomes. The most common way to do this is to use their expected values.</p>
+</div>
+</div>
+</div>
+<p>The Average Treatment Effect is defined as:</p>
+<p><span class="math display">
+\begin{split}
+\tau_{ATE} &amp; = E(Y_{1i} - Y_{0i}) \\
+&amp; = \frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i})
+\end{split}
+</span></p>
+<p>We cannot calculate this with observed data - since we need all potential outcomes to do this. We can estimate this (covered throughout this course).</p>
+<p><br></p>
+</section>
+<section id="average-treatment-effect-on-the-treated-att" class="level3">
+<h3 class="anchored" data-anchor-id="average-treatment-effect-on-the-treated-att">Average Treatment Effect on the Treated (ATT)</h3>
+<p>An alternative estimand to the ATE is the Average Treatment Effect on the Treated (ATT):</p>
+<p><span class="math display">
+\begin{split}
+\tau_{ATT} &amp; = E(Y_{1i} - Y_{0i} \ | \ D_i = 1) \\
+&amp; = \frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i}) \quad  \text{where } N_1 = \sum\limits_{i=1}^ND_i
+\end{split}
+</span></p>
+<p>This is the causal effect of <u>only variables who have received the treatment</u>.</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ATT vs.&nbsp;ATE
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When does <span class="math inline">\tau_{ATT} = \tau_{ATE}</span>?</p>
+<ul>
+<li>When the expectation of the potential outcomes of both the treated and control are the same, then the two equal each other.</li>
+</ul>
+<p>The opposite is also true: if the expectation of the potential outcomes of both the treated and control are different, then the two are not equal.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="conditional-average-treatment-effect-cate" class="level3">
+<h3 class="anchored" data-anchor-id="conditional-average-treatment-effect-cate">Conditional Average Treatment Effect (CATE)</h3>
+<p>The conditional average treatment effect is any treatment effect where there is a condition on a characteristic/covariate:</p>
+<p><span class="math display">
+\tau_{CATE}(x) = E(Y_{1i} - Y_{0i} \ | \ X_i = x)
+</span></p>
+<p>This is the causal effect of only variables who meet the condition of the covariate specified. For example, you could find the conditional average treatment effect of only women (so the covariate which we are conditioning on is <em>gender</em>).</p>
+<p>This is often used for tailoring products/medicine/advertising to certain groups of people.</p>
+<p>This estimand will go by other names, including the Local Average Treatment Effect (LATE).</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="selection-bias-and-confounders" class="level1">
+<h1><strong>Selection Bias and Confounders</strong></h1>
+<section id="naive-estimator-and-selection-bias" class="level3">
+<h3 class="anchored" data-anchor-id="naive-estimator-and-selection-bias">Naive Estimator and Selection Bias</h3>
+<p>A natural way to estimate the ATE is to use a naive estimator: find the average difference of <u>observed</u> outcomes. This is called the naive estimator:</p>
+<p><span class="math display">
+\begin{split}
+\hat\tau_{naive} = E(Y_i|D_i = 1) - E(Y_i|D_i = 0)
+\end{split}
+</span></p>
+<p>However, there is an issue - we can show this with algebra:</p>
+<p><span class="math display">
+\begin{split}
+\hat\tau_{naive} &amp; = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
+&amp; = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) \\
+&amp; = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + E(Y_{0i}|D_i = 1) - E(Y_{0i}|D_i = 1) \\
+&amp; = E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1) + E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0) \\
+&amp; = \tau_{ATT} + E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)
+\end{split}
+</span></p>
+<p>We can see that our naive estimator produces the <span class="math inline">\tau_{ATT}</span> <strong>plus</strong> an extra bit (called the selection bias). Thus, our naive estimator is biased, so we should be careful about using this naive estimator (correlation does not equal causation).</p>
+<p><br></p>
+</section>
+<section id="confounders" class="level3">
+<h3 class="anchored" data-anchor-id="confounders">Confounders</h3>
+<p>Take the selection bias formula from above:</p>
+<p><span class="math display">
+E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)
+</span></p>
+<p>If selection bias is non-zero, this essentially states that the expected potential outcome before treatment <span class="math inline">Y_{0i}</span> between the treatment and control groups is not equal.</p>
+<p>Or in other words, the treatment and control groups have some other variable causing differences even before treatment has begun. This implies that the differences between the treatment and control group may not be due to treatment <span class="math inline">D</span>, but due to the underlying differences before treatment even occurred.</p>
+<p><strong>Confounders</strong> are variables that cause the differences between treatment and control groups before the treatment has started. Confounders are correlate with both the treatment variable and the outcome.</p>
+<p>This is why correlation does not equal causation - if the treatment and control group are different before we start the experiment, we cannot say the difference between the two is purely a result of treatment <span class="math inline">D</span>.</p>
+<p><br></p>
+</section>
+<section id="omitted-variable-bias-in-regression" class="level3">
+<h3 class="anchored" data-anchor-id="omitted-variable-bias-in-regression">Omitted Variable Bias in Regression</h3>
+<p>Let us say we are interested in finding the relationship between treatment <span class="math inline">D</span> and outcome <span class="math inline">Y</span>. However, there is a confounding variable, <span class="math inline">X</span>, that is correlated with both <span class="math inline">D</span> and <span class="math inline">Y</span>.</p>
+<p>We could run a simple linear regression with just <span class="math inline">D</span> and <span class="math inline">Y</span> (essentially a measure of correlation between the two):</p>
+<p><span class="math display">
+Y_i = \beta_0^S + \beta_1^SD_i + u_i^S
+</span></p>
+<p>We could also run a multiple linear regression with <span class="math inline">D</span>, confounder <span class="math inline">X</span>, and <span class="math inline">Y</span>. This accounts for the impact of the confounder, and “partials out” the effect of the confounder (this is given by the Regression Anatomy Theorem):</p>
+<p><span class="math display">
+Y_i = \beta_0 + \beta_1D_i + \beta_2 X_i + u_i
+</span></p>
+<p>Our simple linear regression coefficient <span class="math inline">\beta_1^S</span> (a measure of correlation) is thus wrong for the causal effect - it fails to partial out the effect of confounder <span class="math inline">X</span>. We can quantify “how wrong” <span class="math inline">\beta_1^S</span> is with the omitted variable bias formula:</p>
+<p><span class="math display">
+\beta_1^S = \beta_1 + \beta_2\delta_1
+</span></p>
+<ul>
+<li>Where <span class="math inline">\delta_1</span> is the coefficient of a regression between outcome <span class="math inline">X</span> and explanatory variable <span class="math inline">D</span>.</li>
+</ul>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Details of Omitted Variable Bias
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We have a short and long regression, where the long includes confounder <span class="math inline">X</span>:</p>
+<p><span class="math display">
+\begin{split}
+Y_i &amp; = \beta_0^S + \beta_1^SD_i + u_i^S \\
+Y_i &amp; = \beta_0 + \beta_1D_i + \beta_2X_i + u_i
+\end{split}
+</span></p>
+<p>Now consider an auxiliary regression, where the omitted variable (confounder) <span class="math inline">X</span> is the outcome variable, and <span class="math inline">D</span> is the explanatory variable:</p>
+<p><span class="math display">
+X_i = \delta_0 + \delta_1 D_i + v_i
+</span></p>
+<p>We can plug in the above <span class="math inline">X_i</span> into our long regression, to get the entire long regression equation in terms of <span class="math inline">D_i</span>:</p>
+<p><span class="math display">
+\begin{split}
+Y_i &amp; = \beta_0 + \beta_1D_i + \beta_2 X_i + u_i \\
+&amp; = \beta_0 + \beta_1 D_i + \beta_2(\delta_0 + \delta_1 D_i + v_i) + u_i \\
+&amp; = \beta_0 + \beta_1 D_i + \beta_2 \delta_0 + \beta_2\delta_1 D_i + \beta_2 v_i + u_i \\
+&amp; = \beta_0 + \beta_2 \delta_0 + (\beta_1+\beta_2\delta_1)D_i + \beta_2v_i + u_i
+\end{split}
+</span></p>
+<p>The last equation is essentially a “recreation” of the short regression with only one explanatory variable. Note how the coefficient of <span class="math inline">D_i</span> in this regression is <span class="math inline">(\beta_1 + \beta_2 \delta_1)</span>.</p>
+<p>Thus, <span class="math inline">\beta_1^S = \beta_1 + \beta_2 \delta_1</span>. Since <span class="math inline">\beta_1</span> is the true value of the relationship between <span class="math inline">D</span> and <span class="math inline">Y</span> (since it controls for the confounder), that means <span class="math inline">\beta_1^S</span> is off by <span class="math inline">\beta_2 \delta_1</span>.</p>
+</div>
+</div>
+</div>
+<p>Thus, <span class="math inline">\beta_2 \delta_1</span> is the omitted variable <strong>bias</strong> in the short regression. In conclusion - if we do not account for confounding variables, we will have bias in our causal estimations. Thus, <u>correlation does not equal causation!</u></p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="graphical-causal-frameworks" class="level1">
+<h1><strong>Graphical Causal Frameworks</strong></h1>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
