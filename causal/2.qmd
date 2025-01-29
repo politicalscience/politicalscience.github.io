@@ -42,7 +42,7 @@ D_i = \begin{cases}
 \end{cases}
 $$
 
-::: {.callout-tip collapse="true" appearance="simple"}
+::: {.callout-note collapse="true" appearance="simple"}
 ## Further information on Treatment Variables
 
 Causal variables/treatments must occur before the outcome. A variable cannot cause something to occur in the past.
@@ -97,7 +97,7 @@ Before the treatment (*A priori*), both potential outcomes could be observed.
 
 After the treatment, one is **observed**, and the other is **counterfactual**. For any given experiment, only one will ever be seen, and the counterfactual will never be seen (missing data problem).
 
-::: {.callout-tip collapse="true" appearance="simple"}
+::: {.callout-note collapse="true" appearance="simple"}
 ## Neyman Urn Model
 
 Potential Outcomes can be visualised with the Neyman Urn Model.
@@ -122,7 +122,7 @@ This missing data problem is called the **fundamental problem of causal inferenc
 The above given observed and potential outcome frameworks depends on the Stable Unit Treatment Value Assumption (SUTVA).
 
 $$
-Y_{(D_1, D_2, \dots, D_N)i} = Y_{(D_1', D_2', \dots, D_N')i}
+\underbrace{Y_{(D_1, D_2, \dots, D_N)i}}_{\text{Observed treatments}} = \underbrace{Y_{(D_1', D_2', \dots, D_N')i}}_{\text{All alternative treatments}}
 $$
 
 -   Where $D_1, D_2, \dots D_N$ are the observed treatment status $D_i$ of all observations $i = 1, \dots, N$.
@@ -130,7 +130,7 @@ $$
 
 Or more intuitively, the potential outcomes of unit $i$ only depends on their own treatment status, and no other unit's treatment status. The treatment is also the same for everyone (treatment is stable and consistent)
 
-::: {.callout-tip collapse="true" appearance="simple"}
+::: {.callout-note collapse="true" appearance="simple"}
 ## Examples of SUTVA Violations
 
 -   Spill-over effects: If we are testing a new curriculum, one student $j$ getting the new curriculum may teach their friend $i$ the new curriculum, thus affecting the potential outcomes of $i$.
@@ -176,7 +176,7 @@ This is also very hard to estimate, as we cannot reliably fill in the missing po
 
 ATE is a group-level causal estimand.
 
-::: {.callout-tip collapse="true" appearance="simple"}
+::: {.callout-note collapse="true" appearance="simple"}
 ## Group-Level Causal Estimands
 
 Consider a population of units $i = 1, \dots, N$.
@@ -219,7 +219,7 @@ $$
 
 This is the causal effect of [only variables who have received the treatment]{.underline}.
 
-::: {.callout-tip collapse="true" appearance="simple"}
+::: {.callout-note collapse="true" appearance="simple"}
 ## ATT vs. ATE
 
 When does $\tau_{ATT} = \tau_{ATE}$?
@@ -259,7 +259,7 @@ A natural way to estimate the ATE is to use a naive estimator: find the average 
 
 $$
 \begin{split}
-\hat\tau_{naive} = E(Y_i|D_i = 1) - E(Y_i|D_i = 0)
+\hat\tau_{naive} = \underbrace{E(Y_i|D_i = 1)}_{\text{Observed }Y \text{ for treatment}} - \underbrace{E(Y_i|D_i = 0)}_{\text{Observed }Y \text{ for control}}
 \end{split}
 $$
 
@@ -269,9 +269,8 @@ $$
 \begin{split}
 \hat\tau_{naive} & = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
 & = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) \\
-& = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + E(Y_{0i}|D_i = 1) - E(Y_{0i}|D_i = 1) \\
-& = E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1) + E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0) \\
-& = \tau_{ATT} + E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)
+& = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i}|D_i = 1)}_{\text{This just equals 0, so we can add it}} \\
+& = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
 \end{split}
 $$
 
@@ -284,7 +283,7 @@ We can see that our naive estimator produces the $\tau_{ATT}$ **plus** an extra 
 Take the selection bias formula from above:
 
 $$
-E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)
+\underbrace{E(Y_{0i}|D_i = 1)}_{Y_{0i}\text{ for treatment}} - \underbrace{E(Y_{0i} | D_i = 0)}_{Y_{0i}\text{ for control}}
 $$
 
 If selection bias is non-zero, this essentially states that the expected potential outcome before treatment $Y_{0i}$ between the treatment and control groups is not equal.
@@ -321,7 +320,7 @@ $$
 
 -   Where $\delta_1$ is the coefficient of a regression between outcome $X$ and explanatory variable $D$.
 
-::: {.callout-tip collapse="true" appearance="simple"}
+::: {.callout-note collapse="true" appearance="simple"}
 ## Details of Omitted Variable Bias
 
 We have a short and long regression, where the long includes confounder $X$:
@@ -363,4 +362,93 @@ Thus, $\beta_2 \delta_1$ is the omitted variable **bias** in the short regressio
 
 ------------------------------------------------------------------------
 
-# **Graphical Causal Frameworks**
+# **Directed Acyclic Graphs**
+
+### Components of the Graphs
+
+Causal Diagrams are a visual way to represent causal theories and frameworks, which allows us to visualise how variables interact with each other.
+
+Each Directed Acyclic Graph (DAG) has the following components:
+
+1.  Nodes: representing variables (which are also called vertices).
+2.  Directed Edges: Arrows that encode one-way causal theories between variables. For example, we might believe $Z$ causes $X$, so we will draw an arrow from $Z$ to $X$. These connections are **observable** (solid) or **unobservable** (dashed).
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Directed Acyclic Graphs
+
+Below is an example of a directed acyclic graph:
+
+![](images/clipboard-3648393347.png){fig-align="center" width="50%"}
+
+What does this diagram show?
+
+-   We have two unobserved variables: $Q$ and $Y$
+-   We have three observed variables: $Z$, $D$, and $Y$.
+-   We can see the causal theories represented by arrows.
+
+What can we learn from this diagram?
+
+-   $Z \rightarrow Y$ is confounded by $W$: $W$ is affecting who gets treatment $Z$, and causing $Y$. Thus, $W$ is affecting who gets selected into treatment $Z$, and selecting your potential outcome $Y$. Thus, this is an example of selection bias.
+-   $D \rightarrow Y$ is confounded by $Q$.
+-   $Z \rightarrow D$ is not confounded, so we can estimate this causal effect.
+
+Note: All these conclusions are only true if our causal theory is correct (we have specified all the possible variables, and we have specified the correct causal relationships).
+:::
+
+Features of a Directed Acyclic Graph:
+
+1.  They must be acyclic: This means that they are not circular - $A$ does not terminate back at $A$.
+2.  Non-Connections: The absence of relationships between variables.
+
+<br />
+
+### Representing Interventions
+
+Treatments (interventions by the researcher, for example) are when we determine one variable exogenously (such as by randomisation).
+
+Or in other words, one variable is determined randomly externally, not caused by any variables within the directed acyclic graphs.
+
+Treatments are represented by the **do()** operator. When the treatment is exogenous, we can break all the connections into that variable's node.
+
+This is because we are determining the value of the variable, not any other variables.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Interventions
+
+![](images/clipboard-1438441757.png){fig-align="center" width="50%"}
+
+An intervention here is on variable $D$. That means the value of $D$ is being chosen outside of this graph (by randomisation, or the researcher).
+
+This allows us to delete the arrow between $Q \rightarrow D$ and $Z \rightarrow D$. This is because we are exogenously determining $D$, so $Q$ and $Z$ are not determining the value of $D$.
+:::
+
+With exogenously determined variables, we can find the causal effect that variable is causing on another.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Assignment Mechanism**
+
+### Different Assignment Mechanisms
+
+The Assignment Mechanism is the procedure that determines the treatment status of each unit. In causal inference, we want to restrict the assignment mechanism, in order to remove the effect of selection bias.
+
+There are three assumptions about assignment mechanisms that are needed for identifying causal effects.
+
+1.  Individualistic: Assignment does not depend on covariates, and does not depend on the potential outcomes of other units.
+2.  Probabilistic: There is a non-zero probability for each treatment value, for each unit.
+3.  Unconfounded: Assignment does not depend on the potential outcomes.
+
+<br />
+
+### Assignment and Studies
+
+There are two types of studies that use different assignment mechanisms:
+
+1.  Randomisation Experiments: The assignment mechanism is both known, and controlled by the researcher. Generally, the researcher chooses some type of randomisation.
+2.  Observational Studies: The assignment mechanism is not known to, or not under the control of the researcher.
+
+Generally, the most credible studies are randomisation studies, since we can control interventions to parse out the effect of confounders. Observational studies generally rely on more assumptions that need to be met, and need to be defended for the study to be credible.
