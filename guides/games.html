@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Quick Guide to Game Theory</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="games_files/libs/clipboard/clipboard.min.js"></script>
+<script src="games_files/libs/quarto-html/quarto.js"></script>
+<script src="games_files/libs/quarto-html/popper.min.js"></script>
+<script src="games_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="games_files/libs/quarto-html/anchor.min.js"></script>
+<link href="games_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="games_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="games_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="games_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="games_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: true
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Quick Guide to Game Theory</h1>
+            <p class="subtitle lead">Kevin’s Guide to Political Science</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#basics-of-game-theory" id="toc-basics-of-game-theory" class="nav-link active" data-scroll-target="#basics-of-game-theory"><strong>Basics of Game Theory</strong></a>
+  <ul class="collapse">
+  <li><a href="#games-and-notations" id="toc-games-and-notations" class="nav-link" data-scroll-target="#games-and-notations">Games and Notations</a></li>
+  <li><a href="#types-of-games" id="toc-types-of-games" class="nav-link" data-scroll-target="#types-of-games">Types of Games</a></li>
+  <li><a href="#preference-theory" id="toc-preference-theory" class="nav-link" data-scroll-target="#preference-theory">Preference Theory</a></li>
+  <li><a href="#utility-functions-and-maximal-set" id="toc-utility-functions-and-maximal-set" class="nav-link" data-scroll-target="#utility-functions-and-maximal-set">Utility Functions and Maximal Set</a></li>
+  </ul></li>
+  <li><a href="#dominant-strategies" id="toc-dominant-strategies" class="nav-link" data-scroll-target="#dominant-strategies"><strong>Dominant Strategies</strong></a>
+  <ul class="collapse">
+  <li><a href="#dominant-strategy" id="toc-dominant-strategy" class="nav-link" data-scroll-target="#dominant-strategy">Dominant Strategy</a></li>
+  <li><a href="#dominant-strategy-equilibrium" id="toc-dominant-strategy-equilibrium" class="nav-link" data-scroll-target="#dominant-strategy-equilibrium">Dominant Strategy Equilibrium</a></li>
+  </ul></li>
+  <li><a href="#nash-equilibrium" id="toc-nash-equilibrium" class="nav-link" data-scroll-target="#nash-equilibrium"><strong>Nash Equilibrium</strong></a>
+  <ul class="collapse">
+  <li><a href="#best-responses" id="toc-best-responses" class="nav-link" data-scroll-target="#best-responses">Best Responses</a></li>
+  <li><a href="#pure-strategy-nash-equilibrium" id="toc-pure-strategy-nash-equilibrium" class="nav-link" data-scroll-target="#pure-strategy-nash-equilibrium">Pure Strategy Nash Equilibrium</a></li>
+  <li><a href="#pareto-optimal-and-focal-points" id="toc-pareto-optimal-and-focal-points" class="nav-link" data-scroll-target="#pareto-optimal-and-focal-points">Pareto Optimal and Focal Points</a></li>
+  <li><a href="#trembling-hand-perfect-equilibrium" id="toc-trembling-hand-perfect-equilibrium" class="nav-link" data-scroll-target="#trembling-hand-perfect-equilibrium">Trembling Hand Perfect Equilibrium</a></li>
+  <li><a href="#mixed-strategies" id="toc-mixed-strategies" class="nav-link" data-scroll-target="#mixed-strategies">Mixed Strategies</a></li>
+  <li><a href="#mixed-strategy-nash-equilibrium" id="toc-mixed-strategy-nash-equilibrium" class="nav-link" data-scroll-target="#mixed-strategy-nash-equilibrium">Mixed Strategy Nash Equilibrium</a></li>
+  </ul></li>
+  <li><a href="#subgame-perfect-nash-equilibrium" id="toc-subgame-perfect-nash-equilibrium" class="nav-link" data-scroll-target="#subgame-perfect-nash-equilibrium"><strong>Subgame Perfect Nash Equilibrium</strong></a>
+  <ul class="collapse">
+  <li><a href="#strategies-and-decision-nodes" id="toc-strategies-and-decision-nodes" class="nav-link" data-scroll-target="#strategies-and-decision-nodes">Strategies and Decision Nodes</a></li>
+  <li><a href="#nash-equilibrium-in-dynamic-games" id="toc-nash-equilibrium-in-dynamic-games" class="nav-link" data-scroll-target="#nash-equilibrium-in-dynamic-games">Nash Equilibrium in Dynamic Games</a></li>
+  <li><a href="#subgame-perfect-nash-equilibrium-1" id="toc-subgame-perfect-nash-equilibrium-1" class="nav-link" data-scroll-target="#subgame-perfect-nash-equilibrium-1">Subgame Perfect Nash Equilibrium</a></li>
+  </ul></li>
+  <li><a href="#perfect-bayesian-equilibrium" id="toc-perfect-bayesian-equilibrium" class="nav-link" data-scroll-target="#perfect-bayesian-equilibrium"><strong>Perfect Bayesian Equilibrium</strong></a>
+  <ul class="collapse">
+  <li><a href="#information-sets" id="toc-information-sets" class="nav-link" data-scroll-target="#information-sets">Information Sets</a></li>
+  <li><a href="#belief-profile" id="toc-belief-profile" class="nav-link" data-scroll-target="#belief-profile">Belief Profile</a></li>
+  <li><a href="#bayes-theorem" id="toc-bayes-theorem" class="nav-link" data-scroll-target="#bayes-theorem">Bayes’ Theorem</a></li>
+  <li><a href="#perfect-bayesian-equilibrium-1" id="toc-perfect-bayesian-equilibrium-1" class="nav-link" data-scroll-target="#perfect-bayesian-equilibrium-1">Perfect Bayesian Equilibrium</a></li>
+  <li><a href="#signalling-games" id="toc-signalling-games" class="nav-link" data-scroll-target="#signalling-games">Signalling Games</a></li>
+  <li><a href="#separating-equilibrium" id="toc-separating-equilibrium" class="nav-link" data-scroll-target="#separating-equilibrium">Separating Equilibrium</a></li>
+  <li><a href="#pooling-equilibrium" id="toc-pooling-equilibrium" class="nav-link" data-scroll-target="#pooling-equilibrium">Pooling Equilibrium</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>Use the sidebar for easy navigation.</p>
+<hr>
+<section id="basics-of-game-theory" class="level1">
+<h1><strong>Basics of Game Theory</strong></h1>
+<section id="games-and-notations" class="level3">
+<h3 class="anchored" data-anchor-id="games-and-notations">Games and Notations</h3>
+<p>Games consist of:</p>
+<ul>
+<li>A set of players <span class="math inline">i = 1, \dots, N</span></li>
+<li>For each player <span class="math inline">i</span>, a set of actions <span class="math inline">a_i</span> and strategies <span class="math inline">s_i</span> or <span class="math inline">\sigma_i</span>.</li>
+<li>An action profile of all player’s actions <span class="math inline">a = (a_1, \dots, a_N)</span>, also notated <span class="math inline">a = (a_i, a_{-i})</span>, where <span class="math inline">a_{-i}</span> is the actions of all other players not player <span class="math inline">i</span>.</li>
+<li>A strategy profile of all player’s strategies <span class="math inline">s = (s_1, \dots, s_N)</span>, also notated <span class="math inline">s = (s_i, s_{-i})</span>.</li>
+<li>For each player <span class="math inline">i</span>, preferences over the action profiles, specified by a payoff function <span class="math inline">u_i(s_i, s_{-i})</span>.</li>
+</ul>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Strategies vs.&nbsp;Actions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Strategies and Actions are two different things.</p>
+<p>An action is something you do on a particular moment a player has to make a move.</p>
+<ul>
+<li>For example, in chess, an action might be move the knight to some square.</li>
+</ul>
+<p>A strategy is a <strong>complete plan of action</strong> - i.e.&nbsp;a plan of all the actions you will take in the game, for all the possible alternate scenarios that could occur in the game.</p>
+<ul>
+<li>For example, in chess, a strategy would be a complete plan of what actions to take, for every possible response of your opponent, for every possible move throughout the entire game.</li>
+</ul>
+<p>For static-complete information games, these two are often equivalent, but it is important to make this distinction for dynamic and incomplete information games.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="types-of-games" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-games">Types of Games</h3>
+<p>Games are categorised by their <em>timing</em> and their <em>information</em>:</p>
+<p>Games based on timing:</p>
+<ul>
+<li>A <strong>static game</strong> is when all players move simultaneously.</li>
+<li>A <strong>dynamic game</strong> is when players move sequentially.</li>
+</ul>
+<p>Games based on the availability of information:</p>
+<ul>
+<li>A <strong>complete information</strong> game is when all payoffs are known by all players.</li>
+<li>An <strong>incomplete information</strong> game is when some payoffs are not common knowledge, i.e.&nbsp;some players have private information.</li>
+</ul>
+<p><br></p>
+</section>
+<section id="preference-theory" class="level3">
+<h3 class="anchored" data-anchor-id="preference-theory">Preference Theory</h3>
+<p>Let us define <span class="math inline">X</span> as a set of alternatives that some agent <span class="math inline">i</span> can achieve. Alternatives are both mutually exclusive and exhaustive.</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Mutually Exclusive and Exhaustive Alternatives
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Mutually exclusive means that if you end up with one alternative, you cannot end up with any other alternative at the same time.</p>
+<ul>
+<li>For example, if I get a 95 on my exam, I cannot possibly also get a 85 on the same exam. Having gotten one score on my exam, the other alternatives cannot be obtained.</li>
+</ul>
+<p>Exhaustive means <span class="math inline">X</span> consists of all possibilities - the set of all possible outcomes.</p>
+<ul>
+<li>For example, the potential scores on an exam are 0 - 100, so the set <span class="math inline">X</span> includes all of these potential scores. There are no potential outcomes I can get outside of <span class="math inline">X</span>.</li>
+</ul>
+</div>
+</div>
+</div>
+<p>A preference relation is a relationship between two elements of <span class="math inline">X</span>:</p>
+<ul>
+<li>If <span class="math inline">x \succ y</span>, the agent <strong>strictly prefers</strong> <span class="math inline">x</span> to <span class="math inline">y</span> - i.e.&nbsp;when given the choice, they will always choose <span class="math inline">x</span>.</li>
+<li>If <span class="math inline">x \sim y</span>, the agent is <strong>indifferent</strong> between <span class="math inline">x</span> and <span class="math inline">y</span>.</li>
+<li>If <span class="math inline">x \succsim y</span>, the agent <strong>weakly prefers</strong> <span class="math inline">x</span> to <span class="math inline">y</span> - i.e.&nbsp;the agent either prefers <span class="math inline">x</span> to <span class="math inline">y</span>, or is indifferent, but never prefers <span class="math inline">y</span> to <span class="math inline">x</span>.</li>
+</ul>
+<p>Preferences are assumed to be rational if they are complete and transitive.</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Complete and Transitive Preferences
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Complete</strong> preferences means for all <span class="math inline">x, y \in X</span>, either <span class="math inline">x \succsim y</span> or <span class="math inline">y \succsim x</span>.</p>
+<ul>
+<li>For any two alternatives, the agent always has some type of preference relation (never “no opinion”).</li>
+<li>This does not mean they cannot be indifferent (that is a preference relation). It just means that if you ask the agent how they feel between <span class="math inline">x</span> and <span class="math inline">y</span>, they must be able to say they prefer one, or are indifferent, and not say “I don’t have an opinion”.</li>
+</ul>
+<p><strong>Transitive</strong> preferences means that for <span class="math inline">x, y, z \in X</span>, if <span class="math inline">x \succsim y</span>, and <span class="math inline">y \succsim z</span>, then <span class="math inline">x \succsim z</span>.</p>
+<ul>
+<li>Note: group preferences are not always transitive (condercet’s paradox), and thus not rational. But for individual agent purposes, we generally assume to this to be true.</li>
+</ul>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="utility-functions-and-maximal-set" class="level3">
+<h3 class="anchored" data-anchor-id="utility-functions-and-maximal-set">Utility Functions and Maximal Set</h3>
+<p>A utility function is a mapping <span class="math inline">u: X \rightarrow \mathbb R</span>, such that for any <span class="math inline">x, y \in X</span>, <span class="math inline">u(x) ≥ u(y)</span> if and only if <span class="math inline">x \succsim y</span>. Or in other words, the utility function should match the preference relations.</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Notes on Utility Functions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The mapping of utility functions is often <strong>ordinal</strong>, not continuous.</p>
+<ul>
+<li>For example, let us say <span class="math inline">u(x) = 2</span> and <span class="math inline">u(y) = 1</span>. If <span class="math inline">u</span> is ordinal, we can say that <span class="math inline">x</span> is preferred to <span class="math inline">y</span>. But, we cannot say <span class="math inline">x</span> is preferred <em>twice as much</em> as <span class="math inline">y</span>, since for ordinal, the distance means nothing - only the magnitude.</li>
+</ul>
+<p>Any rational set of preferences (both complete and transitive) can be represented by a utility function.</p>
+<ul>
+<li>The proof is beyond the scope of this lesson. But we can quickly show why if either are violated, they cannot be represented.</li>
+<li>If the preferences are incomplete, we cannot assign a number utility to the alternative that the individual is unsure about/does not have an opinion on.</li>
+<li>If the preferences are not transitive, we cannot create a utility function, because numbers <span class="math inline">\mathbb R</span> (which the utility function uses as a mapping) are transitive, and you cannot map something non-transitive into something transitive.</li>
+</ul>
+</div>
+</div>
+</div>
+<p>What is the best choice from <span class="math inline">X</span> that an agent can make (rationality)?</p>
+<p>We define the “best choice” as outcomes/alternatives included in the <strong>maximal set</strong> of <span class="math inline">X</span>, notated <span class="math inline">M(\succsim, X)</span>:</p>
+<p><span class="math display">
+\begin{split}
+M(\succsim, X) &amp; = \{ x \in X : x \succsim y, \ \forall \ y \in X \} \\
+&amp; = \arg \max\limits_{x \in X} \{u(x) \}
+\end{split}
+</span></p>
+<p>Or in more intuitive terms, the inputs <span class="math inline">x \in X</span> that make the utility function <span class="math inline">u \in \mathbb R</span> achieve its maximum value, are the elements of <span class="math inline">x</span> in the maximal set <span class="math inline">M(\succsim, X)</span>.</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="dominant-strategies" class="level1">
+<h1><strong>Dominant Strategies</strong></h1>
+<section id="dominant-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="dominant-strategy">Dominant Strategy</h3>
+<p>A strategy <span class="math inline">s_i^D</span> is a <strong>strictly dominant</strong> strategy for player <span class="math inline">i</span> if:</p>
+<p><span class="math display">
+u_i(s_i^D, s_{-i}) &gt; u_i (s_i, s_{-i}), \quad \forall \ s_{-i}, \ \forall s_i ≠ s_i^D
+</span></p>
+<p>Or in other words, a strategy <span class="math inline">s_i^D</span> is a strictly dominant strategy for player <span class="math inline">i</span>, if it gives a higher payoff than any other strategy of player <span class="math inline">i</span>, no matter the choice of strategy of other players.</p>
+<p>A strategy <span class="math inline">s_i^D</span> is <strong>weakly dominant</strong> for player <span class="math inline">i</span> if:</p>
+<p><span class="math display">
+u_i(s_i^D, s_{-i}) ≥ u_i (s_i, s_{-i}), \quad \forall \ s_{-i}, \ \forall s_i ≠ s_i^D
+</span></p>
+<p>A strategy <span class="math inline">s_i^1</span> that always produces a lower payoff than <span class="math inline">s_i^2</span> is said to be <strong>strictly dominated</strong>. A strategy <span class="math inline">s_i^1</span> that always produces a lower or equal payoff than <span class="math inline">s_i^2</span> is said to be <strong>weakly dominated</strong>.</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Eliminating Dominated Strategies
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A strictly dominated strategy can be eliminated, as it will never be played. A strictly dominated strategy will never form a part of any equilibrium (pure or mixed).</p>
+<p>A weakly dominated strategy <strong>cannot</strong> be eliminated. It can be a best response in certain cases.</p>
+<ul>
+<li>However, if you have multiple equilibria, some that have weakly dominated strategies, you can eliminate some of them as they are often considered non-pivotal or nonsensical, which narrows the amount of equilibrium you have.</li>
+</ul>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="dominant-strategy-equilibrium" class="level3">
+<h3 class="anchored" data-anchor-id="dominant-strategy-equilibrium">Dominant Strategy Equilibrium</h3>
+<p>A strategy profile <span class="math inline">s^D</span> is a dominant strategy equilibrium, if every player is playing a dominant strategy.</p>
+<p>Formally, a strategy profile <span class="math inline">s^D = (s_1^D, \dots, s_N^D)</span> is a dominant strategy equilibrium, if <span class="math inline">s_i^D</span> is a dominant strategy for all <span class="math inline">i</span>:</p>
+<p><span class="math display">
+u_i(s_i^D, s_{-i}) &gt; u_i (s_i, s_{-i}), \quad \forall \ s_{-i}, \ \forall s_i ≠ s_i^D, \ \forall \ i
+</span></p>
+<p>Dominant Strategy Equilibrium, if it exists, is always unique. However, it often does not exist.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example: Prisoner’s Dilemma
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take the classic game: the prisoner’s dilemma. The matrix representation is as follows:</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{cooperate} &amp; \text{defect} \\
+\text{cooperate} &amp; (3, 3) &amp; (0, 4) \\
+\text{defect} &amp; (4, 0) &amp; (1,1)
+\end{matrix}
+</span></p>
+<ul>
+<li>Payoffs are given as (player picking between rows, player picking between columns)</li>
+</ul>
+<p>Let us look at the row player’s decision. First, let us hold constant their opponent (the column player) and assume they choose <em>cooperate</em>.</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{cooperate}  \\
+\text{cooperate} &amp; (3, 3) \\
+\text{defect} &amp; (4, 0)
+\end{matrix}
+</span></p>
+<p>We can see <span class="math inline">4 &gt; 3</span>, so the row player should choose <em>defect</em>.</p>
+<p>Now, let us hold constant their opponent (the column player) and assume they choose <em>defect</em>.</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{defect} \\
+\text{cooperate} &amp; (0, 4) \\
+\text{defect} &amp; (1,1)
+\end{matrix}
+</span></p>
+<p>We can see <span class="math inline">1&gt;0</span>, so the row player should choose <em>defect</em>.</p>
+<p>Thus, the row player, no matter what their opponent does, should choose <em>defect</em>. Thus, <em>defect</em> is a dominant strategy.</p>
+<p><br></p>
+<p>Since this game is symmetrical, the column player also has a dominant strategy of <em>defect.</em></p>
+<p>Thus, the dominant strategy equilibrium of this game is (<em>defect, defect</em>).</p>
+</div>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="nash-equilibrium" class="level1">
+<h1><strong>Nash Equilibrium</strong></h1>
+<section id="best-responses" class="level3">
+<h3 class="anchored" data-anchor-id="best-responses">Best Responses</h3>
+<p>The strategy <span class="math inline">s_i</span> for player <span class="math inline">i</span>, is a <strong>best response</strong> to a specific opponent’s strategy <span class="math inline">s_{-i}</span>, if it yields maximum payoff to <span class="math inline">i</span> holding the opponents specific strategy <span class="math inline">s_{-i}</span> constant.</p>
+<p><span class="math display">
+u_i(s_i, s_{-i}) ≥ u_i(s_i', s_{-i}) \quad \forall \ s_i'
+</span></p>
+<p>In other words, that means, holding the opponents strategy constant, player <span class="math inline">i</span> has no <strong>profitable deviation</strong> to any other strategy to obtain a better payoff.</p>
+<p>Best responses of player <span class="math inline">i</span> are denoted as the following:</p>
+<p><span class="math display">
+Br_i(s_{-i}) = s_i
+</span></p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example: Stag-Hunt Game
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take the classic game: the stag-hunt game. The matrix representation is as follows:</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{stag} &amp; \text{hunt} \\
+\text{stag} &amp; (2, 2) &amp; (0, 1) \\
+\text{hunt} &amp; (1, 0) &amp; (1,1)
+\end{matrix}
+</span></p>
+<p>Let us compute the best responses of the player choosing between rows, to each of the opponents possible strategies.</p>
+<p>Let us say the opponent plays <em>stag</em>. What is the row player’s best response?</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{stag} \\
+\text{stag} &amp; (2, 2) \\
+\text{hunt} &amp; (1, 0)
+\end{matrix}
+</span></p>
+<p>We can see <span class="math inline">2&gt;1</span>, thus the row player’s best response in this case is to play <em>stag</em>.</p>
+<p>Let us say the opponent plays <em>hunt</em>. What is the row player’s best response?</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{hunt} \\
+\text{stag}  &amp; (0, 1) \\
+\text{hunt}&amp; (1,1)
+\end{matrix}
+</span></p>
+<p>We can see <span class="math inline">1&gt;0</span>, thus the row player’s best response in this case is to play <em>hunt</em>.</p>
+<p><br></p>
+<p>We can notate the best responses of the row player (player 1) as follows:</p>
+<p><span class="math display">
+\begin{cases}
+Br_1(\text{stag}) = \text{stag} \\
+Br_1(\text{hunt}) = \text{hunt}
+\end{cases}
+</span></p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="pure-strategy-nash-equilibrium" class="level3">
+<h3 class="anchored" data-anchor-id="pure-strategy-nash-equilibrium">Pure Strategy Nash Equilibrium</h3>
+<p>A strategy profile <span class="math inline">s^*</span> is a Nash Equilibrium, when all players are playing best responses (and no player has any profitable deviations, holding the opponents strategy consistent):</p>
+<p><span class="math display">
+u_i(s_i^*, s_{-i}^*) ≥ u_i(s_i', s_{-i}^*) \quad \forall \ s_i', \ \forall \ i
+</span></p>
+<p>There are a few characteristics of Nash Equilibrium:</p>
+<ul>
+<li>There can be more than one Nash Equilibrium in a game, thus, they are not unique.</li>
+<li>All dominant strategy equilibrium are Nash Equilibrium as well, but not all Nash Equilibrium are dominant strategy equilibrium.</li>
+</ul>
+<p>Nash Equilibrium can be computed in 2 ways:</p>
+<ol type="1">
+<li>Calculate all the best responses of each player. The strategy profiles where all players are playing best responses is a Nash Equilibrium.</li>
+<li>Test different cases of strategy profiles. If no profitable deviation exists while holding other player’s strategies constant, then that is a Nash Equilibrium.</li>
+</ol>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example: Assurance Game
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take this famous game - the assurance game. The matrix form is as follows:</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{nukes} &amp; \text{no nukes} \\
+\text{nukes} &amp; (1, 1) &amp; (3, 0) \\
+\text{no nukes} &amp; (0, 3) &amp; (4,4)
+\end{matrix}
+</span></p>
+<p>To find the Nash Equilibrium, let us compute best responses for both players. Start with the row player (best responses underlined and bolded):</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{nukes} &amp; \text{no nukes} \\
+\text{nukes} &amp; (\underline{\mathbf 1}, 1) &amp; (3, 0) \\
+\text{no nukes} &amp; (0, 3) &amp; (\underline{\mathbf 4},4)
+\end{matrix}
+</span></p>
+<p>Now, let us find the best responses of the column player:</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{nukes} &amp; \text{no nukes} \\
+\text{nukes} &amp; (\underline{\mathbf 1}, \underline{\mathbf 1}) &amp; (3, 0) \\
+\text{no nukes} &amp; (0, 3) &amp; (\underline{\mathbf 4},\underline{\mathbf 4})
+\end{matrix}
+</span></p>
+<p>We can see that strategy profiles (<em>nukes, nukes</em>) and (<em>no nukes, no nukes</em>) are both strategy profiles where both players are playing best responses. Thus, these two strategy profiles are the Nash Equilibrium.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="pareto-optimal-and-focal-points" class="level3">
+<h3 class="anchored" data-anchor-id="pareto-optimal-and-focal-points">Pareto Optimal and Focal Points</h3>
+<p>When there are Nash Equilibrium, in theory, all are just as equally likely to occur.</p>
+<p>However, this isn’t very useful - we want equilibrium concepts to help us make predictions of behaviour. Thus, there are two ways in which we can determine if some equilibrium might be more plausible than others.</p>
+<p>A <strong>Pareto Efficient/Optimal</strong> outcome is an outcome where it is impossible to move to any other outcome that makes at least one player better off, <u>without making anyone else worse off</u>.</p>
+<ul>
+<li>If there is one Nash Equilibrium outcome that is Pareto Efficient, while the others are not, it is likely a more plausible outcome than the other Nash Equilibrium.</li>
+</ul>
+<p>A <strong>Focal Point</strong> is a “cutural” concept - that one Nash Equilibrium might be more cuturally or socially “obvious” as a solution compared to the other Nash Equilibrium.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example: Meet in Paris Game
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take the following game:</p>
+<p>You want to meet a friend in Paris, but your phones are both dead. If you both choose the same place, then you get a full payoff. if you two choose different places to meet, then neither get any payoff.</p>
+<p>In theory, any location in Paris is a Nash Equilibria - since as long as both of you are at the same place, you are getting the optimal outcome. However, culturally, there are some locations in Paris that are more “obvious”. For example, many people would probably meet at the Eiffel Tower. Thus, the Eiffel Tower is a focal point - a likely solution to the game, due to cultural reasons.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="trembling-hand-perfect-equilibrium" class="level3">
+<h3 class="anchored" data-anchor-id="trembling-hand-perfect-equilibrium">Trembling Hand Perfect Equilibrium</h3>
+<p>One assumption of Game Theory is that players are always rational - they will always aim to maximise their payoff. However, in the real world, this isn’t always the case. Sometimes, players will play an unoptimal action.</p>
+<p>If our goal of our models is to make predictions about outcomes, we want our models to be <strong>robust</strong>.</p>
+<p>The Trembling Hand Perfect Equilibrium assumes that one of the players plays an unoptimal (non-Nash Equilibrium) action <span class="math inline">\epsilon</span> proportion of the time.</p>
+<p>If the Nash Equilibrium remains the Nash Equilibrium, even with one player acting unoptimally <span class="math inline">\epsilon</span> of the time, then the equilibrium is robust.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example: Trembling Hand Perfect Equilibrium
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take this following game:</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{Left} &amp; \text{Right} \\
+\text{Up} &amp; (1, 1) &amp; (2, 0) \\
+\text{Down} &amp; (0, 2) &amp; (2,2)
+\end{matrix}
+</span></p>
+<p>This game has two Nash Equilibriua: (Up, Left) and (Down, Right).</p>
+<p>Let us test the robustness of the (<em>Up</em>, <em>Left</em>) Equilibrium. Let us assume player 1 (row player) is irrational at probability <span class="math inline">\epsilon</span>, and selects <em>Down</em>. The remainder of the time <span class="math inline">1 - \epsilon</span> they still play the optimal <em>Up</em>. Let us call this strategy <span class="math inline">s_1^\epsilon</span></p>
+<p>Will player 2 still prefer to play <em>Left</em> and mantain the current equilibrium?</p>
+<p>We can solve this by finding the expected utility of player 2 playing <em>Left</em> and <em>Right</em>, and seeing if the utility of <em>Left</em> is still higher. Remember, player 1 is playing strategy <span class="math inline">s_1^\epsilon</span>.</p>
+<p><span class="math display">
+\begin{cases}
+u_2(\text{Left}, s_i^\epsilon) = Pr(\text{up}) \times 1 + Pr(\text{Down}) \times 2 = (1-\epsilon)(1) + \epsilon(2) = 1 + \epsilon \\
+u_2(\text{Right}, s_i^\epsilon) = Pr(\text{up}) \times 0 + Pr(\text{Down}) \times 2 = (1-\epsilon)(0) + \epsilon(2) = 2 \epsilon
+\end{cases}
+</span></p>
+<p>Is the utility for player 2 of playing <em>Left</em> greater or equal than playing <em>Right</em>?</p>
+<p><span class="math display">
+\begin{split}
+u_2(\text{Left}, s_i^\epsilon) &amp; ≥ u_2(\text{Right}, s_i^\epsilon) \\
+1 + \epsilon &amp; ≥ 2 \epsilon \\
+\epsilon &amp; ≤ 1
+\end{split}
+</span></p>
+<p>This tells us that <em>Left</em> is the preferred strategy of player 2, as long as <span class="math inline">\epsilon ≤ 1</span>. Remember, <span class="math inline">\epsilon</span> is a probability between 0 and 1. That means, all values of <span class="math inline">\epsilon</span> ensure <em>Left</em> is the preferred strategy.</p>
+<p>Thus, (Up, Left) is still the equilibrium, no matter how irrational player 1 might be.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="mixed-strategies" class="level3">
+<h3 class="anchored" data-anchor-id="mixed-strategies">Mixed Strategies</h3>
+<p>Let us say player <span class="math inline">i</span> has possible strategies <span class="math inline">\{s_1, \dots, s_m \}</span>. A mixed strategy for player <span class="math inline">i</span> is a probability distribution over their set of strategies:</p>
+<p><span class="math display">
+\sigma_i = (\sigma_i(s_1), \dots, \sigma_i(s_m))
+</span></p>
+<p>Where <span class="math inline">\sigma_i(s_k)</span> is the probability of player <span class="math inline">i</span> playing their strategy <span class="math inline">s_k</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of a Mixed Strategy
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us say player <span class="math inline">i</span> has some mixed strategy:</p>
+<p><span class="math display">
+\sigma_i = (0.25, 0.75)
+</span></p>
+<p>What this means is that player 1 will play their first strategy <span class="math inline">s_1</span> 25% of the time, and play their second strategy <span class="math inline">s_2</span> 75% of the time.</p>
+</div>
+</div>
+</div>
+<p>Mixed Strategies have a few properties:</p>
+<ol type="1">
+<li><span class="math inline">\sigma_i(s_k) \in [0, 1], \quad \forall \ s_k \in \{s_1, \dots, s_m \}</span>. This is because of the laws of probability - a probability must be between 0 and 1.</li>
+<li><span class="math inline">\sum\limits_k \sigma_i(s_k) = 1</span>, In other words - all probabilities in the mixed strategy should sum to 1.</li>
+</ol>
+<p>Pure strategies are technically mixed-strategies where one strategy has probability 1, and all other strategies have probability 0.</p>
+<p><br></p>
+</section>
+<section id="mixed-strategy-nash-equilibrium" class="level3">
+<h3 class="anchored" data-anchor-id="mixed-strategy-nash-equilibrium">Mixed Strategy Nash Equilibrium</h3>
+<p>The mixed-strategy profile <span class="math inline">\sigma^* = (\sigma_1^*, \dots, \sigma_N^*)</span> is a Nash Equilibrium if <span class="math inline">\sigma_i^*</span> is a best response to <span class="math inline">\sigma_{-i}^*</span> for all players <span class="math inline">i</span>.</p>
+<p><span class="math display">
+u_i(\sigma_i^*, \sigma_{-i}^*) ≥ u_i(\sigma_i', \sigma_{-i}^*) \quad \forall \ \sigma_i', \ \forall \ i
+</span></p>
+<p>A few notes on Mixed Strategy Nash Equilibrium.</p>
+<ol type="1">
+<li>If a mixed strategy for player <span class="math inline">i</span>, <span class="math inline">\sigma_i^*</span> is in a Nash Equilibrium, player <span class="math inline">i</span> must be indifferent between the strategies they are mixing. This is because if player <span class="math inline">i</span> preferred one strategy over all others, they would simply play that strategy, not mix.</li>
+<li>All pure-strategy Nash equilibrium are also mixed-strategy nash equilibrium, just that the mixed strategy in question has a probability of playing one strategy 100% of the time.</li>
+<li>All simultaneous games where all players have a finite set of strategies, has a mixed strategy Nash Equilibrium (this proof got John Nash as Nobel Prize).</li>
+</ol>
+<p>Finding Mixed Strategy Nash Equilibrium should take this procedure:</p>
+<ol type="1">
+<li>Find all pure-strategy Nash Equilibrium.</li>
+<li>If there are any strategies that are strictly dominated by one other strategy, eliminate them, as they are never a part of mixed-strategy Nash.</li>
+<li>Find the mixed strategy nash equilibrium (shown below).</li>
+</ol>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example: Matching Pennies Game
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take the following Matching Pennies game:</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{Heads} &amp; \text{Tails} \\
+\text{Heads} &amp; (1, -1) &amp; (-1, 1) \\
+\text{Tails} &amp; (-1, 1) &amp; (1,-1)
+\end{matrix}
+</span></p>
+<p>First, let us find the pure-strategy Nash Equilibrium.</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{Heads} &amp; \text{Tails} \\
+\text{Heads} &amp; (\underline{\mathbf 1}, -1) &amp; (-1, \underline{\mathbf 1}) \\
+\text{Tails} &amp; (-1, \underline{\mathbf 1}) &amp; (\underline{\mathbf 1},-1)
+\end{matrix}
+</span></p>
+<p>We can see there are no pure-strategy Nash Equilibrium. We also do not have any strictly dominated strategies.</p>
+<p>We now need to find the probabilities each player plays each strategy at their disposal.</p>
+<p>Let us define <span class="math inline">p</span> as player 1’s (row player) probability of playing <em>Heads</em>, which means they will play <em>Tails</em> with probability <span class="math inline">1-p</span>. Similarly, let us define <span class="math inline">q</span> as player 2’s probability of playing <em>Heads</em>, which means they will play tails at probability <span class="math inline">1-q</span>:</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; \text{Heads} &amp; \text{Tails} \\
+\text{Heads} &amp; (1, -1) &amp; (-1, 1) &amp; p \\
+\text{Tails} &amp; (-1, 1) &amp; (1,-1) &amp; 1-p \\
+&amp; q &amp; 1-q
+\end{matrix}
+</span></p>
+<p>Let us look at player 1. What is their expected utility when playing <em>Heads</em> or <em>Tails</em> (which depends on player 2’s probability <span class="math inline">q</span>):</p>
+<p><span class="math display">
+\begin{cases}
+u_1(\text{Heads}) = 1q -1(1-q) = 2q - 1 \\
+u_1(\text{Tails}) = -1q + 1(1-q) = -2q + 1
+\end{cases}
+</span></p>
+<p>We know that for player 1 to mix between these two strategies, they must be indifferent. Thus:</p>
+<p><span class="math display">
+\begin{split}
+u_1(\text{Heads}) &amp; = u_1(\text{Tails}) \\
+2q - 1 &amp; = -2q + 1 \\
+4q &amp; = 2 \\
+q &amp; = \frac{1}{2}
+\end{split}
+</span></p>
+<p>Thus, player 1 will play <em>Heads</em> 50% of the time.</p>
+<p>We can do the same exercise with player 2, and we will also get <span class="math inline">p = \frac{1}{2}</span>.</p>
+<p>Thus, the Mixed Strategy Nash Equilibrium is: <span class="math inline">\left( (\frac{1}{2}, \frac{1}{2}), (\frac{1}{2},\frac{1}{2}) \right)</span>.</p>
+<ul>
+<li>This is in the form <span class="math inline">((\sigma_1(\text{Heads}), \sigma_1(\text{Tails}), (\sigma_2(\text{Heads}), \sigma_2(\text{Tails}))</span></li>
+</ul>
+</div>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="subgame-perfect-nash-equilibrium" class="level1">
+<h1><strong>Subgame Perfect Nash Equilibrium</strong></h1>
+<section id="strategies-and-decision-nodes" class="level3">
+<h3 class="anchored" data-anchor-id="strategies-and-decision-nodes">Strategies and Decision Nodes</h3>
+<p>In dynamic games, players move sequentially. This means that if player 1 moves first, player 2 may have different “states” of the game in which to make a decision.</p>
+<p>Each potential location in the game in which a player has to choose an action is called a <strong>decision node</strong>.</p>
+<p>A <strong>strategy</strong>, by definition, is a complete plan of action. This implies that a strategy of a player must include what a player would do at <u>every possible decision node in the game</u>. Even if the decision node is never reached, the strategy profile of the player must specify an action to do at that decision node.</p>
+<p>The total number of different strategies is the product of the number of actions possible at every decision node.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Strategies: Budget Game
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take a typical dynamic game (where players move sequentially):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-627480872.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>In this game, Congress has one <strong>decision node</strong>, and the President has 2 decision nodes.</p>
+<p>Thus, congress has 2 strategies: Small Budget, or Large Budget.</p>
+<p>President has 4 strategies, since he has 2 in the first decision node, and 2 in the second, and the total number of strategies is the product: <span class="math inline">2 \times 2</span>.</p>
+<ul>
+<li>The strategies are: (Approve, Approve), (Approve, Reject), (Reject, Approve), (Reject, Reject)</li>
+<li>The first part of each represents what they would do in the top decision node (after P1 plays small budget), the second part of each represents the bottom decision node.</li>
+</ul>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="nash-equilibrium-in-dynamic-games" class="level3">
+<h3 class="anchored" data-anchor-id="nash-equilibrium-in-dynamic-games">Nash Equilibrium in Dynamic Games</h3>
+<p>Nash Equilibrium have the same definition in Dynamic Games - a strategy profile where all players are playing best responses, and no player has a profitable deviation.</p>
+<p>However, finding Nash Equilibrium for Dynamic Games requires you to convert the tree-form into normal form.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Normal Form: Budget Game
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take a typical dynamic game (where players move sequentially):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-627480872.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>We discussed the potential strategies of each player above (let us simplify the strategies to the first letter of their name):</p>
+<ul>
+<li>Congress: S or L</li>
+<li>President: (AA), (AR), (RA), (RR) - the first letter represents what they would do in the top decision node (after P1 plays small budget).</li>
+</ul>
+<p>We put this into normal form as follows:</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; AA &amp; AR &amp; RA &amp; RR \\
+S &amp; (10, 2) &amp; (10, 2) &amp; (2, 1) &amp; (2, 1)\\
+L &amp; (5, 10) &amp; (0, 0) &amp; (5, 10) &amp; (0, 0)
+\end{matrix}
+</span></p>
+<p>We can quickly find the Nash Equilibrium in all the same ways as before:</p>
+<p><span class="math display">
+\begin{matrix}
+&amp; AA &amp; AR &amp; RA &amp; RR \\
+S &amp; (\underline{\mathbf{10}}, \underline{\mathbf 2}) &amp; (\underline{\mathbf{10}}, \underline{\mathbf 2}) &amp; (2, 1) &amp; (\underline{\mathbf 2}, 1)\\
+L &amp; (5, \underline{\mathbf{10}}) &amp; (0, 0) &amp; (\underline{\mathbf 5}, \underline{\mathbf{10}}) &amp; (0, 0)
+\end{matrix}
+</span></p>
+<p>We have three Nash Equilibria: <span class="math inline">(S, AA), \ (S, AR), \ (L, RA)</span>.</p>
+</div>
+</div>
+</div>
+<p>However, Nash Equilibrium have a problem in dynamic games: actions at nodes not reached on the path of equilibrium, do not affect payoffs.</p>
+<ul>
+<li>This means that Nash Equilibrium include solutions where players do not play optimally off the path (what we call <strong>non-credible threats</strong>).</li>
+<li>This is a big issue, since off-the-path behaviour determines how previous players anticipate what to do.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Non-Credible Threats: Budget Game
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take a typical dynamic game (where players move sequentially):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-627480872.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>From above, we found three Nash Equilibrium: <span class="math inline">(S, AA), \ (S, AR), \ (L, RA)</span>.</p>
+<p>Let us take a look at the third Nash Equilibrium, <span class="math inline">L, RA</span>:</p>
+<p>This equilibrium says that the President will choose to <em>Reject</em> in the top node (after congress passes a small budget). But, this makes no sense - we can see President can increase their payoff to 2 if they choose approve.</p>
+<p>If president does play optimally and moves to <em>Approve</em> in the top node, now Congress has a profitable deviation from <span class="math inline">L</span> to <span class="math inline">S</span>, as they can go from a payoff of 5 to 10.</p>
+<p>Thus, this <span class="math inline">L, RA</span> equilibrium does not make much sense - it completely depends on the assumption that off-the-path on the top-node, the President will choose an unoptimal action of <span class="math inline">R</span>.</p>
+<p>This shows the issue with Nash Equilibrium in Dynamic Games.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="subgame-perfect-nash-equilibrium-1" class="level3">
+<h3 class="anchored" data-anchor-id="subgame-perfect-nash-equilibrium-1">Subgame Perfect Nash Equilibrium</h3>
+<p>A Subgame Perfect Nash Equilibrium (SPNE) is a subset of Nash Equilibria, where all players act optimally, even in nodes that are not reached in equilibrium.</p>
+<p>Subgame Perfect Nash Equilibrium can also be defined as a strategy profile that is a Nash Equilibrium in all Subgames of the Game.</p>
+<ul>
+<li>A subgame of an extensive game is a game consisting of any node and its subsequent actions and nodes.</li>
+</ul>
+<p>To find SPNE, we use backwards induction:</p>
+<ol type="1">
+<li>Start with the last player to move. Determine their optimal action, and eliminate their non-optimal actions.</li>
+<li>Now move forward to the second-to-last player to move. Determine their optimal action - assuming that the outcomes eliminated in step 1 are not feasible to obtain.</li>
+<li>Now keep moving forward one player, and find their optimal action, until you reach the front.</li>
+</ol>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Backwards Induction
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take this following dynamic game:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-496372571.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>Let us start with the last player to move, player 3.</p>
+<ul>
+<li>On the left decision node, <span class="math inline">9&gt;4</span>, so player 3 chooses <span class="math inline">r</span>.</li>
+<li>On the middle decision node, <span class="math inline">8&gt;7</span>, so player 3 chooses <span class="math inline">l</span>.</li>
+<li>On the right decision node, <span class="math inline">3 &gt; 0</span>, so player 3 chooses <span class="math inline">r</span>.</li>
+</ul>
+<p>Now, go one step backward to player 2:</p>
+<ul>
+<li>Player 2 can choose between <span class="math inline">a</span> and <span class="math inline">b</span> - however, they should only consider outcomes that player 3 will choose (they are anticipating what player 3 will do).</li>
+<li>Under this assumption, if player 2 chooses <span class="math inline">a</span>, they know player 3 will choose <span class="math inline">l</span>, and player 2 will get a payoff of 2.</li>
+<li>If player 2 chooses <span class="math inline">b</span>, they know player 3 will choose <span class="math inline">r</span>, and player 2 will get a pyyoff of 5.</li>
+<li>Since <span class="math inline">5&gt;2</span>, player 2 will choose <span class="math inline">b</span>.</li>
+</ul>
+<p>Now, go one step backward to player 1:</p>
+<ul>
+<li>Player 1 can choose between <span class="math inline">L</span> and <span class="math inline">R</span>- however, they should only consider outcomes that player 3 and player 2 will choose (they are anticipating what later players will do).</li>
+<li>Under this assumption, if player 1 chooses <span class="math inline">L</span>, they know player 3 will choose <span class="math inline">r</span>, and that will get player 1 a payoff of 5.</li>
+<li>If player 1 chooses <span class="math inline">R</span>, they know player 2 will choose <span class="math inline">b</span>, and player 3 will choose <span class="math inline">r</span>, and that will get player 1 a payoff of 1.</li>
+<li>Since <span class="math inline">5&gt;1</span>, that means player 1 will play <span class="math inline">L</span>.</li>
+</ul>
+<p>Thus, the SPNE of this game is: <span class="math inline">(L, b, rlr)</span>.</p>
+<ul>
+<li>Remember, the strategy profile consists of what a player will do at each node in the game. Player 3 has 3 nodes, so we have to indicate that in our SPNE.</li>
+</ul>
+</div>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="perfect-bayesian-equilibrium" class="level1">
+<h1><strong>Perfect Bayesian Equilibrium</strong></h1>
+<section id="information-sets" class="level3">
+<h3 class="anchored" data-anchor-id="information-sets">Information Sets</h3>
+<p>In incomplete information games, sometimes, a player is unsure which decision node they are on.</p>
+<p>An <strong>information set</strong> is a set of decision nodes in which a player is unsure which one they are at.</p>
+<ul>
+<li>For example, if player <span class="math inline">i</span> is unsure they are at decision node <span class="math inline">A</span> or <span class="math inline">B</span>, those two decision nodes will be a part of the same information set.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Information Sets
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take this following game: Alex moves first, then Chris - however, Chris cannot observe the action Alex took:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3164207541.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>Thus, Chris is unsure if they are at the left side of the game, or the right side of the game, since Chris did not observe what Alex did.</p>
+<p>Thus, these two nodes are on the same information set for Chris - he knows he is in this information set, but he is unsure which node he is at within this information set.</p>
+</div>
+</div>
+</div>
+<p>Players have to choose the same action to do for all nodes in an information set. This is because they are unsure which node within the information set they are at, so they have to do the same action for all of the nodes.</p>
+<p><br></p>
+</section>
+<section id="belief-profile" class="level3">
+<h3 class="anchored" data-anchor-id="belief-profile">Belief Profile</h3>
+<p>Players have a set of <strong>beliefs</strong> regarding which node they are at within the information set. This is often described as a probability distribution over each node within the information set.</p>
+<ul>
+<li>For example, player <span class="math inline">i</span> might believe they have an 80% chance of being at node <span class="math inline">A</span>, and 20% chance at being in node <span class="math inline">B</span>.</li>
+<li>Note: Beliefs within an information set should sum to 1.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Beliefs
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take this following game: Alex moves first, then Chris - however, Chris cannot observe the action Alex took:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3164207541.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>Chris is unsure if he is at the left or right node. However, Chris can put a belief that he is at each node - we can label these beliefs <span class="math inline">\mu</span> and <span class="math inline">1-\mu</span>.</p>
+<ul>
+<li><span class="math inline">\mu</span> is Chris’s belief of the chance he is at the left node.</li>
+<li><span class="math inline">1-\mu</span> is Chris’s belief of the chance he is not at the left node, so at the right node.</li>
+</ul>
+<p>Chris will use these beliefs to help him decide if he should play <span class="math inline">o</span> or <span class="math inline">f</span>.</p>
+</div>
+</div>
+</div>
+<p>Players will use these beliefs to determine what strategy they should play at the information set.</p>
+<p>Players can also “update” their beliefs based on new information from prior events in the game.</p>
+<p><br></p>
+</section>
+<section id="bayes-theorem" class="level3">
+<h3 class="anchored" data-anchor-id="bayes-theorem">Bayes’ Theorem</h3>
+<p>Let us assume <span class="math inline">Pr(A)</span> is the probability of us being at a specific node. Let us assume <span class="math inline">Pr(B)</span> is the probability of us being in the information set that contains the specific node.</p>
+<p>Thus, <span class="math inline">Pr(A|B)</span> is the probability of us being at the specific node, assuming we have entered the information set. Bayes’ Rule says the following about <span class="math inline">Pr(A|B)</span>:</p>
+<p><span class="math display">
+\begin{split}
+Pr(A|B) &amp; = \frac{Pr(B|A) Pr(A)}{Pr(B)} \\
+&amp; = \frac{Pr(B|A) Pr(A)}{Pr(B|A)Pr(A) + Pr(B|A^C)Pr(A^C)}
+\end{split}
+</span></p>
+<ul>
+<li>The second equation expands <span class="math inline">Pr(B)</span> using the law of total probability.</li>
+</ul>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Proof of Bayes’ Rule
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us start off with the definition of conditional probability:</p>
+<p><span class="math display">
+Pr(A|B) = \frac{Pr(A \cap B)}{Pr(B)}
+</span></p>
+<p>Let us solve for <span class="math inline">Pr(A \cap B)</span> to get:</p>
+<p><span class="math display">
+Pr(A\cap B) = Pr(A|B)Pr(B)
+</span></p>
+<p>Now, let us take the opposite conditional probability:</p>
+<p><span class="math display">
+Pr(B|A) = \frac{Pr(B \cap A)}{Pr(A)}
+</span></p>
+<p>Let us solve for <span class="math inline">Pr(B \cap A)</span>:</p>
+<p><span class="math display">
+Pr(B\cap A) = Pr(B|A) Pr(A)
+</span></p>
+<p><br></p>
+<p>By the commutative property of sets, we know that:</p>
+<p><span class="math display">
+Pr(A \cap B) = Pr(B \cap A)
+</span></p>
+<p>Thus, the following must also be true.</p>
+<p><span class="math display">
+Pr(A|B)Pr(B) = Pr(B|A)Pr(A)
+</span></p>
+<p>Now, let us solve for <span class="math inline">Pr(A|B)</span>:</p>
+<p><span class="math display">
+Pr(A|B) = \frac{Pr(B|A)Pr(A)}{Pr(B)}
+</span></p>
+<p>Thus, we have proved Bayes’ Rule.</p>
+</div>
+</div>
+</div>
+<p>We often call <span class="math inline">Pr(A)</span> the prior probability, and <span class="math inline">Pr(A|B)</span> the posterior probability. Bayes’ Rule allows us to use new information to update our original prior probability <span class="math inline">Pr(A)</span> to get our posterior probability <span class="math inline">Pr(B|A)</span>.</p>
+<p><br></p>
+</section>
+<section id="perfect-bayesian-equilibrium-1" class="level3">
+<h3 class="anchored" data-anchor-id="perfect-bayesian-equilibrium-1">Perfect Bayesian Equilibrium</h3>
+<p>A Perfect Bayesian Equilibrium (PBE) consists of:</p>
+<ol type="1">
+<li>A <strong>strategy profile</strong>: specifying the action to take for each player, at every information set in the game.</li>
+<li>A <strong>belief profile</strong>: a probability distribution over each node in each information set.</li>
+</ol>
+<p>For every player, players should act <strong>sequentially rational</strong>. This means that:</p>
+<ol type="1">
+<li>Players act <strong>optimally</strong> at every information set (maximise their payoffs), given their belief profiles.</li>
+<li>Player’s beliefs are <strong>consistent</strong> with the strategy profiles, if on-the-equilibrium-path beliefs are consistent with Bayes Rule, and if off-the-equilibrium-path beliefs are sufficiently restricted to ensure players are acting optimally with regard to their beliefs.</li>
+</ol>
+<p>To find a Perfect Bayesian Equilibrium, you should generally start with backwards induction to find strategies, then check if the beliefs are consistent with these strategies.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example: Selten’s Horse
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take this game:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3973452779.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:65.0%"></p>
+</figure>
+</div>
+<p>Let us find the Perfect Bayesian Equilibria of this game.</p>
+<p>First, let us start off with the strategy profiles by doing backwards induction.</p>
+<p>What should player 3 play in their node?</p>
+<ul>
+<li>We can see that no matter what their belief <span class="math inline">p</span> is, <span class="math inline">L</span> always has a better payoff than <span class="math inline">R</span>. Thus, 3 will play <span class="math inline">L</span>.</li>
+</ul>
+<p>Now, what should player 2 do?</p>
+<ul>
+<li>If player 2 chooses <span class="math inline">A</span>, they get a payoff of 3.</li>
+<li>If player <span class="math inline">A</span> chooses <span class="math inline">D</span>, they know that player 3 will choose <span class="math inline">L</span>, so player 2 will get a payoff of 5.</li>
+<li>Since <span class="math inline">5&gt;2</span>, player 2 chooses <span class="math inline">D</span>.</li>
+</ul>
+<p>Now, what should player 1 do?</p>
+<ul>
+<li>If player 1 plays <span class="math inline">D</span>, they know player 3 will play <span class="math inline">L</span>, thus getting player 1 a payoff of 4.</li>
+<li>If player 1 plays <span class="math inline">A</span>, they know player 2 will play <span class="math inline">D</span> and player 3 will play <span class="math inline">L</span>, getting them a payoff of 5.</li>
+<li>Since <span class="math inline">5&gt;4</span>, player 1 will play <span class="math inline">A</span>.</li>
+</ul>
+<p>So now, we have found the strategy profile <span class="math inline">(A, D, L)</span> is optimal. But what about the beliefs?</p>
+<p>Well, what beliefs are consistent with this strategy? We can see that under this equilibrium path, player 3’s information set is on-the-equilibrium path (it will be reached).</p>
+<ul>
+<li>We see that on the equilibrium path, we will always end up on the <span class="math inline">(1-p)</span> node (since we know player 1 does not want to play <span class="math inline">D</span>).</li>
+<li>Thus, the belief that makes sense should be <span class="math inline">p=0</span>, since player 1 never plays <span class="math inline">D</span>, so if we end up in the information set, we must be on <span class="math inline">1-p</span>,</li>
+</ul>
+<p>Thus, the PBE is <span class="math inline">(A, D, L, p = 0)</span>.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="signalling-games" class="level3">
+<h3 class="anchored" data-anchor-id="signalling-games">Signalling Games</h3>
+<p>Signalling games are a very common form of incomplete-information game in Game Theory. They take the following form:</p>
+<ol type="1">
+<li><strong>Nature</strong> chooses with probability <span class="math inline">p</span> the type <span class="math inline">\theta</span> of the world. Player 1 observes <span class="math inline">\theta</span>. Player 2 does not observe <span class="math inline">\theta</span>.</li>
+<li><strong>Player 1</strong> chooses one action <span class="math inline">m</span> in set <span class="math inline">M</span>, which act as <em>signals</em> for <span class="math inline">\theta</span>.</li>
+<li><strong>Player 2</strong> receives <span class="math inline">m</span> (not <span class="math inline">\theta</span>), and chooses some action <span class="math inline">a \in A</span>.</li>
+</ol>
+<p>This game basically says that player 1 has some private information <span class="math inline">\theta</span> about the world, and they can either decide to reveal or conceal this information to player 2 through their action <span class="math inline">m</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example: Value of Education
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The value of education model, developed by Spence (1973), is an example of a signalling game.</p>
+<p>There are two players: the Job-Seeker, and the Boss</p>
+<ol type="1">
+<li>Nature chooses the Job-Seeker’s ability: High ability (H), or Low ability (L), with some probability <span class="math inline">p</span>.</li>
+<li>Job-Seeker decides whether or not to get a Degree (D). The Degree acts as a signal as whether the Job-Seeker is type high ability or low ability.</li>
+<li>The Boss observes whether or not the Job-Seeker gets a Manager (M) or Blue-Collar (B) job. The Boss makes this decision based on their beliefs on if the job-seeker is High ability or Low ability, according to their signal and updating beliefs by Bayes’ Rule.</li>
+</ol>
+<p>The idea is that getting a degree is more costly for a low ability job-seeker, but it is a positive signal that you are type high ability. Bosses want to put High-ability people in manager roles, and low-ability people in blue-collar roles.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3253346778.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="separating-equilibrium" class="level3">
+<h3 class="anchored" data-anchor-id="separating-equilibrium">Separating Equilibrium</h3>
+<p>A separating equilibrium is a PBE of a signalling game, where each type <span class="math inline">\theta</span> of sender, sends a different message <span class="math inline">m</span>.</p>
+<p>By sending a different message <span class="math inline">m</span> for each type <span class="math inline">\theta</span>, the sender is essentially “revealing” their type <span class="math inline">\theta</span> to the second player who does not know <span class="math inline">\theta</span>. With this information, the second player can update their beliefs on what type <span class="math inline">\theta</span> the sender is.</p>
+<p>To solve for a separating equilibrium, you should do the following:</p>
+<ol type="1">
+<li>Choose one potential separating equilibrium.</li>
+<li>Update beliefs of player 2 using Bayes’ Rule.</li>
+<li>Calculate best responses for Player 2 given these updated beliefs.</li>
+<li>Now, holding Player 2’s strategies constant, check if player 1 has any profitable deviations.</li>
+<li>If player 1 has no profitable deviations, you have a Seperating Equilibrium.</li>
+<li>Now, check all other potential separating equilibria.</li>
+</ol>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Finding Seperating Equilibrium: Value of Education
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take the value of education game from earlier:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3253346778.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>There are 2 potential seperating equilibrium:</p>
+<ol type="1">
+<li>In type <span class="math inline">H</span>, player 1 plays <span class="math inline">U</span>, and in type <span class="math inline">L</span>, player 1 plays <span class="math inline">D</span> (we will call this <span class="math inline">UD</span>)</li>
+<li>In type <span class="math inline">H</span>, player 1 plays <span class="math inline">D</span>, and in type <span class="math inline">L</span>, player 1 plays <span class="math inline">U</span> (we will call this <span class="math inline">DU</span>)</li>
+</ol>
+<p>Let us check <span class="math inline">UD</span> first.</p>
+<ul>
+<li>Given this set of strategies, we know Player 2’s beliefs <span class="math inline">\mu_U = 1</span> and <span class="math inline">\mu_D = 0</span>.</li>
+<li>With these beliefs, we know on the left side, player 2 should play <span class="math inline">M</span>, and on the right side, player 2 should play <span class="math inline">B</span>.</li>
+</ul>
+<p>Now does player 1 have any profitable deviation?</p>
+<ul>
+<li>In type <span class="math inline">H</span>, Player 1 is playing <span class="math inline">U</span>. He knows that after <span class="math inline">U</span>, player 2 plays <span class="math inline">M</span>, getting player 1 a payoff of 10. If player 1 deviates to <span class="math inline">D</span>, he knows player 2 plays <span class="math inline">B</span> on the right side, so player 1 gets a payoff of 4, which is less than 10. So this is not a profitable deviation.</li>
+<li>In type <span class="math inline">L</span>, player 1 is playing <span class="math inline">D</span>. He knows that after <span class="math inline">D</span>, player 2 plays <span class="math inline">B</span>, getting player 1 a payoff of 1. If player 1 deviates to <span class="math inline">U</span>, he knows player 2 plays <span class="math inline">M</span> on the right side, so player 1 gets a payoff of 10. That is a profitable deviation.</li>
+</ul>
+<p>Thus, Player 1 has a profitable deviation in type <span class="math inline">L</span>, so this is <u>not a separating equilibrium</u>.</p>
+<p><br></p>
+<p>Now, let us check <span class="math inline">DU</span>:</p>
+<ul>
+<li>Given this set of strategies, we know player 2’s beliefs <span class="math inline">\mu_U = 0</span> and <span class="math inline">\mu_D = 1</span>.</li>
+<li>With these beliefs, we know on the left side, player 2 should play <span class="math inline">B</span>, and on the right side, player 2 should play <span class="math inline">M</span>.</li>
+</ul>
+<p>Now does player 1 have any profitable deviation?</p>
+<ul>
+<li>In type <span class="math inline">H</span>, player 1 is playing <span class="math inline">D</span>. He knows that after <span class="math inline">D</span>, player 2 plays <span class="math inline">M</span>, getting player 1 a payoff of 8. If player 1 deviates to <span class="math inline">U</span>, he knows player 2 plays <span class="math inline">B</span>, getting him a payoff of 6. That is not a profitable deviation.</li>
+<li>In type <span class="math inline">L</span>, player 1 is playing <span class="math inline">U</span>. He knows that after <span class="math inline">U</span>, player 2 plays <span class="math inline">B</span>, getting player 1 a payoff of 6. If player 1 deviates to <span class="math inline">D</span>, he knows player 2 plays <span class="math inline">M</span>, getting him a payoff of 5. This is not a profitable deviation.</li>
+</ul>
+<p>Thus, there is a seperating equilibrium <span class="math inline">(DU, BM, \mu_U = 0, \mu_D = 1)</span>.</p>
+<ul>
+<li>Where <span class="math inline">DU</span> is in the form of type <span class="math inline">H</span>, type <span class="math inline">L</span>; and <span class="math inline">BM</span> is in the form of left information set, right information set.</li>
+</ul>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="pooling-equilibrium" class="level3">
+<h3 class="anchored" data-anchor-id="pooling-equilibrium">Pooling Equilibrium</h3>
+<p>A pooling equilibrium is a PBE of a signalling game, where no matter what type <span class="math inline">\theta</span> the sender is, the sender always sends the same message <span class="math inline">m</span>.</p>
+<p>By sending the same message <span class="math inline">m</span> for all types <span class="math inline">\theta</span>, the sender refuses to reveal any information about their <span class="math inline">\theta</span>. Thus, player 2’s posterior and prior beliefs about sender’s type <span class="math inline">\theta</span> remain the same.</p>
+<p>To solve for a separating equilibrium, you should do the following:</p>
+<ol type="1">
+<li>Choose one potential pooling equilibrium.</li>
+<li>Update beliefs of player 2 on-the-equilibrium-path using Bayes’ Rule (actually, this will stay the same as the prior beliefs). The off-the-equilibrium path information set will be dealt with later.</li>
+<li>Calculate best responses for Player 2 given these beliefs.</li>
+<li>Now, holding Player 2’s strategies constant, check if player 1 has any profitable deviations.</li>
+<li>If player 1 has no profitable deviations, you have a Seperating Equilibrium. If player 1 might have a profitable deviation depending on what player 2 chooses off-the-equilibrium path, you will need to find the beliefs off-the-equilibrium path that eliminate this profitable deviation.</li>
+<li>Now, check all other potential pooling equilibria.</li>
+</ol>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Finding Pooling Equilibrium: Value of Education
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take the value of education game from earlier (assume <span class="math inline">p = 0.25</span>):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3253346778.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>There are 2 potential pooling equilibrium:</p>
+<ol type="1">
+<li>Player 1 plays <span class="math inline">UU</span> (playing <span class="math inline">U</span> no matter the type).</li>
+<li>Player 1 plays <span class="math inline">DD</span> (playing <span class="math inline">D</span> no matter the type).</li>
+</ol>
+<p>Let us test <span class="math inline">UU</span> (I will not test <span class="math inline">DD</span>, but the same process applies).</p>
+<p>First, we know that information set <span class="math inline">\mu_U</span> is on the equilibrium path. Since we cannot update our beliefs, our beliefs remain the same as the prior (<span class="math inline">p = 0.25</span> as given above):</p>
+<ul>
+<li>Thus, <span class="math inline">\mu_U = 0.25</span>, and <span class="math inline">1-\mu_U = 0.75</span>.</li>
+</ul>
+<p>Now, let us find the optimal action of player 2 in this <span class="math inline">\mu_U</span> information set, based on the beliefs above:</p>
+<p><span class="math display">
+\begin{cases}
+u_2(M) = 10\mu_U + 0(1-\mu_U) = 10(0.25) = 2.5 \\
+u_2(B) = 5\mu_u + 3(1-\mu_u) = 5(0.25) +3(0.75) = 3.5
+\end{cases}
+</span></p>
+<p>We see that <span class="math inline">3.5&gt;2.5</span>, so we know player 2 will play <span class="math inline">B</span> on the left information set.</p>
+<p>Now, does player 1 have a profitable deviation?</p>
+<ul>
+<li>In type <span class="math inline">H</span>, player 1 is playing <span class="math inline">U</span>. As calculated above, we know player 2 plays <span class="math inline">B</span> here, so player 1 gets a payoff of 6. If player 1 deviates to <span class="math inline">D</span>, he could potentially get either 8 or 4 (depending on what player 2 plays on the right side).</li>
+<li>In type <span class="math inline">L</span>, player 1 is playing <span class="math inline">U</span>. As calculated above, we know player 2 plays <span class="math inline">B</span> here, so player 1 gets a payoff of 6. If player 1 deviates to <span class="math inline">D</span>, he could potentially get either 5 or 1, which or both less than 6. Thus, there is no profitable deviation.</li>
+</ul>
+<p>Thus, player 1 only has a potential profitable deviation in type <span class="math inline">H</span>, if player 2 plays <span class="math inline">M</span> on the right side information set (which will give player 1 a deviation payoff of 8, higher than his original 6 sticking with <span class="math inline">U</span>).</p>
+<p>Thus, for this to be a equilbrium, we must <strong>eliminate</strong> this profitable deviation, by making sure player 2 does not play <span class="math inline">M</span> on the right-side, but instead plays <span class="math inline">B</span>.</p>
+<ul>
+<li>If player 2 plays <span class="math inline">B</span> on the right side, the player 1 deviation in type <span class="math inline">H</span> would only yield payoff 4, so there would be no profitable deviation for player 1.</li>
+</ul>
+<p>This means that the expected utility of <span class="math inline">B</span> for player 2 must be higher than the expected utility of <span class="math inline">M</span> on the right-side information set:</p>
+<p><span class="math display">
+\begin{split}
+u_2(B) &amp; ≥ u_2 (M) \\
+5\mu_D + 3(1-\mu_D) &amp; ≥ 10\mu_D + 0(1-\mu_D) \\
+5\mu_D + 3 - 3\mu_D &amp;≥ 10\mu_D \\
+2 \mu_D + 3&amp;≥ 10\mu_D \\
+8\mu_D&amp;≤3 \\
+\mu_D&amp;≤\frac{3}{8}
+\end{split}
+</span></p>
+<p>Thus, this set of strategies is only a pooling PBE if <span class="math inline">\mu_D ≤ \frac{3}{8}</span>, since only this off-the-equilibrium-path belief condition ensures that there is no profitable deviation for player 1.</p>
+<p>Thus, the pooling PBE is: <span class="math inline">(UU, BB, \mu_U = \frac{1}{4}, \mu_D ≤ \frac{3}{8})</span>.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
