@@ -1,5 +1,5 @@
 ---
-title: "Randomised Controlled Trials"
+title: "Randomised Experiments"
 subtitle: "Methods for Causal Inference"
 format:
     html:
@@ -23,7 +23,7 @@ format:
 editor: visual
 ---
 
-This chapter introduces the "gold standard" of causal inference: randomised controlled trials.
+This chapter introduces the "gold standard" of causal inference: randomised controlled trials. This chapter also covers extensions, such as stratified experiments and survey experiments.
 
 ------------------------------------------------------------------------
 
@@ -44,7 +44,11 @@ Quick notation for randomised experiments:
 ::: {.callout-note collapse="true" appearance="simple"}
 ## More on Randomisation
 
-Rewatch the section on Bernoulli.
+$N_1$, the number of individuals assigned to treatment, does not necessarily need to be 50% (although this is quite a common number).
+
+Also note that when you fix the number of units to be treated at $N_1$, technically, not all units have an independent probability of being selected. This is because once you have assigned $N_1$ individuals to treatment, we know the remaining individuals must be assigned to control. This usually is not a huge issue.
+
+You can use bernoulli randomisation (simple randomisation) to avoid this issue. Bernoulli gives every individual a certain chance of being selected. This does mean that with different randomisation trials, we will get different numbers of treated individuals for each trial.
 :::
 
 <br />
@@ -171,14 +175,28 @@ Randomisation can be complicated by a few factors:
 
 1.  Missing data (often due to individuals dropping out). We are concerned that there is some covariate that is causing some people to drop out, which re-introduces selection bias.
 2.  Measurement Problems: Hawthorne Effect - subjects know what you are studying, and will change their behaviour as a result.
-3.  Non-Compliance: Some units assigned to treatment might not take the treatment, and some units assigned to control may take the treatment.
+3.  Non-Compliance: Some units assigned to treatment might not take the treatment, and some units assigned to control may take the treatment (this can often be dealt with by using an instrumental variable design).
 
 Randomisation does not help with external validity - the ability to extrapolate our results to external situations.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## More on External Validity
 
-Add notes here from GV481 and Lecture
+External validity asks if we can generalise our conclusions from our subjects, to other subjects outside our experiment. Can we extrapolate our estimates to to other populations?
+
+For example, if we measured the effect of migration on tolerance for our subjects in India, can we say the same effect is true of someone in Japan, the US, or Europe?
+
+This is important - if we cannot extrapolate, some results may be very niche.
+
+To extrapolate to a greater population, our actual sample of observations in our experiment, should be representative of the greater population. This is often violated, as random sample for experiments is very very difficult.
+
+This is called 𝑋-Validity: we can study this with data - to see how representative our population is compared to the population.
+
+Non-representative programme of treatment is another threat: Sometimes, treatments will differ between areas.
+
+For example, if we are encouraging people to migrate to test how that changes their tolerance, how are the governmental/ngo/private agencies working with you affecting the process. Would less capable agencies create different effects?
+
+This is called $C$-validity, and we cannot measure this with data, unless you redo your experiment in another context.
 :::
 
 <br />
@@ -187,7 +205,7 @@ Add notes here from GV481 and Lecture
 
 ------------------------------------------------------------------------
 
-# Causal Estimation
+# **Causal Estimation**
 
 ### Difference in Means Estimator
 
@@ -203,7 +221,7 @@ $$
 \hat\tau_{ATE} = \bar Y_1 - \bar Y_0
 $$
 
-This is an unbiased estimator because selection bias is eliminated with randomisation.
+This is an unbiased estimator because selection bias is eliminated with randomisation. This is also an asymptotically consistent estimator due to the [law of large numbers](https://politicalscience.github.io/causal/1.html#asymptotically-consistent-estimators).
 
 <br />
 
@@ -244,7 +262,7 @@ Thus, the difference in means is equivalent to $\hat\tau$ regression coefficient
 
 Furthermore, $\hat\gamma$ is equivalent to the average $Y$ in the control group $\bar Y_0$.
 
-We do not need to include covariates. This is because randomisation allows us to meet the asymptotic consistency condition of both randomisation and exogeneity.
+We do not need to include covariates. This is because randomisation allows us to meet the [asymptotic consistency](https://politicalscience.github.io/causal/1.html#conditions-for-asymptotic-consistency) condition of both randomisation and exogeneity.
 
 However, sometimes pre-treatment covariates are included. We should not include post-treatment covariates.
 
@@ -268,7 +286,7 @@ We should not include post-treatment covariates. Anything that is measured post-
 
 ------------------------------------------------------------------------
 
-# Statistical Inference
+# **Statistical Inference**
 
 ### Inference with T-Test
 
@@ -284,3 +302,17 @@ Generally, we use a statistical significance level of $\alpha = 0.05$, so we rej
 For more complex randomisation schemes, you will need different standard errors. For example, if you use a cluster randomisation scheme, you might need clustered standard errors.
 
 <br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Extension: Stratified Experiments**
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Extension: Survey Experiments**

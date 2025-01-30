@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Randomised Controlled Trials</title>
+<title>Randomised Experiments</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -85,7 +85,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Randomised Controlled Trials</h1>
+      <h1 class="title">Randomised Experiments</h1>
             <p class="subtitle lead">Methods for Causal Inference</p>
                       </div>
   </div>
@@ -115,15 +115,17 @@ window.Quarto = {
   <li><a href="#the-balancing-property" id="toc-the-balancing-property" class="nav-link" data-scroll-target="#the-balancing-property">The Balancing Property</a></li>
   <li><a href="#complications-and-limitations" id="toc-complications-and-limitations" class="nav-link" data-scroll-target="#complications-and-limitations">Complications and Limitations</a></li>
   </ul></li>
-  <li><a href="#causal-estimation" id="toc-causal-estimation" class="nav-link" data-scroll-target="#causal-estimation">Causal Estimation</a>
+  <li><a href="#causal-estimation" id="toc-causal-estimation" class="nav-link" data-scroll-target="#causal-estimation"><strong>Causal Estimation</strong></a>
   <ul class="collapse">
   <li><a href="#difference-in-means-estimator" id="toc-difference-in-means-estimator" class="nav-link" data-scroll-target="#difference-in-means-estimator">Difference in Means Estimator</a></li>
   <li><a href="#ordinary-least-squares-estimator" id="toc-ordinary-least-squares-estimator" class="nav-link" data-scroll-target="#ordinary-least-squares-estimator">Ordinary Least Squares Estimator</a></li>
   </ul></li>
-  <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference">Statistical Inference</a>
+  <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference"><strong>Statistical Inference</strong></a>
   <ul class="collapse">
   <li><a href="#inference-with-t-test" id="toc-inference-with-t-test" class="nav-link" data-scroll-target="#inference-with-t-test">Inference with T-Test</a></li>
   </ul></li>
+  <li><a href="#extension-stratified-experiments" id="toc-extension-stratified-experiments" class="nav-link" data-scroll-target="#extension-stratified-experiments"><strong>Extension: Stratified Experiments</strong></a></li>
+  <li><a href="#extension-survey-experiments" id="toc-extension-survey-experiments" class="nav-link" data-scroll-target="#extension-survey-experiments"><strong>Extension: Survey Experiments</strong></a></li>
   </ul>
 </nav>
 </div>
@@ -135,7 +137,7 @@ window.Quarto = {
 
 
 
-<p>This chapter introduces the “gold standard” of causal inference: randomised controlled trials.</p>
+<p>This chapter introduces the “gold standard” of causal inference: randomised controlled trials. This chapter also covers extensions, such as stratified experiments and survey experiments.</p>
 <hr>
 <section id="randomisation" class="level1">
 <h1><strong>Randomisation</strong></h1>
@@ -161,7 +163,9 @@ More on Randomisation
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Rewatch the section on Bernoulli.</p>
+<p><span class="math inline">N_1</span>, the number of individuals assigned to treatment, does not necessarily need to be 50% (although this is quite a common number).</p>
+<p>Also note that when you fix the number of units to be treated at <span class="math inline">N_1</span>, technically, not all units have an independent probability of being selected. This is because once you have assigned <span class="math inline">N_1</span> individuals to treatment, we know the remaining individuals must be assigned to control. This usually is not a huge issue.</p>
+<p>You can use bernoulli randomisation (simple randomisation) to avoid this issue. Bernoulli gives every individual a certain chance of being selected. This does mean that with different randomisation trials, we will get different numbers of treated individuals for each trial.</p>
 </div>
 </div>
 </div>
@@ -277,7 +281,7 @@ Details on the Balancing Property
 <ol type="1">
 <li>Missing data (often due to individuals dropping out). We are concerned that there is some covariate that is causing some people to drop out, which re-introduces selection bias.</li>
 <li>Measurement Problems: Hawthorne Effect - subjects know what you are studying, and will change their behaviour as a result.</li>
-<li>Non-Compliance: Some units assigned to treatment might not take the treatment, and some units assigned to control may take the treatment.</li>
+<li>Non-Compliance: Some units assigned to treatment might not take the treatment, and some units assigned to control may take the treatment (this can often be dealt with by using an instrumental variable design).</li>
 </ol>
 <p>Randomisation does not help with external validity - the ability to extrapolate our results to external situations.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
@@ -292,7 +296,14 @@ More on External Validity
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Add notes here from GV481 and Lecture</p>
+<p>External validity asks if we can generalise our conclusions from our subjects, to other subjects outside our experiment. Can we extrapolate our estimates to to other populations?</p>
+<p>For example, if we measured the effect of migration on tolerance for our subjects in India, can we say the same effect is true of someone in Japan, the US, or Europe?</p>
+<p>This is important - if we cannot extrapolate, some results may be very niche.</p>
+<p>To extrapolate to a greater population, our actual sample of observations in our experiment, should be representative of the greater population. This is often violated, as random sample for experiments is very very difficult.</p>
+<p>This is called&nbsp;𝑋-Validity: we can study this with data - to see how representative our population is compared to the population.</p>
+<p>Non-representative programme of treatment is another threat: Sometimes, treatments will differ between areas.</p>
+<p>For example, if we are encouraging people to migrate to test how that changes their tolerance, how are the governmental/ngo/private agencies working with you affecting the process. Would less capable agencies create different effects?</p>
+<p>This is called <span class="math inline">C</span>-validity, and we cannot measure this with data, unless you redo your experiment in another context.</p>
 </div>
 </div>
 </div>
@@ -302,7 +313,7 @@ More on External Validity
 </section>
 </section>
 <section id="causal-estimation" class="level1">
-<h1>Causal Estimation</h1>
+<h1><strong>Causal Estimation</strong></h1>
 <section id="difference-in-means-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="difference-in-means-estimator">Difference in Means Estimator</h3>
 <p>Our causal estimand is the Average Treatment Effect (ATE):</p>
@@ -313,7 +324,7 @@ More on External Validity
 <p><span class="math display">
 \hat\tau_{ATE} = \bar Y_1 - \bar Y_0
 </span></p>
-<p>This is an unbiased estimator because selection bias is eliminated with randomisation.</p>
+<p>This is an unbiased estimator because selection bias is eliminated with randomisation. This is also an asymptotically consistent estimator due to the <a href="https://politicalscience.github.io/causal/1.html#asymptotically-consistent-estimators">law of large numbers</a>.</p>
 <p><br></p>
 </section>
 <section id="ordinary-least-squares-estimator" class="level3">
@@ -354,7 +365,7 @@ E(Y_i|D_i) = \hat\gamma + \hat\tau D_i + \hat\epsilon_i
 </div>
 </div>
 <p>Furthermore, <span class="math inline">\hat\gamma</span> is equivalent to the average <span class="math inline">Y</span> in the control group <span class="math inline">\bar Y_0</span>.</p>
-<p>We do not need to include covariates. This is because randomisation allows us to meet the asymptotic consistency condition of both randomisation and exogeneity.</p>
+<p>We do not need to include covariates. This is because randomisation allows us to meet the <a href="https://politicalscience.github.io/causal/1.html#conditions-for-asymptotic-consistency">asymptotic consistency</a> condition of both randomisation and exogeneity.</p>
 <p>However, sometimes pre-treatment covariates are included. We should not include post-treatment covariates.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
@@ -385,7 +396,7 @@ Including Pre-Treatment Covariates
 </section>
 </section>
 <section id="statistical-inference" class="level1">
-<h1>Statistical Inference</h1>
+<h1><strong>Statistical Inference</strong></h1>
 <section id="inference-with-t-test" class="level3">
 <h3 class="anchored" data-anchor-id="inference-with-t-test">Inference with T-Test</h3>
 <p>We can use a <strong>t</strong>-test for statistical inference.</p>
@@ -398,7 +409,18 @@ Including Pre-Treatment Covariates
 <p>Generally, we use a statistical significance level of <span class="math inline">\alpha = 0.05</span>, so we reject the null if <span class="math inline">|t|&gt;1.96</span>.</p>
 <p>For more complex randomisation schemes, you will need different standard errors. For example, if you use a cluster randomisation scheme, you might need clustered standard errors.</p>
 <p><br></p>
+<p><br></p>
+<hr>
 </section>
+</section>
+<section id="extension-stratified-experiments" class="level1">
+<h1><strong>Extension: Stratified Experiments</strong></h1>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+<section id="extension-survey-experiments" class="level1">
+<h1><strong>Extension: Survey Experiments</strong></h1>
 </section>
 
 </main>

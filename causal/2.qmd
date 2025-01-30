@@ -193,7 +193,7 @@ The Average Treatment Effect is defined as:
 $$
 \begin{split}
 \tau_{ATE} & = E(Y_{1i} - Y_{0i}) \\
-& = \frac{1}{N} \sum\limits_{i=1}^N (Y_{1i} - Y_{0i})
+& = \underbrace{\frac{1}{N} \sum\limits_{i=1}^N (Y_{1i} - Y_{0i})}_{\text{a formula for average}}
 \end{split}
 $$
 
@@ -208,7 +208,7 @@ An alternative estimand to the ATE is the Average Treatment Effect on the Treate
 $$
 \begin{split}
 \tau_{ATT} & = E(Y_{1i} - Y_{0i} \ | \ D_i = 1) \\
-& = \frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i}) \quad  \text{where } N_1 = \sum\limits_{i=1}^ND_i
+& = \underbrace{\frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i}) \quad  \text{where } N_1 = \sum\limits_{i=1}^ND_i}_{\text{a formula for the average only for units }D_i = 1}
 \end{split}
 $$
 
@@ -293,37 +293,64 @@ This is why correlation does not equal causation - if the treatment and control 
 
 ### Omitted Variable Bias in Regression
 
-We want to find the effect $D \rightarrow Y$. We have a short and long regression, where the long includes confounder $X$:
+We can demonstrate how confounders cause bias more generally in regression. Suppose there is some confounding variable $z$ that we have not included in a "short" regression. The actual, "true" regression of the population, would include this confounder $z$
 
 $$
 \begin{split}
-Y_i & = \beta_0^S + \beta_1^SD_i + u_i^S \\
-Y_i & = \beta_0 + \beta_1D_i + \beta_2X_i + u_i
+& \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}_{\text{short regression}} \\
+& \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}_{\text{true regression with } z}
 \end{split}
 $$
 
-Now consider an auxiliary regression, where the omitted variable (confounder) $X$ is the outcome variable, and $D$ is the explanatory variable:
+The OLS estimate of the "short regression" excluding confounder $z$ is:
 
 $$
-X_i = \delta_0 + \delta_1 D_i + v_i
+\boldsymbol{\hat\beta} = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
 $$
 
-We can plug in the above $X_i$ into our long regression, to get the entire long regression equation in terms of $D_i$:
+Let us now plug in the "true" model into where $\mathbf y$ is:
 
 $$
 \begin{split}
-Y_i & = \beta_0 + \beta_1D_i + \beta_2 X_i + u_i \\
-& = \beta_0 + \beta_1 D_i + \beta_2\underbrace{(\delta_0 + \delta_1 D_i + v_i)}_{\text{insert regression } X_i} + u_i \\
-& = \beta_0 + \beta_1 D_i + \beta_2 \delta_0 + \beta_2\delta_1 D_i + \beta_2 v_i + u_i \\
-& = \underbrace{\beta_0 + \beta_2 \delta_0}_{\beta_0^S} + \underbrace{(\beta_1+\beta_2\delta_1)D_i}_{\beta_1^SD_i} + \underbrace{\beta_2v_i + u_i}_{u_i^S}
+\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{(\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u)}_{\text{true model } \mathbf y} \\
+& = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\text{inverses cancel out}} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
+& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
 \end{split}
 $$
 
-The last equation is essentially a "recreation" of the short regression with only one explanatory variable. Note how the coefficient of $D_i$ in this regression is $(\beta_1 + \beta_2 \delta_1)$.
+Now, let us find the expected value of $\boldsymbol{\hat\beta}$, which is conditional on $\mathbf X, \mathbf z$:
 
-Thus, $\beta_1^S = \beta_1 + \beta_2 \delta_1$. Since $\beta_1$ is the true value of the relationship between $D$ and $Y$ (since it controls for the confounder), that means $\beta_1^S$ is off by $\beta_2 \delta_1$.
+$$
+\begin{split}
+E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z) & = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{E(\mathbf u | \mathbf X, \mathbf z)}_{= \ 0} \\
+& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta
+\end{split}
+$$
 
-Thus, $\beta_2 \delta_1$ is the omitted variable **bias** in the short regression. In conclusion - if we do not account for confounding variables, we will have bias in our causal estimations. Thus, [correlation does not equal causation!]{.underline}
+Now, what if we had a regression of outcome variable being the confounder $z$, on the explanatory variables $\mathbf X$, such that $\mathbf z = \mathbf X \boldsymbol\pi + \mathbf v$. Our OLS estimate would have the solution:
+
+$$
+\boldsymbol{\hat\pi} = (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf z
+$$
+
+Now, we can plug $\boldsymbol{\hat\pi}$ into our expected value of $\boldsymbol{\hat\beta}$:
+
+$$
+E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)  = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}
+$$
+
+Now, using the law of iterated expectations, we get (assuming we are using an unbiased estimator for $\boldsymbol{\hat\pi}$:
+
+$$
+\begin{split}
+E(\boldsymbol{\hat\beta}) & = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)) \\
+& = E(\boldsymbol\beta + \boldsymbol{\hat\pi \delta}) \\
+& = \boldsymbol\beta + E(\boldsymbol{\hat\pi}) \boldsymbol \delta \\
+& = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}
+\end{split}
+$$
+
+Thus, we can see by not including confounder $z$ in our "short regression", the estimator is now biased by $\boldsymbol{\hat\pi \delta}$.
 
 <br />
 

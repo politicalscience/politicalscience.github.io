@@ -324,7 +324,7 @@ Group-Level Causal Estimands
 <p><span class="math display">
 \begin{split}
 \tau_{ATE} &amp; = E(Y_{1i} - Y_{0i}) \\
-&amp; = \frac{1}{N} \sum\limits_{i=1}^N (Y_{1i} - Y_{0i})
+&amp; = \underbrace{\frac{1}{N} \sum\limits_{i=1}^N (Y_{1i} - Y_{0i})}_{\text{a formula for average}}
 \end{split}
 </span></p>
 <p>We cannot calculate this with observed data - since we need all potential outcomes to do this. We can estimate this (covered throughout this course).</p>
@@ -336,7 +336,7 @@ Group-Level Causal Estimands
 <p><span class="math display">
 \begin{split}
 \tau_{ATT} &amp; = E(Y_{1i} - Y_{0i} \ | \ D_i = 1) \\
-&amp; = \frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i}) \quad  \text{where } N_1 = \sum\limits_{i=1}^ND_i
+&amp; = \underbrace{\frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i}) \quad  \text{where } N_1 = \sum\limits_{i=1}^ND_i}_{\text{a formula for the average only for units }D_i = 1}
 \end{split}
 </span></p>
 <p>This is the causal effect of <u>only variables who have received the treatment</u>.</p>
@@ -412,29 +412,50 @@ ATT vs.&nbsp;ATE
 </section>
 <section id="omitted-variable-bias-in-regression" class="level3">
 <h3 class="anchored" data-anchor-id="omitted-variable-bias-in-regression">Omitted Variable Bias in Regression</h3>
-<p>We want to find the effect <span class="math inline">D \rightarrow Y</span>. We have a short and long regression, where the long includes confounder <span class="math inline">X</span>:</p>
+<p>We can demonstrate how confounders cause bias more generally in regression. Suppose there is some confounding variable <span class="math inline">z</span> that we have not included in a “short” regression. The actual, “true” regression of the population, would include this confounder <span class="math inline">z</span></p>
 <p><span class="math display">
 \begin{split}
-Y_i &amp; = \beta_0^S + \beta_1^SD_i + u_i^S \\
-Y_i &amp; = \beta_0 + \beta_1D_i + \beta_2X_i + u_i
+&amp; \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}_{\text{short regression}} \\
+&amp; \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}_{\text{true regression with } z}
 \end{split}
 </span></p>
-<p>Now consider an auxiliary regression, where the omitted variable (confounder) <span class="math inline">X</span> is the outcome variable, and <span class="math inline">D</span> is the explanatory variable:</p>
+<p>The OLS estimate of the “short regression” excluding confounder <span class="math inline">z</span> is:</p>
 <p><span class="math display">
-X_i = \delta_0 + \delta_1 D_i + v_i
+\boldsymbol{\hat\beta} = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
 </span></p>
-<p>We can plug in the above <span class="math inline">X_i</span> into our long regression, to get the entire long regression equation in terms of <span class="math inline">D_i</span>:</p>
+<p>Let us now plug in the “true” model into where <span class="math inline">\mathbf y</span> is:</p>
 <p><span class="math display">
 \begin{split}
-Y_i &amp; = \beta_0 + \beta_1D_i + \beta_2 X_i + u_i \\
-&amp; = \beta_0 + \beta_1 D_i + \beta_2\underbrace{(\delta_0 + \delta_1 D_i + v_i)}_{\text{insert regression } X_i} + u_i \\
-&amp; = \beta_0 + \beta_1 D_i + \beta_2 \delta_0 + \beta_2\delta_1 D_i + \beta_2 v_i + u_i \\
-&amp; = \underbrace{\beta_0 + \beta_2 \delta_0}_{\beta_0^S} + \underbrace{(\beta_1+\beta_2\delta_1)D_i}_{\beta_1^SD_i} + \underbrace{\beta_2v_i + u_i}_{u_i^S}
+\boldsymbol{\hat\beta} &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{(\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u)}_{\text{true model } \mathbf y} \\
+&amp; = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\text{inverses cancel out}} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
+&amp; = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
 \end{split}
 </span></p>
-<p>The last equation is essentially a “recreation” of the short regression with only one explanatory variable. Note how the coefficient of <span class="math inline">D_i</span> in this regression is <span class="math inline">(\beta_1 + \beta_2 \delta_1)</span>.</p>
-<p>Thus, <span class="math inline">\beta_1^S = \beta_1 + \beta_2 \delta_1</span>. Since <span class="math inline">\beta_1</span> is the true value of the relationship between <span class="math inline">D</span> and <span class="math inline">Y</span> (since it controls for the confounder), that means <span class="math inline">\beta_1^S</span> is off by <span class="math inline">\beta_2 \delta_1</span>.</p>
-<p>Thus, <span class="math inline">\beta_2 \delta_1</span> is the omitted variable <strong>bias</strong> in the short regression. In conclusion - if we do not account for confounding variables, we will have bias in our causal estimations. Thus, <u>correlation does not equal causation!</u></p>
+<p>Now, let us find the expected value of <span class="math inline">\boldsymbol{\hat\beta}</span>, which is conditional on <span class="math inline">\mathbf X, \mathbf z</span>:</p>
+<p><span class="math display">
+\begin{split}
+E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z) &amp; = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{E(\mathbf u | \mathbf X, \mathbf z)}_{= \ 0} \\
+&amp; = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta
+\end{split}
+</span></p>
+<p>Now, what if we had a regression of outcome variable being the confounder <span class="math inline">z</span>, on the explanatory variables <span class="math inline">\mathbf X</span>, such that <span class="math inline">\mathbf z = \mathbf X \boldsymbol\pi + \mathbf v</span>. Our OLS estimate would have the solution:</p>
+<p><span class="math display">
+\boldsymbol{\hat\pi} = (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf z
+</span></p>
+<p>Now, we can plug <span class="math inline">\boldsymbol{\hat\pi}</span> into our expected value of <span class="math inline">\boldsymbol{\hat\beta}</span>:</p>
+<p><span class="math display">
+E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)  = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}
+</span></p>
+<p>Now, using the law of iterated expectations, we get (assuming we are using an unbiased estimator for <span class="math inline">\boldsymbol{\hat\pi}</span>:</p>
+<p><span class="math display">
+\begin{split}
+E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)) \\
+&amp; = E(\boldsymbol\beta + \boldsymbol{\hat\pi \delta}) \\
+&amp; = \boldsymbol\beta + E(\boldsymbol{\hat\pi}) \boldsymbol \delta \\
+&amp; = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}
+\end{split}
+</span></p>
+<p>Thus, we can see by not including confounder <span class="math inline">z</span> in our “short regression”, the estimator is now biased by <span class="math inline">\boldsymbol{\hat\pi \delta}</span>.</p>
 <p><br></p>
 <p><br></p>
 <hr>
