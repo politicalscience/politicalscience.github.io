@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Linear Regression Model</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="1_files/libs/quarto-html/quarto.js"></script>
+<script src="1_files/libs/quarto-html/popper.min.js"></script>
+<script src="1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: true
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Linear Regression Model</h1>
+            <p class="subtitle lead">Regression Models</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#basics-of-the-model" id="toc-basics-of-the-model" class="nav-link active" data-scroll-target="#basics-of-the-model"><strong>Basics of the Model</strong></a>
+  <ul class="collapse">
+  <li><a href="#model-specification" id="toc-model-specification" class="nav-link" data-scroll-target="#model-specification">Model Specification</a></li>
+  <li><a href="#estimation-process" id="toc-estimation-process" class="nav-link" data-scroll-target="#estimation-process">Estimation Process</a></li>
+  <li><a href="#deriving-ols-estimates" id="toc-deriving-ols-estimates" class="nav-link" data-scroll-target="#deriving-ols-estimates">Deriving OLS Estimates</a></li>
+  </ul></li>
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation"><strong>Interpretation</strong></a>
+  <ul class="collapse">
+  <li><a href="#interpretation-of-coefficients" id="toc-interpretation-of-coefficients" class="nav-link" data-scroll-target="#interpretation-of-coefficients">Interpretation of Coefficients</a></li>
+  <li><a href="#interpretation-of-the-intercept" id="toc-interpretation-of-the-intercept" class="nav-link" data-scroll-target="#interpretation-of-the-intercept">Interpretation of the Intercept</a></li>
+  <li><a href="#residual-standard-deviation" id="toc-residual-standard-deviation" class="nav-link" data-scroll-target="#residual-standard-deviation">Residual Standard Deviation</a></li>
+  <li><a href="#r-squared" id="toc-r-squared" class="nav-link" data-scroll-target="#r-squared">R-Squared</a></li>
+  </ul></li>
+  <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference"><strong>Statistical Inference</strong></a>
+  <ul class="collapse">
+  <li><a href="#heteroscedasticity-and-standard-errors" id="toc-heteroscedasticity-and-standard-errors" class="nav-link" data-scroll-target="#heteroscedasticity-and-standard-errors">Heteroscedasticity and Standard Errors</a></li>
+  <li><a href="#t-tests" id="toc-t-tests" class="nav-link" data-scroll-target="#t-tests">T-Tests</a></li>
+  <li><a href="#confidence-intervals" id="toc-confidence-intervals" class="nav-link" data-scroll-target="#confidence-intervals">Confidence Intervals</a></li>
+  <li><a href="#f-tests" id="toc-f-tests" class="nav-link" data-scroll-target="#f-tests">F-Tests</a></li>
+  <li><a href="#predictive-inference" id="toc-predictive-inference" class="nav-link" data-scroll-target="#predictive-inference">Predictive Inference</a></li>
+  </ul></li>
+  <li><a href="#extensions" id="toc-extensions" class="nav-link" data-scroll-target="#extensions"><strong>Extensions</strong></a>
+  <ul class="collapse">
+  <li><a href="#categorical-explanatory-variables" id="toc-categorical-explanatory-variables" class="nav-link" data-scroll-target="#categorical-explanatory-variables">Categorical Explanatory Variables</a></li>
+  <li><a href="#interaction-effects" id="toc-interaction-effects" class="nav-link" data-scroll-target="#interaction-effects">Interaction Effects</a></li>
+  <li><a href="#polynomial-transformations" id="toc-polynomial-transformations" class="nav-link" data-scroll-target="#polynomial-transformations">Polynomial Transformations</a></li>
+  <li><a href="#logarithmic-transformations" id="toc-logarithmic-transformations" class="nav-link" data-scroll-target="#logarithmic-transformations">Logarithmic Transformations</a></li>
+  </ul></li>
+  <li><a href="#implementation-in-r" id="toc-implementation-in-r" class="nav-link" data-scroll-target="#implementation-in-r"><strong>Implementation in R</strong></a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>This lesson introduces the basics of multiple linear regression, the foundational model for all of statistics.</p>
+<hr>
+<section id="basics-of-the-model" class="level1">
+<h1><strong>Basics of the Model</strong></h1>
+<section id="model-specification" class="level3">
+<h3 class="anchored" data-anchor-id="model-specification">Model Specification</h3>
+<p>Let us say we have some outcome variable <span class="math inline">y</span>, and several explanatory variables <span class="math inline">x_1, x_2, \dots, x_k</span>. We have data on <span class="math inline">n</span> number of observations <span class="math inline">i = 1, \dots n</span>.</p>
+<p>The linear regression model can be written as a conditional expectation <span class="math inline">E(y|x)</span> function:</p>
+<p><span class="math display">
+E(y_i|x_i) = \beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki}
+</span></p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+More Info on Conditional Expectations
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Imagine <span class="math inline">y</span> is income, and <span class="math inline">x</span> is age.</p>
+<p>At age <span class="math inline">x=20</span>, not every 20 year old makes the same amount of income. There is some distribution, with some making more, and some making less. This is the distribution <span class="math inline">y|x=20</span>.</p>
+<p>We can find the expected value of this distribution, <span class="math inline">E(y|x=20)</span>. This is a conditional expectation, and indicates the expected income of a 20 year old if we randomly chose one from the distribution.</p>
+<p>At <span class="math inline">x=30</span>, the <span class="math inline">E(y|x)</span> probably is different (30 year olds make more money). Thus, the linear model is essentially stating that the expected <span class="math inline">y</span> depends on <span class="math inline">x</span>. Or in terms of this example, the expected income depends on the individual’s age.</p>
+</div>
+</div>
+</div>
+<p>The linear model can also be specified for any specific outcome value <span class="math inline">y_i</span>:</p>
+<p><span class="math display">
+y_i = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{ki} + u_i
+</span></p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+More Info on the Error Term <span class="math inline">u_i</span>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The <span class="math inline">u_i</span> is called the error term. This indicates that not every value of <span class="math inline">y_i</span> in our data will be exactly on the linear best-fit line.</p>
+<p>Graphically, it is the highlighted part:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1210742477.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:65.0%"></p>
+</figure>
+</div>
+<p>In social science terms, the <span class="math inline">u_i</span> is the effect of any other variable not included in our model on <span class="math inline">y</span>.</p>
+<p>For example, if <span class="math inline">x</span> is age, and <span class="math inline">y</span> is income, we will have the following relationship:</p>
+<p><span class="math display">
+\text{income}_i = \beta_0 + \beta_1 \text{age}_i + u_i
+</span></p>
+<p>However, not every individual lies perfectly on this linear line. This is because there are other factors outside of age that affect <span class="math inline">y</span> (income), and these other factors are bundled into the error term.</p>
+</div>
+</div>
+</div>
+<p>We can also specify the linear model in terms of linear algebra:</p>
+<p><span class="math display">
+\mathbf y = \mathbf X \mathbf\beta + \mathbf u
+</span></p>
+<ul>
+<li>Where <span class="math inline">\mathbf y, \mathbf \beta, \mathbf u</span> are vectors and <span class="math inline">\mathbf X</span> is a <span class="math inline">n \times (k+1)</span> matrix.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+More Info on the Linear Algebra Representation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Start with the linear model written in terms of <span class="math inline">y_i</span>:</p>
+<p><span class="math display">
+y_i = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{ki} + u_i
+</span></p>
+<p>We can rewrite <span class="math inline">y_i</span> to be equal to:</p>
+<p><span class="math display">
+y_i = \mathbf x_i^T \mathbf \beta + u_i, \text{ where } \mathbf \beta = \begin{bmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{bmatrix} \text{ and } \mathbf x_i = \begin{bmatrix}1 \\x_{1i} \\\vdots \\x_{ki}\end{bmatrix}
+</span></p>
+<p><br></p>
+<p>Note how we have the subscript <span class="math inline">i</span> representing each individual observation. With a vector, we can expand out these subscripts.</p>
+<p>Using this logic, we can obtain the following, with the <span class="math inline">\mathbf x_i^T</span> and <span class="math inline">\beta</span> being vectors within a vector:</p>
+<p><span class="math display">
+\begin{split}
+\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} &amp; = \begin{pmatrix}\mathbf x_1^T\beta + u_1 \\ \mathbf x_2^T\beta + u_2 \\ \vdots \\ \mathbf x_n^T\beta + u_n\end{pmatrix} \\
+&amp; \\
+\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}&amp; = \begin{pmatrix} \mathbf x_1^T\beta \\ \mathbf x_2^T\beta \\ \vdots \\ \mathbf x_n^T\beta\end{pmatrix} + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
+\end{split}
+</span></p>
+<p>Since <span class="math inline">\beta</span> vector appears as a common factor for all observations <span class="math inline">i=1,...,n</span>, we can factor it out and have an equation:</p>
+<p><span class="math display">
+\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} = \begin{pmatrix} \mathbf x_1^T \\ \mathbf x_2^T \\ \vdots \\ \mathbf x_n^T\end{pmatrix} \space \beta + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
+</span></p>
+<p>We can expand the <span class="math inline">x_1',...,x_n'</span> vector into a matrix. Remember that each <span class="math inline">x_1',...,x_n'</span> is already a vector of different explanatory variables. So, we get the following result:</p>
+<p><span class="math display">
+\mathbf y = \mathbf X \mathbf \beta + \mathbf u, \text{ where } \mathbf X = \begin{bmatrix}1 &amp; x_{11} &amp; \dots &amp; x_{k1} \\1 &amp; x_{12} &amp; \dots &amp; x_{k2} \\\vdots &amp; \vdots &amp; \vdots &amp; \vdots \\1 &amp; x_{1n} &amp; \dots &amp; x_{kn}\end{bmatrix}
+</span></p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="estimation-process" class="level3">
+<h3 class="anchored" data-anchor-id="estimation-process">Estimation Process</h3>
+<p>To estimate the population parameters <span class="math inline">\beta_0, \dots, \beta_k</span>, we use our sample data, and try to find the values <span class="math inline">\widehat{\beta_0}, \dots, \widehat{\beta_k}</span> that <strong>minimise the square sum of residuals</strong> (SSR):</p>
+<p><span class="math display">
+\begin{split}
+SSR &amp; = \sum\limits_{i=1}^n(y_i - \hat y_i)^2 \\
+&amp; = \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_{1i} - \dots - \widehat{\beta_k}x_{ki})
+\end{split}
+</span></p>
+<p>In the linear algebra representation (where <span class="math inline">\mathbf b</span> is the vector of estimated parameters <span class="math inline">\widehat{\beta_0}, \dots, \widehat{\beta_k}</span>):</p>
+<p><span class="math display">
+\begin{split}
+SSR &amp; = (\mathbf y - \mathbf{\hat y})^T(\mathbf y - \mathbf{\hat y}) \\
+&amp; = (\mathbf y - \mathbf{Xb})^T(\mathbf y - \mathbf{Xb})
+\end{split}
+</span></p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Intuitive Visualisation of SSR
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The residuals are the difference from our predicted best-fit line result <span class="math inline">\widehat{y_i}</span>, and the actual value of <span class="math inline">y_i</span> in the data. Below highlighted in red are the residuals.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-846785636.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>After we have the residual values, we simply square each of them, then sum all of them together. That is the sum of squared residuals.</p>
+</div>
+</div>
+</div>
+<p>This estimation is called the <strong>ordinary least squares (OLS) estimator</strong>. The solutions to the OLS estimator can be derived mathematically.</p>
+<p><br></p>
+</section>
+<section id="deriving-ols-estimates" class="level3">
+<h3 class="anchored" data-anchor-id="deriving-ols-estimates">Deriving OLS Estimates</h3>
+<p>Let us define our estimation vector <span class="math inline">\boldsymbol{\hat{\beta}}</span> as the value of <span class="math inline">\boldsymbol{\hat{\beta}}</span> that minimises the sum of squared errors:</p>
+<p><span class="math display">
+\boldsymbol{\hat{\beta}} = \min\limits_{b} (\mathbf y - \mathbf{Xb})^T (\mathbf y - \mathbf{Xb}) = \min\limits_b S(\mathbf b)
+</span></p>
+<p>We can expand <span class="math inline">S(\mathbf b)</span> as follows:</p>
+<p><span class="math display">
+\begin{split}
+S(\mathbf b) &amp; = \mathbf y^T \mathbf y - \mathbf b^T \mathbf X^T \mathbf y - \mathbf y^T \mathbf{Xb} + \mathbf b^T \mathbf X^T \mathbf{Xb} \\
+&amp; = \mathbf y^T \mathbf y - 2\mathbf b^T \mathbf X^T \mathbf y + \mathbf b^T \mathbf X^T \mathbf{Xb}
+\end{split}
+</span></p>
+<p>Taking the partial derivative in respect to <span class="math inline">b</span>:</p>
+<p><span class="math display">
+\frac{\partial S(\mathbf b)}{\partial \mathbf b} = \begin{pmatrix}\frac{\partial S(\mathbf b)}{\partial b_1} \\\vdots \\\frac{\partial S(\mathbf b)}{\partial b_k}\end{pmatrix}
+</span></p>
+<p>Differentiating with the vector <span class="math inline">b</span> yields:</p>
+<p><span class="math display">
+\frac{\partial S(\mathbf b)}{\partial b} = -2\mathbf X^T \mathbf y + 2 \mathbf X^T \mathbf{Xb}
+</span></p>
+<p>Evaluated at <span class="math inline">\hat{\beta}</span>, the derivatives should equal zero (since first order condition of finding minimums):</p>
+<p><span class="math display">
+\frac{\partial S(\mathbf b)}{\partial b} \biggr|_{\hat{\beta}} = -2\mathbf X^T \mathbf y + 2\mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} = 0
+</span></p>
+<p>When assuming <span class="math inline">X'X</span> is invertable (which is true if <span class="math inline">\mathbf X</span> is full rank), we can isolate <span class="math inline">\hat{\beta}</span> to find the solution to OLS:</p>
+<p><span class="math display">
+\begin{split}
+-2\mathbf X^T\mathbf y + 2 \mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} &amp; = 0 \\
+2 \mathbf X^T \mathbf X \boldsymbol{\hat\beta} &amp; = 2\mathbf X^T \mathbf y \\
+\boldsymbol{\hat\beta} &amp; = (2\mathbf X^T \mathbf X)^{-1} 2 \mathbf X^T \mathbf y \\
+\boldsymbol{\hat\beta} &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
+\end{split}
+</span></p>
+<p>With the estimated parameters <span class="math inline">\widehat{\beta_0}, \dots, \widehat{\beta_k}</span>, we now have a best-fit line, called the <strong>fitted values</strong>.</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="interpretation" class="level1">
+<h1><strong>Interpretation</strong></h1>
+<section id="interpretation-of-coefficients" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-of-coefficients">Interpretation of Coefficients</h3>
+<p>I define <span class="math inline">\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}</span>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 46%">
+<col style="width: 47%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><strong>Continuous</strong> <span class="math inline">x_j</span></td>
+<td><strong>Binary</strong> <span class="math inline">x_j</span></td>
+</tr>
+<tr class="even">
+<td><strong>Continuous</strong> <span class="math inline">y</span></td>
+<td>For every one unit increase in <span class="math inline">x_j</span>, there is an expected <span class="math inline">\widehat{\beta_j}</span> unit change in <span class="math inline">y</span>.</td>
+<td>There is a <span class="math inline">\widehat{\beta_j}</span> unit difference in <span class="math inline">y</span> between category <span class="math inline">x_j = 1</span> and category <span class="math inline">x_j = 0</span>.</td>
+</tr>
+<tr class="odd">
+<td><strong>Binary</strong> <span class="math inline">y</span></td>
+<td>For every one unit increase in <span class="math inline">x_j</span>, there is an expected <span class="math inline">\widehat{\beta_j} \times 100</span> percentage point change in the probability of a unit being in category <span class="math inline">y=1</span>.</td>
+<td>There is a <span class="math inline">\widehat{\beta_j}\times 100</span> percentage point difference in the probability of a unit being in category <span class="math inline">y=1</span> between category <span class="math inline">x_j = 1</span> and category <span class="math inline">x_j = 0</span>.</td>
+</tr>
+</tbody>
+</table>
+<p>If you have multiple explanatory variables, always add: <em>while holding all other explanatory variables not</em> <span class="math inline">x_j</span> <em>constant.</em></p>
+<p>You can prove these explanations by plugging in <span class="math inline">x_i = x</span> and <span class="math inline">x_i = x+1</span> and finding the change in <span class="math inline">\widehat{y_i}</span>, or by finding the partial derivative in respect to <span class="math inline">x_j</span>.</p>
+<p><br></p>
+</section>
+<section id="interpretation-of-the-intercept" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-of-the-intercept">Interpretation of the Intercept</h3>
+<p>The intercept is <span class="math inline">\widehat{\beta_0}</span>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 41%">
+<col style="width: 51%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><strong>Continuous</strong> <span class="math inline">x_j</span></td>
+<td><strong>Binary</strong> <span class="math inline">x_j</span></td>
+</tr>
+<tr class="even">
+<td><strong>Continuous</strong> <span class="math inline">y</span></td>
+<td>When all explanatory variables equal 0, the expected value of <span class="math inline">y</span> is <span class="math inline">\widehat{\beta_0}</span>.</td>
+<td>For category <span class="math inline">x_j = 0</span>, the expected value of <span class="math inline">y</span> is <span class="math inline">\widehat{\beta_0}</span> (when all other explanatory variables equal 0).</td>
+</tr>
+<tr class="odd">
+<td><strong>Binary</strong> <span class="math inline">y</span></td>
+<td>When all explanatory variables equal 0, the expected probability of a unit being in category <span class="math inline">y=1</span> is <span class="math inline">\widehat{\beta_0} \times 100</span></td>
+<td>For category <span class="math inline">x_j = 0</span>, the expected probability of a unit being in category <span class="math inline">y=1</span> is <span class="math inline">\widehat{\beta_0} \times 100</span> (when all other explanatory variables equal 0).</td>
+</tr>
+</tbody>
+</table>
+<p>You can prove these interpretations by plugging in <span class="math inline">x_1, \dots, x_k = 0</span>.</p>
+<p><br></p>
+</section>
+<section id="residual-standard-deviation" class="level3">
+<h3 class="anchored" data-anchor-id="residual-standard-deviation">Residual Standard Deviation</h3>
+<p>Residuals are:</p>
+<p><span class="math display">
+\widehat{u_i} = y_i - \widehat{y_i}
+</span></p>
+<p>Or in other words, the distance of the actual value <span class="math inline">y_i</span> of observation <span class="math inline">i</span>, compared to the predicted <span class="math inline">\widehat{y_i}</span> from our fitted values/best-fit line.</p>
+<p>The residual standard deviation <span class="math inline">\hat\sigma</span> measures the spread/variance of our residuals - so, how far away the actual values <span class="math inline">y_i</span> are from our predicted values <span class="math inline">\widehat{y_i}</span> in general for all observations.</p>
+<p><span class="math display">
+\hat\sigma = \sqrt{Var(u_i)}
+</span></p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Visualisation of Residual Standard Deviation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Below is a figure illustrating different residual standard deviations, with the same best-fit line.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2649765153.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>Smaller <span class="math inline">\hat\sigma</span> mean the actual values are, on average, close to our predicted values, and larger <span class="math inline">\hat\sigma</span> mean the actual values are, on average, further away from our predicted values.</p>
+<p><br></p>
+</section>
+<section id="r-squared" class="level3">
+<h3 class="anchored" data-anchor-id="r-squared">R-Squared</h3>
+<p>R-Squared (<span class="math inline">R^2</span>) measures the proportion of variation in <span class="math inline">y</span> that is explained by our explanatory variables.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Mathematical Derivation of R-Squared
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us define these three concepts: the total sum of squares (SST), explained sum of squares (SSE), and residual sum of squares (SSR):</p>
+<p><span class="math display">
+\begin{split}
+&amp; SST = \sum\limits_{i=1}^n (y_i - \bar y)^2 \\
+&amp; SSE = \sum\limits_{i=1}^n (\hat y_i - \bar y)^2 \\
+&amp; SSR = \sum\limits_{i=1}^n (\hat u_i)^2
+\end{split}
+</span></p>
+<ul>
+<li>The SST explains the total amount of variation in <span class="math inline">y</span></li>
+<li>The SSE is the amount of variation in <span class="math inline">y</span> explained by our model</li>
+<li>The SSR is the amount of variation in <span class="math inline">y</span> not explained by our model</li>
+</ul>
+<p>Let us look at the total sum of squares (SST). We can manipulate it as follows:</p>
+<p><span class="math display">
+\begin{split}
+SST &amp; = \sum\limits_{i=1}^n (y_i - \bar y)^2 \\
+&amp; = \sum\limits_{i=1}^n(y_i - \hat y_i+ \hat y_i - \bar y)^2 \\
+&amp; = \sum\limits_{i=1}^n((y_i - \hat y_i)+ \hat y_i - \bar y)^2 \\
+&amp; = \sum\limits_{i=1}^n[\hat u_i + \hat y_i - \bar y]^2 \\
+&amp; = \sum\limits_{i=1}^n[\hat u_i^2 + \hat u_i \hat y_i - \hat u_i \bar y + \hat y_i \hat u_i + \hat y_i^2 - \hat y_i \bar y-\bar y \hat u_i -\bar y \hat  y_i+\hat y^2_i] \\
+&amp; = \sum\limits_{i=1}^n[ \hat u_i^2 + 2 \hat u_i \hat y_i+ \hat y_i^2 - 2 \hat u_i \bar y - 2 \hat y_i \bar y + \bar y ^2]
+\end{split}
+</span></p>
+<p>By a property of linear regression, <span class="math inline">\sum \hat y_i \hat u_i = 0</span>. Knowing this, we can further simplify to:</p>
+<p><span class="math display">
+\begin{split}
+SST &amp; = \sum\limits_{i=1}^n[ \hat u_i^2 + \hat y_i^2 - 2 \hat u_i \bar y - 2 \hat y_i \bar y + \bar y ^2] \\
+&amp; = \sum\limits_{i=1}^n[\hat u_i^2 + (\hat y_i - \bar y)^2]\\
+&amp; = \sum\limits_{i=1}^n \hat u_i^2 + \sum\limits_{i=1}^n(\hat y_i - \bar y)^2 \\
+&amp; = SSE + SSR
+\end{split}
+</span></p>
+<p>This makes sense: After all, SSE is the squared errors explained by the model, and SSR is the residual (non-explained) parts of the model, so together, they should be equal to the total sum of squares.</p>
+<p>Thus, R-squared should naturally be defined as:</p>
+<p><span class="math display">
+R^2 = \frac{SSE}{SST} = \frac{1 - SSR}{SST}
+</span></p>
+</div>
+</div>
+</div>
+<p>R-Squared is always between 0 and 1 (or 0-100 as a percentage). Higher values indicate our model better explains the variation in <span class="math inline">y</span>.</p>
+<p>Interpreting R-squared: <em>The Model explains</em> <span class="math inline">R^2 \times 100</span> <em>percent of the variation in</em> <span class="math inline">y</span><em>.</em></p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="statistical-inference" class="level1">
+<h1><strong>Statistical Inference</strong></h1>
+<section id="heteroscedasticity-and-standard-errors" class="level3">
+<h3 class="anchored" data-anchor-id="heteroscedasticity-and-standard-errors">Heteroscedasticity and Standard Errors</h3>
+<p><u>Homoscedasticity</u> is defined as:</p>
+<p><span class="math display">
+Var(u|x_1, \dots, x_k) = \sigma^2, \ \forall x
+</span></p>
+<ul>
+<li>Or in other words, no matter the values of any explanatory variable, the error term variance is <strong>constant</strong>.</li>
+<li>If this is false, then we have <u>heteroscedasticity</u>.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Intuitive Visualisation of Homoscedasticity
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all <span class="math inline">\widehat{u_i}</span>):</p>
+<p><img src="images/clipboard-1713529842.png" class="img-fluid" style="width:100.0%"></p>
+<p>Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of <span class="math inline">x</span>.</p>
+<p>The heteroscedasticity residuals have a clear pattern - the up-down variance is smaller when <span class="math inline">x</span> is smaller, and the up-down variance is larger when <span class="math inline">x</span> is larger.</p>
+<p>Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.</p>
+</div>
+</div>
+</div>
+<p>If you have homoscedasticity, you should use normal OLS standard errors.</p>
+<p>If you have heteroscedasticity, you should use robust OLS standard errors. You should also use robust standard errors if you are not sure which errors to use.</p>
+<p>Standard errors can be mathematically derived (this is shown in the OLS theory notes in the causal inference section).</p>
+<p><br></p>
+</section>
+<section id="t-tests" class="level3">
+<h3 class="anchored" data-anchor-id="t-tests">T-Tests</h3>
+<p>In regression, our typical hypotheses are:</p>
+<ul>
+<li><span class="math inline">H_0 : \beta_j = 0</span> (i.e.&nbsp;there is no relationship between <span class="math inline">x_j</span> and <span class="math inline">y</span>).</li>
+<li><span class="math inline">H_1:\beta_j ≠ 0</span> (i.e.&nbsp;there is a relationship between <span class="math inline">x_j</span> and <span class="math inline">y</span>).</li>
+</ul>
+<p>Using the standard error (see above), we calculate the <span class="math inline">t</span>-statistic, and using the <span class="math inline">t</span>-statistic, we calculate a p-value.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Details of Running a Hypothesis Test
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>First, we calculate the t-test statistic:</p>
+<p><span class="math display">
+t = \frac{\widehat{\beta_1} - H_0}{\widehat{se}(\widehat{\beta_1})}
+</span></p>
+<ul>
+<li>Where <span class="math inline">H_0</span> is typically 0, but if you do decide to alter the null hypothesis, you would plug it in.</li>
+</ul>
+<p>Now, we consult a t-distribution of <span class="math inline">n-k-1</span> degrees of freedom. We use a t-distribution because the standard error calculation used in OLS is slightly imprecise.</p>
+<ul>
+<li>Note: we can only do this step if we believe the central limit theorem is met (that our errors are asymptotically normal). We need a large enough sample size.</li>
+</ul>
+<p>We start from the middle of the t-distribution, and move <em>t-test-statstic</em> number of standard deviations from both sides of the middle.</p>
+<p>Then, we find the probability of getting a t-test statistic even further from the middle than the one we got. The area highlighted in the figure below showcases this. In the figure, the t-test statistic is 2.228.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1533818238.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>The area highlighted, divided by the entire area under the curve, is the p-value.</p>
+</div>
+</div>
+</div>
+<p>The p-value we get is the probability of getting a test statistic equally or more extreme than the one we got, given the null hypothesis is true.</p>
+<ul>
+<li><p>If <span class="math inline">p&lt;0.05</span>, we believe the probability of a null hypothesis is low enough, such that we reject the null hypothesis (that there is no relationship between <span class="math inline">x</span> and <span class="math inline">y</span>), and conclude our alternate hypothesis (that there is a relationship between <span class="math inline">x</span> and <span class="math inline">y</span>).</p></li>
+<li><p>If <span class="math inline">p &gt; 0.05</span>, we cannot reject the null hypothesis, and cannot reject that there is no relationship between <span class="math inline">x</span> and <span class="math inline">y</span>.</p></li>
+</ul>
+<p>NOTE: this is not causality - we are only looking at the relationship. Causality needs to be established with an adequate research design.</p>
+<p><br></p>
+</section>
+<section id="confidence-intervals" class="level3">
+<h3 class="anchored" data-anchor-id="confidence-intervals">Confidence Intervals</h3>
+<p>The 95% confidence intervals of coefficients have the following bounds:</p>
+<p><span class="math display">
+\widehat{\beta_j} - 1.96 \widehat{se}(\widehat{\beta_j}), \ \ \widehat{\beta_j} + 1.96 \widehat{se}(\widehat{\beta_j})
+</span></p>
+<ul>
+<li>The 1.96 is an approximation assuming a normal distribution. The actual confidence intervals (calculated by computers) will use a t-distribution of <span class="math inline">n-k-1</span>, which will result in a slightly different multiplicative factor.</li>
+</ul>
+<p>The confidence interval means that under repeated sampling and estimating <span class="math inline">\widehat{\beta_j}</span>, 95% of the confidence intervals that we construct will include the true <span class="math inline">\beta_j</span> value in the population.</p>
+<p>If the confidence interval contains 0, we cannot conclude a relationship between <span class="math inline">x_j</span> and <span class="math inline">y</span>, as 0 is a plausible value of <span class="math inline">\beta_j</span>. These results will always match those of the t-test.</p>
+<p><br></p>
+</section>
+<section id="f-tests" class="level3">
+<h3 class="anchored" data-anchor-id="f-tests">F-Tests</h3>
+<p>F-tests are used to test more than one coefficient at a time. The hypotheses will be:</p>
+<ul>
+<li><span class="math inline">M_0 : y = \beta_0 + \beta_1 x_1 + \dots + \beta_g x_g + u_i</span> (the smaller null model).</li>
+<li><span class="math inline">M_a : y = \beta_0 + \beta_1x_1 + \dots + \beta_g x_g + \dots + \beta_kx_k + u_i</span> (the bigger model with additional variables).</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Details of the F-test
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>F-tests compare the <span class="math inline">R^2</span> of the two models through the F-statistic:</p>
+<p><span class="math display">
+F = \frac{(SSR_0 - SSR_a) / (k_a - k_0)}{SSR_a /(n - k_a - 1)}
+</span></p>
+<p>We then consult a F-distribution with <span class="math inline">k_a - k_0</span> and <span class="math inline">n-k_a - 1</span> degrees of freedom, obtaining a p-value (in the same way as the t-test).</p>
+</div>
+</div>
+</div>
+<p>The p-value we get is the probability of getting a test statistic equally or more extreme than the one we got, given the null hypothesis is true.</p>
+<ul>
+<li>If <span class="math inline">p&lt;0.05</span>, the we believe the probability of the null hypothesis is low enough, such that we reject the null hypothesis (that <span class="math inline">M_0</span> is the better model), and conclude our alternate hypothesis (that <span class="math inline">M_a</span> is a better model). This also means the extra coefficients in <span class="math inline">M_a</span> are jointly statistically significant.</li>
+<li>If <span class="math inline">p &gt; 0.05</span>, we cannot reject the null hypothesis, and cannot reject that <span class="math inline">M_0</span> is a better model. Thus, the extra coefficients in <span class="math inline">M_a</span> are jointly not statistically significant.</li>
+</ul>
+<p><br></p>
+</section>
+<section id="predictive-inference" class="level3">
+<h3 class="anchored" data-anchor-id="predictive-inference">Predictive Inference</h3>
+<p>We can predict using the linear regression by plugging in explanatory variable values, and finding the predicted <span class="math inline">\widehat{y_i}</span>.</p>
+<p>We also have confidence intervals for every predicted <span class="math inline">\widehat{y_i}</span>. These intervals are calculated with the residual standard deviation (covered previously):</p>
+<p><span class="math display">
+\widehat{y_i} - 1.96 \hat\sigma, \ \widehat{y_i} + 1.96 \hat\sigma
+</span></p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="extensions" class="level1">
+<h1><strong>Extensions</strong></h1>
+<section id="categorical-explanatory-variables" class="level3">
+<h3 class="anchored" data-anchor-id="categorical-explanatory-variables">Categorical Explanatory Variables</h3>
+<p>Take an explanatory variable <span class="math inline">x</span>, which has <span class="math inline">n</span> number of categories <span class="math inline">1, \dots, n</span>. To include <span class="math inline">x</span> in our regression, we would create <span class="math inline">n-1</span> dummy variables, to create the following regression model:</p>
+<p><span class="math display">
+E(y_i|x_i) = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{n-1 \ i}
+</span></p>
+<ul>
+<li>Categories <span class="math inline">1, \dots, n-1</span> get there own binary variable <span class="math inline">x_1, \dots, x_{n-1}</span>.</li>
+<li>Category <span class="math inline">n</span> (the reference category) does not get its own variable. We can change which category we wish to be the reference.</li>
+</ul>
+<p>Interpretation is as follows (category <span class="math inline">j</span> is any one of category <span class="math inline">1, \dots, n-1</span>).</p>
+<ul>
+<li><span class="math inline">\beta_j</span> is the difference in expected <span class="math inline">y</span> between category <span class="math inline">j</span> and the reference category.</li>
+<li><span class="math inline">\beta_0</span> is the expected <span class="math inline">y</span> of the reference category.</li>
+<li>Thus, category <span class="math inline">j</span> has an expected <span class="math inline">y</span> of <span class="math inline">\beta_0 + \beta_j</span>.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of a Categorical Explanatory Variable
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us say that <span class="math inline">x</span> is the variable <em>development level of a country</em>, with 3 categories: low (L), medium (M), and high (H). <span class="math inline">y</span> will be the crime rate of the country.</p>
+<p>Let us set <em>low development (L)</em> as our reference category. Our regression will be:</p>
+<p><span class="math display">
+E(y|x) = \beta_0 + \beta_1x_M + \beta_2 x_H
+</span></p>
+<p>Now let us interpret the coefficients:</p>
+<ul>
+<li><span class="math inline">\beta_0</span> is the expected crime rate for a country of <em>low (L)</em> development.</li>
+<li><span class="math inline">\beta_1</span> is the difference in expected crime rate between a <em>medium (M)</em> developed country and a <em>low (L) developed country</em> (since low is the reference category).</li>
+<li><span class="math inline">\beta_2</span> is the difference in expected crime rate between a <em>high (H)</em> developed country and a <em>low (L) developed country</em> (since low is the reference category).</li>
+</ul>
+<p>The expected/predicted <span class="math inline">y</span> (crime rate) for each category is:</p>
+<ul>
+<li>Low (L): <span class="math inline">\beta_0</span></li>
+<li>Medium (M): <span class="math inline">\beta_0 + \beta_1</span></li>
+<li>High (H): <span class="math inline">\beta_0 + \beta_2</span>.</li>
+</ul>
+</div>
+</div>
+</div>
+<p>Each coefficient <span class="math inline">\beta_j</span>’s statistical significance is a difference-in-means significance test, not the significance of the categorical variable as a whole. To find if the entire categorical variable is significant, you should use a F-test.</p>
+<p><br></p>
+</section>
+<section id="interaction-effects" class="level3">
+<h3 class="anchored" data-anchor-id="interaction-effects">Interaction Effects</h3>
+<p>An interaction between two variables means they are multiplied in the regression equation:</p>
+<p><span class="math display">
+y_i = \beta_0 + \beta_1x_{1i} + \beta_2x_{2i} + \beta_3 x_{1i} x_{2i}
+</span></p>
+<p>Interpretation of the relationship between <span class="math inline">x_1</span> and <span class="math inline">y</span> is as follows:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 47%">
+<col style="width: 43%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><strong>Binary</strong> <span class="math inline">x_2</span></td>
+<td><strong>Continuous</strong> <span class="math inline">x_2</span></td>
+</tr>
+<tr class="even">
+<td><strong>Binary</strong> <span class="math inline">x_1</span></td>
+<td><p>When <span class="math inline">x_2 = 0</span>, the effect of <span class="math inline">x_1</span> (going from 0 to 1) on <span class="math inline">y</span> is <span class="math inline">\widehat{\beta_1}</span>.</p>
+<p>When <span class="math inline">x_2 = 1</span>, the effect of <span class="math inline">x_1</span> (going from 0 to 1) on <span class="math inline">y</span> is <span class="math inline">\widehat{\beta_1} + \widehat{ \beta_3}</span>.</p></td>
+<td>The effect of <span class="math inline">x_1</span> (going from 0 to 1) on <span class="math inline">y</span> is <span class="math inline">\widehat{\beta_1} + \widehat{\beta_3} x_2</span>.</td>
+</tr>
+<tr class="odd">
+<td><strong>Continuous</strong> <span class="math inline">x_1</span></td>
+<td><p>When <span class="math inline">x_2 = 0</span>, for every increase in one unit of <span class="math inline">x_1</span>, there is an expected <span class="math inline">\widehat{\beta_1}</span> unit change in <span class="math inline">y</span>.</p>
+<p>When <span class="math inline">x_2 = 1</span>, for every increase in one unit of <span class="math inline">x_1</span>, there is an expected <span class="math inline">\widehat{\beta_1}+ \widehat{\beta_3}</span> change in <span class="math inline">y</span>.</p></td>
+<td>For every increase of one unit in <span class="math inline">x_1</span>, there is an expected <span class="math inline">\widehat{\beta_1} + \widehat{\beta_3} x_2</span> change in <span class="math inline">y</span>.</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Proof of Interpretations of Interactions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We can solve for the change of <span class="math inline">x_1</span> on <span class="math inline">y</span> using a partial derivative of <span class="math inline">y</span> in respect to <span class="math inline">x_1</span>:</p>
+<p><span class="math display">
+\begin{split}
+\frac{\partial \widehat{y_i}}{\partial x_{1i}} &amp; = \frac{\partial}{\partial x_{1i}} \left[ \widehat{\beta_0} + \widehat{\beta_1}x_{1i} + \widehat{\beta_2}x_{2i} + \widehat{\beta_3}x_{1i}x_{2i}\right] \\
+\frac{\partial \widehat{y_i}}{\partial x_{1i}} &amp; = \widehat{\beta_1} + \widehat{\beta_3}x_2
+\end{split}
+</span></p>
+<p>This gives us the effect of <span class="math inline">x_1</span> on <span class="math inline">y</span>.</p>
+</div>
+</div>
+</div>
+<p><span class="math inline">\widehat{\beta_0}</span> is still the expected <span class="math inline">y</span> when all explanatory variables equal 0.</p>
+<p>The coefficient of the interaction <span class="math inline">\widehat{\beta_3}</span>, when statistically significant, indicates a statistically significant interaction effect. If it is not statistically significant, then the interaction effect is not statistically significant (and can be dropped).</p>
+<p><br></p>
+</section>
+<section id="polynomial-transformations" class="level3">
+<h3 class="anchored" data-anchor-id="polynomial-transformations">Polynomial Transformations</h3>
+<p>Sometimes the relationship between two variables is not a straight line - we can add more flexibility with polynomials. The most common form of polynomial transformation is the quadratic transformation:</p>
+<p><span class="math display">
+y_i = \beta_0 + \beta_1x_{i} + \beta_2 x_{i}^2 + u_i
+</span></p>
+<p>Our estimated <span class="math inline">\widehat{\beta_0}</span> remains the expected value of <span class="math inline">y</span> when all explanatory variables equal 0.</p>
+<p>Unfortunately, the <span class="math inline">\widehat{\beta_1}</span> and <span class="math inline">\widehat{\beta_2}</span> coefficients are not directly interpretable.</p>
+<ul>
+<li><span class="math inline">\widehat{\beta_2}</span>’s sign can tell us if the best-fit parabola opens upward or downward.</li>
+<li>The significance of <span class="math inline">\widehat{\beta_2}</span> also indicates if the quadratic term is statistically significant. If it is not, we can remove the transformation.</li>
+</ul>
+<p>We can interpret two things about the quadratic transformation:</p>
+<ul>
+<li>For every one unit increase in <span class="math inline">x</span>, there is an expected <span class="math inline">\widehat{\beta_1} + 2 \widehat{\beta_2}x</span> unit increase in <span class="math inline">y</span>.</li>
+<li>The minimum/maximum point in the best-fit parabola occurs at <span class="math inline">x_i = - \widehat{\beta_1}/2 \widehat{\beta_2}</span></li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Proof of Polynomial Interpretations
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We can derive the change in <span class="math inline">y</span> given a one unit increase in <span class="math inline">x</span> by finding the partial derivative of <span class="math inline">y</span> in respect to <span class="math inline">x</span>:</p>
+<p><span class="math display">
+\begin{split}
+\frac{\partial \widehat{y_i}}{\partial x} &amp; = \frac{\partial}{\partial x} \left[ \widehat{\beta_0} + \widehat{\beta_1}x_i + \widehat{\beta_2}x_i^2 \right] \\
+\frac{\partial \widehat{y_i}}{\partial x} &amp; = \widehat{\beta_1} + 2 \widehat{\beta_2}x_i
+\end{split}
+</span></p>
+<p>We can also solve for the <span class="math inline">x_i</span> that results in the minimum/maximum of the best-fit parabola by setting the partial derivative equal to 0:</p>
+<p><span class="math display">
+\begin{split}
+0 &amp; = \widehat{\beta_1} + 2 \widehat{\beta_2}x_i \\
+x_i &amp; = -\widehat{\beta_1}/2 \widehat{\beta_2}
+\end{split}
+</span></p>
+</div>
+</div>
+</div>
+<p>We can go beyond quadratic - as long as we always include lower degree terms in our model:</p>
+<ul>
+<li>Cubic: <span class="math inline">y_i = \beta_0 + \beta_1x_{i} + \beta_2 x_{i}^2 + \beta_3 x_i^3 + u_i</span></li>
+<li>Quartic: <span class="math inline">y_i = \beta_0 + \beta_1x_{i} + \beta_2 x_{i}^2 + \beta_3 x_i^3 + \beta_4 x_i^4 + u_i</span></li>
+</ul>
+<p><br></p>
+</section>
+<section id="logarithmic-transformations" class="level3">
+<h3 class="anchored" data-anchor-id="logarithmic-transformations">Logarithmic Transformations</h3>
+<p>Logarithmic transformations are often used to change skewed variables into normally distributed variables.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Logging a Skewed Variable
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Many monetary variables are heavily skewed. Natural logging these variables can turn them into normal distributions. This is useful, since skewed variables tend to have heteroscedasticity, and by making them normal, we can use the smaller normal standard errors.</p>
+<p>For example, take this variable called <em>expenses</em> with a significant right skew:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-4184932163.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>If we take the log of this variable, we get the following distribution that is almost normal:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-296612325.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>We have 3 types of logarithmic transformations:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 39%">
+<col style="width: 43%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><span class="math inline">x</span></td>
+<td><span class="math inline">\log (x)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">y</span></td>
+<td><p>Linear Model:</p>
+<p><span class="math inline">y = \beta_0 + \beta_1 x + u</span></p></td>
+<td><p>Linear-Log Model:</p>
+<p><span class="math inline">y = \beta_0 + \beta_1 \log x + u</span></p></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\log (y)</span></td>
+<td><p>Log-Linear Model:</p>
+<p><span class="math inline">\log(y) = \beta_0 + \beta_1 x + u</span></p></td>
+<td><p>Log-Log Model:</p>
+<p><span class="math inline">\log y = \beta_0 + \beta_1 \log x + u</span></p></td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>Interpreting the models:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 46%">
+<col style="width: 46%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><span class="math inline">x</span></td>
+<td><span class="math inline">\log (x)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">y</span></td>
+<td><p>Linear Model:</p>
+<p>When <span class="math inline">x</span> increases by one unit, there is an expected <span class="math inline">\widehat{\beta_1}</span> unit change in <span class="math inline">y</span>.</p></td>
+<td><p>Linear-Log Model:</p>
+<p>When <span class="math inline">x</span> increases by 10%, there is an expected <span class="math inline">0.096 \widehat{\beta_1}</span> unit change in <span class="math inline">y</span>.</p></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\log (y)</span></td>
+<td><p>Log-Linear Model:</p>
+<p>For every one unit increase in <span class="math inline">x</span>, <span class="math inline">y</span> is multiplied by <span class="math inline">e^{\widehat{\beta_1}}</span>.</p></td>
+<td><p>Log-Log Model:</p>
+<p>Multiplying <span class="math inline">x</span> by <span class="math inline">e</span> will multiply the expected value of <span class="math inline">y</span> by <span class="math inline">e^{\widehat{\beta_1}}</span>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Proof of Interpretations for Log Transformations
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Proof of Linear-Log Model:</p>
+<p><span class="math display">
+\begin{split}
+&amp; E(y_i|x_i = x) = \beta_0 + \beta_1 \log x \\
+&amp; E(y_i | x_i = e^A x) = \beta_0 + \beta_1 \log(e^A x) \\
+&amp; = \beta_0 + \beta_1 (\log(e^A) + \log x) \\
+&amp; = \beta_0 + \beta_1 (A + \log x) \\
+&amp; = \beta_0 + \beta_1A + \beta_1 \log x
+\end{split}
+</span></p>
+<p><span class="math display">
+\begin{split}
+E(y_i|x_i = \alpha x) - E(y_i|x_i = x) &amp; = \beta_0 + \beta_1 A + \beta_1 \log (x) - (\beta_0 + \beta_1 \log x) \\
+&amp; = \beta_1 A
+\end{split}
+</span></p>
+<ul>
+<li>When <span class="math inline">A = 0.095</span>, then <span class="math inline">e^A = 1.1</span>. Thus, a 1.1 times increase of <span class="math inline">x</span> results in a <span class="math inline">0.095 \widehat{\beta_1}</span> change in <span class="math inline">y</span>.</li>
+</ul>
+<p><br></p>
+<p>Proof of Log-Linear Model:</p>
+<p><span class="math display">
+\begin{split}
+E(\log y_i | x_i = x) =  \log y_i &amp; = \beta_0 + \beta_1 x \\
+y_i &amp; = e^{\beta_0 + \beta_1 x} \\
+y_i &amp; = e^{\beta_0}e^{\beta_1 x} \\
+E(\log y_i|x_i = x+1) = \log y_i &amp; = \beta_0 + \beta_1(x+1) \\
+y_i &amp; = e^{\beta_0 + \beta_1 + \beta_1 x} \\
+y_i &amp; = e^{\beta_0}e^{\beta_1}e^{\beta_1x}
+\end{split}
+</span></p>
+<p><span class="math display">
+\begin{split}
+\frac{E(\log y_i|x_i = x+1)}{E(\log y_i | x_i = x)} &amp; = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1x}}{e^{\beta_0}e^{\beta_1x}} \\
+&amp; = e^{\beta_1}
+\end{split}
+</span></p>
+<ul>
+<li>Thus, when <span class="math inline">x</span> increases by one, there is a multiplicative increase of <span class="math inline">e^{\beta_1}</span>.</li>
+</ul>
+<p><br></p>
+<p>Proof of Log-Log model:</p>
+<p><span class="math display">
+\begin{split}
+E(\log y_i | x_i = x) =  \log y_i &amp; = \beta_0 + \beta_1 \log x \\
+y_i &amp; = e^{\beta_0 + \beta_1 \log x} \\
+y_i &amp; = e^{\beta_0}e^{\beta_1 \log x} \\
+E(\log y_i|x_i = ex) = \log y_i &amp; = \beta_0 + \beta_1 \log (ex) \\
+y_i &amp; = e^{\beta_0 + \beta_1 \log e + \beta_1 \log x} \\
+y_i &amp; = e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}
+\end{split}
+</span></p>
+<p><span class="math display">
+\begin{split}
+\frac{E(\log y_i|x_i = ex)}{E(\log y_i | x_i = x)} &amp; = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}}{e^{\beta_0}e^{\beta_1 \log x}} \\
+&amp; = e^{\beta_1}
+\end{split}
+</span></p>
+<ul>
+<li>Thus, when <span class="math inline">x</span> is multiplied by <span class="math inline">e</span>, there is a multiplicative increase of <span class="math inline">e^{\beta_1}</span>.</li>
+</ul>
+</div>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="implementation-in-r" class="level1">
+<h1><strong>Implementation in R</strong></h1>
+<p>You will need package <em>fixest</em>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Regression with normal standard errors can be done with the <em>lm()</em> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3, <span class="at">data =</span> mydata)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Regression with robust standard errors can be done with the <em>feols()</em> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">feols</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3, <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Output will include coefficients, standard errors, p-values, and more.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Binary and Categorical Variables
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You can include binary and categorical variables by using the <em>as.factor()</em> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">feols</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> <span class="fu">as.factor</span>(x2) <span class="sc">+</span> x3, <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can do the same for <span class="math inline">y</span> or <span class="math inline">x</span>. Just remember, <span class="math inline">y</span> cannot be a categorical variable (use multinomial logsitic regression instead).</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interaction Effects
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Two interact two variables, use * between them. This will automatically include both the interaction term, and the two variables by themselves.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">feols</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2<span class="sc">*</span>x3, <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If for some reason, you only want the interaction term, but not the variables by themselves, you can use a colon : between the two variables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">feols</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2<span class="sc">:</span>x3, <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Polynomial Transformations
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To conduct a polynomial transformation, you can use the <em>I()</em> function. The second argument is the degree of the polynomial:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">feols</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> <span class="fu">I</span>(x2, <span class="dv">3</span>), <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>) <span class="co">#cubic for x2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Logarithmic Transformations
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The best way to do a logarithmic transformation is to create a new variable that is the log of the variable you want to transform using the <em>log()</em> function, before you even start the regression:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mydata<span class="sc">$</span>x1_log <span class="ot">&lt;-</span> <span class="fu">log</span>(mydata<span class="sc">$</span>x1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Confidence Intervals
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To find the confidence intervals for coefficients, first estimate the model with <em>lm()</em> or <em>feols()</em> as shown previously, then use the <em>confint()</em> command:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+F-Tests
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To run a f-test, use the <em>anova()</em> command, and input your two different models, with the null model going first.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1, model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note: F-tests only work with models that are run with homoscedastic standard errors. Robust standard errors will not work.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+LaTeX Regression Tables
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You can use the <em>texreg</em> package to make nice regression tables automatically.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(texreg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The syntax for <em>texreg()</em> is as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">texreg</span>(<span class="at">l =</span> <span class="fu">list</span>(model1, model2, model3),</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">custom.model.names =</span> <span class="fu">c</span>(<span class="st">"model 1"</span>, <span class="st">"model 2"</span>, <span class="st">"model 3"</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">custom.coef.names =</span> <span class="fu">c</span>(<span class="st">"intercept"</span>, <span class="st">"x1"</span>, <span class="st">"x2"</span>),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can replace <em>texreg()</em> with <em>screenreg()</em> if you want a nicer regression table in the R-console.</p>
+<p>Note: you must have the same amount of model names as total models in your texreg, and you must have the same amount of coeficient names as the total amount of coefficients in all of your models.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Prediction
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We can use the <em>predict()</em> function to generate fitted value predictions in R:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>my_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, <span class="at">newdata =</span> my_new_data)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#my_new_data is a dataframe with a bunch of explanatory variable values for which to predict for.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

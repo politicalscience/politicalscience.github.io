@@ -1,0 +1,872 @@
+---
+title: "Linear Regression Model"
+subtitle: "Regression Models"
+format:
+    html:
+        page-layout: article
+        grid:
+          sidebar-width: 350px
+          body-width: 700px
+          margin-width: 250px
+          gutter-width: 2em
+        fontsize: 12pt
+        theme: default
+        toc: TRUE
+        toc-depth: 3
+        toc-location: left
+        toc-expand: true
+        toc-title: "Table of Contents"
+        mainfont: "Computer Modern"
+        title-block-banner: true
+        classoption: fleqn
+        html-math-method: katex
+editor: visual
+---
+
+This lesson introduces the basics of multiple linear regression, the foundational model for all of statistics.
+
+------------------------------------------------------------------------
+
+# **Basics of the Model**
+
+### Model Specification
+
+Let us say we have some outcome variable $y$, and several explanatory variables $x_1, x_2, \dots, x_k$. We have data on $n$ number of observations $i = 1, \dots n$.
+
+The linear regression model can be written as a conditional expectation $E(y|x)$ function:
+
+$$
+E(y_i|x_i) = \beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki}
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## More Info on Conditional Expectations
+
+Imagine $y$ is income, and $x$ is age.
+
+At age $x=20$, not every 20 year old makes the same amount of income. There is some distribution, with some making more, and some making less. This is the distribution $y|x=20$.
+
+We can find the expected value of this distribution, $E(y|x=20)$. This is a conditional expectation, and indicates the expected income of a 20 year old if we randomly chose one from the distribution.
+
+At $x=30$, the $E(y|x)$ probably is different (30 year olds make more money). Thus, the linear model is essentially stating that the expected $y$ depends on $x$. Or in terms of this example, the expected income depends on the individual's age.
+:::
+
+The linear model can also be specified for any specific outcome value $y_i$:
+
+$$
+y_i = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{ki} + u_i
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## More Info on the Error Term $u_i$
+
+The $u_i$ is called the error term. This indicates that not every value of $y_i$ in our data will be exactly on the linear best-fit line.
+
+Graphically, it is the highlighted part:
+
+![](images/clipboard-1210742477.png){fig-align="center" width="65%"}
+
+In social science terms, the $u_i$ is the effect of any other variable not included in our model on $y$.
+
+For example, if $x$ is age, and $y$ is income, we will have the following relationship:
+
+$$
+\text{income}_i = \beta_0 + \beta_1 \text{age}_i + u_i
+$$
+
+However, not every individual lies perfectly on this linear line. This is because there are other factors outside of age that affect $y$ (income), and these other factors are bundled into the error term.
+:::
+
+We can also specify the linear model in terms of linear algebra:
+
+$$
+\mathbf y = \mathbf X \mathbf\beta + \mathbf u
+$$
+
+-   Where $\mathbf y, \mathbf \beta, \mathbf u$ are vectors and $\mathbf X$ is a $n \times (k+1)$ matrix.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## More Info on the Linear Algebra Representation
+
+Start with the linear model written in terms of $y_i$:
+
+$$
+y_i = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{ki} + u_i
+$$
+
+We can rewrite $y_i$ to be equal to:
+
+$$
+y_i = \mathbf x_i^T \mathbf \beta + u_i, \text{ where } \mathbf \beta = \begin{bmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{bmatrix} \text{ and } \mathbf x_i = \begin{bmatrix}1 \\x_{1i} \\\vdots \\x_{ki}\end{bmatrix}
+$$
+
+<br />
+
+Note how we have the subscript $i$ representing each individual observation. With a vector, we can expand out these subscripts.
+
+Using this logic, we can obtain the following, with the $\mathbf x_i^T$ and $\beta$ being vectors within a vector:
+
+$$
+\begin{split}
+\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} & = \begin{pmatrix}\mathbf x_1^T\beta + u_1 \\ \mathbf x_2^T\beta + u_2 \\ \vdots \\ \mathbf x_n^T\beta + u_n\end{pmatrix} \\
+& \\
+\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}& = \begin{pmatrix} \mathbf x_1^T\beta \\ \mathbf x_2^T\beta \\ \vdots \\ \mathbf x_n^T\beta\end{pmatrix} + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
+\end{split}
+$$
+
+Since $\beta$ vector appears as a common factor for all observations $i=1,...,n$, we can factor it out and have an equation:
+
+$$
+\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} = \begin{pmatrix} \mathbf x_1^T \\ \mathbf x_2^T \\ \vdots \\ \mathbf x_n^T\end{pmatrix} \space \beta + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
+$$
+
+We can expand the $x_1',...,x_n'$ vector into a matrix. Remember that each $x_1',...,x_n'$ is already a vector of different explanatory variables. So, we get the following result:
+
+$$
+\mathbf y = \mathbf X \mathbf \beta + \mathbf u, \text{ where } \mathbf X = \begin{bmatrix}1 & x_{11} & \dots & x_{k1} \\1 & x_{12} & \dots & x_{k2} \\\vdots & \vdots & \vdots & \vdots \\1 & x_{1n} & \dots & x_{kn}\end{bmatrix}
+$$
+:::
+
+<br />
+
+### Estimation Process
+
+To estimate the population parameters $\beta_0, \dots, \beta_k$, we use our sample data, and try to find the values $\widehat{\beta_0}, \dots, \widehat{\beta_k}$ that **minimise the square sum of residuals** (SSR):
+
+$$
+\begin{split}
+SSR & = \sum\limits_{i=1}^n(y_i - \hat y_i)^2 \\
+& = \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_{1i} - \dots - \widehat{\beta_k}x_{ki})
+\end{split}
+$$
+
+In the linear algebra representation (where $\mathbf b$ is the vector of estimated parameters $\widehat{\beta_0}, \dots, \widehat{\beta_k}$):
+
+$$
+\begin{split}
+SSR & = (\mathbf y - \mathbf{\hat y})^T(\mathbf y - \mathbf{\hat y}) \\
+& = (\mathbf y - \mathbf{Xb})^T(\mathbf y - \mathbf{Xb})
+\end{split}
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Intuitive Visualisation of SSR
+
+The residuals are the difference from our predicted best-fit line result $\widehat{y_i}$, and the actual value of $y_i$ in the data. Below highlighted in red are the residuals.
+
+![](images/clipboard-846785636.png){fig-align="center" width="70%"}
+
+After we have the residual values, we simply square each of them, then sum all of them together. That is the sum of squared residuals.
+:::
+
+This estimation is called the **ordinary least squares (OLS) estimator**. The solutions to the OLS estimator can be derived mathematically.
+
+<br />
+
+### Deriving OLS Estimates
+
+Let us define our estimation vector $\boldsymbol{\hat{\beta}}$ as the value of $\boldsymbol{\hat{\beta}}$ that minimises the sum of squared errors:
+
+$$
+\boldsymbol{\hat{\beta}} = \min\limits_{b} (\mathbf y - \mathbf{Xb})^T (\mathbf y - \mathbf{Xb}) = \min\limits_b S(\mathbf b)
+$$
+
+We can expand $S(\mathbf b)$ as follows:
+
+$$
+\begin{split}
+S(\mathbf b) & = \mathbf y^T \mathbf y - \mathbf b^T \mathbf X^T \mathbf y - \mathbf y^T \mathbf{Xb} + \mathbf b^T \mathbf X^T \mathbf{Xb} \\ 
+& = \mathbf y^T \mathbf y - 2\mathbf b^T \mathbf X^T \mathbf y + \mathbf b^T \mathbf X^T \mathbf{Xb}
+\end{split}
+$$
+
+Taking the partial derivative in respect to $b$:
+
+$$
+\frac{\partial S(\mathbf b)}{\partial \mathbf b} = \begin{pmatrix}\frac{\partial S(\mathbf b)}{\partial b_1} \\\vdots \\\frac{\partial S(\mathbf b)}{\partial b_k}\end{pmatrix}
+$$
+
+Differentiating with the vector $b$ yields:
+
+$$
+\frac{\partial S(\mathbf b)}{\partial b} = -2\mathbf X^T \mathbf y + 2 \mathbf X^T \mathbf{Xb}
+$$
+
+Evaluated at $\hat{\beta}$, the derivatives should equal zero (since first order condition of finding minimums):
+
+$$
+\frac{\partial S(\mathbf b)}{\partial b} \biggr|_{\hat{\beta}} = -2\mathbf X^T \mathbf y + 2\mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} = 0
+$$
+
+When assuming $X'X$ is invertable (which is true if $\mathbf X$ is full rank), we can isolate $\hat{\beta}$ to find the solution to OLS:
+
+$$
+\begin{split}
+-2\mathbf X^T\mathbf y + 2 \mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} & = 0 \\
+2 \mathbf X^T \mathbf X \boldsymbol{\hat\beta} & = 2\mathbf X^T \mathbf y \\
+\boldsymbol{\hat\beta} & = (2\mathbf X^T \mathbf X)^{-1} 2 \mathbf X^T \mathbf y \\
+\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
+\end{split}
+$$
+
+With the estimated parameters $\widehat{\beta_0}, \dots, \widehat{\beta_k}$, we now have a best-fit line, called the **fitted values**.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Interpretation**
+
+### Interpretation of Coefficients
+
+I define $\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}$.
+
+|                    |                                                                                                                                                                         |                                                                                                                                                                              |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                    | **Continuous** $x_j$                                                                                                                                                    | **Binary** $x_j$                                                                                                                                                             |
+| **Continuous** $y$ | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j}$ unit change in $y$.                                                                      | There is a $\widehat{\beta_j}$ unit difference in $y$ between category $x_j = 1$ and category $x_j = 0$.                                                                     |
+| **Binary** $y$     | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j} \times 100$ percentage point change in the probability of a unit being in category $y=1$. | There is a $\widehat{\beta_j}\times 100$ percentage point difference in the probability of a unit being in category $y=1$ between category $x_j = 1$ and category $x_j = 0$. |
+
+If you have multiple explanatory variables, always add: *while holding all other explanatory variables not* $x_j$ *constant.*
+
+You can prove these explanations by plugging in $x_i = x$ and $x_i = x+1$ and finding the change in $\widehat{y_i}$, or by finding the partial derivative in respect to $x_j$.
+
+<br />
+
+### Interpretation of the Intercept
+
+The intercept is $\widehat{\beta_0}$.
+
+|                    |                                                                                                                                      |                                                                                                                                                                      |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                    | **Continuous** $x_j$                                                                                                                 | **Binary** $x_j$                                                                                                                                                     |
+| **Continuous** $y$ | When all explanatory variables equal 0, the expected value of $y$ is $\widehat{\beta_0}$.                                            | For category $x_j = 0$, the expected value of $y$ is $\widehat{\beta_0}$ (when all other explanatory variables equal 0).                                             |
+| **Binary** $y$     | When all explanatory variables equal 0, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$ | For category $x_j = 0$, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$ (when all other explanatory variables equal 0). |
+
+You can prove these interpretations by plugging in $x_1, \dots, x_k = 0$.
+
+<br />
+
+### Residual Standard Deviation
+
+Residuals are:
+
+$$
+\widehat{u_i} = y_i - \widehat{y_i}
+$$
+
+Or in other words, the distance of the actual value $y_i$ of observation $i$, compared to the predicted $\widehat{y_i}$ from our fitted values/best-fit line.
+
+The residual standard deviation $\hat\sigma$ measures the spread/variance of our residuals - so, how far away the actual values $y_i$ are from our predicted values $\widehat{y_i}$ in general for all observations.
+
+$$
+\hat\sigma = \sqrt{Var(u_i)}
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Visualisation of Residual Standard Deviation
+
+Below is a figure illustrating different residual standard deviations, with the same best-fit line.
+
+![](images/clipboard-2649765153.png){fig-align="center" width="80%"}
+:::
+
+Smaller $\hat\sigma$ mean the actual values are, on average, close to our predicted values, and larger $\hat\sigma$ mean the actual values are, on average, further away from our predicted values.
+
+<br />
+
+### R-Squared
+
+R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained by our explanatory variables.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Mathematical Derivation of R-Squared
+
+Let us define these three concepts: the total sum of squares (SST), explained sum of squares (SSE), and residual sum of squares (SSR):
+
+$$
+\begin{split}
+& SST = \sum\limits_{i=1}^n (y_i - \bar y)^2 \\
+& SSE = \sum\limits_{i=1}^n (\hat y_i - \bar y)^2 \\
+& SSR = \sum\limits_{i=1}^n (\hat u_i)^2
+\end{split}
+$$
+
+-   The SST explains the total amount of variation in $y$
+-   The SSE is the amount of variation in $y$ explained by our model
+-   The SSR is the amount of variation in $y$ not explained by our model
+
+Let us look at the total sum of squares (SST). We can manipulate it as follows:
+
+$$
+\begin{split}
+SST & = \sum\limits_{i=1}^n (y_i - \bar y)^2 \\
+& = \sum\limits_{i=1}^n(y_i - \hat y_i+ \hat y_i - \bar y)^2 \\
+& = \sum\limits_{i=1}^n((y_i - \hat y_i)+ \hat y_i - \bar y)^2 \\
+& = \sum\limits_{i=1}^n[\hat u_i + \hat y_i - \bar y]^2 \\
+& = \sum\limits_{i=1}^n[\hat u_i^2 + \hat u_i \hat y_i - \hat u_i \bar y + \hat y_i \hat u_i + \hat y_i^2 - \hat y_i \bar y-\bar y \hat u_i -\bar y \hat  y_i+\hat y^2_i] \\
+& = \sum\limits_{i=1}^n[ \hat u_i^2 + 2 \hat u_i \hat y_i+ \hat y_i^2 - 2 \hat u_i \bar y - 2 \hat y_i \bar y + \bar y ^2]
+\end{split}
+$$
+
+By a property of linear regression, $\sum \hat y_i \hat u_i = 0$. Knowing this, we can further simplify to:
+
+$$
+\begin{split}
+SST & = \sum\limits_{i=1}^n[ \hat u_i^2 + \hat y_i^2 - 2 \hat u_i \bar y - 2 \hat y_i \bar y + \bar y ^2] \\
+& = \sum\limits_{i=1}^n[\hat u_i^2 + (\hat y_i - \bar y)^2]\\
+& = \sum\limits_{i=1}^n \hat u_i^2 + \sum\limits_{i=1}^n(\hat y_i - \bar y)^2 \\
+& = SSE + SSR
+\end{split}
+$$
+
+This makes sense: After all, SSE is the squared errors explained by the model, and SSR is the residual (non-explained) parts of the model, so together, they should be equal to the total sum of squares.
+
+Thus, R-squared should naturally be defined as:
+
+$$
+R^2 = \frac{SSE}{SST} = \frac{1 - SSR}{SST}
+$$
+:::
+
+R-Squared is always between 0 and 1 (or 0-100 as a percentage). Higher values indicate our model better explains the variation in $y$.
+
+Interpreting R-squared: *The Model explains* $R^2 \times 100$ *percent of the variation in* $y$*.*
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Statistical Inference**
+
+### Heteroscedasticity and Standard Errors
+
+[Homoscedasticity]{.underline} is defined as:
+
+$$
+Var(u|x_1, \dots, x_k) = \sigma^2, \ \forall x
+$$
+
+-   Or in other words, no matter the values of any explanatory variable, the error term variance is **constant**.
+-   If this is false, then we have [heteroscedasticity]{.underline}.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Intuitive Visualisation of Homoscedasticity
+
+An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all $\widehat{u_i}$):
+
+![](images/clipboard-1713529842.png){width="100%"}
+
+Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of $x$.
+
+The heteroscedasticity residuals have a clear pattern - the up-down variance is smaller when $x$ is smaller, and the up-down variance is larger when $x$ is larger.
+
+Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.
+:::
+
+If you have homoscedasticity, you should use normal OLS standard errors.
+
+If you have heteroscedasticity, you should use robust OLS standard errors. You should also use robust standard errors if you are not sure which errors to use.
+
+Standard errors can be mathematically derived (this is shown in the OLS theory notes in the causal inference section).
+
+<br />
+
+### T-Tests
+
+In regression, our typical hypotheses are:
+
+-   $H_0 : \beta_j = 0$ (i.e. there is no relationship between $x_j$ and $y$).
+-   $H_1:\beta_j ≠ 0$ (i.e. there is a relationship between $x_j$ and $y$).
+
+Using the standard error (see above), we calculate the $t$-statistic, and using the $t$-statistic, we calculate a p-value.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Details of Running a Hypothesis Test
+
+First, we calculate the t-test statistic:
+
+$$
+t = \frac{\widehat{\beta_1} - H_0}{\widehat{se}(\widehat{\beta_1})}
+$$
+
+-   Where $H_0$ is typically 0, but if you do decide to alter the null hypothesis, you would plug it in.
+
+Now, we consult a t-distribution of $n-k-1$ degrees of freedom. We use a t-distribution because the standard error calculation used in OLS is slightly imprecise.
+
+-   Note: we can only do this step if we believe the central limit theorem is met (that our errors are asymptotically normal). We need a large enough sample size.
+
+We start from the middle of the t-distribution, and move *t-test-statstic* number of standard deviations from both sides of the middle.
+
+Then, we find the probability of getting a t-test statistic even further from the middle than the one we got. The area highlighted in the figure below showcases this. In the figure, the t-test statistic is 2.228.
+
+![](images/clipboard-1533818238.png){fig-align="center" width="60%"}
+
+The area highlighted, divided by the entire area under the curve, is the p-value.
+:::
+
+The p-value we get is the probability of getting a test statistic equally or more extreme than the one we got, given the null hypothesis is true.
+
+-   If $p<0.05$, we believe the probability of a null hypothesis is low enough, such that we reject the null hypothesis (that there is no relationship between $x$ and $y$), and conclude our alternate hypothesis (that there is a relationship between $x$ and $y$).
+
+-   If $p > 0.05$, we cannot reject the null hypothesis, and cannot reject that there is no relationship between $x$ and $y$.
+
+NOTE: this is not causality - we are only looking at the relationship. Causality needs to be established with an adequate research design.
+
+<br />
+
+### Confidence Intervals
+
+The 95% confidence intervals of coefficients have the following bounds:
+
+$$
+\widehat{\beta_j} - 1.96 \widehat{se}(\widehat{\beta_j}), \ \ \widehat{\beta_j} + 1.96 \widehat{se}(\widehat{\beta_j})
+$$
+
+-   The 1.96 is an approximation assuming a normal distribution. The actual confidence intervals (calculated by computers) will use a t-distribution of $n-k-1$, which will result in a slightly different multiplicative factor.
+
+The confidence interval means that under repeated sampling and estimating $\widehat{\beta_j}$, 95% of the confidence intervals that we construct will include the true $\beta_j$ value in the population.
+
+If the confidence interval contains 0, we cannot conclude a relationship between $x_j$ and $y$, as 0 is a plausible value of $\beta_j$. These results will always match those of the t-test.
+
+<br />
+
+### F-Tests
+
+F-tests are used to test more than one coefficient at a time. The hypotheses will be:
+
+-   $M_0 : y = \beta_0 + \beta_1 x_1 + \dots + \beta_g x_g + u_i$ (the smaller null model).
+-   $M_a : y = \beta_0 + \beta_1x_1 + \dots + \beta_g x_g + \dots + \beta_kx_k + u_i$ (the bigger model with additional variables).
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Details of the F-test
+
+F-tests compare the $R^2$ of the two models through the F-statistic:
+
+$$
+F = \frac{(SSR_0 - SSR_a) / (k_a - k_0)}{SSR_a /(n - k_a - 1)}
+$$
+
+We then consult a F-distribution with $k_a - k_0$ and $n-k_a - 1$ degrees of freedom, obtaining a p-value (in the same way as the t-test).
+:::
+
+The p-value we get is the probability of getting a test statistic equally or more extreme than the one we got, given the null hypothesis is true.
+
+-   If $p<0.05$, the we believe the probability of the null hypothesis is low enough, such that we reject the null hypothesis (that $M_0$ is the better model), and conclude our alternate hypothesis (that $M_a$ is a better model). This also means the extra coefficients in $M_a$ are jointly statistically significant.
+-   If $p > 0.05$, we cannot reject the null hypothesis, and cannot reject that $M_0$ is a better model. Thus, the extra coefficients in $M_a$ are jointly not statistically significant.
+
+<br />
+
+### Predictive Inference
+
+We can predict using the linear regression by plugging in explanatory variable values, and finding the predicted $\widehat{y_i}$.
+
+We also have confidence intervals for every predicted $\widehat{y_i}$. These intervals are calculated with the residual standard deviation (covered previously):
+
+$$
+\widehat{y_i} - 1.96 \hat\sigma, \ \widehat{y_i} + 1.96 \hat\sigma
+$$
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Extensions**
+
+### Categorical Explanatory Variables
+
+Take an explanatory variable $x$, which has $n$ number of categories $1, \dots, n$. To include $x$ in our regression, we would create $n-1$ dummy variables, to create the following regression model:
+
+$$
+E(y_i|x_i) = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{n-1 \ i}
+$$
+
+-   Categories $1, \dots, n-1$ get there own binary variable $x_1, \dots, x_{n-1}$.
+-   Category $n$ (the reference category) does not get its own variable. We can change which category we wish to be the reference.
+
+Interpretation is as follows (category $j$ is any one of category $1, \dots, n-1$).
+
+-   $\beta_j$ is the difference in expected $y$ between category $j$ and the reference category.
+-   $\beta_0$ is the expected $y$ of the reference category.
+-   Thus, category $j$ has an expected $y$ of $\beta_0 + \beta_j$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of a Categorical Explanatory Variable
+
+Let us say that $x$ is the variable *development level of a country*, with 3 categories: low (L), medium (M), and high (H). $y$ will be the crime rate of the country.
+
+Let us set *low development (L)* as our reference category. Our regression will be:
+
+$$
+E(y|x) = \beta_0 + \beta_1x_M + \beta_2 x_H
+$$
+
+Now let us interpret the coefficients:
+
+-   $\beta_0$ is the expected crime rate for a country of *low (L)* development.
+-   $\beta_1$ is the difference in expected crime rate between a *medium (M)* developed country and a *low (L) developed country* (since low is the reference category).
+-   $\beta_2$ is the difference in expected crime rate between a *high (H)* developed country and a *low (L) developed country* (since low is the reference category).
+
+The expected/predicted $y$ (crime rate) for each category is:
+
+-   Low (L): $\beta_0$
+-   Medium (M): $\beta_0 + \beta_1$
+-   High (H): $\beta_0 + \beta_2$.
+:::
+
+Each coefficient $\beta_j$'s statistical significance is a difference-in-means significance test, not the significance of the categorical variable as a whole. To find if the entire categorical variable is significant, you should use a F-test.
+
+<br />
+
+### Interaction Effects
+
+An interaction between two variables means they are multiplied in the regression equation:
+
+$$
+y_i = \beta_0 + \beta_1x_{1i} + \beta_2x_{2i} + \beta_3 x_{1i} x_{2i}
+$$
+
+Interpretation of the relationship between $x_1$ and $y$ is as follows:
+
++----------------------+-------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
+|                      | **Binary** $x_2$                                                                                                                    | **Continuous** $x_2$                                                                                                     |
++----------------------+-------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
+| **Binary** $x_1$     | When $x_2 = 0$, the effect of $x_1$ (going from 0 to 1) on $y$ is $\widehat{\beta_1}$.                                              | The effect of $x_1$ (going from 0 to 1) on $y$ is $\widehat{\beta_1} + \widehat{\beta_3} x_2$.                           |
+|                      |                                                                                                                                     |                                                                                                                          |
+|                      | When $x_2 = 1$, the effect of $x_1$ (going from 0 to 1) on $y$ is $\widehat{\beta_1} + \widehat{ \beta_3}$.                         |                                                                                                                          |
++----------------------+-------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
+| **Continuous** $x_1$ | When $x_2 = 0$, for every increase in one unit of $x_1$, there is an expected $\widehat{\beta_1}$ unit change in $y$.               | For every increase of one unit in $x_1$, there is an expected $\widehat{\beta_1} + \widehat{\beta_3} x_2$ change in $y$. |
+|                      |                                                                                                                                     |                                                                                                                          |
+|                      | When $x_2 = 1$, for every increase in one unit of $x_1$, there is an expected $\widehat{\beta_1}+ \widehat{\beta_3}$ change in $y$. |                                                                                                                          |
++----------------------+-------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Proof of Interpretations of Interactions
+
+We can solve for the change of $x_1$ on $y$ using a partial derivative of $y$ in respect to $x_1$:
+
+$$
+\begin{split}
+\frac{\partial \widehat{y_i}}{\partial x_{1i}} & = \frac{\partial}{\partial x_{1i}} \left[ \widehat{\beta_0} + \widehat{\beta_1}x_{1i} + \widehat{\beta_2}x_{2i} + \widehat{\beta_3}x_{1i}x_{2i}\right] \\
+\frac{\partial \widehat{y_i}}{\partial x_{1i}} & = \widehat{\beta_1} + \widehat{\beta_3}x_2
+\end{split}
+$$
+
+This gives us the effect of $x_1$ on $y$.
+:::
+
+$\widehat{\beta_0}$ is still the expected $y$ when all explanatory variables equal 0.
+
+The coefficient of the interaction $\widehat{\beta_3}$, when statistically significant, indicates a statistically significant interaction effect. If it is not statistically significant, then the interaction effect is not statistically significant (and can be dropped).
+
+<br />
+
+### Polynomial Transformations
+
+Sometimes the relationship between two variables is not a straight line - we can add more flexibility with polynomials. The most common form of polynomial transformation is the quadratic transformation:
+
+$$
+y_i = \beta_0 + \beta_1x_{i} + \beta_2 x_{i}^2 + u_i
+$$
+
+Our estimated $\widehat{\beta_0}$ remains the expected value of $y$ when all explanatory variables equal 0.
+
+Unfortunately, the $\widehat{\beta_1}$ and $\widehat{\beta_2}$ coefficients are not directly interpretable.
+
+-   $\widehat{\beta_2}$'s sign can tell us if the best-fit parabola opens upward or downward.
+-   The significance of $\widehat{\beta_2}$ also indicates if the quadratic term is statistically significant. If it is not, we can remove the transformation.
+
+We can interpret two things about the quadratic transformation:
+
+-   For every one unit increase in $x$, there is an expected $\widehat{\beta_1} + 2 \widehat{\beta_2}x$ unit increase in $y$.
+-   The minimum/maximum point in the best-fit parabola occurs at $x_i = - \widehat{\beta_1}/2 \widehat{\beta_2}$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Proof of Polynomial Interpretations
+
+We can derive the change in $y$ given a one unit increase in $x$ by finding the partial derivative of $y$ in respect to $x$:
+
+$$
+\begin{split}
+\frac{\partial \widehat{y_i}}{\partial x} & = \frac{\partial}{\partial x} \left[ \widehat{\beta_0} + \widehat{\beta_1}x_i + \widehat{\beta_2}x_i^2 \right] \\
+\frac{\partial \widehat{y_i}}{\partial x} & = \widehat{\beta_1} + 2 \widehat{\beta_2}x_i
+\end{split}
+$$
+
+We can also solve for the $x_i$ that results in the minimum/maximum of the best-fit parabola by setting the partial derivative equal to 0:
+
+$$
+\begin{split}
+0 & = \widehat{\beta_1} + 2 \widehat{\beta_2}x_i \\
+x_i & = -\widehat{\beta_1}/2 \widehat{\beta_2}
+\end{split}
+$$
+:::
+
+We can go beyond quadratic - as long as we always include lower degree terms in our model:
+
+-   Cubic: $y_i = \beta_0 + \beta_1x_{i} + \beta_2 x_{i}^2 + \beta_3 x_i^3 + u_i$
+-   Quartic: $y_i = \beta_0 + \beta_1x_{i} + \beta_2 x_{i}^2 + \beta_3 x_i^3 + \beta_4 x_i^4 + u_i$
+
+<br />
+
+### Logarithmic Transformations
+
+Logarithmic transformations are often used to change skewed variables into normally distributed variables.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Logging a Skewed Variable
+
+Many monetary variables are heavily skewed. Natural logging these variables can turn them into normal distributions. This is useful, since skewed variables tend to have heteroscedasticity, and by making them normal, we can use the smaller normal standard errors.
+
+For example, take this variable called *expenses* with a significant right skew:
+
+![](images/clipboard-4184932163.png){fig-align="center" width="60%"}
+
+If we take the log of this variable, we get the following distribution that is almost normal:
+
+![](images/clipboard-296612325.png){fig-align="center" width="60%"}
+:::
+
+We have 3 types of logarithmic transformations:
+
++------------+-------------------------------------+-----------------------------------------+
+|            | $x$                                 | $\log (x)$                              |
++------------+-------------------------------------+-----------------------------------------+
+| $y$        | Linear Model:                       | Linear-Log Model:                       |
+|            |                                     |                                         |
+|            | $y = \beta_0 + \beta_1 x + u$       | $y = \beta_0 + \beta_1 \log x + u$      |
++------------+-------------------------------------+-----------------------------------------+
+| $\log (y)$ | Log-Linear Model:                   | Log-Log Model:                          |
+|            |                                     |                                         |
+|            | $\log(y) = \beta_0 + \beta_1 x + u$ | $\log y = \beta_0 + \beta_1 \log x + u$ |
++------------+-------------------------------------+-----------------------------------------+
+
+<br />
+
+Interpreting the models:
+
++------------+----------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------+
+|            | $x$                                                                                          | $\log (x)$                                                                                    |
++------------+----------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------+
+| $y$        | Linear Model:                                                                                | Linear-Log Model:                                                                             |
+|            |                                                                                              |                                                                                               |
+|            | When $x$ increases by one unit, there is an expected $\widehat{\beta_1}$ unit change in $y$. | When $x$ increases by 10%, there is an expected $0.096 \widehat{\beta_1}$ unit change in $y$. |
++------------+----------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------+
+| $\log (y)$ | Log-Linear Model:                                                                            | Log-Log Model:                                                                                |
+|            |                                                                                              |                                                                                               |
+|            | For every one unit increase in $x$, $y$ is multiplied by $e^{\widehat{\beta_1}}$.            | Multiplying $x$ by $e$ will multiply the expected value of $y$ by $e^{\widehat{\beta_1}}$.    |
++------------+----------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------+
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Proof of Interpretations for Log Transformations
+
+Proof of Linear-Log Model:
+
+$$
+\begin{split}
+& E(y_i|x_i = x) = \beta_0 + \beta_1 \log x \\
+& E(y_i | x_i = e^A x) = \beta_0 + \beta_1 \log(e^A x) \\
+& = \beta_0 + \beta_1 (\log(e^A) + \log x) \\
+& = \beta_0 + \beta_1 (A + \log x) \\
+& = \beta_0 + \beta_1A + \beta_1 \log x
+\end{split}
+$$
+
+$$
+\begin{split}
+E(y_i|x_i = \alpha x) - E(y_i|x_i = x) & = \beta_0 + \beta_1 A + \beta_1 \log (x) - (\beta_0 + \beta_1 \log x) \\
+& = \beta_1 A
+\end{split}
+$$
+
+-   When $A = 0.095$, then $e^A = 1.1$. Thus, a 1.1 times increase of $x$ results in a $0.095 \widehat{\beta_1}$ change in $y$.
+
+<br />
+
+Proof of Log-Linear Model:
+
+$$
+\begin{split}
+E(\log y_i | x_i = x) =  \log y_i & = \beta_0 + \beta_1 x \\
+y_i & = e^{\beta_0 + \beta_1 x} \\
+y_i & = e^{\beta_0}e^{\beta_1 x} \\
+E(\log y_i|x_i = x+1) = \log y_i & = \beta_0 + \beta_1(x+1) \\
+y_i & = e^{\beta_0 + \beta_1 + \beta_1 x} \\
+y_i & = e^{\beta_0}e^{\beta_1}e^{\beta_1x}
+\end{split}
+$$
+
+$$
+\begin{split}
+\frac{E(\log y_i|x_i = x+1)}{E(\log y_i | x_i = x)} & = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1x}}{e^{\beta_0}e^{\beta_1x}} \\
+& = e^{\beta_1}
+\end{split}
+$$
+
+-   Thus, when $x$ increases by one, there is a multiplicative increase of $e^{\beta_1}$.
+
+<br />
+
+Proof of Log-Log model:
+
+$$
+\begin{split}
+E(\log y_i | x_i = x) =  \log y_i & = \beta_0 + \beta_1 \log x \\
+y_i & = e^{\beta_0 + \beta_1 \log x} \\
+y_i & = e^{\beta_0}e^{\beta_1 \log x} \\
+E(\log y_i|x_i = ex) = \log y_i & = \beta_0 + \beta_1 \log (ex) \\
+y_i & = e^{\beta_0 + \beta_1 \log e + \beta_1 \log x} \\
+y_i & = e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}
+\end{split}
+$$
+
+$$
+\begin{split}
+\frac{E(\log y_i|x_i = ex)}{E(\log y_i | x_i = x)} & = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}}{e^{\beta_0}e^{\beta_1 \log x}} \\
+& = e^{\beta_1}
+\end{split}
+$$
+
+-   Thus, when $x$ is multiplied by $e$, there is a multiplicative increase of $e^{\beta_1}$.
+:::
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Implementation in R**
+
+You will need package *fixest*.
+
+```{r, eval = FALSE}
+library(fixest)
+```
+
+Regression with normal standard errors can be done with the *lm()* function:
+
+```{r, eval = FALSE}
+model <- lm(y ~ x1 + x2 + x3, data = mydata)
+summary(model)
+```
+
+Regression with robust standard errors can be done with the *feols()* function:
+
+```{r, eval = FALSE}
+model <- feols(y ~ x1 + x2 + x3, data = mydata, se = "hetero")
+summary(model)
+```
+
+Output will include coefficients, standard errors, p-values, and more.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Binary and Categorical Variables
+
+You can include binary and categorical variables by using the *as.factor()* function:
+
+```{r, eval = FALSE}
+feols(y ~ x1 + as.factor(x2) + x3, data = mydata, se = "hetero")
+```
+
+You can do the same for $y$ or $x$. Just remember, $y$ cannot be a categorical variable (use multinomial logsitic regression instead).
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Interaction Effects
+
+Two interact two variables, use \* between them. This will automatically include both the interaction term, and the two variables by themselves.
+
+```{r, eval = FALSE}
+feols(y ~ x1 + x2*x3, data = mydata, se = "hetero")
+```
+
+If for some reason, you only want the interaction term, but not the variables by themselves, you can use a colon : between the two variables:
+
+```{r, eval = FALSE}
+feols(y ~ x1 + x2:x3, data = mydata, se = "hetero")
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Polynomial Transformations
+
+To conduct a polynomial transformation, you can use the *I()* function. The second argument is the degree of the polynomial:
+
+```{r, eval = FALSE}
+feols(y ~ x1 + I(x2, 3), data = mydata, se = "hetero") #cubic for x2
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Logarithmic Transformations
+
+The best way to do a logarithmic transformation is to create a new variable that is the log of the variable you want to transform using the *log()* function, before you even start the regression:
+
+```{r, eval = FALSE}
+mydata$x1_log <- log(mydata$x1)
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Confidence Intervals
+
+To find the confidence intervals for coefficients, first estimate the model with *lm()* or *feols()* as shown previously, then use the *confint()* command:
+
+```{r, eval = FALSE}
+confint(model)
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## F-Tests
+
+To run a f-test, use the *anova()* command, and input your two different models, with the null model going first.
+
+```{r, eval = FALSE}
+anova(model1, model2)
+```
+
+Note: F-tests only work with models that are run with homoscedastic standard errors. Robust standard errors will not work.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## LaTeX Regression Tables
+
+You can use the *texreg* package to make nice regression tables automatically.
+
+```{r, eval = FALSE}
+library(texreg)
+```
+
+The syntax for *texreg()* is as follows:
+
+```{r, eval = FALSE}
+texreg(l = list(model1, model2, model3),
+       custom.model.names = c("model 1", "model 2", "model 3"),
+       custom.coef.names = c("intercept", "x1", "x2"),
+       digits = 3)
+```
+
+You can replace *texreg()* with *screenreg()* if you want a nicer regression table in the R-console.
+
+Note: you must have the same amount of model names as total models in your texreg, and you must have the same amount of coeficient names as the total amount of coefficients in all of your models.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Prediction
+
+We can use the *predict()* function to generate fitted value predictions in R:
+
+```{r, eval = FALSE}
+my_predictions <- predict(model, newdata = my_new_data)
+#my_new_data is a dataframe with a bunch of explanatory variable values for which to predict for.
+```
+:::

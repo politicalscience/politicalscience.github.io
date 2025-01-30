@@ -86,7 +86,7 @@ window.Quarto = {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Causal Frameworks and Estimands</h1>
-            <p class="subtitle lead">Applied Econometrics/Causal Inference</p>
+            <p class="subtitle lead">Methods for Causal Inference</p>
                       </div>
   </div>
     
@@ -157,7 +157,7 @@ window.Quarto = {
 <p><span class="math display">
 D_i = \begin{cases}
 1 \quad \text{if unit } i \text{ recieved the treatment} \\
-0 \quad \text{otherwise}
+0 \quad \text{if unit } i \text{ did not recieve the treatment}
 \end{cases}
 </span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
@@ -193,7 +193,6 @@ Y_{di} =\begin{cases}
 &amp; Y_{0i} \quad \text{Outcome for unit } i \text{ when } D_i = 0 \\
 \end{cases}
 </span></p>
-<p>Alternative notation includes <span class="math inline">Y_i(d), y_i^d</span>.</p>
 <p>For example, imagine we are interested in finding the effect of democracy <span class="math inline">D</span> on GDP growth <span class="math inline">Y</span>. Potential outcome <span class="math inline">Y_{1i}</span> is the potential GDP growth of country <span class="math inline">i</span> if they were a democracy, and outcome <span class="math inline">Y_{0i}</span> is the potential GDP growth of a country <span class="math inline">i</span> if they were not a democracy.</p>
 <p><br></p>
 </section>
@@ -204,7 +203,7 @@ Y_{di} =\begin{cases}
 <p><span class="math display">
 Y_i = D_i \cdot Y_{1i} + (1-D_i) \cdot Y_{0i}
 </span></p>
-<p>If we plug in <span class="math inline">D_i = 0, 1</span>, we get the observed outcomes:</p>
+<p>If we plug in <span class="math inline">D_i = 0, 1</span> to the equation above, we get the observed outcomes:</p>
 <p><span class="math display">
 Y_i = \begin{cases}
 Y_{1i} \quad \text{if } D_i = 1 \\
@@ -229,13 +228,13 @@ Neyman Urn Model
 <p>Before the treatment, we have a box (we cannot see) with both potential outcomes.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-802589608.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+<p><img src="images/clipboard-802589608.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:55.0%"></p>
 </figure>
 </div>
 <p>Then, when we apply treatment, we stick our hand into the box that we cannot see, and pull out one observed outcome.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-2975134148.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+<p><img src="images/clipboard-2975134148.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
 </figure>
 </div>
 <p>We are essentially sampling from potential outcomes to get observed outcomes.</p>
@@ -249,12 +248,8 @@ Neyman Urn Model
 <h3 class="anchored" data-anchor-id="stable-unit-treatment-value-assumption">Stable Unit Treatment Value Assumption</h3>
 <p>The above given observed and potential outcome frameworks depends on the Stable Unit Treatment Value Assumption (SUTVA).</p>
 <p><span class="math display">
-\underbrace{Y_{(D_1, D_2, \dots, D_N)i}}_{\text{Observed treatments}} = \underbrace{Y_{(D_1', D_2', \dots, D_N')i}}_{\text{All alternative treatments}}
+\underbrace{Y_{(D_1, D_2, \dots, D_N)i}}_{\text{Observed } D_i} = \underbrace{Y_{(D_1', D_2', \dots, D_N')i}}_{\text{All alternative } D_i}
 </span></p>
-<ul>
-<li>Where <span class="math inline">D_1, D_2, \dots D_N</span> are the observed treatment status <span class="math inline">D_i</span> of all observations <span class="math inline">i = 1, \dots, N</span>.</li>
-<li>Where <span class="math inline">D_1', D_2', \dots, D_N'</span> are any alternative treatment status <span class="math inline">D_i</span> of all observations.</li>
-</ul>
 <p>Or more intuitively, the potential outcomes of unit <span class="math inline">i</span> only depends on their own treatment status, and no other unit’s treatment status. The treatment is also the same for everyone (treatment is stable and consistent)</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -329,7 +324,7 @@ Group-Level Causal Estimands
 <p><span class="math display">
 \begin{split}
 \tau_{ATE} &amp; = E(Y_{1i} - Y_{0i}) \\
-&amp; = \frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i})
+&amp; = \frac{1}{N} \sum\limits_{i=1}^N (Y_{1i} - Y_{0i})
 \end{split}
 </span></p>
 <p>We cannot calculate this with observed data - since we need all potential outcomes to do this. We can estimate this (covered throughout this course).</p>
@@ -396,7 +391,7 @@ ATT vs.&nbsp;ATE
 \begin{split}
 \hat\tau_{naive} &amp; = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
 &amp; = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) \\
-&amp; = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i}|D_i = 1)}_{\text{This just equals 0, so we can add it}} \\
+&amp; = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i}|D_i = 1)}_{\text{This equals 0, so we can add it}} \\
 &amp; = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
 \end{split}
 </span></p>
@@ -417,35 +412,7 @@ ATT vs.&nbsp;ATE
 </section>
 <section id="omitted-variable-bias-in-regression" class="level3">
 <h3 class="anchored" data-anchor-id="omitted-variable-bias-in-regression">Omitted Variable Bias in Regression</h3>
-<p>Let us say we are interested in finding the relationship between treatment <span class="math inline">D</span> and outcome <span class="math inline">Y</span>. However, there is a confounding variable, <span class="math inline">X</span>, that is correlated with both <span class="math inline">D</span> and <span class="math inline">Y</span>.</p>
-<p>We could run a simple linear regression with just <span class="math inline">D</span> and <span class="math inline">Y</span> (essentially a measure of correlation between the two):</p>
-<p><span class="math display">
-Y_i = \beta_0^S + \beta_1^SD_i + u_i^S
-</span></p>
-<p>We could also run a multiple linear regression with <span class="math inline">D</span>, confounder <span class="math inline">X</span>, and <span class="math inline">Y</span>. This accounts for the impact of the confounder, and “partials out” the effect of the confounder (this is given by the Regression Anatomy Theorem):</p>
-<p><span class="math display">
-Y_i = \beta_0 + \beta_1D_i + \beta_2 X_i + u_i
-</span></p>
-<p>Our simple linear regression coefficient <span class="math inline">\beta_1^S</span> (a measure of correlation) is thus wrong for the causal effect - it fails to partial out the effect of confounder <span class="math inline">X</span>. We can quantify “how wrong” <span class="math inline">\beta_1^S</span> is with the omitted variable bias formula:</p>
-<p><span class="math display">
-\beta_1^S = \beta_1 + \beta_2\delta_1
-</span></p>
-<ul>
-<li>Where <span class="math inline">\delta_1</span> is the coefficient of a regression between outcome <span class="math inline">X</span> and explanatory variable <span class="math inline">D</span>.</li>
-</ul>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Details of Omitted Variable Bias
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>We have a short and long regression, where the long includes confounder <span class="math inline">X</span>:</p>
+<p>We want to find the effect <span class="math inline">D \rightarrow Y</span>. We have a short and long regression, where the long includes confounder <span class="math inline">X</span>:</p>
 <p><span class="math display">
 \begin{split}
 Y_i &amp; = \beta_0^S + \beta_1^SD_i + u_i^S \\
@@ -460,16 +427,13 @@ X_i = \delta_0 + \delta_1 D_i + v_i
 <p><span class="math display">
 \begin{split}
 Y_i &amp; = \beta_0 + \beta_1D_i + \beta_2 X_i + u_i \\
-&amp; = \beta_0 + \beta_1 D_i + \beta_2(\delta_0 + \delta_1 D_i + v_i) + u_i \\
+&amp; = \beta_0 + \beta_1 D_i + \beta_2\underbrace{(\delta_0 + \delta_1 D_i + v_i)}_{\text{insert regression } X_i} + u_i \\
 &amp; = \beta_0 + \beta_1 D_i + \beta_2 \delta_0 + \beta_2\delta_1 D_i + \beta_2 v_i + u_i \\
-&amp; = \beta_0 + \beta_2 \delta_0 + (\beta_1+\beta_2\delta_1)D_i + \beta_2v_i + u_i
+&amp; = \underbrace{\beta_0 + \beta_2 \delta_0}_{\beta_0^S} + \underbrace{(\beta_1+\beta_2\delta_1)D_i}_{\beta_1^SD_i} + \underbrace{\beta_2v_i + u_i}_{u_i^S}
 \end{split}
 </span></p>
 <p>The last equation is essentially a “recreation” of the short regression with only one explanatory variable. Note how the coefficient of <span class="math inline">D_i</span> in this regression is <span class="math inline">(\beta_1 + \beta_2 \delta_1)</span>.</p>
 <p>Thus, <span class="math inline">\beta_1^S = \beta_1 + \beta_2 \delta_1</span>. Since <span class="math inline">\beta_1</span> is the true value of the relationship between <span class="math inline">D</span> and <span class="math inline">Y</span> (since it controls for the confounder), that means <span class="math inline">\beta_1^S</span> is off by <span class="math inline">\beta_2 \delta_1</span>.</p>
-</div>
-</div>
-</div>
 <p>Thus, <span class="math inline">\beta_2 \delta_1</span> is the omitted variable <strong>bias</strong> in the short regression. In conclusion - if we do not account for confounding variables, we will have bias in our causal estimations. Thus, <u>correlation does not equal causation!</u></p>
 <p><br></p>
 <p><br></p>
@@ -487,7 +451,7 @@ Y_i &amp; = \beta_0 + \beta_1D_i + \beta_2 X_i + u_i \\
 <li>Directed Edges: Arrows that encode one-way causal theories between variables. For example, we might believe <span class="math inline">Z</span> causes <span class="math inline">X</span>, so we will draw an arrow from <span class="math inline">Z</span> to <span class="math inline">X</span>. These connections are <strong>observable</strong> (solid) or <strong>unobservable</strong> (dashed).</li>
 </ol>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -496,7 +460,7 @@ Example of Directed Acyclic Graphs
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Below is an example of a directed acyclic graph:</p>
 <div class="quarto-figure quarto-figure-center">
@@ -534,7 +498,7 @@ Example of Directed Acyclic Graphs
 <p>Treatments are represented by the <strong>do()</strong> operator. When the treatment is exogenous, we can break all the connections into that variable’s node.</p>
 <p>This is because we are determining the value of the variable, not any other variables.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -543,7 +507,7 @@ Example of Interventions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">

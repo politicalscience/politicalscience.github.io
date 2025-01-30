@@ -1,6 +1,6 @@
 ---
 title: "Causal Frameworks and Estimands"
-subtitle: "Applied Econometrics/Causal Inference"
+subtitle: "Methods for Causal Inference"
 format:
     html:
         page-layout: article
@@ -38,7 +38,7 @@ $D$ is our treatment variable. The indicator of treatment for each unit $i$ is $
 $$
 D_i = \begin{cases}
 1 \quad \text{if unit } i \text{ recieved the treatment} \\
-0 \quad \text{otherwise}
+0 \quad \text{if unit } i \text{ did not recieve the treatment}
 \end{cases}
 $$
 
@@ -68,8 +68,6 @@ Y_{di} =\begin{cases}
 \end{cases}
 $$
 
-Alternative notation includes $Y_i(d), y_i^d$.
-
 For example, imagine we are interested in finding the effect of democracy $D$ on GDP growth $Y$. Potential outcome $Y_{1i}$ is the potential GDP growth of country $i$ if they were a democracy, and outcome $Y_{0i}$ is the potential GDP growth of a country $i$ if they were not a democracy.
 
 <br />
@@ -84,7 +82,7 @@ $$
 Y_i = D_i \cdot Y_{1i} + (1-D_i) \cdot Y_{0i}
 $$
 
-If we plug in $D_i = 0, 1$, we get the observed outcomes:
+If we plug in $D_i = 0, 1$ to the equation above, we get the observed outcomes:
 
 $$
 Y_i = \begin{cases}
@@ -104,11 +102,11 @@ Potential Outcomes can be visualised with the Neyman Urn Model.
 
 Before the treatment, we have a box (we cannot see) with both potential outcomes.
 
-![](images/clipboard-802589608.png){fig-align="center" width="70%"}
+![](images/clipboard-802589608.png){fig-align="center" width="55%"}
 
 Then, when we apply treatment, we stick our hand into the box that we cannot see, and pull out one observed outcome.
 
-![](images/clipboard-2975134148.png){fig-align="center" width="70%"}
+![](images/clipboard-2975134148.png){fig-align="center" width="60%"}
 
 We are essentially sampling from potential outcomes to get observed outcomes.
 :::
@@ -122,11 +120,8 @@ This missing data problem is called the **fundamental problem of causal inferenc
 The above given observed and potential outcome frameworks depends on the Stable Unit Treatment Value Assumption (SUTVA).
 
 $$
-\underbrace{Y_{(D_1, D_2, \dots, D_N)i}}_{\text{Observed treatments}} = \underbrace{Y_{(D_1', D_2', \dots, D_N')i}}_{\text{All alternative treatments}}
+\underbrace{Y_{(D_1, D_2, \dots, D_N)i}}_{\text{Observed } D_i} = \underbrace{Y_{(D_1', D_2', \dots, D_N')i}}_{\text{All alternative } D_i}
 $$
-
--   Where $D_1, D_2, \dots D_N$ are the observed treatment status $D_i$ of all observations $i = 1, \dots, N$.
--   Where $D_1', D_2', \dots, D_N'$ are any alternative treatment status $D_i$ of all observations.
 
 Or more intuitively, the potential outcomes of unit $i$ only depends on their own treatment status, and no other unit's treatment status. The treatment is also the same for everyone (treatment is stable and consistent)
 
@@ -198,7 +193,7 @@ The Average Treatment Effect is defined as:
 $$
 \begin{split}
 \tau_{ATE} & = E(Y_{1i} - Y_{0i}) \\
-& = \frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i})
+& = \frac{1}{N} \sum\limits_{i=1}^N (Y_{1i} - Y_{0i})
 \end{split}
 $$
 
@@ -269,7 +264,7 @@ $$
 \begin{split}
 \hat\tau_{naive} & = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
 & = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) \\
-& = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i}|D_i = 1)}_{\text{This just equals 0, so we can add it}} \\
+& = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i}|D_i = 1)}_{\text{This equals 0, so we can add it}} \\
 & = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
 \end{split}
 $$
@@ -298,32 +293,7 @@ This is why correlation does not equal causation - if the treatment and control 
 
 ### Omitted Variable Bias in Regression
 
-Let us say we are interested in finding the relationship between treatment $D$ and outcome $Y$. However, there is a confounding variable, $X$, that is correlated with both $D$ and $Y$.
-
-We could run a simple linear regression with just $D$ and $Y$ (essentially a measure of correlation between the two):
-
-$$
-Y_i = \beta_0^S + \beta_1^SD_i + u_i^S
-$$
-
-We could also run a multiple linear regression with $D$, confounder $X$, and $Y$. This accounts for the impact of the confounder, and "partials out" the effect of the confounder (this is given by the Regression Anatomy Theorem):
-
-$$
-Y_i = \beta_0 + \beta_1D_i + \beta_2 X_i + u_i
-$$
-
-Our simple linear regression coefficient $\beta_1^S$ (a measure of correlation) is thus wrong for the causal effect - it fails to partial out the effect of confounder $X$. We can quantify "how wrong" $\beta_1^S$ is with the omitted variable bias formula:
-
-$$
-\beta_1^S = \beta_1 + \beta_2\delta_1
-$$
-
--   Where $\delta_1$ is the coefficient of a regression between outcome $X$ and explanatory variable $D$.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Details of Omitted Variable Bias
-
-We have a short and long regression, where the long includes confounder $X$:
+We want to find the effect $D \rightarrow Y$. We have a short and long regression, where the long includes confounder $X$:
 
 $$
 \begin{split}
@@ -343,16 +313,15 @@ We can plug in the above $X_i$ into our long regression, to get the entire long 
 $$
 \begin{split}
 Y_i & = \beta_0 + \beta_1D_i + \beta_2 X_i + u_i \\
-& = \beta_0 + \beta_1 D_i + \beta_2(\delta_0 + \delta_1 D_i + v_i) + u_i \\
+& = \beta_0 + \beta_1 D_i + \beta_2\underbrace{(\delta_0 + \delta_1 D_i + v_i)}_{\text{insert regression } X_i} + u_i \\
 & = \beta_0 + \beta_1 D_i + \beta_2 \delta_0 + \beta_2\delta_1 D_i + \beta_2 v_i + u_i \\
-& = \beta_0 + \beta_2 \delta_0 + (\beta_1+\beta_2\delta_1)D_i + \beta_2v_i + u_i
+& = \underbrace{\beta_0 + \beta_2 \delta_0}_{\beta_0^S} + \underbrace{(\beta_1+\beta_2\delta_1)D_i}_{\beta_1^SD_i} + \underbrace{\beta_2v_i + u_i}_{u_i^S}
 \end{split}
 $$
 
 The last equation is essentially a "recreation" of the short regression with only one explanatory variable. Note how the coefficient of $D_i$ in this regression is $(\beta_1 + \beta_2 \delta_1)$.
 
 Thus, $\beta_1^S = \beta_1 + \beta_2 \delta_1$. Since $\beta_1$ is the true value of the relationship between $D$ and $Y$ (since it controls for the confounder), that means $\beta_1^S$ is off by $\beta_2 \delta_1$.
-:::
 
 Thus, $\beta_2 \delta_1$ is the omitted variable **bias** in the short regression. In conclusion - if we do not account for confounding variables, we will have bias in our causal estimations. Thus, [correlation does not equal causation!]{.underline}
 

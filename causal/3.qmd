@@ -1,6 +1,6 @@
 ---
 title: "Randomised Controlled Trials"
-subtitle: "Applied Econometrics/Causal Inference"
+subtitle: "Methods for Causal Inference"
 format:
     html:
         page-layout: article
@@ -23,7 +23,7 @@ format:
 editor: visual
 ---
 
-Summary
+This chapter introduces the "gold standard" of causal inference: randomised controlled trials.
 
 ------------------------------------------------------------------------
 
@@ -76,7 +76,7 @@ $$
 
 ### Randomisation and Selection Bias
 
-Let us return to our naive estimator comparing observed outcomes (from the last chapter), and our problem of selection bias:
+Let us return to our [naive estimator](https://politicalscience.github.io/causal/2.html#naive-estimator-and-selection-bias) comparing observed outcomes, and our problem of selection bias:
 
 $$
 \hat\tau_{\text{naive}} = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}}
@@ -116,19 +116,18 @@ $$
 \end{split}
 $$
 
-We can simplify all of our estimands using these properties:
-
-$$
-\tau_{ATE} = E(Y_{1i}) - E(Y_{0i})
-$$
+Now look at the formula for the [ATT](https://politicalscience.github.io/causal/2.html#average-treatment-effect-on-the-treated-att). We can simplify as follows:
 
 $$
 \begin{split}
-\tau_{ATT} =
-\end{split} 
+\tau_{ATT} & = E(Y_{1i} -Y_{0i}|D_i = 1)\\
+& = E(Y_{1i} |D_i = 1) - E(Y_{0i} | D_i = 1) \\
+& = E(Y_{1i} ) - E(Y_{0i}) \\
+& = \underbrace{E(Y_{1i} - Y_{0i})}_{\tau_{ATE}}
+\end{split}
 $$
 
-And now we see that all the estimands are equivalent under randomisation.
+And now we see that $\tau_{ATT}$ and $\tau_{ATE}$ are equivalent under randomisation.
 
 <br />
 
@@ -195,7 +194,7 @@ Add notes here from GV481 and Lecture
 Our causal estimand is the Average Treatment Effect (ATE):
 
 $$
-\tau_{ATE} = E(Y_1) - E(Y_0)
+\tau_{ATE} = E(Y_{1i}) - E(Y_{0i})
 $$
 
 We can estimate this using the difference-in-means estimator, by taking the sample mean $Y$ of the treatment group, minus the sample mean $Y$ of the control group:
@@ -221,7 +220,26 @@ Here, $\hat\tau$ is our estimator of the ATE. This gives the same estimate as th
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Proof OLS is Equivalent to Difference-in-Means
 
-Notes
+Remember that OLS is the best approximation of the conditional expectation function $E(y|x)$.
+
+Thus, we can write the regression as:
+
+$$
+E(Y_i|D_i) = \hat\gamma + \hat\tau D_i + \hat\epsilon_i
+$$
+
+Now, let us find the difference between treatment $E(Y_i|D_i =1)$ and control $E(Y_i|D_i = 0)$:
+
+$$
+\begin{split}
+& E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
+= & \ \hat\gamma + \hat\tau(1) + \hat\epsilon_i - (\hat\gamma + \hat\tau(0) + \hat\epsilon_i) \\
+= & \ \hat\gamma + \hat\tau + \hat\epsilon_i - \hat\gamma - \hat\epsilon \\
+= & \ \hat\tau
+\end{split}
+$$
+
+Thus, the difference in means is equivalent to $\hat\tau$ regression coefficient.
 :::
 
 Furthermore, $\hat\gamma$ is equivalent to the average $Y$ in the control group $\bar Y_0$.
