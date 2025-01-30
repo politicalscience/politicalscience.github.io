@@ -86,7 +86,7 @@ window.Quarto = {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Principle Components Analysis</h1>
-            <p class="subtitle lead">Multivariate Statistics and Measurement</p>
+            <p class="subtitle lead">Methods for Measurement</p>
                       </div>
   </div>
     
@@ -105,19 +105,19 @@ window.Quarto = {
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#principle-components-analysis" id="toc-principle-components-analysis" class="nav-link active" data-scroll-target="#principle-components-analysis"><span class="header-section-number">1</span> <strong>Principle Components Analysis</strong></a>
+  <li><a href="#principle-components-analysis" id="toc-principle-components-analysis" class="nav-link active" data-scroll-target="#principle-components-analysis"><strong>Principle Components Analysis</strong></a>
   <ul class="collapse">
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#observed-variables" id="toc-observed-variables" class="nav-link" data-scroll-target="#observed-variables">Observed Variables</a></li>
   <li><a href="#principle-components" id="toc-principle-components" class="nav-link" data-scroll-target="#principle-components">Principle Components</a></li>
   <li><a href="#the-form-of-principle-components" id="toc-the-form-of-principle-components" class="nav-link" data-scroll-target="#the-form-of-principle-components">The Form of Principle Components</a></li>
   </ul></li>
-  <li><a href="#mathematics-of-pca" id="toc-mathematics-of-pca" class="nav-link" data-scroll-target="#mathematics-of-pca"><span class="header-section-number">2</span> <strong>Mathematics of PCA</strong></a>
+  <li><a href="#mathematics-of-pca" id="toc-mathematics-of-pca" class="nav-link" data-scroll-target="#mathematics-of-pca"><strong>Mathematics of PCA</strong></a>
   <ul class="collapse">
-  <li><a href="#calculating-weights" id="toc-calculating-weights" class="nav-link" data-scroll-target="#calculating-weights">Calculating Weights</a></li>
+  <li><a href="#calculating-principle-components" id="toc-calculating-principle-components" class="nav-link" data-scroll-target="#calculating-principle-components">Calculating Principle Components</a></li>
   <li><a href="#standardisation-of-items" id="toc-standardisation-of-items" class="nav-link" data-scroll-target="#standardisation-of-items">Standardisation of Items</a></li>
   </ul></li>
-  <li><a href="#interpreting-principle-components" id="toc-interpreting-principle-components" class="nav-link" data-scroll-target="#interpreting-principle-components"><span class="header-section-number">3</span> <strong>Interpreting Principle Components</strong></a>
+  <li><a href="#interpreting-principle-components" id="toc-interpreting-principle-components" class="nav-link" data-scroll-target="#interpreting-principle-components"><strong>Interpreting Principle Components</strong></a>
   <ul class="collapse">
   <li><a href="#properties-of-principal-components" id="toc-properties-of-principal-components" class="nav-link" data-scroll-target="#properties-of-principal-components">Properties of Principal Components</a></li>
   <li><a href="#choosing-number-of-components" id="toc-choosing-number-of-components" class="nav-link" data-scroll-target="#choosing-number-of-components">Choosing Number of Components</a></li>
@@ -138,8 +138,8 @@ window.Quarto = {
 
 <p>Summary goes here</p>
 <hr>
-<section id="principle-components-analysis" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> <strong>Principle Components Analysis</strong></h1>
+<section id="principle-components-analysis" class="level1">
+<h1><strong>Principle Components Analysis</strong></h1>
 <section id="introduction" class="level3">
 <h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
 <p>Principle Components Analysis (PCA) combines multiple observed variables into one or new observed variables (called principle components).</p>
@@ -189,7 +189,7 @@ Example: Trust in Institutions
 <li>Sample correlations <span class="math inline">Corr(x_i, x_k)</span> for each pair of variables <span class="math inline">i ≠ k</span>.</li>
 <li>Total variance of the <span class="math inline">p</span> variables: <span class="math inline">Var(x_1) + Var(x_2)+ \dots + Var(x_p)</span>.</li>
 </ol>
-<p>The sample correlations <span class="math inline">Corr(x_i, x_k)</span> can be summarised in a correlation matrix.</p>
+<p>The sample correlations <span class="math inline">Corr(x_i, x_k)</span> can be summarised in a covariance matrix. We notate the covariance matrix as <span class="math inline">\boldsymbol\Sigma</span>. We can also use a correlation matrix (more on that later).</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -232,6 +232,18 @@ y_2 = &amp; a_{12}x_1 + a_{22}x_2 + \dots + a_{p2}x_p \\
 y_p = &amp; a_{1p}x_1 + a_{2p}x_2 + \dots + a_{pp}x_p
 \end{split}
 </span></p>
+<p>We can rewrite each principle component in terms of linear algebra:</p>
+<p><span class="math display">
+y_j = \mathbf a_j^T\mathbf x = \underbrace{\begin{pmatrix}
+a_{1j} &amp; a_{2j} &amp;\dots &amp; a_{pj}
+\end{pmatrix}}_{\text{weight vector for } y_i} \begin{pmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_p
+\end{pmatrix}
+</span></p>
+<p>And all principle components can be expressed as:</p>
+<p><span class="math display">
+\mathbf y = \mathbf A^T \mathbf x, \quad \mathbf A = \begin{pmatrix} \mathbf a_1 &amp; \mathbf a_2 &amp; \dots &amp; \mathbf a_p \end{pmatrix}
+</span></p>
 <p>Each component is a weighted sum of the original variables, with weights <span class="math inline">a_{ij}</span>. These weights have a few properties:</p>
 <ol type="1">
 <li><span class="math inline">\sum_i a_{ij}^2 = 1</span> for each <span class="math inline">j = 1, 2, \dots, p</span>. Or in other words, the weights should sum to 1.</li>
@@ -242,12 +254,32 @@ y_p = &amp; a_{1p}x_1 + a_{2p}x_2 + \dots + a_{pp}x_p
 <hr>
 </section>
 </section>
-<section id="mathematics-of-pca" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> <strong>Mathematics of PCA</strong></h1>
-<section id="calculating-weights" class="level3">
-<h3 class="anchored" data-anchor-id="calculating-weights">Calculating Weights</h3>
-<p>The weights <span class="math inline">a_{ij}</span> are calculated from eigenvalue decomposition of the covariance matrix of <span class="math inline">x_1, \dots, x_p</span>.</p>
-<p><span class="math inline">(a_{1j}, a_{2j}, \dots, a_{pj})</span> is the eigenvector corresponding to the <span class="math inline">j</span>th eigenvalue <span class="math inline">\lambda_j</span>.</p>
+<section id="mathematics-of-pca" class="level1">
+<h1><strong>Mathematics of PCA</strong></h1>
+<section id="calculating-principle-components" class="level3">
+<h3 class="anchored" data-anchor-id="calculating-principle-components">Calculating Principle Components</h3>
+<p>The weights <span class="math inline">a_{ij}</span> are calculated from eigenvalue decomposition of the covariance matrix <span class="math inline">\boldsymbol\Sigma</span> of variables <span class="math inline">x_1, \dots, x_p</span>.</p>
+<p>We assume that <span class="math inline">\boldsymbol\Sigma</span> has <span class="math inline">p</span> distinct positive eigenvalues, denoted <span class="math inline">\lambda_1 &gt; \dots, \lambda_p &gt; 0</span>. Each eigenvalue corresponds to a eigenvector <span class="math inline">\mathbf a_j</span>, which serves as the weight vector for the <span class="math inline">i</span>th principle component:</p>
+<p><span class="math display">
+\boldsymbol\Sigma \mathbf a_j = \lambda_j \mathbf a_j
+</span></p>
+<p>We can apply eigenvalue decomposition to matrix <span class="math inline">\boldsymbol\Sigma</span>:</p>
+<p><span class="math display">
+\boldsymbol\Sigma = \mathbf{ADA}^{-1}
+</span></p>
+<p>Where <span class="math inline">\mathbf Q</span> is made up of the eigenvectors of matrix <span class="math inline">\boldsymbol\Sigma</span>, and <span class="math inline">\mathbf D</span> is a diagonal matrix with the eigenvalues <span class="math inline">\lambda</span> on its diagonals:</p>
+<p><span class="math display">
+\mathbf D = \begin{pmatrix}
+\lambda_1 &amp; 0 &amp; \dots &amp; 0 \\
+0 &amp; \lambda_2 &amp; \dots &amp; 0 \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+0 &amp; 0 &amp; 0 &amp; \lambda_p
+\end{pmatrix}, \quad \mathbf A = \begin{pmatrix} \mathbf a_1 &amp; \mathbf a_2 &amp; \dots &amp; \mathbf a_p \end{pmatrix}
+</span></p>
+<p>The principle components will be as follows:</p>
+<p><span class="math display">
+\mathbf y = \mathbf A^T \mathbf x
+</span></p>
 <p><br></p>
 <p><br></p>
 </section>
@@ -269,8 +301,8 @@ z_{it} = \frac{x_{it} - \bar x_i}{s_i}
 <hr>
 </section>
 </section>
-<section id="interpreting-principle-components" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> <strong>Interpreting Principle Components</strong></h1>
+<section id="interpreting-principle-components" class="level1">
+<h1><strong>Interpreting Principle Components</strong></h1>
 <section id="properties-of-principal-components" class="level3">
 <h3 class="anchored" data-anchor-id="properties-of-principal-components">Properties of Principal Components</h3>
 <p>The variance of <span class="math inline">y_j</span>, is equivalent to the <span class="math inline">j</span>th eigenvalue:</p>

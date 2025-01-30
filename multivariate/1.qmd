@@ -1,6 +1,6 @@
 ---
 title: "Principle Components Analysis"
-subtitle: "Multivariate Statistics and Measurement"
+subtitle: "Methods for Measurement"
 format:
     html:
         page-layout: article
@@ -11,8 +11,6 @@ format:
           gutter-width: 2em
         fontsize: 12pt
         theme: default
-        number-sections: true
-        number-depth: 1
         toc: TRUE
         toc-depth: 3
         toc-location: left
@@ -72,7 +70,7 @@ These variables can be summarised by:
 3.  Sample correlations $Corr(x_i, x_k)$ for each pair of variables $i ≠ k$.
 4.  Total variance of the $p$ variables: $Var(x_1) + Var(x_2)+ \dots + Var(x_p)$.
 
-The sample correlations $Corr(x_i, x_k)$ can be summarised in a correlation matrix.
+The sample correlations $Corr(x_i, x_k)$ can be summarised in a covariance matrix. We notate the covariance matrix as $\boldsymbol\Sigma$. We can also use a correlation matrix (more on that later).
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Example of a Correlation Matrix
@@ -110,6 +108,22 @@ y_p = & a_{1p}x_1 + a_{2p}x_2 + \dots + a_{pp}x_p
 \end{split}
 $$
 
+We can rewrite each principle component in terms of linear algebra:
+
+$$
+y_j = \mathbf a_j^T\mathbf x = \underbrace{\begin{pmatrix}
+a_{1j} & a_{2j} &\dots & a_{pj}
+\end{pmatrix}}_{\text{weight vector for } y_i} \begin{pmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_p
+\end{pmatrix} 
+$$
+
+And all principle components can be expressed as:
+
+$$
+\mathbf y = \mathbf A^T \mathbf x, \quad \mathbf A = \begin{pmatrix} \mathbf a_1 & \mathbf a_2 & \dots & \mathbf a_p \end{pmatrix}
+$$
+
 Each component is a weighted sum of the original variables, with weights $a_{ij}$. These weights have a few properties:
 
 1.  $\sum_i a_{ij}^2 = 1$ for each $j = 1, 2, \dots, p$. Or in other words, the weights should sum to 1.
@@ -123,11 +137,38 @@ Each component is a weighted sum of the original variables, with weights $a_{ij}
 
 # **Mathematics of PCA**
 
-### Calculating Weights
+### Calculating Principle Components
 
-The weights $a_{ij}$ are calculated from eigenvalue decomposition of the covariance matrix of $x_1, \dots, x_p$.
+The weights $a_{ij}$ are calculated from eigenvalue decomposition of the covariance matrix $\boldsymbol\Sigma$ of variables $x_1, \dots, x_p$.
 
-$(a_{1j}, a_{2j}, \dots, a_{pj})$ is the eigenvector corresponding to the $j$th eigenvalue $\lambda_j$.
+We assume that $\boldsymbol\Sigma$ has $p$ distinct positive eigenvalues, denoted $\lambda_1 > \dots, \lambda_p > 0$. Each eigenvalue corresponds to a eigenvector $\mathbf a_j$, which serves as the weight vector for the $i$th principle component:
+
+$$
+\boldsymbol\Sigma \mathbf a_j = \lambda_j \mathbf a_j
+$$
+
+We can apply eigenvalue decomposition to matrix $\boldsymbol\Sigma$:
+
+$$
+\boldsymbol\Sigma = \mathbf{ADA}^{-1}
+$$
+
+Where $\mathbf Q$ is made up of the eigenvectors of matrix $\boldsymbol\Sigma$, and $\mathbf D$ is a diagonal matrix with the eigenvalues $\lambda$ on its diagonals:
+
+$$
+\mathbf D = \begin{pmatrix}
+\lambda_1 & 0 & \dots & 0 \\
+0 & \lambda_2 & \dots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & \lambda_p
+\end{pmatrix}, \quad \mathbf A = \begin{pmatrix} \mathbf a_1 & \mathbf a_2 & \dots & \mathbf a_p \end{pmatrix}
+$$
+
+The principle components will be as follows:
+
+$$
+\mathbf y = \mathbf A^T \mathbf x
+$$
 
 <br />
 
