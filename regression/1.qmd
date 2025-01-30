@@ -36,7 +36,22 @@ Let us say we have some outcome variable $y$, and several explanatory variables 
 The linear regression model can be written as a conditional expectation $E(y|x)$ function:
 
 $$
-E(y_i|x_i) = \beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki}
+\underbrace{E(y_i|x_i)}_{\text{expected } y_i} = \underbrace{\beta_0}_{\text{intercept}} + \underbrace{{\beta_1}}_{\text{Coefficient}}x_{1i} + \dots + \beta_kx_{ki}
+$$
+
+The linear model can also be specified for any specific outcome value $y_i$:
+
+$$
+\underbrace{y_i}_{y \text{ for } i} = \underbrace{\beta_0}_{\text{intercept}} + \underbrace{\beta_1}_{\text{coefficient}}x_{1i} + \dots + \beta_k x_{ki} + \underbrace{u_i}_{\text{error}}
+$$
+
+We can also specify the linear model in terms of linear algebra:
+
+$$
+\underbrace{\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}}_{\mathbf y} =
+\underbrace{\begin{pmatrix}1 & x_{11} & \dots & x_{k1} \\1 & x_{12} & \dots & x_{k2} \\\vdots & \vdots & \vdots & \vdots \\1 & x_{1n} & \dots & x_{kn}\end{pmatrix}}_{\mathbf X}
+\underbrace{\begin{pmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{pmatrix}}_{\boldsymbol \beta}
++ \underbrace{\begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}}_{\mathbf u}
 $$
 
 ::: {.callout-note collapse="true" appearance="simple"}
@@ -50,12 +65,6 @@ We can find the expected value of this distribution, $E(y|x=20)$. This is a cond
 
 At $x=30$, the $E(y|x)$ probably is different (30 year olds make more money). Thus, the linear model is essentially stating that the expected $y$ depends on $x$. Or in terms of this example, the expected income depends on the individual's age.
 :::
-
-The linear model can also be specified for any specific outcome value $y_i$:
-
-$$
-y_i = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{ki} + u_i
-$$
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## More Info on the Error Term $u_i$
@@ -75,56 +84,6 @@ $$
 $$
 
 However, not every individual lies perfectly on this linear line. This is because there are other factors outside of age that affect $y$ (income), and these other factors are bundled into the error term.
-:::
-
-We can also specify the linear model in terms of linear algebra:
-
-$$
-\mathbf y = \mathbf X \mathbf\beta + \mathbf u
-$$
-
--   Where $\mathbf y, \mathbf \beta, \mathbf u$ are vectors and $\mathbf X$ is a $n \times (k+1)$ matrix.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## More Info on the Linear Algebra Representation
-
-Start with the linear model written in terms of $y_i$:
-
-$$
-y_i = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{ki} + u_i
-$$
-
-We can rewrite $y_i$ to be equal to:
-
-$$
-y_i = \mathbf x_i^T \mathbf \beta + u_i, \text{ where } \mathbf \beta = \begin{bmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{bmatrix} \text{ and } \mathbf x_i = \begin{bmatrix}1 \\x_{1i} \\\vdots \\x_{ki}\end{bmatrix}
-$$
-
-<br />
-
-Note how we have the subscript $i$ representing each individual observation. With a vector, we can expand out these subscripts.
-
-Using this logic, we can obtain the following, with the $\mathbf x_i^T$ and $\beta$ being vectors within a vector:
-
-$$
-\begin{split}
-\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} & = \begin{pmatrix}\mathbf x_1^T\beta + u_1 \\ \mathbf x_2^T\beta + u_2 \\ \vdots \\ \mathbf x_n^T\beta + u_n\end{pmatrix} \\
-& \\
-\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}& = \begin{pmatrix} \mathbf x_1^T\beta \\ \mathbf x_2^T\beta \\ \vdots \\ \mathbf x_n^T\beta\end{pmatrix} + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
-\end{split}
-$$
-
-Since $\beta$ vector appears as a common factor for all observations $i=1,...,n$, we can factor it out and have an equation:
-
-$$
-\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} = \begin{pmatrix} \mathbf x_1^T \\ \mathbf x_2^T \\ \vdots \\ \mathbf x_n^T\end{pmatrix} \space \beta + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
-$$
-
-We can expand the $x_1',...,x_n'$ vector into a matrix. Remember that each $x_1',...,x_n'$ is already a vector of different explanatory variables. So, we get the following result:
-
-$$
-\mathbf y = \mathbf X \mathbf \beta + \mathbf u, \text{ where } \mathbf X = \begin{bmatrix}1 & x_{11} & \dots & x_{k1} \\1 & x_{12} & \dots & x_{k2} \\\vdots & \vdots & \vdots & \vdots \\1 & x_{1n} & \dots & x_{kn}\end{bmatrix}
-$$
 :::
 
 <br />
@@ -198,7 +157,7 @@ $$
 \frac{\partial S(\mathbf b)}{\partial b} \biggr|_{\hat{\beta}} = -2\mathbf X^T \mathbf y + 2\mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} = 0
 $$
 
-When assuming $X'X$ is invertable (which is true if $\mathbf X$ is full rank), we can isolate $\hat{\beta}$ to find the solution to OLS:
+When assuming $\mathbf X^T \mathbf X$ is invertable (which is true if $\mathbf X$ is full rank), we can isolate $\hat{\beta}$ to find the solution to OLS:
 
 $$
 \begin{split}
@@ -219,50 +178,43 @@ With the estimated parameters $\widehat{\beta_0}, \dots, \widehat{\beta_k}$, we 
 
 # **Interpretation**
 
-### Interpretation of Coefficients
+### Interpretation of Parameters
 
-I define $\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}$.
+I define $\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}$, multiplied to $x_j \in \{x_1, \dots, x_k\}$. $\widehat{\beta_0}$ is the intercept.
 
-|                    |                                                                                                                                                                         |                                                                                                                                                                              |
-|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
++--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |                    | **Continuous** $x_j$                                                                                                                                                    | **Binary** $x_j$                                                                                                                                                             |
++--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **Continuous** $y$ | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j}$ unit change in $y$.                                                                      | There is a $\widehat{\beta_j}$ unit difference in $y$ between category $x_j = 1$ and category $x_j = 0$.                                                                     |
+|                    |                                                                                                                                                                         |                                                                                                                                                                              |
+|                    | When all explanatory variables equal 0, the expected value of $y$ is $\widehat{\beta_0}$.                                                                               | For category $x_j = 0$, the expected value of $y$ is $\widehat{\beta_0}$ (when all other explanatory variables equal 0).                                                     |
++--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **Binary** $y$     | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j} \times 100$ percentage point change in the probability of a unit being in category $y=1$. | There is a $\widehat{\beta_j}\times 100$ percentage point difference in the probability of a unit being in category $y=1$ between category $x_j = 1$ and category $x_j = 0$. |
+|                    |                                                                                                                                                                         |                                                                                                                                                                              |
+|                    | When all explanatory variables equal 0, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$                                    | For category $x_j = 0$, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$ (when all other explanatory variables equal 0).         |
++--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 If you have multiple explanatory variables, always add: *while holding all other explanatory variables not* $x_j$ *constant.*
-
-You can prove these explanations by plugging in $x_i = x$ and $x_i = x+1$ and finding the change in $\widehat{y_i}$, or by finding the partial derivative in respect to $x_j$.
-
-<br />
-
-### Interpretation of the Intercept
-
-The intercept is $\widehat{\beta_0}$.
-
-|                    |                                                                                                                                      |                                                                                                                                                                      |
-|--------------------|--------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|                    | **Continuous** $x_j$                                                                                                                 | **Binary** $x_j$                                                                                                                                                     |
-| **Continuous** $y$ | When all explanatory variables equal 0, the expected value of $y$ is $\widehat{\beta_0}$.                                            | For category $x_j = 0$, the expected value of $y$ is $\widehat{\beta_0}$ (when all other explanatory variables equal 0).                                             |
-| **Binary** $y$     | When all explanatory variables equal 0, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$ | For category $x_j = 0$, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$ (when all other explanatory variables equal 0). |
-
-You can prove these interpretations by plugging in $x_1, \dots, x_k = 0$.
 
 <br />
 
 ### Residual Standard Deviation
 
-Residuals are:
+Residuals are the distance of the actual value $y_i$ of observation $i$, compared to the predicted $\widehat{y_i}$ from our fitted values/best-fit line. They can be obtained after we fit our model:
 
 $$
-\widehat{u_i} = y_i - \widehat{y_i}
+\begin{split}
+\mathbf{\hat u} & = \mathbf y - \mathbf{\hat y} \\
+& = \mathbf y - \mathbf X(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
+\end{split}
 $$
-
-Or in other words, the distance of the actual value $y_i$ of observation $i$, compared to the predicted $\widehat{y_i}$ from our fitted values/best-fit line.
 
 The residual standard deviation $\hat\sigma$ measures the spread/variance of our residuals - so, how far away the actual values $y_i$ are from our predicted values $\widehat{y_i}$ in general for all observations.
 
+The residual variance is estimated with the formula below (with the residual standard deviation being the square root):
+
 $$
-\hat\sigma = \sqrt{Var(u_i)}
+\hat\sigma^2 = \frac{\sum_{i=1}^n \hat u_i^2}{n-k-1} = \frac{\mathbf{\hat u}^T \mathbf{\hat u}}{n-k-1}
 $$
 
 ::: {.callout-note collapse="true" appearance="simple"}
@@ -343,16 +295,22 @@ Interpreting R-squared: *The Model explains* $R^2 \times 100$ *percent of the va
 
 # **Statistical Inference**
 
-### Heteroscedasticity and Standard Errors
+### Homoscedasticity and Heteroscedasticity
 
 [Homoscedasticity]{.underline} is defined as:
 
 $$
-Var(u|x_1, \dots, x_k) = \sigma^2, \ \forall x
+Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
+\sigma^2 & 0 & \dots & 0 \\
+0 & \sigma^2 & \dots & 0 \\
+\vdots & \vdots & \ddots & 0 \\
+0 & 0 & \dots & \sigma^2
+\end{pmatrix}
 $$
 
--   Or in other words, no matter the values of any explanatory variable, the error term variance is **constant**.
--   If this is false, then we have [heteroscedasticity]{.underline}.
+Or in other words, no matter the values of any explanatory variable, the error term variance is **constant**.
+
+If this is false, then we have [heteroscedasticity]{.underline}.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Intuitive Visualisation of Homoscedasticity
@@ -372,7 +330,61 @@ If you have homoscedasticity, you should use normal OLS standard errors.
 
 If you have heteroscedasticity, you should use robust OLS standard errors. You should also use robust standard errors if you are not sure which errors to use.
 
-Standard errors can be mathematically derived (this is shown in the OLS theory notes in the causal inference section).
+<br />
+
+### Deriving Standard Errors
+
+We will only derive homoscedastic (normal) standard errors. The robust standard error derivation is beyond the scope of this lesson (just trust the computer that it will calculate it properly).
+
+We want to find the variance of our estimator, $Var(\boldsymbol{\hat\beta} | \mathbf X)$. Let us start off with our OLS solution. We can simplify as follows:
+
+$$
+\begin{split}
+\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y \\
+& = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T\underbrace{(\mathbf X \boldsymbol\beta + \mathbf u)}_{\text{plug in } \mathbf y} \\
+& = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\text{inverses cancel out }} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
+& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
+\end{split}
+$$
+
+Thus, we know:
+
+$$
+Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \ | \ \mathbf X)
+$$
+
+$\boldsymbol\beta$ is a vector of fixed constants (the true parameter values in the population). $(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u$ can be imagined as a matrix of fixed constants, since we are conditioning the above variance on $\mathbf X$ (so for each $\mathbf X$, the statement is fixed).
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Mathematical Lemma
+
+If $\mathbf u$ is an $n$ dimensional vector of random variables, $\mathbf c$ is an $m$ dimensional vector, and $\mathbf B$ is an $n \times m$ dimensional matrix with fixed constants, then the following is true:
+
+$$
+Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^T
+$$
+
+I will not prove this lemma here, but it is provable.
+:::
+
+With the Lemma above, and with the definition of homoscedasticity, we can simplify:
+
+$$
+\begin{split}
+Var(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T Var(\mathbf u | \mathbf X) [(\mathbf X^T \mathbf X)^{-1} \mathbf X^T]^{-1} \\
+& = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{Var(\mathbf u | \mathbf X)}_{\text{homoscedastcity}} \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
+& = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{\sigma^2}_{\text{scalar}} \mathbf I_n \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
+& =  \sigma^2 (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf I_n \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
+& =  \sigma^2 (\mathbf X^T \mathbf X)^{-1} \underbrace{\mathbf X^T  \mathbf X (\mathbf X^T \mathbf X)^{-1}}_{\text{inverses cancel out}} \\
+& =  \sigma^2 (\mathbf X^T \mathbf X)^{-1}
+\end{split}
+$$
+
+However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed previously). The standard errors are the square root of the variance. Thus, our standard errors are:
+
+$$
+se(\boldsymbol{\hat\beta}) = \hat\sigma \sqrt{(\mathbf X^T \mathbf X)^{-1}}
+$$
 
 <br />
 
@@ -636,17 +648,17 @@ If we take the log of this variable, we get the following distribution that is a
 
 We have 3 types of logarithmic transformations:
 
-+------------+-------------------------------------+-----------------------------------------+
-|            | $x$                                 | $\log (x)$                              |
-+------------+-------------------------------------+-----------------------------------------+
-| $y$        | Linear Model:                       | Linear-Log Model:                       |
-|            |                                     |                                         |
-|            | $y = \beta_0 + \beta_1 x + u$       | $y = \beta_0 + \beta_1 \log x + u$      |
-+------------+-------------------------------------+-----------------------------------------+
-| $\log (y)$ | Log-Linear Model:                   | Log-Log Model:                          |
-|            |                                     |                                         |
-|            | $\log(y) = \beta_0 + \beta_1 x + u$ | $\log y = \beta_0 + \beta_1 \log x + u$ |
-+------------+-------------------------------------+-----------------------------------------+
++--------------+-------------------------------------+-----------------------------------------+
+|              | $x$                                 | $\log (x)$                              |
++--------------+-------------------------------------+-----------------------------------------+
+| $y$          | Linear Model:                       | Linear-Log Model:                       |
+|              |                                     |                                         |
+|              | $y = \beta_0 + \beta_1 x + u$       | $y = \beta_0 + \beta_1 \log x + u$      |
++--------------+-------------------------------------+-----------------------------------------+
+| $\log (y)$   | Log-Linear Model:                   | Log-Log Model:                          |
+|              |                                     |                                         |
+|              | $\log(y) = \beta_0 + \beta_1 x + u$ | $\log y = \beta_0 + \beta_1 \log x + u$ |
++--------------+-------------------------------------+-----------------------------------------+
 
 <br />
 

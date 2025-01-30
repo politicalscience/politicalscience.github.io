@@ -147,14 +147,14 @@ window.Quarto = {
   </ul></li>
   <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation"><strong>Interpretation</strong></a>
   <ul class="collapse">
-  <li><a href="#interpretation-of-coefficients" id="toc-interpretation-of-coefficients" class="nav-link" data-scroll-target="#interpretation-of-coefficients">Interpretation of Coefficients</a></li>
-  <li><a href="#interpretation-of-the-intercept" id="toc-interpretation-of-the-intercept" class="nav-link" data-scroll-target="#interpretation-of-the-intercept">Interpretation of the Intercept</a></li>
+  <li><a href="#interpretation-of-parameters" id="toc-interpretation-of-parameters" class="nav-link" data-scroll-target="#interpretation-of-parameters">Interpretation of Parameters</a></li>
   <li><a href="#residual-standard-deviation" id="toc-residual-standard-deviation" class="nav-link" data-scroll-target="#residual-standard-deviation">Residual Standard Deviation</a></li>
   <li><a href="#r-squared" id="toc-r-squared" class="nav-link" data-scroll-target="#r-squared">R-Squared</a></li>
   </ul></li>
   <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference"><strong>Statistical Inference</strong></a>
   <ul class="collapse">
-  <li><a href="#heteroscedasticity-and-standard-errors" id="toc-heteroscedasticity-and-standard-errors" class="nav-link" data-scroll-target="#heteroscedasticity-and-standard-errors">Heteroscedasticity and Standard Errors</a></li>
+  <li><a href="#homoscedasticity-and-heteroscedasticity" id="toc-homoscedasticity-and-heteroscedasticity" class="nav-link" data-scroll-target="#homoscedasticity-and-heteroscedasticity">Homoscedasticity and Heteroscedasticity</a></li>
+  <li><a href="#deriving-standard-errors" id="toc-deriving-standard-errors" class="nav-link" data-scroll-target="#deriving-standard-errors">Deriving Standard Errors</a></li>
   <li><a href="#t-tests" id="toc-t-tests" class="nav-link" data-scroll-target="#t-tests">T-Tests</a></li>
   <li><a href="#confidence-intervals" id="toc-confidence-intervals" class="nav-link" data-scroll-target="#confidence-intervals">Confidence Intervals</a></li>
   <li><a href="#f-tests" id="toc-f-tests" class="nav-link" data-scroll-target="#f-tests">F-Tests</a></li>
@@ -188,7 +188,18 @@ window.Quarto = {
 <p>Let us say we have some outcome variable <span class="math inline">y</span>, and several explanatory variables <span class="math inline">x_1, x_2, \dots, x_k</span>. We have data on <span class="math inline">n</span> number of observations <span class="math inline">i = 1, \dots n</span>.</p>
 <p>The linear regression model can be written as a conditional expectation <span class="math inline">E(y|x)</span> function:</p>
 <p><span class="math display">
-E(y_i|x_i) = \beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki}
+\underbrace{E(y_i|x_i)}_{\text{expected } y_i} = \underbrace{\beta_0}_{\text{intercept}} + \underbrace{{\beta_1}}_{\text{Coefficient}}x_{1i} + \dots + \beta_kx_{ki}
+</span></p>
+<p>The linear model can also be specified for any specific outcome value <span class="math inline">y_i</span>:</p>
+<p><span class="math display">
+\underbrace{y_i}_{y \text{ for } i} = \underbrace{\beta_0}_{\text{intercept}} + \underbrace{\beta_1}_{\text{coefficient}}x_{1i} + \dots + \beta_k x_{ki} + \underbrace{u_i}_{\text{error}}
+</span></p>
+<p>We can also specify the linear model in terms of linear algebra:</p>
+<p><span class="math display">
+\underbrace{\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}}_{\mathbf y} =
+\underbrace{\begin{pmatrix}1 &amp; x_{11} &amp; \dots &amp; x_{k1} \\1 &amp; x_{12} &amp; \dots &amp; x_{k2} \\\vdots &amp; \vdots &amp; \vdots &amp; \vdots \\1 &amp; x_{1n} &amp; \dots &amp; x_{kn}\end{pmatrix}}_{\mathbf X}
+\underbrace{\begin{pmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{pmatrix}}_{\boldsymbol \beta}
++ \underbrace{\begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}}_{\mathbf u}
 </span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
@@ -209,10 +220,6 @@ More Info on Conditional Expectations
 </div>
 </div>
 </div>
-<p>The linear model can also be specified for any specific outcome value <span class="math inline">y_i</span>:</p>
-<p><span class="math display">
-y_i = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{ki} + u_i
-</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -241,54 +248,6 @@ More Info on the Error Term <span class="math inline">u_i</span>
 </div>
 </div>
 </div>
-<p>We can also specify the linear model in terms of linear algebra:</p>
-<p><span class="math display">
-\mathbf y = \mathbf X \mathbf\beta + \mathbf u
-</span></p>
-<ul>
-<li>Where <span class="math inline">\mathbf y, \mathbf \beta, \mathbf u</span> are vectors and <span class="math inline">\mathbf X</span> is a <span class="math inline">n \times (k+1)</span> matrix.</li>
-</ul>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-More Info on the Linear Algebra Representation
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Start with the linear model written in terms of <span class="math inline">y_i</span>:</p>
-<p><span class="math display">
-y_i = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{ki} + u_i
-</span></p>
-<p>We can rewrite <span class="math inline">y_i</span> to be equal to:</p>
-<p><span class="math display">
-y_i = \mathbf x_i^T \mathbf \beta + u_i, \text{ where } \mathbf \beta = \begin{bmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{bmatrix} \text{ and } \mathbf x_i = \begin{bmatrix}1 \\x_{1i} \\\vdots \\x_{ki}\end{bmatrix}
-</span></p>
-<p><br></p>
-<p>Note how we have the subscript <span class="math inline">i</span> representing each individual observation. With a vector, we can expand out these subscripts.</p>
-<p>Using this logic, we can obtain the following, with the <span class="math inline">\mathbf x_i^T</span> and <span class="math inline">\beta</span> being vectors within a vector:</p>
-<p><span class="math display">
-\begin{split}
-\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} &amp; = \begin{pmatrix}\mathbf x_1^T\beta + u_1 \\ \mathbf x_2^T\beta + u_2 \\ \vdots \\ \mathbf x_n^T\beta + u_n\end{pmatrix} \\
-&amp; \\
-\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}&amp; = \begin{pmatrix} \mathbf x_1^T\beta \\ \mathbf x_2^T\beta \\ \vdots \\ \mathbf x_n^T\beta\end{pmatrix} + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
-\end{split}
-</span></p>
-<p>Since <span class="math inline">\beta</span> vector appears as a common factor for all observations <span class="math inline">i=1,...,n</span>, we can factor it out and have an equation:</p>
-<p><span class="math display">
-\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} = \begin{pmatrix} \mathbf x_1^T \\ \mathbf x_2^T \\ \vdots \\ \mathbf x_n^T\end{pmatrix} \space \beta + \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
-</span></p>
-<p>We can expand the <span class="math inline">x_1',...,x_n'</span> vector into a matrix. Remember that each <span class="math inline">x_1',...,x_n'</span> is already a vector of different explanatory variables. So, we get the following result:</p>
-<p><span class="math display">
-\mathbf y = \mathbf X \mathbf \beta + \mathbf u, \text{ where } \mathbf X = \begin{bmatrix}1 &amp; x_{11} &amp; \dots &amp; x_{k1} \\1 &amp; x_{12} &amp; \dots &amp; x_{k2} \\\vdots &amp; \vdots &amp; \vdots &amp; \vdots \\1 &amp; x_{1n} &amp; \dots &amp; x_{kn}\end{bmatrix}
-</span></p>
-</div>
-</div>
-</div>
 <p><br></p>
 </section>
 <section id="estimation-process" class="level3">
@@ -308,7 +267,7 @@ SSR &amp; = (\mathbf y - \mathbf{\hat y})^T(\mathbf y - \mathbf{\hat y}) \\
 \end{split}
 </span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -317,7 +276,7 @@ Intuitive Visualisation of SSR
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The residuals are the difference from our predicted best-fit line result <span class="math inline">\widehat{y_i}</span>, and the actual value of <span class="math inline">y_i</span> in the data. Below highlighted in red are the residuals.</p>
 <div class="quarto-figure quarto-figure-center">
@@ -357,7 +316,7 @@ S(\mathbf b) &amp; = \mathbf y^T \mathbf y - \mathbf b^T \mathbf X^T \mathbf y -
 <p><span class="math display">
 \frac{\partial S(\mathbf b)}{\partial b} \biggr|_{\hat{\beta}} = -2\mathbf X^T \mathbf y + 2\mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} = 0
 </span></p>
-<p>When assuming <span class="math inline">X'X</span> is invertable (which is true if <span class="math inline">\mathbf X</span> is full rank), we can isolate <span class="math inline">\hat{\beta}</span> to find the solution to OLS:</p>
+<p>When assuming <span class="math inline">\mathbf X^T \mathbf X</span> is invertable (which is true if <span class="math inline">\mathbf X</span> is full rank), we can isolate <span class="math inline">\hat{\beta}</span> to find the solution to OLS:</p>
 <p><span class="math display">
 \begin{split}
 -2\mathbf X^T\mathbf y + 2 \mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} &amp; = 0 \\
@@ -374,9 +333,9 @@ S(\mathbf b) &amp; = \mathbf y^T \mathbf y - \mathbf b^T \mathbf X^T \mathbf y -
 </section>
 <section id="interpretation" class="level1">
 <h1><strong>Interpretation</strong></h1>
-<section id="interpretation-of-coefficients" class="level3">
-<h3 class="anchored" data-anchor-id="interpretation-of-coefficients">Interpretation of Coefficients</h3>
-<p>I define <span class="math inline">\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}</span>.</p>
+<section id="interpretation-of-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-of-parameters">Interpretation of Parameters</h3>
+<p>I define <span class="math inline">\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}</span>, multiplied to <span class="math inline">x_j \in \{x_1, \dots, x_k\}</span>. <span class="math inline">\widehat{\beta_0}</span> is the intercept.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 5%">
@@ -391,63 +350,39 @@ S(\mathbf b) &amp; = \mathbf y^T \mathbf y - \mathbf b^T \mathbf X^T \mathbf y -
 </tr>
 <tr class="even">
 <td><strong>Continuous</strong> <span class="math inline">y</span></td>
-<td>For every one unit increase in <span class="math inline">x_j</span>, there is an expected <span class="math inline">\widehat{\beta_j}</span> unit change in <span class="math inline">y</span>.</td>
-<td>There is a <span class="math inline">\widehat{\beta_j}</span> unit difference in <span class="math inline">y</span> between category <span class="math inline">x_j = 1</span> and category <span class="math inline">x_j = 0</span>.</td>
+<td><p>For every one unit increase in <span class="math inline">x_j</span>, there is an expected <span class="math inline">\widehat{\beta_j}</span> unit change in <span class="math inline">y</span>.</p>
+<p>When all explanatory variables equal 0, the expected value of <span class="math inline">y</span> is <span class="math inline">\widehat{\beta_0}</span>.</p></td>
+<td><p>There is a <span class="math inline">\widehat{\beta_j}</span> unit difference in <span class="math inline">y</span> between category <span class="math inline">x_j = 1</span> and category <span class="math inline">x_j = 0</span>.</p>
+<p>For category <span class="math inline">x_j = 0</span>, the expected value of <span class="math inline">y</span> is <span class="math inline">\widehat{\beta_0}</span> (when all other explanatory variables equal 0).</p></td>
 </tr>
 <tr class="odd">
 <td><strong>Binary</strong> <span class="math inline">y</span></td>
-<td>For every one unit increase in <span class="math inline">x_j</span>, there is an expected <span class="math inline">\widehat{\beta_j} \times 100</span> percentage point change in the probability of a unit being in category <span class="math inline">y=1</span>.</td>
-<td>There is a <span class="math inline">\widehat{\beta_j}\times 100</span> percentage point difference in the probability of a unit being in category <span class="math inline">y=1</span> between category <span class="math inline">x_j = 1</span> and category <span class="math inline">x_j = 0</span>.</td>
+<td><p>For every one unit increase in <span class="math inline">x_j</span>, there is an expected <span class="math inline">\widehat{\beta_j} \times 100</span> percentage point change in the probability of a unit being in category <span class="math inline">y=1</span>.</p>
+<p>When all explanatory variables equal 0, the expected probability of a unit being in category <span class="math inline">y=1</span> is <span class="math inline">\widehat{\beta_0} \times 100</span></p></td>
+<td><p>There is a <span class="math inline">\widehat{\beta_j}\times 100</span> percentage point difference in the probability of a unit being in category <span class="math inline">y=1</span> between category <span class="math inline">x_j = 1</span> and category <span class="math inline">x_j = 0</span>.</p>
+<p>For category <span class="math inline">x_j = 0</span>, the expected probability of a unit being in category <span class="math inline">y=1</span> is <span class="math inline">\widehat{\beta_0} \times 100</span> (when all other explanatory variables equal 0).</p></td>
 </tr>
 </tbody>
 </table>
 <p>If you have multiple explanatory variables, always add: <em>while holding all other explanatory variables not</em> <span class="math inline">x_j</span> <em>constant.</em></p>
-<p>You can prove these explanations by plugging in <span class="math inline">x_i = x</span> and <span class="math inline">x_i = x+1</span> and finding the change in <span class="math inline">\widehat{y_i}</span>, or by finding the partial derivative in respect to <span class="math inline">x_j</span>.</p>
-<p><br></p>
-</section>
-<section id="interpretation-of-the-intercept" class="level3">
-<h3 class="anchored" data-anchor-id="interpretation-of-the-intercept">Interpretation of the Intercept</h3>
-<p>The intercept is <span class="math inline">\widehat{\beta_0}</span>.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 6%">
-<col style="width: 41%">
-<col style="width: 51%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td></td>
-<td><strong>Continuous</strong> <span class="math inline">x_j</span></td>
-<td><strong>Binary</strong> <span class="math inline">x_j</span></td>
-</tr>
-<tr class="even">
-<td><strong>Continuous</strong> <span class="math inline">y</span></td>
-<td>When all explanatory variables equal 0, the expected value of <span class="math inline">y</span> is <span class="math inline">\widehat{\beta_0}</span>.</td>
-<td>For category <span class="math inline">x_j = 0</span>, the expected value of <span class="math inline">y</span> is <span class="math inline">\widehat{\beta_0}</span> (when all other explanatory variables equal 0).</td>
-</tr>
-<tr class="odd">
-<td><strong>Binary</strong> <span class="math inline">y</span></td>
-<td>When all explanatory variables equal 0, the expected probability of a unit being in category <span class="math inline">y=1</span> is <span class="math inline">\widehat{\beta_0} \times 100</span></td>
-<td>For category <span class="math inline">x_j = 0</span>, the expected probability of a unit being in category <span class="math inline">y=1</span> is <span class="math inline">\widehat{\beta_0} \times 100</span> (when all other explanatory variables equal 0).</td>
-</tr>
-</tbody>
-</table>
-<p>You can prove these interpretations by plugging in <span class="math inline">x_1, \dots, x_k = 0</span>.</p>
 <p><br></p>
 </section>
 <section id="residual-standard-deviation" class="level3">
 <h3 class="anchored" data-anchor-id="residual-standard-deviation">Residual Standard Deviation</h3>
-<p>Residuals are:</p>
+<p>Residuals are the distance of the actual value <span class="math inline">y_i</span> of observation <span class="math inline">i</span>, compared to the predicted <span class="math inline">\widehat{y_i}</span> from our fitted values/best-fit line. They can be obtained after we fit our model:</p>
 <p><span class="math display">
-\widehat{u_i} = y_i - \widehat{y_i}
+\begin{split}
+\mathbf{\hat u} &amp; = \mathbf y - \mathbf{\hat y} \\
+&amp; = \mathbf y - \mathbf X(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
+\end{split}
 </span></p>
-<p>Or in other words, the distance of the actual value <span class="math inline">y_i</span> of observation <span class="math inline">i</span>, compared to the predicted <span class="math inline">\widehat{y_i}</span> from our fitted values/best-fit line.</p>
 <p>The residual standard deviation <span class="math inline">\hat\sigma</span> measures the spread/variance of our residuals - so, how far away the actual values <span class="math inline">y_i</span> are from our predicted values <span class="math inline">\widehat{y_i}</span> in general for all observations.</p>
+<p>The residual variance is estimated with the formula below (with the residual standard deviation being the square root):</p>
 <p><span class="math display">
-\hat\sigma = \sqrt{Var(u_i)}
+\hat\sigma^2 = \frac{\sum_{i=1}^n \hat u_i^2}{n-k-1} = \frac{\mathbf{\hat u}^T \mathbf{\hat u}}{n-k-1}
 </span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -456,7 +391,7 @@ Visualisation of Residual Standard Deviation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Below is a figure illustrating different residual standard deviations, with the same best-fit line.</p>
 <div class="quarto-figure quarto-figure-center">
@@ -474,7 +409,7 @@ Visualisation of Residual Standard Deviation
 <h3 class="anchored" data-anchor-id="r-squared">R-Squared</h3>
 <p>R-Squared (<span class="math inline">R^2</span>) measures the proportion of variation in <span class="math inline">y</span> that is explained by our explanatory variables.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -483,7 +418,7 @@ Mathematical Derivation of R-Squared
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let us define these three concepts: the total sum of squares (SST), explained sum of squares (SSE), and residual sum of squares (SSR):</p>
 <p><span class="math display">
@@ -535,18 +470,21 @@ R^2 = \frac{SSE}{SST} = \frac{1 - SSR}{SST}
 </section>
 <section id="statistical-inference" class="level1">
 <h1><strong>Statistical Inference</strong></h1>
-<section id="heteroscedasticity-and-standard-errors" class="level3">
-<h3 class="anchored" data-anchor-id="heteroscedasticity-and-standard-errors">Heteroscedasticity and Standard Errors</h3>
+<section id="homoscedasticity-and-heteroscedasticity" class="level3">
+<h3 class="anchored" data-anchor-id="homoscedasticity-and-heteroscedasticity">Homoscedasticity and Heteroscedasticity</h3>
 <p><u>Homoscedasticity</u> is defined as:</p>
 <p><span class="math display">
-Var(u|x_1, \dots, x_k) = \sigma^2, \ \forall x
+Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
+\sigma^2 &amp; 0 &amp; \dots &amp; 0 \\
+0 &amp; \sigma^2 &amp; \dots &amp; 0 \\
+\vdots &amp; \vdots &amp; \ddots &amp; 0 \\
+0 &amp; 0 &amp; \dots &amp; \sigma^2
+\end{pmatrix}
 </span></p>
-<ul>
-<li>Or in other words, no matter the values of any explanatory variable, the error term variance is <strong>constant</strong>.</li>
-<li>If this is false, then we have <u>heteroscedasticity</u>.</li>
-</ul>
+<p>Or in other words, no matter the values of any explanatory variable, the error term variance is <strong>constant</strong>.</p>
+<p>If this is false, then we have <u>heteroscedasticity</u>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -555,7 +493,7 @@ Intuitive Visualisation of Homoscedasticity
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all <span class="math inline">\widehat{u_i}</span>):</p>
 <p><img src="images/clipboard-1713529842.png" class="img-fluid" style="width:100.0%"></p>
@@ -567,7 +505,60 @@ Intuitive Visualisation of Homoscedasticity
 </div>
 <p>If you have homoscedasticity, you should use normal OLS standard errors.</p>
 <p>If you have heteroscedasticity, you should use robust OLS standard errors. You should also use robust standard errors if you are not sure which errors to use.</p>
-<p>Standard errors can be mathematically derived (this is shown in the OLS theory notes in the causal inference section).</p>
+<p><br></p>
+</section>
+<section id="deriving-standard-errors" class="level3">
+<h3 class="anchored" data-anchor-id="deriving-standard-errors">Deriving Standard Errors</h3>
+<p>We will only derive homoscedastic (normal) standard errors. The robust standard error derivation is beyond the scope of this lesson (just trust the computer that it will calculate it properly).</p>
+<p>We want to find the variance of our estimator, <span class="math inline">Var(\boldsymbol{\hat\beta} | \mathbf X)</span>. Let us start off with our OLS solution. We can simplify as follows:</p>
+<p><span class="math display">
+\begin{split}
+\boldsymbol{\hat\beta} &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y \\
+&amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T\underbrace{(\mathbf X \boldsymbol\beta + \mathbf u)}_{\text{plug in } \mathbf y} \\
+&amp; = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\text{inverses cancel out }} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
+&amp; = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
+\end{split}
+</span></p>
+<p>Thus, we know:</p>
+<p><span class="math display">
+Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \ | \ \mathbf X)
+</span></p>
+<p><span class="math inline">\boldsymbol\beta</span> is a vector of fixed constants (the true parameter values in the population). <span class="math inline">(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u</span> can be imagined as a matrix of fixed constants, since we are conditioning the above variance on <span class="math inline">\mathbf X</span> (so for each <span class="math inline">\mathbf X</span>, the statement is fixed).</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Mathematical Lemma
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>If <span class="math inline">\mathbf u</span> is an <span class="math inline">n</span> dimensional vector of random variables, <span class="math inline">\mathbf c</span> is an <span class="math inline">m</span> dimensional vector, and <span class="math inline">\mathbf B</span> is an <span class="math inline">n \times m</span> dimensional matrix with fixed constants, then the following is true:</p>
+<p><span class="math display">
+Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^T
+</span></p>
+<p>I will not prove this lemma here, but it is provable.</p>
+</div>
+</div>
+</div>
+<p>With the Lemma above, and with the definition of homoscedasticity, we can simplify:</p>
+<p><span class="math display">
+\begin{split}
+Var(\boldsymbol{\hat\beta} | \mathbf X) &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T Var(\mathbf u | \mathbf X) [(\mathbf X^T \mathbf X)^{-1} \mathbf X^T]^{-1} \\
+&amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{Var(\mathbf u | \mathbf X)}_{\text{homoscedastcity}} \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
+&amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{\sigma^2}_{\text{scalar}} \mathbf I_n \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
+&amp; =  \sigma^2 (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf I_n \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
+&amp; =  \sigma^2 (\mathbf X^T \mathbf X)^{-1} \underbrace{\mathbf X^T  \mathbf X (\mathbf X^T \mathbf X)^{-1}}_{\text{inverses cancel out}} \\
+&amp; =  \sigma^2 (\mathbf X^T \mathbf X)^{-1}
+\end{split}
+</span></p>
+<p>However, we do not actually know what <span class="math inline">\sigma^2</span> is. We can estimate it with <span class="math inline">\hat\sigma^2</span> (discussed previously). The standard errors are the square root of the variance. Thus, our standard errors are:</p>
+<p><span class="math display">
+se(\boldsymbol{\hat\beta}) = \hat\sigma \sqrt{(\mathbf X^T \mathbf X)^{-1}}
+</span></p>
 <p><br></p>
 </section>
 <section id="t-tests" class="level3">
