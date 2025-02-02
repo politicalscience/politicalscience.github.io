@@ -184,7 +184,7 @@ Thus, incumbent with type $\theta_H$ only wants to put in effort $e_1 = 1$ in $t
 
 We can create a graph of when the incumbents want to exert effort $e_1 = 1$ given the value of $R$:
 
-![](images/clipboard-756073885.png){fig-align="center" width="80%"}
+![](images/clipboard-756073885.png){fig-align="center" width="70%"}
 
 We can see there are three different scenarios:
 
@@ -196,9 +196,135 @@ We can see there are three different scenarios:
 
 ### Voter's Electoral Decision
 
+We discussed above how there are the 3 different scenarios given the value of $R$. Let us test each scenario. We also assumed that the voter will re-elect if there is a good outcome $w_1 = 1$ in period \$t=1\$, and not re-elect if there is a bad outcome $w_1 = 0$.
+
+Is this assumption of the strategy for the voter rational? Let us test each of the 3 scenarios given $R$ to see if this strategy is rational for the voter. To do this, we will be using Bayes' Rule.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Refersher: Bayes' Rule
+
+Bayes' Rule states the following:
+
+$$
+\underbrace{Pr(A|B)}_{\text{posterior}} = \frac{\overbrace{Pr(B|A)}^{\text{likelihood}} \overbrace{Pr(A)}^{\text{prior}}}{\underbrace{Pr(B|A)Pr(A) + Pr(B|A^C)Pr(A^C)}_{\text{evidence: }Pr(B) \text{ expanded with law of total probability}}}
+$$
+
+This will allow us to take our prior beliefs (such as the initial probability of high-competence), and update them given new information (like witnessing a good/bad policy outcome).
+:::
+
+Remember that nature decides the type of the incumbent and challenger with prior probability $p$ of being high competence $\theta_h$. Let us also remind us the probability of a good outcome, $\pi = Pr(w_t = 1)$, given the type and effort of the incumbent:
+
+$$
+\pi = Pr(w_t = 1) = \begin{bmatrix}
+& e_t = 0 & e_t = 1 \\
+\theta_L & 0 & 0.5 \\
+\theta_H & 0.5 & 1
+\end{bmatrix}
+$$
+
+<br />
+
+Let us assume we are in the situation $R<2$, where neither play puts effort. We know that the voter wants to elect a high competence candidate $\theta_H$. What is the probability of the candidate being $\theta_H$, given we observe each outcome $w_1 \in \{0, 1\}$?
+
+$$
+\begin{split}
+Pr(\theta_h | w_1 = 0) & = \frac{\overbrace{Pr(w_1 = 0|\theta_H)}^{0.5 \text{ (given by } \pi)} \overbrace{Pr(\theta_H)}^{p \text{ (prior)}}}
+{\underbrace{Pr(w_1 = 0|\theta_H)Pr(\theta_H)}_{\text{same as above}} + \underbrace{Pr(w_1 = 0|\theta_L)}_{1 \text{ (given by } \pi)} \underbrace{Pr(\theta_L)}_{1-p \text{ (prior)}}} \\
+& = \frac{0.5p}{0.5 p + 1(1-p)} = \frac{p}{2-p}
+\end{split}
+$$
+
+$$
+\begin{split}
+Pr(\theta_h | w_1 = 1) & = \frac{\overbrace{Pr(w_1 = 1|\theta_H)}^{0.5 \text{ (given by } \pi)} \overbrace{Pr(\theta_H)}^{p \text{ (prior)}}}
+{\underbrace{Pr(w_1 = 1|\theta_H)Pr(\theta_H)}_{\text{same as above}} + \underbrace{Pr(w_1 = 1|\theta_L)}_{0 \text{ (given by } \pi)} \underbrace{Pr(\theta_L)}_{1-p \text{ (prior)}}} \\
+& = \frac{0.5p}{0.5p + 0(1-p)} = \frac{0.5p}{0.5p} = 1
+\end{split}
+$$
+
+Thus, we know that given we observe a bad outcome $w_1 = 0$, there is a $\frac{p}{2-p}$ probability that the incumbent is type high competence $\theta_H$. We know that the challenger has the possibility of being $\theta_H$ with probability $p$. Since:
+
+$$
+\frac{p}{2-p} < p \quad (\text{since } p \in (0, 1))
+$$
+
+That means that the challenger is more likely to be a high competence $\theta_H$ politician, which means the rational thing to do is to not re-elect, and instead elect the challenger.
+
+We also know that if we observe a good outcome $w_1 = 1$, there is a probability of $1$ that the incumbent is high-type. This is a higher probability than $p \in (0, 1)$, the probability the challenger is high competence $\theta_H$. Thus, if you observe a good outcome $w_1$, you should re-elect the incumbent.
+
+This matches with our assumption that voter will re-elect if there is a good outcome $w_1 = 1$ in period $t=1$, and not re-elect if there is a bad outcome $w_1 = 0$.
+
+<br />
+
+Now, let us assume we are in the situation $R\in (2, 4)$, where only the high competence type $\theta_H$ puts effort. We know that the voter wants to elect a high competence candidate $\theta_H$. What is the probability of the candidate being $\theta_H$, given the two possible outcomes $w_1 \in \{0, 1\}$?
+
+$$
+\begin{split}
+Pr(\theta_h | w_1 = 0) & = \frac{\overbrace{Pr(w_1 = 0|\theta_H)}^{0 \text{ (given by } \pi)} \overbrace{Pr(\theta_H)}^{p \text{ (prior)}}}
+{\underbrace{Pr(w_1 = 0|\theta_H)Pr(\theta_H)}_{\text{same as above}} + \underbrace{Pr(w_1 = 0|\theta_L)}_{1 \text{ (given by } \pi)} \underbrace{Pr(\theta_L)}_{1-p \text{ (prior)}}} \\
+& = \frac{0p}{1(1-p)} = 0
+\end{split}
+$$
+
+$$
+\begin{split}
+Pr(\theta_h | w_1 = 1) & = \frac{\overbrace{Pr(w_1 = 1|\theta_H)}^{1 \text{ (given by } \pi)} \overbrace{Pr(\theta_H)}^{p \text{ (prior)}}}
+{\underbrace{Pr(w_1 = 1|\theta_H)Pr(\theta_H)}_{\text{same as above}} + \underbrace{Pr(w_1 = 1|\theta_L)}_{0 \text{ (given by } \pi)} \underbrace{Pr(\theta_L)}_{1-p \text{ (prior)}}} \\
+& = \frac{1p}{1p + 0(1-p)} = \frac{p}{p} = 1
+\end{split}
+$$
+
+So we can see that if we observe $w_1 = 0$, there is a 0% chance that the incumbent is high competence $\theta_H$, so we should not re-elect and vote in the challenger. If we observe $w_1 = 1$, there is a 100% chance that the incumbent is high competence $\theta_H$, so we should re-elect. This matches with our assumption that voter will re-elect if there is a good outcome $w_1 = 1$ in period $t=1$, and not re-elect if there is a bad outcome $w_1 = 0$.
+
+<br />
+
+Finally, let us assume we are in the situation $R> 4$, where both types put effort. We know that the voter wants to elect a high competence candidate $\theta_H$. What is the probability of the candidate being $\theta_H$, given the two possible outcomes $w_1 \in \{0, 1\}$?
+
+$$
+\begin{split}
+Pr(\theta_h | w_1 = 0) & = \frac{\overbrace{Pr(w_1 = 0|\theta_H)}^{0 \text{ (given by } \pi)} \overbrace{Pr(\theta_H)}^{p \text{ (prior)}}}
+{\underbrace{Pr(w_1 = 0|\theta_H)Pr(\theta_H)}_{\text{same as above}} + \underbrace{Pr(w_1 = 0|\theta_L)}_{0.5 \text{ (given by } \pi)} \underbrace{Pr(\theta_L)}_{1-p \text{ (prior)}}} \\
+& = \frac{0p}{0.5(1-p)} = 0
+\end{split}
+$$
+
+$$
+\begin{split}
+Pr(\theta_h | w_1 = 1) & = \frac{\overbrace{Pr(w_1 = 1|\theta_H)}^{1 \text{ (given by } \pi)} \overbrace{Pr(\theta_H)}^{p \text{ (prior)}}}
+{\underbrace{Pr(w_1 = 1|\theta_H)Pr(\theta_H)}_{\text{same as above}} + \underbrace{Pr(w_1 = 1|\theta_L)}_{0.5 \text{ (given by } \pi)} \underbrace{Pr(\theta_L)}_{1-p \text{ (prior)}}} \\
+& = \frac{1p}{1p + 0.5(1-p)} = \frac{2p}{2p + 1 - p} = \frac{2p}{1+ p}
+\end{split}
+$$
+
+So we can see that if we observe $w_1 = 0$, there is a 0% chance that the incumbent is high competence $\theta_H$, so we should not re-elect and vote in the challenger. If we observe $w_1 = 1$, there is a $\frac{2p}{1+p} > p$ chance that the incumbent is high competence $\theta_H$, so we should re-elect. This matches with our assumption that the voter will re-elect if there is a good outcome $w_1 = 1$ in period $t=1$, and not re-elect if there is a bad outcome $w_1 = 0$.
+
+<br />
+
+Thus, the assumption that the voter will re-elect if there is a good outcome $w_1 = 1$ in period $t=1$, and not re-elect if there is a bad outcome $w_1 = 0$ is indeed rational.
+
 <br />
 
 ### Interpretation of the Outcome
+
+Thus, we have found the equilibrium strategies of this game:
+
+-   For voters, they will only re-elect if they see a good outcome $w_1 = 1$, and vote for the challgner if they see a bad outcome $w_1 = 0$.
+-   For the incumbent in the first round: if $R < 2$, then neither type will put effort, so $e_1 = 0$. If $R \in (2, 4)$, then only $\theta_H$ puts in effort. If $R > 4$, then both types put in effort. In the second round, all types of incumbents will put $e_2 = 0$ effort.
+-   For the challenger, if they are elected for the second round, they will put $e_2 = 0$ effort.
+
+What does this equilibrium outcome tell us?
+
+When the benefits of holding offices are low ($R < 2$), incumbents do not really value re-election. Thus incumbents will not put any effort into their jobs. Elections here fail to incentives politicians to work hard. Elections in this scenario do always screen out and vote out low competence politicians, but they sometimes also mistakenly vote out high competence politicians as well.
+
+When the benefits of holding offices are intermediate ($R \in (2, 4)$), only competent incumbents want to seek re-election and will put in effort. The cost of effort given the rewards of holding office are too high for low-competence incumbents, so they will not put in effort. Thus, elections here incentives good politicians. Elections also are able to perfectly screen politicians: low competence ones are always voted out, and high competence ones are always re-elected.
+
+When the benefits of holding office are high ($R > 4$), all politicians are motivated to seek re-election, and all politicians put in effort. Election is able to always successful re-elect good politicians, but some bad politicians are also re-elected.
+
+<br />
+
+Essentially what we have shown is a trade-off between selection and incentives. When the benefits of holding office are high, politicians are incentivised to put in effort, however, this also means that some low competence individuals will be re-elected. When the benefits of holding office are low, politicians are not incentivsed to put in effort, but we can almost always vote out low-comeptence individuals.
+
+This model shows how the benefits of holding office, such as pay, receiving gifts and lobbying, and power, can impact how politicians behave. There is often discussion around paying politicians too high of salaries. However, this model shows that paying higher salaries actually motivates politicians to put more effort.
 
 <br />
 
@@ -209,6 +335,110 @@ We can see there are three different scenarios:
 # **Elections, Taxes and Public Goods**
 
 ### A Model of Public Finance
+
+Elections can also be a way in which the amount of public goods provision can be decided, and the amount of taxes can be decided.
+
+Let us say we have $n$ number of citizens. Each citizen $i$ is different from each other, with varying incomes $y_i$. Citizens utility is derived of two things:
+
+1.  How much they consume privately, $c_i$ (like stuff they buy, food the eat, consumer spending).
+2.  Their benefit from public goods provided by the government. The government will provide $g$ amount of public goods, which will give the citizen $H(g)$ of utility, where $H$ is a function converting the amount of public goods $g$ into utility.
+
+The government provides an amount of the public good $g ≥ 0$. However, they can only pay for it through taxes $t \in [0, 1]$ (we are assuming no borrowing for this model). Increasing taxes $t$ will decrease citizen's income $y_i$, which will reduce the amount they will be able to consumer $c_i$. Let us assume that taxes are only used for public goods.
+
+We can define the amount of public goods as $g$, which will be equal to:
+
+$$
+\underbrace{ty_1 + ty_2 + \dots + ty_n}_{\text{taxes collected from all citizens}} = n t \bar y = g
+$$
+
+Where $\bar y$ is the average income of all citizens. We will assume that the mean income $\bar y$ is greater than the median income $y_m$, since income is almost always right-skewed.
+
+<br />
+
+Thus, the utility of any citizen $i$ is their utility from both private consumption and public goods:
+
+$$
+u_i = c_i + H(g)
+$$
+
+Private consumption $c_i$ of a citizen $i$, will be defined as the amount of income remaining after taxes. We know that $t y_i$ is taxed, so $(1-t)y_i$ is untaxed income. Thus:
+
+$$
+c_i = (1-t)y_i
+$$
+
+We will also assume that the utility derived from the public good, $H(g)$, has decreasing marginal utility. This means that adding more and more $g$ will always yield a higher utility, however, with each additional $g$, the gain in utility is smaller.
+
+<br />
+
+### Citizen's Maximum Utility
+
+Now the question is, what amount of public good $g$ (which directly impacts taxes $t$ and private consumption $c_i$), is the optimal amount which maximises each citizen's utility?
+
+Recall that citizen's utility is $u_i = c_i + H(g)$. We also defined $c_i = (1-t)y_i$. Let us plug $c_i$ into the utility function:
+
+$$
+u_i = (1-t)y_i + H(g)
+$$
+
+Recall that earlier, we derived that $nt \bar y = g$. We can solve for $t$ to get $t = \frac{g}{n \bar y}$. Now plugging that in to the utility function, we get:
+
+$$
+u_i = \left(1 - \frac{g}{n \bar y} \right)y_i + H(g)
+$$
+
+We now have only one variable $g$ in our utility function, so $u_i$ is a function of $g$. How do we find the maximum utility for any citizen $i$? We can find the first order condition to maximise $u_i(g)$:
+
+$$
+\begin{split}
+u_i(g) & = \left(1 - \frac{g}{n \bar y} \right)y_i + H(g) \\
+u_i(g) & = y_i - \frac{y_i}{n \bar y}g + H(g) \\
+u_i'(g) & = 0 - \frac{y_i}{n \bar y} + H'(g) \\
+u'_i(g) & = -\frac{y_i}{n \bar y} + H'(g) \\
+0 & = -\frac{y_i}{n \bar y} + H'(g) \\
+H'(g) & =  \frac{y_i}{n \bar y}
+\end{split}
+$$
+
+So we know the maximisation of utility condition is $H'(g) = \frac{y_i}{n \bar y}$. What does this tell us?
+
+First, we know $H(g)$ has decreasing marginal utility, which means $H'(g)$ must be decreasing as $g$ increases (see blue line below). We also know by $H'(g) = \frac{y_i}{n \bar y}$, that when $y_i$ increases, $H'(g)$ should also increase, and when $y_i$ decreases, $H'(g)$ decreases. We can put this in a graph:
+
+![](images/clipboard-3177160330.png){fig-align="center" width="60%"}
+
+Let us take two citizens, $y^H$, who has a large income, and $y_L$, who has a low income. For the high income person $y^H$, the corresponding $g^L$ on the blue line is quite small. For the low income person $y^L$, the corresponding $g^H$ on the blue line is quite large.
+
+This makes sense: the higher income you are (the richer you are), you probably care less about public goods $g$, and would rather have lower taxes that benefit you more. If you have a lower income, you would rather have more government services and public goods.
+
+<br />
+
+### Electoral Model and Conclusions
+
+Now we know the maximisation of utility for each citizen $i$, what about the level of public goods $g$ that is implemented in a country?
+
+In a democratic country, elections decide the policy platforms. Let us have two candidates $A$ and $B$ who are competing on the amount of public goods provision, choosing positions $p_A$ and $p_B$ regarding how much $g$ to provide. The party who wins the majority of votes will implement their plan.
+
+According to the downsian model, the median voter is the pivotal voter in which both candidates will converge to. Remember that the median voter has an income of $y_m$. Thus, the maximisation of utility condition for the median voter is:
+
+$$
+H'(g)  =  \frac{y_i}{n \bar y} = \frac{y_m}{n \bar y}
+$$
+
+Remember that a higher $H'(g)$ corresponds to a lower $g$. What does the above equation tell us?
+
+First, if $y_m$ is much smaller than $\bar y$, then $H'(g)$ will decrease and $g$ will be higher. That means in a society with more skewed income distribution (where the mean income is significantly higher than the median) will have higher public good provision and higher taxes.
+
+Second, a richer country on average would have a higher $\bar y$. A higher $\bar y$ means a lower $H'(g)$, and a larger $g$. This thus means that richer countries on average should have larger public goods provisions and larger taxes.
+
+The first prediction does not seem necessarily to be true. Many ultra-unequal countries with huge skews of income do not have strong welfare states, while more equal countries (like in many nordic countries) do have strong welfare systems.
+
+The second prediction does seem to be more accurate. In general, the countries with the largest welfare systems and highest taxes are developed nations who have significantly higher average incomes.
+
+<br />
+
+You might point out that these predictions depend on the assumption that the Downsian model is correct, and that indeed, politicians converge at the median voter. However, in the [last chapter](https://politicalscience.github.io/topics/1.html), we discussed how this convergence often does not occur.
+
+However, even using another model, like the [Probabilistic Voting model](https://politicalscience.github.io/topics/1.html#voting-on-more-than-policy), we would still get a similar prediction. The probablistic model predicts divergence, but this divergence shifts relative to the positioning of the median voter. Thus, the 2 predictions we made would still apply to non-converging models of electoral competition.
 
 <br />
 
