@@ -201,7 +201,7 @@ We discussed above how there are the 3 different scenarios given the value of $R
 Is this assumption of the strategy for the voter rational? Let us test each of the 3 scenarios given $R$ to see if this strategy is rational for the voter. To do this, we will be using Bayes' Rule.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Refersher: Bayes' Rule
+## Refresher: Bayes' Rule
 
 Bayes' Rule states the following:
 
@@ -447,3 +447,248 @@ However, even using another model, like the [Probabilistic Voting model](https:/
 ------------------------------------------------------------------------
 
 # **Elections as Information Aggregators**
+
+### Model of Information Aggregation
+
+Many scholars believe that democracy is about finding the "correct" policy (ex. Russeau's Social Contract). The belief is that there is some true "will of the people" that will benefit everyone, and the goal of elections is to find this correct common good.
+
+No one individually knows exactly what the correct policy is. However, some people have some idea of what it could be. Elections could then serve as a way to "pool" everyone's information together to find the correct policy (ex. wisdom of the crowd), instead of relying on everyone's individual model.
+
+<br />
+
+Let us say there are three voters in a country, $i \in \{1, 2, 3\}$. They have to make a choice between two policies $\{A, B\}$, and they will make this choice by majority vote.
+
+There are two states of the world $\theta \in \{\theta_A, \theta_B\}$. In world $\theta_A$, policy $A$ is the correct policy, and in $\theta_B$, policy $B$ is the correct policy.
+
+The state of the world $\theta \in \{\theta_A, \theta_B\}$ is unknown. The voters only know that there is a probability $\pi$ of the state being $\theta_A$:
+
+$$
+\begin{split}
+& Pr(\theta_A) = \pi \\
+& Pr(\theta_B) = 1-\pi
+\end{split}
+$$
+
+Before casting their ballot, each voter receives a signal $s_i \in \{0, 1\}$. Signal $0$ suggests that policy $A$ is correct (suggests $\theta_A$), and signal $1$ suggests policy $B$ is correct (suggests $\theta_B$). The probability of receiving each signal is as follows:
+
+$$
+\begin{split}
+& Pr(s_i=0|\theta_A) = q^a > \frac{1}{2} \\
+& Pr(s_i=1|\theta_B) = q^b > \frac{1}{2}
+\end{split}
+$$
+
+Or in other words, there is more than a 50% chance that the signal a player receives is correct about the state of the world.
+
+The payoffs for the players are as follows:
+
+$$
+u_i = \begin{cases}
+1 \quad \text{if correct policy is implemented} \\
+0 \quad \text{if otherwise}
+\end{cases}
+$$
+
+<br />
+
+The timing of the game is as follows:
+
+1.  Nature determines the state of the world $\theta \in \{\theta_A, \theta_B\}$ where $Pr(\theta_A) = \pi$.
+2.  The signal $s_i \in \{0, 1\}$ is received by every voter.
+3.  All voters cast their votes for policy $A$ or $B$ simultaneously.
+4.  The policy that gets the most votes is implemented.
+
+<br />
+
+### Sincere Voting
+
+Sincere voting is when each voter simply follows her signal. Under this assumption, the strategy of voter $i \in \{1, 2, 3\}$ would be:
+
+$$
+\sigma_i = \begin{cases}
+\text{vote A after } s_i = 0 \\
+\text{vote B after } s_i = 1
+\end{cases}
+$$
+
+With the new information of the signal $s_i$, each voter can update their prior belief about the state in the world through Bayes' rule.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Refresher: Bayes' Rule
+
+Bayes' Rule states the following:
+
+$$
+\underbrace{Pr(A|B)}_{\text{posterior}} = \frac{\overbrace{Pr(B|A)}^{\text{likelihood}} \overbrace{Pr(A)}^{\text{prior}}}{\underbrace{Pr(B|A)Pr(A) + Pr(B|A^C)Pr(A^C)}_{\text{evidence: }Pr(B) \text{ expanded with law of total probability}}}
+$$
+
+This will allow us to take our prior beliefs (such as the initial probability of state $\theta$), and update them given new information (like witnessing the signal $s_i$).
+:::
+
+After signal $s=0$, what does voter $i$ believe the probability that the state of the world is $\theta_A$?
+
+$$
+\begin{split}
+\underbrace{Pr(\theta_A|s_i = 0)}_{\text{updated belief of } \theta_A}
+& = \frac{\overbrace{Pr(s_i = 0|\theta_A)}^{q^a \ (s_i \text{ accuracy)}} \overbrace{Pr(\theta_A)}^{\pi \text{ (prior)}}}
+{\underbrace{Pr(s_i = 0|\theta_A) Pr(\theta_A)}_{\text{same as numerator}} + \underbrace{Pr(s_i = 0|\theta_B)}_{(1-q^b) \ s_i \text{ inaccurate}} \underbrace{Pr(\theta_B)}_{(1- \pi) \text{ (prior)}}} \\
+& = \frac{q^a\pi}{q^a \pi + (1-q^b)(1-\pi)}
+\end{split}
+$$
+
+After signal $s_i = 1$, what does voter $i$ believe the probability the state of the world is $\theta_B$?
+
+$$
+\begin{split}
+\underbrace{Pr(\theta_B|s_i = 1)}_{\text{updated belief of } \theta_B}
+& = \frac{\overbrace{Pr(s_i = 1|\theta_B)}^{q^b \ (s_i \text{ accuracy)}} \overbrace{Pr(\theta_B)}^{(1-\pi) \text{ (prior)}}}
+{\underbrace{Pr(s_i = 1|\theta_B) Pr(\theta_B)}_{\text{same as numerator}} + \underbrace{Pr(s_i = 1|\theta_A)}_{(1-q^a) \ s_i \text{ inaccurate}} \underbrace{Pr(\theta_A)}_{\pi \text{ (prior)}}} \\
+& = \frac{q^b(1-\pi)}{q^b(1- \pi) + (1-q^a)\pi}
+\end{split}
+$$
+
+Rationally, a voter should base their decision on their updated posterior beliefs. Thus, having recieved $s_i = 0$, you should only follow the signal (which suggests $\theta_A$), only if your posterior belief also suggests $Pr(\theta_A| s_i = 0) > Pr(\theta_B|s_i = 0)$.
+
+$$
+\begin{split}
+& Pr(\theta_A|s_i = 0) > Pr(\theta_B|s_i = 0) \\
+& Pr(\theta_A|s_i = 0) > \underbrace{1 - Pr(\theta_A|s_i = 0)}_{\text{complement probability}} \\
+& \frac{q^a\pi}{q^a \pi + (1-q^b)(1-\pi)} \ > \ 1- \frac{q^a\pi}{q^a \pi + (1-q^b)(1-\pi)} \\
+& q^a \pi \ > \ q^a \pi + (1-q^b)(1-\pi) \left(1- \frac{q^a\pi}{q^a \pi + (1-q^b)(1-\pi)} \right) \\
+& q^a \pi \ > \ q^a \pi + (1-q^b)(1-\pi) - q^a \pi \\
+& q^a \pi \ > \ (1-q^b)(1-\pi) \\
+& \frac{q^a \pi}{1 - q^b} \ > \ 1 - \pi \\
+& \frac{q^a}{1 - q^b} \ > \ \frac{1 - \pi}{\pi} \\
+\end{split}
+$$
+
+Thus, voter $i$ should only sincerely follow their signal $s_i = 0$ if $\frac{q^a}{1 - q^b} > \frac{1 - \pi}{\pi}$.
+
+We can also do the same with having received $s_i = 1$, you should only follow the signal (which suggests $\theta_B$ if:
+
+$$
+\begin{split}
+& Pr(\theta_B|s_i = 1) > Pr(\theta_A|s_i = 1) \\
+& Pr(\theta_B|s_i = 1) > \underbrace{1 - Pr(\theta_B|s_i = 1)}_{\text{complement probability}} \\
+& \frac{q^b(1-\pi)}{q^b(1- \pi) + (1-q^a)\pi} > 1 - \frac{q^b(1-\pi)}{q^b(1- \pi) + (1-q^a)\pi} \\
+& q^b(1-\pi) \ > \ q^b(1- \pi) + (1-q^a)\pi \left( 1 - \frac{q^b(1-\pi)}{q^b(1- \pi) + (1-q^a)\pi} \right) \\
+& q^b(1-\pi) \ > \ q^b(1- \pi) + (1-q^a)\pi - q^b(1- \pi) \\
+& q^b(1-\pi) \ > \ (1-q^a)\pi \\
+& \frac{q^b}{(1-q^a)} \ > \ \frac{\pi}{(1-\pi)}
+\end{split}
+$$
+
+Thus, voter $i$ should only sincerely follow their signal $s_i = 1$ if $\frac{q^b}{(1-q^a)} >  \frac{\pi}{(1-\pi)}$.
+
+<br />
+
+Thus, the rationality of sincerely voting (following your signal) depends on the probabilities of $\pi$, $q^b$, and $q^a$.
+
+For example, if $\pi = \frac{1}{2}$, if you plug that in (and consider that $q^a, q^b > \frac{1}{2}$), sincere voting is always optimal at an individual level.
+
+However, so far, we have only focused on each voter's own signal. What about the other signals of other voters? These could also provide information that we have not yet considered.
+
+<br />
+
+### Information Aggregation
+
+Suppose voter 3 has received $s_3=1$. They must decide how to vote.
+
+1.  If voters 1 and 2 both voted for $B$, then their vote does not matter.
+2.  If voters 1 and 2 both voted for $R$, then their vote does not matter.
+3.  Their vote only matters if voter 1 and 2 split their votes.
+
+This concept of being able to determine an election is called being **pivotal**.
+
+<br />
+
+Being a pivotal voter provides information. After all, there is only one true state of the world $\theta \in \{\theta_A, \theta_B\}$.
+
+Let us say the state of the world is $\theta_A$. What is the probability of the first 2 voters getting different signals? We know that probability of 2 independent events happening is their product. Thus:
+
+$$
+\begin{split}
+Pr(s_1 ≠ s_2 | \theta_A) & = \underbrace{\left(Pr(s_1 = 0|\theta_A) Pr(s_2 = 1 | \theta_A)\right)}_{\text{probability that } s_1 = 0, \ s_2 = 1} + \underbrace{\left(Pr(s_1 = 1|\theta_A) Pr(s_2 = 2 | \theta_A)\right)}_{\text{probability that } s_1 = 1, \ s_2 = 0} \\
+& = q^a(1-q^a) + (1-q^a) q^a \\
+& = 2q^a(1-q^a)
+\end{split}
+$$
+
+Now let us say the state of the world is $\theta_B$. What is the probability of the first 2 voters getting different signals?
+
+$$
+\begin{split}
+Pr(s_1 ≠ s_2 | \theta_B) & = \underbrace{\left(Pr(s_1 = 0|\theta_B) Pr(s_2 = 1 | \theta_B)\right)}_{\text{probability that } s_1 = 0, \ s_2 = 1} + \underbrace{\left(Pr(s_1 = 1|\theta_B) Pr(s_2 = 2 | \theta_B)\right)}_{\text{probability that } s_1 = 1, \ s_2 = 0} \\
+& = (1-q^b)q^b + q^b(1-q^b) \\
+& = 2q^b(1-q^b)
+\end{split}
+$$
+
+This is new information for voter 3 to take in. Before with Bayes' rule, we only considered their own signal $s_3$. Now, they have to consider the additional information of being pivotal.
+
+<br />
+
+### Strategic Voting
+
+So if voter 3 is pivotal, that means they now have additional information beyond just the signal $s_3$ that they received. This means that this could affect their updated posterior belief in the state of the world.
+
+For example, given voter 3 has recieved $s_3 = 1$ signal, what is their belief that the state of the world matches the signal (which implies $\theta_B$)? I have shortened "pivotal" to "piv" in the equations below:
+
+$$
+\begin{split}
+Pr(\theta_B|s_3 = 1, \text{piv}) & = \frac{\overbrace{q^b}^{\text{our info}} \times \overbrace{2q^b(1-q^b)}^{\text{other voters info}}}{\underbrace{q^b}_{\text{our}} \times \underbrace{2q^b(1-q^b)}_{\text{other voters}} + \underbrace{(1- q^a)}_{\text{our}} \times \underbrace{2q^a(1-q^a)}_{\text{other voters}}} \\
+& = \frac{2(q^b)^2(1-q^b)}{2(q^b)^2(1-q^b) + 2q^a(1-q^a)^2} \\
+& = \frac{2(q^b)^2(1-q^b)}{2 \left[(q^b)^2(1-q^b) + q^a(1-q^a)^2 \right]} \\
+& = \frac{(q^b)^2(1-q^b)}{(q^b)^2(1-q^b) + q^a(1-q^a)^2} \\
+\end{split}
+$$
+
+Thus, voter 3 should vote for $B$ after $s_i = 3$ if their updated posterior belief is that $\theta_B$ is more likely:
+
+$$
+\begin{split}
+& \frac{(q^b)^2(1-q^b)}{(q^b)^2(1-q^b) + q^a(1-q^a)^2} ≥ \frac{1}{2} \\
+& (q^b)^2(1-q^b) ≥  \frac{(q^b)^2(1-q^b) + q^a(1-q^a)^2}{2} \\
+& 2(q^b)^2(1-q^b) ≥ (q^b)^2(1-q^b) + q^a(1-q^a)^2 \\
+& (q^b)^2(1-q^b) ≥ q^a(1-q^a)^2  \\
+& \frac{(q^b)^2(1-q^b)}{q^a(1-q^a)^2} ≥ 1 \\
+& \frac{1-q^b}{q^a} \left( \frac{q^b}{1-q^a}\right)^2 ≥ 1 \\
+& \underbrace{\left( \frac{q^b}{1-q^a}\right)}_{\text{3's signal}} \underbrace{\frac{1-q^b}{q^a}\left( \frac{q^b}{1-q^a}\right)}_{\text{other signals given pivotal}} ≥ 1
+\end{split}
+$$
+
+That is the condition for which voter 3 should vote sincerely following their signal $s_3 = 1$.
+
+This condition can be violated. For example, let us suppose $q^a = 0.6$, and $q^b = 0.9$. We can plug it into the formula above:
+
+$$
+\left(\frac{0.9}{1-0.6}\right) \frac{1-0.9}{0.6}\left(\frac{0.9}{1-0.6}\right) = 0.84 < 1
+$$
+
+Thus, given these probabilities, sincere voting is not optimal for voter 3 if they recieve $s_3 = 1$. Instead, voter 3 should vote against their signal, and vote for $A$.
+
+Why is this the case? Well remember, $q^a$ is the likelihood of recieving the correct signal $s-i = 0$ in world $\theta_A$:
+
+$$
+Pr(s_i=0|\theta_A) = q^a = 0.6
+$$
+
+What does that imply? That means if the world is truly $\theta_A$, there is a 40% chance of receiving the wrong signal (i.e. signal $s_i = 1$).
+
+On the other hand, with $q^b = 0.9$, that means that if the world was $\theta_B$, there is only a 10% of recieving the wrong signal (i.e. signal $s_i = 0$).
+
+Thus, because we know the other two voters got different signals, we know one voter got a wrong signal, and that is far more likely that this resulted from state of the world $\theta_A$. When incorporating this information with our own signal $s_3$, we realise that the state of the world being $\theta_A$ is more Kelly.
+
+<br />
+
+### Interpretation of Result
+
+The idea of this is that majority rule allows voters to aggregate information. If everyone was just voting on their own signals (i.e. their own knowledge about the world), the chances of getting the wrong policy are high.
+
+However, in majority rule, by viewing other people's information, we can take that information to make a better understanding of our own information.
+
+However, all of this discussion relies on one key assumption: that there is a correct policy, and the goal of democracy is to find that policy.
+
+Many scholars disagree with the idea of a "correct policy" for everyone. Some believe democracy is more about ideological conflict, while others believe it is more about selecting the right representatives.
+
+However, this does not mean that this idea of elections is completely useless. Some cases, like criminal trials, civil trials, or academic misconduct meetings, will also involve voting by members/juries/citizens. For these cases, there are likely a more realistic notion of a "correct" decision.
