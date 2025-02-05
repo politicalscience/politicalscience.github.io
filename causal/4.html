@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Kevin’s Guide to Political Science</title>
+<title>Selection On Observables</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,17 +23,60 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="index_files/libs/clipboard/clipboard.min.js"></script>
-<script src="index_files/libs/quarto-html/quarto.js"></script>
-<script src="index_files/libs/quarto-html/popper.min.js"></script>
-<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="index_files/libs/quarto-html/anchor.min.js"></script>
-<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="index_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="4_files/libs/clipboard/clipboard.min.js"></script>
+<script src="4_files/libs/quarto-html/quarto.js"></script>
+<script src="4_files/libs/quarto-html/popper.min.js"></script>
+<script src="4_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="4_files/libs/quarto-html/anchor.min.js"></script>
+<link href="4_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="4_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="4_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="4_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="4_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: true
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -42,8 +85,8 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Kevin’s Guide to Political Science</h1>
-            <p class="subtitle lead">A Collection of Materials on Political Science and Political Economy</p>
+      <h1 class="title">Selection On Observables</h1>
+            <p class="subtitle lead">Methods for Causal Inference</p>
                       </div>
   </div>
     
@@ -62,8 +105,15 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#topics-in-political-science" id="toc-topics-in-political-science" class="nav-link active" data-scroll-target="#topics-in-political-science">Topics in Political Science</a></li>
-  <li><a href="#quantitative-methods-in-political-science" id="toc-quantitative-methods-in-political-science" class="nav-link" data-scroll-target="#quantitative-methods-in-political-science">Quantitative Methods in Political Science</a></li>
+  <li><a href="#identification" id="toc-identification" class="nav-link active" data-scroll-target="#identification"><strong>Identification</strong></a>
+  <ul class="collapse">
+  <li><a href="#pre-treatment-covariates" id="toc-pre-treatment-covariates" class="nav-link" data-scroll-target="#pre-treatment-covariates">Pre-Treatment Covariates</a></li>
+  <li><a href="#identification-assumptions" id="toc-identification-assumptions" class="nav-link" data-scroll-target="#identification-assumptions">Identification Assumptions</a></li>
+  <li><a href="#identification-of-the-ate" id="toc-identification-of-the-ate" class="nav-link" data-scroll-target="#identification-of-the-ate">Identification of the ATE</a></li>
+  <li><a href="#identification-of-the-att" id="toc-identification-of-the-att" class="nav-link" data-scroll-target="#identification-of-the-att">Identification of the ATT</a></li>
+  <li><a href="#graphical-identification" id="toc-graphical-identification" class="nav-link" data-scroll-target="#graphical-identification">Graphical Identification</a></li>
+  <li><a href="#good-and-bad-controls" id="toc-good-and-bad-controls" class="nav-link" data-scroll-target="#good-and-bad-controls">Good and Bad Controls</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -75,154 +125,137 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>Here is a collection of materials on <strong>key topics</strong> and <strong>methodology</strong> in political science that I have obtained through my undergraduate and postgraduate degrees!</p>
-<section id="topics-in-political-science" class="level2">
-<h2 class="anchored" data-anchor-id="topics-in-political-science">Topics in Political Science</h2>
-<p>A <a href="https://politicalscience.github.io/guides/games.html">quick guide to game theory</a> to help with this section.</p>
-<div class="callout callout-style-simple callout-tip no-icon callout-titled">
+<p>Randomisation is amazing, but it is not always possible. Often, the assignment mechanism is not under the researcher’s control.</p>
+<hr>
+<section id="identification" class="level1">
+<h1><strong>Identification</strong></h1>
+<section id="pre-treatment-covariates" class="level3">
+<h3 class="anchored" data-anchor-id="pre-treatment-covariates">Pre-Treatment Covariates</h3>
+<p>Any variable <span class="math inline">X</span>, that are predetermined before treatment <span class="math inline">D</span>, are covariates. Thus, treatment <span class="math inline">D</span> does not affect the value of <span class="math inline">X_i</span> for any unit <span class="math inline">i</span>.</p>
+<p>However, <span class="math inline">X</span> and <span class="math inline">D</span> can still be associated - generally where <span class="math inline">X</span> values affect whether a unit <span class="math inline">i</span> takes the treatment <span class="math inline">D</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-378311705.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
+</figure>
+</div>
+<p>Here, we can see <span class="math inline">X</span> is a pre-treatment covariate that affects <span class="math inline">D</span>, and is not caused by <span class="math inline">D</span>. <span class="math inline">V</span> is not a pre-treatment covariate, since it is caused by <span class="math inline">D</span>. <span class="math inline">Q</span> is also not a covariate.</p>
+<p><br></p>
+</section>
+<section id="identification-assumptions" class="level3">
+<h3 class="anchored" data-anchor-id="identification-assumptions">Identification Assumptions</h3>
+<p>In randomisation, we assumed independence of treatment from potential outcomes (also called ignorability). However, without randomisation, we cannot assume this. We can weaken this assumption to the following:</p>
+<ol type="1">
+<li><strong>Conditional Ignorability</strong> (also known as exogeneity or independence): Among units with identical covariate values <span class="math inline">X_i</span>, treatment <span class="math inline">D_i</span> is as-if randomly assigned. Or in other words, potential outcomes are independent from treatment within each specific covariate value <span class="math inline">X_i = x</span>.</li>
+</ol>
+<p><span class="math display">
+(Y_{0i}, Y_{1i}) \perp D_i  \ | \ X_i = x, \quad \forall \ x \in \mathcal X
+</span></p>
+<p>This implies that for a given value of a covariate <span class="math inline">X_i = x</span>, we know:</p>
+<p><span class="math display">
+\begin{split}
+E(Y_{1i}|X_i = x) = E(Y_{1i}|D_i = 1, X_i = x) \\
+E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 0, X_i = x)
+\end{split}
+</span></p>
+<ol start="2" type="1">
+<li><strong>Common Support</strong> assumption: a unit <span class="math inline">i</span> with value of <span class="math inline">X_i</span>, there is a probability that they could be assigned to both control <span class="math inline">D_i = 0</span> or treatment <span class="math inline">D_i = 1</span>. So, there is no value of <span class="math inline">X_i</span> where a unit <span class="math inline">i</span> can only be either treatment or control.</li>
+</ol>
+<p><span class="math display">
+0 &lt; Pr(D_i = 1 \ | X_i = x) &lt; 1 \quad \forall \ x \in \mathcal X
+</span></p>
+<div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
+<i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Topics in Political Science
+Example of Identification Assumptions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>This section contains a variety of topics in political science that I find interesting.</p>
-<p><strong>Elections and Democracies</strong></p>
-<ol type="1">
-<li><a href="https://politicalscience.github.io/topics/1.html">Elections and Policy Competition</a></li>
-<li><a href="https://politicalscience.github.io/topics/2.html">The Uses of Elections</a></li>
-<li>Rise of Populist Parties.</li>
-<li>Democratic Backsliding</li>
-</ol>
-<p><strong>Political Institutions</strong></p>
-<ol start="5" type="1">
-<li>The Prisoner’s Dilemma and Potential for Cooperation</li>
-<li>Legislative Bargaining and Institutional Design</li>
-</ol>
-<p><strong>Politics of Conflict</strong></p>
-<ol start="7" type="1">
-<li>War and Peace</li>
-<li>Terrorism and Counter-Terrorism</li>
-</ol>
-<p><strong>Discrimination</strong></p>
-</div>
-</div>
-</div>
-</section>
-<section id="quantitative-methods-in-political-science" class="level2">
-<h2 class="anchored" data-anchor-id="quantitative-methods-in-political-science">Quantitative Methods in Political Science</h2>
-<p>R-Code is provided for methods.</p>
-<div class="callout callout-style-simple callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Regression and Extensions
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Note! Regression does not show causality! You need a causal identification strategy to identify causal effects (see the next section on causal inference).</p>
-<p><strong>The Generalised Linear Model:</strong></p>
-<ol type="1">
-<li><a href="https://politicalscience.github.io/regression/1.html">Linear Regression Model</a></li>
-<li>Logistic Regression Model</li>
-<li>Regression for Counts</li>
-</ol>
-<p><strong>Extensions:</strong></p>
-<ol start="4" type="1">
-<li>Spatial Regression Models</li>
-<li>Random Forest and Bagging</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Causal Inference
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>This section is about measuring the size of causal effects.</p>
-<ol type="1">
-<li><a href="https://politicalscience.github.io/causal/1.html">Ordinary Least Squares Theory</a></li>
-<li><a href="https://politicalscience.github.io/causal/2.html">Causal Frameworks and Estimands</a></li>
-<li><a href="https://politicalscience.github.io/causal/3.html">Randomised Experiments</a></li>
-<li><a href="https://politicalscience.github.io/causal/4.html">Selection on Observables</a></li>
-<li>Instrumental Variables</li>
-<li>Regression Discontinuity</li>
-<li>Differences-in-Differences</li>
-</ol>
-<p><strong>Additional Topics:</strong></p>
-<ol start="8" type="1">
-<li>Synthetic Controls</li>
-<li>Causal Trees and Machine Learning</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Multivariate Measurement
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>This section is about models that can help us measure latent (unobservable or unmeasurable) variables with multiple observable indicators.</p>
-<ol type="1">
-<li><a href="https://politicalscience.github.io/multivariate/1.html">Principle Components Analysis</a></li>
-<li>Exploratory Factor Analysis</li>
-<li>Confirmatory Factor Analysis</li>
-<li>Latent Trait Models</li>
-<li>Latent Class Models</li>
-<li>Cluster Analysis</li>
-<li>Structural Equation Models</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Text Analysis and Measurement
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>This section is about methods that can help us quantify textual data and analyse textual data.</p>
-<ol type="1">
-<li>Dictionary Methods</li>
-<li>Classification of Texts</li>
-<li>Latent Trait Scales for Text</li>
-<li>Text Similarity and Clustering</li>
-<li>Structural Topic Models</li>
-</ol>
+<p>Imagine we have a theory that being abducted <span class="math inline">D</span> causes turning out to vote.</p>
+<p>Blattman (2009) finds that age is the primary way violent groups chose to abduct individuals: abduction parties released young children and older adults, but kept all adolescent and young males.</p>
+<p>That means our theory is that age <span class="math inline">X</span> affects selection into treatment <span class="math inline">D</span>. Young children and older adults are less likely to get abducted <span class="math inline">D</span>, while adolescent and young males are more likely <span class="math inline">D</span>.</p>
 </div>
 </div>
 </div>
 <p><br></p>
+</section>
+<section id="identification-of-the-ate" class="level3">
+<h3 class="anchored" data-anchor-id="identification-of-the-ate">Identification of the ATE</h3>
+<p>We have our assumptions as noted above. How do these assumptions help us find the ATE? We start with the conditional average treatment effect, conditional on some value of covariates <span class="math inline">x</span>:</p>
+<p><span class="math display">
+\begin{split}
+\tau_{CATE}(x) &amp; = E(Y_{1i} - Y_{0i} \ | \ X_i = x) \\
+&amp; = E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x) \\
+&amp; = \underbrace{E(Y_{1i}|D_i = 1, X_i = x)}_{\text{using conditional ignorability}} - \underbrace{E(Y_{0i}|D_i = 0X_i = x)}_{\text{using conditional ignorability}} \\
+&amp; = \underbrace{E(Y_i|D_i = 1, X_i = x)}_{\text{observable outcome}} - \underbrace{E(Y_i|D_i = 0, X_i = x)}_{\text{observable outcome})}
+\end{split}
+</span></p>
+<p>Now, let us discuss the ATE, and plug in the CATE to identify it:</p>
+<p><span class="math display">
+\begin{split}
+\tau_{ATE} &amp; = E(Y_{1i} - Y_{0i}) \\
+&amp; = \underbrace{\int \overbrace{E(Y_{1i} - Y_{0i} \ | \ X_i = x)}^{\text{CATE at }X_i = x} d \ \overbrace{Pr(X_i)}^{Pr(X_i = x)}}_{\text{weighted average, with weight being } Pr(X_i = x)} \\
+&amp; = \int(\underbrace{E(Y_i|D_i = 1, X_i) - E(Y_i|D_i = 0, X_i)}_{\text{using CATE proof above}})d \ Pr(X_i)
+\end{split}
+</span></p>
+<p>This means the ATE is identified as the weighted average of all the conditional average treatment effects. The conditional average treatment effect is the difference-in-means of the observed <span class="math inline">Y_i</span> at every possible value of <span class="math inline">X_i = x</span>.</p>
+<p><br></p>
+</section>
+<section id="identification-of-the-att" class="level3">
+<h3 class="anchored" data-anchor-id="identification-of-the-att">Identification of the ATT</h3>
+<p>We can weaken our initial assumptions, and still calculate the ATT.</p>
+<ol type="1">
+<li>Weakened conditional ignorability: Only <span class="math inline">Y_{0i}</span> needs to be independent of <span class="math inline">D_i</span> for units with the same covariates <span class="math inline">X_i</span>. Or in other words, <span class="math inline">(Y_{0i}) \perp D_i | X_i = x</span>.</li>
+<li>Weakened common support: <span class="math inline">Pr(D_i = 1 |X_i = x) &lt; 1</span>.</li>
+</ol>
+<p>[Proof goes here]</p>
+<p>Even when all assumptions are met for identification of the ATE, the <span class="math inline">\tau_{ATE}</span> can be different than the <span class="math inline">\tau_{ATT}</span>.</p>
+<p><br></p>
+</section>
+<section id="graphical-identification" class="level3">
+<h3 class="anchored" data-anchor-id="graphical-identification">Graphical Identification</h3>
+<p>D-separation in DAGs corresponds to the assumption of conditional independence.</p>
+<p>A set of nodes <span class="math inline">S</span> can identify the causal effect of <span class="math inline">X \rightarrow Y</span>, if:</p>
+<ol type="1">
+<li>No element of <span class="math inline">S</span> is a descendant of <span class="math inline">X</span> (no element of <span class="math inline">S</span> results from <span class="math inline">X</span>):</li>
+<li>The elements of <span class="math inline">S</span> block all back-door paths from <span class="math inline">X \rightarrow Y</span>.</li>
+</ol>
+<p>Take this example: how can we identify the effect of <span class="math inline">D \rightarrow Y</span>?</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2795492971.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
+</figure>
+</div>
+<p>The conditioning sets identify the total effect of <span class="math inline">D</span> on <span class="math inline">Y</span>:</p>
+<ol type="1">
+<li><span class="math inline">\{Z, M\}</span>:</li>
+<li><span class="math inline">\{M, Q\}</span>:</li>
+<li><span class="math inline">\{Z, Q, M\}</span>:</li>
+</ol>
+<p>Note that <span class="math inline">\{M\}</span> alone does not block - this is because <span class="math inline">M</span> is a collider. Similarly, <span class="math inline">\{Z, Q\}</span> alone leave the backdoor path open through <span class="math inline">M</span>.</p>
+<p><br></p>
+</section>
+<section id="good-and-bad-controls" class="level3">
+<h3 class="anchored" data-anchor-id="good-and-bad-controls">Good and Bad Controls</h3>
+<p>Good controls block backdoor paths, which facilitate identification of the causal effect.</p>
+<p>Bad controls are when we control for post-treatment variables. For example, <span class="math inline">P</span> below is a bad control, since it is caused by <span class="math inline">D</span>, so it is post-treatment.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1369053188.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
+</figure>
+</div>
+<p>You also never want to control variables that only predict <span class="math inline">D</span>. These are bad because controlling for these removes variation in <span class="math inline">D</span> that could be useful.</p>
+<p>Neutral controls are ones that don’t identify the causal effect, but improve efficiency. For example, <span class="math inline">Q</span> below affects <span class="math inline">Y</span>, but there is no backdoor path. Controlling <span class="math inline">Q</span> will not help identification, but can control noise in <span class="math inline">Y</span> which may increase efficiency.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1555756596.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
+</figure>
+</div>
+</section>
 </section>
 
 </main>

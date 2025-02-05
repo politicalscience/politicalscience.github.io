@@ -129,6 +129,8 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#components-of-the-graphs" id="toc-components-of-the-graphs" class="nav-link" data-scroll-target="#components-of-the-graphs">Components of the Graphs</a></li>
   <li><a href="#representing-interventions" id="toc-representing-interventions" class="nav-link" data-scroll-target="#representing-interventions">Representing Interventions</a></li>
+  <li><a href="#blocked-paths" id="toc-blocked-paths" class="nav-link" data-scroll-target="#blocked-paths">Blocked Paths</a></li>
+  <li><a href="#d-seperation" id="toc-d-seperation" class="nav-link" data-scroll-target="#d-seperation">D-Seperation</a></li>
   </ul></li>
   <li><a href="#assignment-mechanism" id="toc-assignment-mechanism" class="nav-link" data-scroll-target="#assignment-mechanism"><strong>Assignment Mechanism</strong></a>
   <ul class="collapse">
@@ -541,6 +543,43 @@ Example of Interventions
 </div>
 </div>
 <p>With exogenously determined variables, we can find the causal effect that variable is causing on another.</p>
+<p><br></p>
+</section>
+<section id="blocked-paths" class="level3">
+<h3 class="anchored" data-anchor-id="blocked-paths">Blocked Paths</h3>
+<p>A set of nodes <span class="math inline">\{ \mathbf S \}</span> blocks a path <span class="math inline">p</span> if either:</p>
+<ol type="1">
+<li>If <span class="math inline">p</span> contains at least one arrow-emitting node in <span class="math inline">S</span>, or</li>
+<li><span class="math inline">p</span> contains at least one collision node (multiple arrows point into it) that is outside <span class="math inline">S</span> and has no descendant of <span class="math inline">S</span> (no arrows go out of it to another node).</li>
+</ol>
+<p>Take this directed acyclic graph:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2373065460.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
+</figure>
+</div>
+<p>We can see the following:</p>
+<ol type="1">
+<li>The path <span class="math inline">D \rightarrow P \rightarrow Y</span> is blocked by set <span class="math inline">\{P\}</span>, because the node <span class="math inline">P</span> is one arrow-emitting node that is in the path <span class="math inline">D \rightarrow P \rightarrow Y</span>.</li>
+<li>The path <span class="math inline">D \leftarrow M \rightarrow Y</span> is blocked by set <span class="math inline">\{M\}</span>, because the node <span class="math inline">M</span> is one arrow-emitting node in the path <span class="math inline">D \leftarrow M \rightarrow Y</span>.</li>
+<li><span class="math inline">D \leftarrow Z \rightarrow M \rightarrow Y</span> is blocked by <span class="math inline">\{M\}</span>, <span class="math inline">\{Z\}</span>, or <span class="math inline">\{M, Z\}</span> - note <span class="math inline">D</span> and <span class="math inline">Y</span> do not emit arrows so they cannot block.</li>
+</ol>
+<p><br></p>
+</section>
+<section id="d-seperation" class="level3">
+<h3 class="anchored" data-anchor-id="d-seperation">D-Seperation</h3>
+<p>If set <span class="math inline">S</span> of nodesblocks all paths from <span class="math inline">D</span> to <span class="math inline">Y</span>, then set <span class="math inline">S</span> of nodes d-separates <span class="math inline">D</span> and <span class="math inline">Y</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-39157862.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
+</figure>
+</div>
+<p>We can see here that <span class="math inline">D</span> and <span class="math inline">Y</span> are d-separated by:</p>
+<ol type="1">
+<li><span class="math inline">\{Z, M\}</span>:</li>
+<li><span class="math inline">\{Q, M\}</span>:</li>
+<li><span class="math inline">\{Z, Q, M\}</span>:</li>
+</ol>
 <p><br></p>
 <p><br></p>
 <hr>

@@ -1,0 +1,156 @@
+---
+title: "Selection On Observables"
+subtitle: "Methods for Causal Inference"
+format:
+    html:
+        page-layout: article
+        grid:
+          sidebar-width: 350px
+          body-width: 700px
+          margin-width: 250px
+          gutter-width: 2em
+        fontsize: 12pt
+        theme: default
+        toc: TRUE
+        toc-depth: 3
+        toc-location: left
+        toc-expand: true
+        toc-title: "Table of Contents"
+        mainfont: "Computer Modern"
+        title-block-banner: true
+        classoption: fleqn
+        html-math-method: katex
+editor: visual
+---
+
+Randomisation is amazing, but it is not always possible. Often, the assignment mechanism is not under the researcher's control.
+
+------------------------------------------------------------------------
+
+# **Identification**
+
+### Pre-Treatment Covariates
+
+Any variable $X$, that are predetermined before treatment $D$, are covariates. Thus, treatment $D$ does not affect the value of $X_i$ for any unit $i$.
+
+However, $X$ and $D$ can still be associated - generally where $X$ values affect whether a unit $i$ takes the treatment $D$.
+
+![](images/clipboard-378311705.png){fig-align="center" width="50%"}
+
+Here, we can see $X$ is a pre-treatment covariate that affects $D$, and is not caused by $D$. $V$ is not a pre-treatment covariate, since it is caused by $D$. $Q$ is also not a covariate.
+
+<br />
+
+### Identification Assumptions
+
+In randomisation, we assumed independence of treatment from potential outcomes (also called ignorability). However, without randomisation, we cannot assume this. We can weaken this assumption to the following:
+
+1.  **Conditional Ignorability** (also known as exogeneity or independence): Among units with identical covariate values $X_i$, treatment $D_i$ is as-if randomly assigned. Or in other words, potential outcomes are independent from treatment within each specific covariate value $X_i = x$.
+
+$$
+(Y_{0i}, Y_{1i}) \perp D_i  \ | \ X_i = x, \quad \forall \ x \in \mathcal X
+$$
+
+This implies that for a given value of a covariate $X_i = x$, we know:
+
+$$
+\begin{split}
+E(Y_{1i}|X_i = x) = E(Y_{1i}|D_i = 1, X_i = x) \\
+E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 0, X_i = x)
+\end{split}
+$$
+
+2.  **Common Support** assumption: a unit $i$ with value of $X_i$, there is a probability that they could be assigned to both control $D_i = 0$ or treatment $D_i = 1$. So, there is no value of $X_i$ where a unit $i$ can only be either treatment or control.
+
+$$
+0 < Pr(D_i = 1 \ | X_i = x) < 1 \quad \forall \ x \in \mathcal X
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Identification Assumptions
+
+Imagine we have a theory that being abducted $D$ causes turning out to vote.
+
+Blattman (2009) finds that age is the primary way violent groups chose to abduct individuals: abduction parties released young children and older adults, but kept all adolescent and young males.
+
+That means our theory is that age $X$ affects selection into treatment $D$. Young children and older adults are less likely to get abducted $D$, while adolescent and young males are more likely $D$.
+:::
+
+<br />
+
+### Identification of the ATE
+
+We have our assumptions as noted above. How do these assumptions help us find the ATE? We start with the conditional average treatment effect, conditional on some value of covariates $x$:
+
+$$
+\begin{split}
+\tau_{CATE}(x) & = E(Y_{1i} - Y_{0i} \ | \ X_i = x) \\
+& = E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x) \\
+& = \underbrace{E(Y_{1i}|D_i = 1, X_i = x)}_{\text{using conditional ignorability}} - \underbrace{E(Y_{0i}|D_i = 0X_i = x)}_{\text{using conditional ignorability}} \\
+& = \underbrace{E(Y_i|D_i = 1, X_i = x)}_{\text{observable outcome}} - \underbrace{E(Y_i|D_i = 0, X_i = x)}_{\text{observable outcome})}
+\end{split}
+$$
+
+Now, let us discuss the ATE, and plug in the CATE to identify it:
+
+$$
+\begin{split}
+\tau_{ATE} & = E(Y_{1i} - Y_{0i}) \\
+& = \underbrace{\int \overbrace{E(Y_{1i} - Y_{0i} \ | \ X_i = x)}^{\text{CATE at }X_i = x} d \ \overbrace{Pr(X_i)}^{Pr(X_i = x)}}_{\text{weighted average, with weight being } Pr(X_i = x)} \\
+& = \int(\underbrace{E(Y_i|D_i = 1, X_i) - E(Y_i|D_i = 0, X_i)}_{\text{using CATE proof above}})d \ Pr(X_i)
+\end{split}
+$$
+
+This means the ATE is identified as the weighted average of all the conditional average treatment effects. The conditional average treatment effect is the difference-in-means of the observed $Y_i$ at every possible value of $X_i = x$.
+
+<br />
+
+### Identification of the ATT
+
+We can weaken our initial assumptions, and still calculate the ATT.
+
+1.  Weakened conditional ignorability: Only $Y_{0i}$ needs to be independent of $D_i$ for units with the same covariates $X_i$. Or in other words, $(Y_{0i}) \perp D_i | X_i = x$.
+2.  Weakened common support: $Pr(D_i = 1 |X_i = x) < 1$.
+
+\[Proof goes here\]
+
+Even when all assumptions are met for identification of the ATE, the $\tau_{ATE}$ can be different than the $\tau_{ATT}$.
+
+<br />
+
+### Graphical Identification
+
+D-separation in DAGs corresponds to the assumption of conditional independence.
+
+A set of nodes $S$ can identify the causal effect of $X \rightarrow Y$, if:
+
+1.  No element of $S$ is a descendant of $X$ (no element of $S$ results from $X$):
+2.  The elements of $S$ block all back-door paths from $X \rightarrow Y$.
+
+Take this example: how can we identify the effect of $D \rightarrow Y$?
+
+![](images/clipboard-2795492971.png){fig-align="center" width="40%"}
+
+The conditioning sets identify the total effect of $D$ on $Y$:
+
+1.  $\{Z, M\}$:
+2.  $\{M, Q\}$:
+3.  $\{Z, Q, M\}$:
+
+Note that $\{M\}$ alone does not block - this is because $M$ is a collider. Similarly, $\{Z, Q\}$ alone leave the backdoor path open through $M$.
+
+<br />
+
+### Good and Bad Controls
+
+Good controls block backdoor paths, which facilitate identification of the causal effect.
+
+Bad controls are when we control for post-treatment variables. For example, $P$ below is a bad control, since it is caused by $D$, so it is post-treatment.
+
+![](images/clipboard-1369053188.png){fig-align="center" width="40%"}
+
+You also never want to control variables that only predict $D$. These are bad because controlling for these removes variation in $D$ that could be useful.
+
+Neutral controls are ones that don't identify the causal effect, but improve efficiency. For example, $Q$ below affects $Y$, but there is no backdoor path. Controlling $Q$ will not help identification, but can control noise in $Y$ which may increase efficiency.
+
+![](images/clipboard-1555756596.png){fig-align="center" width="40%"}
