@@ -343,3 +343,89 @@ By doing this for each individual unit $i$, we now have a new variable $y_j$ tha
 <br />
 
 <br />
+
+------------------------------------------------------------------------
+
+# **Implementation in R**
+
+You will need packages *psych* and *GPArotation*.
+
+```{r, eval = FALSE}
+library(psych)
+library(GPArotation)
+```
+
+To estimate the principle components, you should use the *princomp()* command:
+
+```{r, eval = FALSE}
+pca_object <- princomp(~x1 + x2 + x3,
+                      data = mydata,
+                      cor = TRUE, #to do on corr matrix
+                      scores = TRUE, #calculate scores
+                      na.action = na.exclude)
+summary(newObject)
+```
+
+The summary command will provide the standard deviation of each principle component, the proportion of total variance each component explains, and the cumulative proportion of variance explained.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Obtaining Variances/Eigenvalues
+
+The variances of each principle component (also the eigenvalues) are the square of the standard deviation. We can obtain as following:
+
+```{r, eval = FALSE}
+pca_object$sdev^2
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Screeplot
+
+To create a screeplot to help identify how many principle components to keep, we use the *screeplot()* command:
+
+```{r, eval = FALSE}
+screeplot(pca_object, type='l', main="")
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Weights and Component Loadings
+
+We can calculate weights for each principle component by using the *loadings()* command:
+
+```{r, eval = FALSE}
+pca_weights <- loadings(pca_object)
+print(pca_loadings, cutoff = 0, digits = 4)
+```
+
+For component loadings (weights in a normalised form), we first get the square root of the eigenvalues $\lambda_i$, then we multiply our weights with those square roots.
+
+```{r, eval = FALSE}
+sqrt_lambda <- pca_object$sdev
+print(t(t(pca_weights)*sqrt_lambda), cutoff = 0, digits = 4)
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Component Scores
+
+We can access component scores in the *pca_object* we originally created:
+
+```{r, eval = FALSE}
+pca_object$score
+```
+
+This will give you a table, with the rows being different units in the data, and the columns being different principle component scores for each principle component.
+
+If you are wanting to just view the scores, it is recommended to subset the data if you have too many observations:
+
+```{r, eval = FALSE}
+pca_object$score[1:10,] #first 10 units
+```
+
+You can also subset the number of principle components:
+
+```{r, eval = FALSE}
+pca_object$score[,1:3] #first 3 PC
+```
+:::

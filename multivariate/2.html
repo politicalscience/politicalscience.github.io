@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -128,6 +162,7 @@ window.Quarto = {
   <li><a href="#orthogonal-and-oblique-rotations" id="toc-orthogonal-and-oblique-rotations" class="nav-link" data-scroll-target="#orthogonal-and-oblique-rotations">Orthogonal and Oblique Rotations</a></li>
   <li><a href="#factor-interpretation" id="toc-factor-interpretation" class="nav-link" data-scroll-target="#factor-interpretation">Factor Interpretation</a></li>
   </ul></li>
+  <li><a href="#implementation-in-r" id="toc-implementation-in-r" class="nav-link" data-scroll-target="#implementation-in-r"><strong>Implementation in R</strong></a></li>
   </ul>
 </nav>
 </div>
@@ -296,7 +331,7 @@ Other Choices of Assumption
 <section id="estimation-process" class="level3">
 <h3 class="anchored" data-anchor-id="estimation-process">Estimation Process</h3>
 <p>We know that our latent factor <span class="math inline">\xi \sim \mathcal N(k, \phi)</span>.</p>
-<p>We know that <span class="math inline">x_i</span> is related to <span class="math inline">\xi</span> by <span class="math inline">x_i = \tau_i + \lambda_i \xi + \delta_i</span>, a linear regression. Thus, <span class="math inline">E(x_i|\xi) = \tau_i + \lambda_i \xi</span>. Since <span class="math inline">x_i</span> is also normally distributed, we can say <span class="math inline">\xi \sim \mathcal N(\tau_i + \lambda_i \xi, \theta_{ii})</span>.</p>
+<p>We know that <span class="math inline">x_i</span> is related to <span class="math inline">\xi</span> by <span class="math inline">x_i = \tau_i + \lambda_i \xi + \delta_i</span>, a linear regression. Thus, <span class="math inline">E(x_i|\xi) = \tau_i + \lambda_i \xi</span>. Since <span class="math inline">x_i</span> is also normally distributed, we can say <span class="math inline">x_i \sim \mathcal N(\tau_i + \lambda_i \xi, \ \lambda_i^2\phi +\theta_{ii})</span>.</p>
 <p>We can construct a theoretical covariance matrix of all the items <span class="math inline">x_1, \dots x_p</span>, where the diagonals are the variances:</p>
 <p><span class="math display">
 \begin{pmatrix}
@@ -494,7 +529,101 @@ Visualisation of Orthogonal and Oblique Rotations
 <p><span class="math display">
 \tilde\xi_j = w_{0j} + w_{1j}x_1 + w_{2j}x+2 + \dots + w_{pj}x_p
 </span></p>
+<p><br></p>
+<p><br></p>
+<hr>
 </section>
+</section>
+<section id="implementation-in-r" class="level1">
+<h1><strong>Implementation in R</strong></h1>
+<p>For exploratory factor analysis, you will need the package <em>psych</em> and <em>GPArotation</em>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GPArotation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Before starting factor analysis, you want a dataset with only complete observations (no NA’s) for the variables you are items for factor analysis:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>no_na <span class="ot">&lt;-</span> <span class="fu">apply</span>(mydata, <span class="dv">1</span>, <span class="at">FUN=</span><span class="cf">function</span>(x){<span class="fu">all</span>(<span class="sc">!</span><span class="fu">is.na</span>(x))})</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mydata <span class="ot">&lt;-</span> mydata[no_na,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Also subset the data so that only the items you want to use are in the dataframe.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+EFA with One Factor
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We can use the <em>fa()</em> command to conduct factor analysis:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fa_object <span class="ot">&lt;-</span> <span class="fu">fa</span>(mydata, <span class="at">nfactors=</span><span class="dv">1</span>, <span class="at">fm=</span><span class="st">"ml"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fa_object)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The output provides</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+EFA with Two Factors
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We can use the <em>fa()</em> command to conduct factor anlaysis.</p>
+<p>For a non-rotated (orthogonal) rotation, the code is as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fa_object <span class="ot">&lt;-</span> <span class="fu">fa</span>(mydata, <span class="at">nfactors=</span><span class="dv">1</span>, <span class="at">fm=</span><span class="st">"ml"</span>, <span class="at">rotate =</span> <span class="st">"none"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fa_object)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For a oblique rotation, the code is as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fa_object <span class="ot">&lt;-</span> <span class="fu">fa</span>(mydata, <span class="at">nfactors=</span><span class="dv">1</span>, <span class="at">fm=</span><span class="st">"ml"</span>, <span class="at">rotate =</span> <span class="st">"oblimin"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fa_object)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The output provides a table of the loadings <span class="math inline">\lambda_i</span> for each item. ML1 represents the first factor <span class="math inline">\xi_1</span>, and ML2 represents the second factor <span class="math inline">\xi_2</span>, and so on…</p>
+<p>For the oblique rotation, there is also a table of correlations between all the factors <span class="math inline">\xi_j</span>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Factor Scores
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To calculate factor scores, we can extract them from the <em>fa_object</em> in which we stored our factor analysis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fa_object<span class="sc">$</span>scores</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This will give you a table, with the rows being different units in the data, and the columns being different factor scores for each factor.</p>
+<p>If you are wanting to just view the scores, it is recommended to subset the data if you have too many observations:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fa_object<span class="sc">$</span>scores[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,] <span class="co">#first 10 units</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can also subset the number of factors (although if you don’t need extra factors, you would just specify less when estimating):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pca_object<span class="sc">$</span>scores[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] <span class="co">#first 2 factors</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 </section>
 
 </main>

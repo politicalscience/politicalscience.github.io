@@ -165,7 +165,7 @@ The most common assumption is to choose one item (generally $x_1$), and set $\ta
 
 We know that our latent factor $\xi \sim \mathcal N(k, \phi)$.
 
-We know that $x_i$ is related to $\xi$ by $x_i = \tau_i + \lambda_i \xi + \delta_i$, a linear regression. Thus, $E(x_i|\xi) = \tau_i + \lambda_i \xi$. Since $x_i$ is also normally distributed, we can say $\xi \sim \mathcal N(\tau_i + \lambda_i \xi, \theta_{ii})$.
+We know that $x_i$ is related to $\xi$ by $x_i = \tau_i + \lambda_i \xi + \delta_i$, a linear regression. Thus, $E(x_i|\xi) = \tau_i + \lambda_i \xi$. Since $x_i$ is also normally distributed, we can say $x_i \sim \mathcal N(\tau_i + \lambda_i \xi, \ \lambda_i^2\phi +\theta_{ii})$.
 
 We can construct a theoretical covariance matrix of all the items $x_1, \dots x_p$, where the diagonals are the variances:
 
@@ -354,3 +354,88 @@ We can still calculate our factor scores as before.
 $$
 \tilde\xi_j = w_{0j} + w_{1j}x_1 + w_{2j}x+2 + \dots + w_{pj}x_p
 $$
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Implementation in R**
+
+For exploratory factor analysis, you will need the package *psych* and *GPArotation*:
+
+```{r, eval = FALSE}
+library(psych)
+library(GPArotation)
+```
+
+Before starting factor analysis, you want a dataset with only complete observations (no NA's) for the variables you are items for factor analysis:
+
+```{r, eval = FALSE}
+no_na <- apply(mydata, 1, FUN=function(x){all(!is.na(x))})
+mydata <- mydata[no_na,]
+```
+
+Also subset the data so that only the items you want to use are in the dataframe.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## EFA with One Factor
+
+We can use the *fa()* command to conduct factor analysis:
+
+```{r, eval = FALSE}
+fa_object <- fa(mydata, nfactors=1, fm="ml")
+print(fa_object)
+```
+
+The output provides
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## EFA with Two Factors
+
+We can use the *fa()* command to conduct factor anlaysis.
+
+For a non-rotated (orthogonal) rotation, the code is as follows:
+
+```{r, eval = FALSE}
+fa_object <- fa(mydata, nfactors=1, fm="ml", rotate = "none")
+print(fa_object)
+```
+
+For a oblique rotation, the code is as follows:
+
+```{r, eval = FALSE}
+fa_object <- fa(mydata, nfactors=1, fm="ml", rotate = "oblimin")
+print(fa_object)
+```
+
+The output provides a table of the loadings $\lambda_i$ for each item. ML1 represents the first factor $\xi_1$, and ML2 represents the second factor $\xi_2$, and so on...
+
+For the oblique rotation, there is also a table of correlations between all the factors $\xi_j$.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Factor Scores
+
+To calculate factor scores, we can extract them from the *fa_object* in which we stored our factor analysis.
+
+```{r, eval = FALSE}
+fa_object$scores
+```
+
+This will give you a table, with the rows being different units in the data, and the columns being different factor scores for each factor.
+
+If you are wanting to just view the scores, it is recommended to subset the data if you have too many observations:
+
+```{r, eval = FALSE}
+fa_object$scores[1:10,] #first 10 units
+```
+
+You can also subset the number of factors (although if you don't need extra factors, you would just specify less when estimating):
+
+```{r, eval = FALSE}
+pca_object$scores[,1:2] #first 2 factors
+```
+:::
