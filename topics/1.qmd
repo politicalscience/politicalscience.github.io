@@ -31,24 +31,29 @@ This chapter introduces how candidates compete over policy during elections. We 
 
 ### The Downsian Model
 
-Two candidates $j \in \{A, B\}$ are competing in an election for political office. Both candidates only have one goal - to win the election. Their utility functions are as follows:
+Two candidates $j \in \{A, B\}$ are competing in an election. Both candidates only have one goal - to win the election. Their utility functions are as follows:
 
 $$
-u_j = \begin{cases}
-R \quad \text{if win election} \\
+u_j = R\phi, \quad \text{where } \phi =\begin{cases}
+1 \quad \text{if win election} \\
+0.5 \quad \text{if election is tied} \\
 0 \quad \text{if lose election}
 \end{cases}
 $$
 
-For the election, each candidate $j \in \{A, B \}$ can choose a platform $p_j \in [-1, 1]$.
+Each candidate $j \in \{A, B \}$ can choose a platform $p_j \in [-1, 1]$.
 
-The citizens, who will vote in the election, each have a preferred policy $q^i \in [-1, 1]$. Citizens' preferred policies $q^i$ are uniformly distributed within this continuum:
+Citizens each have a preferred policy $q^i \in [-1, 1]$. Citizens' preferred policies $q^i$ are uniformly distributed within this continuum:
 
 $$
 q^i  \sim U[-1, 1]
 $$
 
-Citizens have single peaked symmetric preferences around their $q^i$. Citizens will vote for the candidate who's policy $p_j$ is closest to $q_i$.
+Citizens will vote for the candidate who's policy $p_j$ is closest to $q_i$. Their utility is given as:
+
+$$
+u_i = |p_j - q^i|
+$$
 
 The timing of the game is as follows:
 
@@ -56,21 +61,31 @@ The timing of the game is as follows:
 2.  Voters observe $p_A, p_B$, and vote $e_i \in \{A, B \}$.
 3.  The politician with most votes wins, and payoffs are realised.
 
-Assume that if there is a tie, there is a coin toss to determine the election.
-
 <br />
 
 ### Equilibrium Outcome
 
-Since each player only cares about winning the election, and gets 0 payoff if they lose, we only need to focus on the probability of each candidate winning. Both candidates want to maximise their chances of winning.
+The utility function of the candidates is:
 
 $$
-\max\limits_{p_j \in [0, 1]} \underbrace{Pr(e=j|p_j,p_{-j})}_{\text{Pr } j \text{ wins given chosen policies}}
+u_j = R\phi, \quad \text{where } \phi =\begin{cases}
+1 \quad \text{if win election} \\
+0.5 \quad \text{if election is tied} \\
+0 \quad \text{if lose election}
+\end{cases}
 $$
 
-Since there are two candidates, this implies that to win the election, a candidate must win 50% of the votes.
+Thus, to maximise their payoff, they must maximise $\phi$. The value of $\phi$ is dependent on the chosen policy position of candidate $j$, $p_j$, and the chosen position of their opponent $p_{-j}$.
 
-Since voter's preferences are single peaked, this means that for either candidate to win, the 50% of votes they win must be in a continuum: i.e. they cannot win the voter at $q^i = -1$ and $q_i = 1$ if they do not win the voters in between.
+$$
+\max\limits_{p_j \in [0, 1]} \phi_{p_j, p_{-j}}
+$$
+
+Since there are two candidates, this implies that to win the election and get $\phi = 1$, a candidate must win 50% of the votes.
+
+Since voter vote for the closest party to their preferred position $q^i$, the 50% of votes they win must be in a continuum: i.e. they cannot win the voter at $q^i = -1$ and $q_i = 1$ if they do not win the voters in between.
+
+<br />
 
 Under these assumptions, the median voter - whose position is exactly the 50th percentile of voters, becomes pivotal. It is not possible to win a continuum of voters more than 50% without winning the median voter.
 
@@ -79,6 +94,8 @@ Thus, the median voter is the pivotal vote that you need to win.
 How can candidates $j \in \{A, B\}$ win the pivotal voter? Candidates win a voter's vote if they are the closes to the voter's preferred policy.
 
 Thus, both parties must be closer than the other to the median voter's policy. Each party will move closer, until they both converge on the median voter.
+
+<br />
 
 Let us denote $q^m$ as the median voter's policy. Thus, the **median voter theory** predicts both party's chosen positions will converge at $q^m$:
 
@@ -94,9 +111,7 @@ If either player moves away from this position, they will lose the median voter,
 
 ### Empirical Evidence
 
-The median voter theory thus argues that both parties should converge at the median voter's preferences.
-
-But is this actually the case? Do parties really converge at the same platform?
+The median voter theory thus argues that both parties should converge at the median voter's preferences. But is this actually the case? Do parties really converge at the same platform?
 
 The Manifesto Project by the New York Times looked at US elections between 2000 and 2016. As shown by the figure below, clearly, both parties did not converge (and in fact, diverged 2012-onwards).
 
@@ -124,9 +139,11 @@ Why is there no convergence of parties to the median voter, as was predicted by 
 
 However, if we think about the real world, this isn't really the case. It is hard to imagine that in order to win an election, Bernie Sanders would forgo everything he has fought for, and suddenly become a centrist. Politicians like Bernie clearly have some utility derived from sticking with their beliefs and principles (Policy-seeking).
 
+<br />
+
 Let us take the Downsian model, but adjust the utility of the candidates $j \in \{A, B\}$ to reflect this policy-seeking nature.
 
-Let us say party $A$ wants a policy as close as possible to $-1$. The more they move away from $-1$, the more they lose utility. For party $B$, let us say their preferred policy is $1$, and the more they move away from this, the more sad they become.
+Let us say party $A$ wants a policy as close as possible to $-1$. The more they move away from $-1$, the more they lose utility. For party $B$, let us say their preferred policy is $1$.
 
 The final implemented policy of the winning party $p$, is determined by who wins the election. If you lose the election, you have to deal with the winner's preferred policy. Let us define $\pi(p_A, p_B)$ as the probability of candidate $A$ winning the election given the chosen $p_A$ and $p_B$:
 
@@ -144,7 +161,7 @@ $$
 
 What is the equilibrium of this game? [Surprisingly, it is still the median voter's position $q^m$.]{.underline}
 
-Let us say $p_A = -0.5$, and $p_B = 0.5$. Is this an equilibrium? In this situation, both candidates have a 50% chance of winning since they are equidistant from the median voter $q^m$. Thus, $\pi(-0.5, 0.5) = 0.5$. Using the utility functions above, we get:
+Let us say $p_A = -0.5$, and $p_B = 0.5$. In this situation, both candidates have a 50% chance of winning since they are equidistant from the median voter $q^m$. Thus, $\pi(-0.5, 0.5) = 0.5$. Using the utility functions above, we get:
 
 $$
 u_A(-0.5) = 0.5\underbrace{(-(-0.5 + 1)^2)}_{\text{A's utility for }p_A} + 0.5\underbrace{(-(0.5 + 1)^2)}_{\text{A's utility for }p_B} = -1.25
@@ -180,9 +197,7 @@ Thus, even with policy-seeking candidates, the equilibrium still suggests that b
 
 So far, we have focused on voters voting exclusively on policy, and found that there is no divergence in parties. We still need another model that might explain why there is divergence in our empirical exercises.
 
-We know from the real world, individuals don't just vote on policy. There are other factors, such as competence, looks, speaking ability, charisma, etc., that all effect who wins elections. Perhaps this factor is one of the reasons we do not witness convergence in the emprical data.
-
-For example, take this graph of favourability ratings of British parties:
+We know from the real world, citizens don't just vote on policy. There are other factors, such as competence, looks, speaking ability, charisma, etc., that all effect who wins elections. For example, take this graph of favourability ratings of British parties:
 
 ![](images/clipboard-2731921414.png){fig-align="center" width="70%"}
 
@@ -194,7 +209,7 @@ It is unlikely that parties are changing their platforms every few weeks. It see
 
 We will add non-policy related "shocks" to each voter, which we will call **valence shocks**.
 
-Let us say our median voter is still at the point $q^m = 0$. All voters receive a common valence shock $\delta$. This $\delta$ tells us something about how the voter $i$ feels about party $A$. This $\delta$ is drawn from a uniform distribution.
+All voters receive a common valence shock $\delta$. This $\delta$ tells us something about how the voter $i$ feels about party $A$. This $\delta$ is drawn from a uniform distribution.
 
 $$
 \delta \sim \underbrace{U\left[ -\frac{1}{\psi}, \ \frac{1}{\psi} \right]}_{\text{uniformly distributed}}
@@ -202,7 +217,7 @@ $$
 
 $\psi \in (0, 1)$ measures the importance of policy. The greater $\psi$ is, the more salient policy is with voters, and this will decrease the range of valence shock $\delta$.
 
-If $\delta$ is positive, then that means voter $i$ likes candidate $A$ for non-policy reasons. If $\delta$ is negative, then voter $i$ dislikes candidate $A$ for non-policy reasons. When $|\delta|$ is larger, the importance of non-policy related individuals is more important than policy (hence why $\psi$, the salience of policy increases, $\delta$ decreases).
+If $\delta$ is positive, then that means voter $i$ likes candidate $A$ for non-policy reasons. If $\delta$ is negative, then voter $i$ dislikes candidate $A$ for non-policy reasons. When $|\delta|$ is larger, the importance of non-policy related individuals is more important than policy.
 
 Any voter $i$'s utility depends on the implemented policy of the winner $p$, and their preferred policy $q^i$:
 
@@ -212,6 +227,8 @@ u_i(p, q^i) = \underbrace{-|p-q^i|}_{\text{utility regarding } p} + \underbrace{
 0 \quad \text{if } B \text{ is elected}
 \end{cases}}_{\text{non-policy valence shock}}
 $$
+
+<br />
 
 The candidate's $j \in \{A, B\}$ utility function is determined by the distance of the winner's policy from their preferred policy $q^j$. We will restrict $q^j$ such that $q^A < 0 < q^B$ (so both parties will have preferred policies on opposite sides of median $q^m = 0$):
 
@@ -241,7 +258,7 @@ $$
 \underbrace{-|p_A - q^i| + \delta}_{u_i(p_A)} ≥ \underbrace{-|p_B - q^i|}_{u_i(p_B)}
 $$
 
-With algebra, we can rearrange this. Thus, we obtain that voter $i$ elects $A$, if and only if $\delta$ meets the following condition:
+Thus, we obtain that voter $i$ elects $A$, if and only if $\delta$ meets the following condition:
 
 $$
 \delta ≥ |p_A - q^i| - |p_B - q^i|
@@ -253,7 +270,9 @@ $$
 \underbrace{\delta ≥ |p_A - 0| - |p_B - 0|}_{\text{since }q_m = \ 0}
 $$
 
-Now, let us think about the candidates $j \in \{A, B\}$. While the voter knows $\delta$, the candidate does not know $\delta$, only how it is distributed. Candidate $A$ knows that they can only win the election if they win the median voter, and they can only win the median voter if the above condition of $\delta$ holds true.
+<br />
+
+Now, let us think about the candidates $j \in \{A, B\}$. The candidate does not know $\delta$, only how it is distributed. Candidate $A$ knows that they can only win the election if they win the median voter, and they can only win the median voter if the above condition of $\delta$ holds true.
 
 We can calculate the probability $\delta$ fits the above condition by using the cumulative density function of a uniform distribution:
 
@@ -272,13 +291,11 @@ Pr(\delta ≥ |p_A - 0| - |p_B - 0|) & = \frac{\frac{1}{\psi} - (|p_A - 0|-|p_B 
 \end{split}
 $$
 
-We know candidate $A$ can only win if this condition is met. Thus, the probabililty of $A$ winning is thus the same as the probability of this condition occurring:
+We know candidate $A$ can only win if this condition is met. Thus, this is the probabililty of $A$ winning:
 
 $$
 \pi(p_A, p_B)= \frac{1}{2} + \psi\left( \frac{|p_B| - |p_A|}{2}\right)
 $$
-
-We know $|p_B|$ and $|p_A|$ are the distance between each party's position and the median voter at $q^m = 0$. We also know that $0 < \psi < 1$. We can see that if $|p_A| < |p_B|$, then candidate $A$ is more likely to win. We can also see that as $\psi$ increases, the difference in policies matters more - thus, if $\psi$ is higher, the policy positions matter more.
 
 Now, let us think about candidate $A$'s utility function that candidate $A$ wants to maximise.
 
@@ -295,9 +312,11 @@ u_A(p_A) & = \underbrace{(\frac{1}{2} + \psi\left( \frac{|p_B| - |p_A|}{2}\right
 \end{split}
 $$
 
-We cannot yet take the first order condition, because of the absolute value functions. Let us eliminate them by logic, not math. Recall that $q^A < 0 < q^B$
+<br />
 
-We know that candidate $A$ will never choose a platform $p_A < q^A$. Why? Because from the earlier $\pi(p_A, p_B)$, we saw that their chances of winning are higher when they are closer to the median. You might as well just deviate to $q^A$, which would be closer to the median, and your ideal point.
+We cannot yet take the first order condition, because of the absolute value functions. Let us eliminate them by logic, not math. Recall that $q^A < 0 < q^B$.
+
+We know that candidate $A$ will never choose a platform $p_A < q^A$. From the earlier $\pi(p_A, p_B)$, we saw that their chances of winning are higher when they are closer to the median. You might as well just deviate to $q^A$, which would be closer to the median, and your ideal point.
 
 We also know candidate $A$ will not propose $p_A > 0$. This is because once they pass $q^m = 0$, they are decreasing their chances of winning, while moving away from their preferred $q^A$.
 
@@ -311,7 +330,9 @@ u_A(p_A) & = (\frac{1}{2} + \psi\left( \frac{p_B - p_A}{2}\right))(-(p_A - q^A) 
 \end{split}
 $$
 
-Now, we want to maximise $u_A(p_A)$ given $p_A$ for candidate $A$. This function is concave (I will not prove this here), so we only need the first order condition. We can use the product rule to help $(uv)' = u'v + v'u$.
+<br />
+
+Now, we want to maximise $u_A(p_A)$ given $p_A$ for candidate $A$. We can use the product rule to help $(uv)' = u'v + v'u$.
 
 $$
 \begin{split}
@@ -326,7 +347,12 @@ $$
 \end{split}
 $$
 
-The equilibrium platform can be viewed as a tradeoff. If you move closer to the median, you are increasing your chances of winning the election, but moving further from your preferred $q^j$. If you stay closer to preferred $q^j$, you are decreasing your chances of winning the election. This can be seen in our maximisation condition:
+<br />
+
+The equilibrium platform can be viewed as a tradeoff:
+
+-   If you move closer to the median, you are increasing your chances of winning the election, but moving further from your preferred $q^j$.
+-   If you stay closer to preferred $q^j$, you are decreasing your chances of winning the election. This can be seen in our maximisation condition:
 
 $$
 \underbrace{\left(\frac{\psi}{2}\right) ( (p_A - q^A) - (p_B - q^A))}_{\text{Marginal effect of staying close to } q^A} - \underbrace{\left(\frac{1}{2} - \frac{\psi}{2}( p_B - p_A)\right)}_{\text{Marg. eff. of moving to median}} = 0
@@ -368,6 +394,8 @@ Furthermore, recall that we assumed the median voter $q^m = 0$. Our equilibrium 
 
 What this predicts is that if the median voter moves either right or left, the entire positioning of both parties changes (and they still do not converge). We can see this matches the empirical evidence above as well - as districts become more conservative, parties move more conservative while still not converging.
 
+<br />
+
 Interestingly, we can see the two party's positioning depends on $\psi$. Remember that $\psi$ is the importance of policy. As $\psi$ increases, the two parties get closer to the median voter. If $\psi$ becomes smaller, there is further divergence.
 
 However, this second prediction has not been backed up by empirical evidence. Hall and Fowlder (2016) use a regression discontinuity design to test convergence between low and high salience issues, and they do not find convergence.
@@ -386,9 +414,9 @@ However, this model is still useful, as it illustrates a critical tradeoff: the 
 
 We have included some other aspects apart from policy in the last model. But, we still make a huge assumption: that the parties know what the median voter's positioning is.
 
-Let us assume that there are only 3 policy positions in our policy space: $p_i \in \{-1, 0, 1\}$ (we can think of this as left, centrist, and right). Voters preferred policy $q^i \in \{-1, 0, 1\}$ as well, however, we will not define the distribution of voters (it could be uniform, skewed, or any distribution).
+Let us assume that there are only 3 policy positions in our policy space: $p_i \in \{-1, 0, 1\}$. Voters preferred policy $q^i \in \{-1, 0, 1\}$ as well.
 
-There are two parties $j \in \{A, B\}$ who want to win the election. However, party $A$ is widely considered by voters as the "more competent" voter, and thus, if party $A$ wins, all voters will get an extra payoff of $\delta \in (0, 1)$. We can define voter utility as:
+There are two parties $j \in \{A, B\}$ who want to win the election. However, party $A$ is considered by voters as the "more competent" voter, and thus, if party $A$ wins, all voters will get an extra payoff of $\delta \in (0, 1)$. We can define voter utility as:
 
 $$
 u_i(p) = \underbrace{-|p - q^i|}_{\text{utility from } p} + \underbrace{I(p_A,p_B)\delta}_{\text{valence if A wins}}
@@ -398,7 +426,7 @@ Where $p$ is the winning party's policy position, $q^i$ is the voter's preferred
 
 Importantly, no parties know the exact location of the median voter. They only know that the median is at -1 with probability $\alpha$, located at 1 with probability $\alpha$, and located at 0 with probability $1- 2\alpha$. Essentially, $\alpha \in (0, \frac{1}{2})$ captures the polarisation of the electorate.
 
-The model basically says that competence does not supsrsede policy, but when voters are indifferent between two parties' policies, they will always prefer the more competent candidate.
+The model basically says that competence does not supersede policy, but when voters are indifferent between two parties' policies, they will always prefer the more competent candidate.
 
 <br />
 
@@ -510,6 +538,8 @@ Well, if both candidates go to the centrist policy 0, who wins? In the Downsian 
 Thus, disadvantaged candidate $B$ has an incentive to become more extreme. Only by differentiating themselves, can they have a chance of winning. They have to hope that the median is indeed at -1 or 1.
 
 Candidate $A$ thus has the incentive of copying candidate $B$'s platform. This is because if they both have the same platform, the more competent $A$ will win with 100% probability.
+
+<br />
 
 What implications does this have? If we look at many elections, we will see the generally more perceived "incompetent" candidate will try to adopt more extreme positions.
 
