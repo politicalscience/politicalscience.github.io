@@ -27,20 +27,20 @@ PCA, as we discussed in the last chapter, is essentially an *algorithm based* me
 
 ------------------------------------------------------------------------
 
-# **Factor Analysis Models**
+# **Factor Analysis**
 
-### Latent Variable Models
+### Factor Analysis Models
+
+Factor Analysis models are Latent Variable Models, with a few characteristics:
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Explanation of Latent Variables
 
 A latent variable is a variable that is not observed. Instead, we observe several variables that are indicators of the latent variable.
 
 A measurement model represents how the observed indicators measure the true concept of interest, the latent variable.
 
 ![](images/clipboard-3108594497.png){fig-align="center" width="35%"}
-
-The figure above shows some latent variable (the circle), and its observed indicators (the squares). We want to use these observed indicators to say something about the latent variable.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Example of Latent Variables
 
 An example of latent variables is the measurement of personality traits.
 
@@ -49,20 +49,12 @@ We can measure personality traits by asking survey respondents many different qu
 But, these answers to the questions are all measuring one latent variable - the personality.
 :::
 
-<br />
-
-### Factor Analysis Models
-
-Factor Analysis models are Latent Variable Models, with a few characteristics:
-
 1.  All observed indicator variables (items) and latent variables (factors) are treated as continuous variables.
 2.  All distributions of the variables are specified as normal distributions.
 3.  All the observed variables (items) are treated as measures of latent variables.
 4.  The latent variables (factors) are on an equal footing with each other - associations between factors are represented with correlations.
 
-The goal of factor analysis is measurement. We can decide how many factors we need to properly measure the latent variables.
-
-We can assign predictions (factor scores) of the latent variable to create constructs of the latent variable to use in statistical analysis.
+We can decide how many factors we need to properly measure the latent variables. We can assign predictions (factor scores) of the latent variable to create constructs of the latent variable to use in statistical analysis.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Example of Factor Analysis
@@ -78,13 +70,13 @@ Below is a model of a factor analysis with 2 factors that are correlated (double
 
 There are two types of factor analysis: Exploratory factor analysis and confirmatory factor analysis.
 
-Exploratory factor analysis (EFA):
+Exploratory factor analysis (**EFA**):
 
 -   We do not assume any number of factors, or what the factor pattern will look like.
 -   Our aim is to find the smallest number of interpretable factors needed to explain the correlations between the observed items.
 -   Models have minimum number of constraints on model parameters.
 
-Confirmatory factor analysis (CFA):
+Confirmatory factor analysis (**CFA**):
 
 -   Models have more than the minimum number of parameter constraints.
 -   Can be used to study how well hypothesized measurement models fit the data.
@@ -99,7 +91,7 @@ Confirmatory factor analysis (CFA):
 
 ### Model Specification
 
-We start with a 1-factor model. We denote the single latent factor (common factor) with $\xi$. This latent variable is normally distributed with mean $k$ and variance $\phi$:
+We denote the single latent factor (common factor) with $\xi$. This latent variable is normally distributed with mean $k$ and variance $\phi$:
 
 $$
 \xi \sim \mathcal N(k, \phi)
@@ -111,31 +103,9 @@ $$
 x_i = \tau_i + \lambda_i \xi + \delta_i
 $$
 
-$\tau_i$ is the intercept term. $\lambda_i$ is the slope, also called the **factor loadings**, which determine the associations between $\xi$ and $x_i$. $\delta_i$ is the error term, called the **unique factors**.
-
-Below is an example of a one-factor model:
+$\lambda_i$ is the slope, also called the **factor loadings**, which determine the associations between $\xi$ and $x_i$. $\delta_i$ is the error term, called the **unique factors**.
 
 ![](images/clipboard-3884145761.png){fig-align="center" width="60%"}
-
-<br />
-
-### Factor Scores
-
-The factor analysis model assumes that the latent variable $\xi$ is an input, that outputs the observed indicator items $x_1, \dots, x_k$.
-
-But the model also implies that given $x_i, \dots, x_k$, we can find the latent variable $\xi$.
-
-![](images/clipboard-4125078041.png){fig-align="center" width="80%"}
-
-That means, once we have estimated the factor analysis model on the left, we can then use $x_1, \dots, x_k$ values for a individual, and predict their latent variable values $\xi$, called **factor scores**. These are calculated as a linear combination of the observed items:
-
-$$
-\tilde\xi = w_0 + w_1x_1 + w_2x+2 + \dots + w_px_p
-$$
-
-The coefficients $w_1, \dots w_p$ depend on the model parameters. Coefficients $w_i$ are highest for items $x_i$ which are the strongest measures of $\xi$ according to the model. These are quite similar to the first principle component of PCA for the same items.
-
-$w_0$ is the intercept. $w_0 = 0$ if both $\xi$ has a mean of 0, and all $x_i$ are standardised (to a standard normal distribution $\mathcal N(0, 1)$) to have a mean of 0.
 
 <br />
 
@@ -147,7 +117,7 @@ There are several assumptions that the exploratory factor analysis model makes:
 2.  Error terms $\delta_1, \dots, \delta_p$ are uncorrelated with each other. This implies that correlations between the items, are entirely explained by the factor. In other words, all $x_i$ are *conditionally independent* given $\xi$.
 3.  Factor $\xi$ is uncorrelated with the error terms $\delta_i$.
 
-We also have to worry about the issue of unique identification. This is because many different values of $k, \phi, \tau_i, \lambda_i$ can give the same observed means, variances, and covariances of the items $x_1, \dots, x_n$, meaning there are more than one possible estimation of the model
+There is also an issue of unique identification. This is because many different values of $k, \phi, \tau_i, \lambda_i$ can give the same observed means, variances, and covariances of the items $x_1, \dots, x_n$.
 
 Thus, we need to fix $k$ and $\phi$ of $\xi \sim \mathcal N(k, \phi)$ by assumption. The standard assumption is $k = 0$ and $\phi =1$, so $\xi \sim \mathcal N(0, 1)$. This makes $\xi$ take a standard normal distribution.
 
@@ -178,7 +148,7 @@ Cov(x_p, x_1) = \lambda_p\phi\lambda_1 & Cov(x_p, x_2) = \lambda_p\phi\lambda_2 
 \end{pmatrix}
 $$
 
-If we fix $\xi \sim \mathcal N(0, 1)$, that implies $\phi = 1$. This allows us to slightly simplify this above theoretical covariance matrix.
+If we fix $\xi \sim \mathcal N(0, 1)$, that implies $\phi = 1$. This allows us to simplify the above theoretical covariance matrix.
 
 The estimation process is to find the values of $\lambda_i$ and $\theta_{ii}$, that make the above hypothetical covariance matrix, as close as possible to our observed covariance matrix from our sample with $x_1, \dots, x_p$. This is generally done with maximum likelihood estimation.
 
@@ -214,7 +184,7 @@ Rotating the factors would simply inverse the signs of the loading from $\lambda
 
 <br />
 
-### Interpretation of Variances
+### Communality and Reliability
 
 When we set our model such that $\xi \sim \mathcal N(0, 1)$, the model implies that the variances of the observed items is:
 
@@ -224,9 +194,25 @@ $$
 
 $\lambda_i^2$ is the part of the variance of $x_i$ explained by the common factor $\xi$, known as the **communality** of $x_i$. $\theta_{ii}$ is the residual variance, also called the specific variance.
 
-The proportion $\lambda_i^2/ (\lambda_i^2 + \theta_{ii})$ is called the reliability of $x_i$. It is the $R^2$ of the measurement model for $x_i$ on $\xi$.
+The proportion $\lambda_i^2/ (\lambda_i^2 + \theta_{ii})$ is called the **reliability** of $x_i$. It is the $R^2$ of the measurement model for $x_i$ on $\xi$.
 
-When all $x_i$ are standardised to have a variance $Var(x_i) = 1$, then the communality $\lambda_i^2$ is equal to the reliability. The communality also can be calculated as $\lambda_i^2 = 1 - \theta_{ii}$. The mean of all the communalities of each item $x_1, \dots, x_p$ is the proportion of total variance of all the items explained by the common factor $\xi$.
+When all $x_i$ are standardised to have a variance $Var(x_i) = 1$, then the communality $\lambda_i^2$ is equal to the reliability: $\lambda_i^2 = 1 - \theta_{ii}$.
+
+The mean of all the communalities of each item $x_1, \dots, x_p$ is the proportion of total variance of all the items explained by the common factor $\xi$.
+
+<br />
+
+### Factor Scores
+
+Once we have estimated the factor analysis model, we can then use $x_1, \dots, x_k$ values for a individual, and predict their latent variable values $\xi$, called **factor scores**. These are calculated as a linear combination of the observed items:
+
+$$
+\tilde\xi = w_0 + w_1x_1 + w_2x+2 + \dots + w_px_p
+$$
+
+The coefficients $w_1, \dots w_p$ depend on the model parameters. Coefficients $w_i$ are highest for items $x_i$ which are the strongest measures of $\xi$ according to the model.
+
+$w_0$ is the intercept. $w_0 = 0$ if both $\xi$ has a mean of 0, and all $x_i$ are standardised (to a standard normal distribution $\mathcal N(0, 1)$) to have a mean of 0.
 
 <br />
 
@@ -307,21 +293,9 @@ This transformation can be interpreted as a rotation (change in coordinate axes)
 In fact, any choice of coefficients $a$ (there are infinitely many of them) will produce the same model fit.
 :::
 
-Each rotation changes the loadings of the factors, and also the interpretation of the factors. Generally, we choose the rotation based on the interpretability of the resulting factors.
+Generally, we choose the rotation based on the interpretability of the resulting factors. Interpretation is easiest when each factor has high loadings for some variables, and small (near 0) loadings for all the rest. This allows us to clearly identify what each factor is representing.
 
-Interpretation is easiest if the loadings have "simple structure". This means each factor has high loadings for some variables, and small (near 0) loadings for all the rest. This allows us to clearly identify what each factor is representing.
-
-This is the advantage of EFA - that we can rotate to get better interpretation.
-
-<br />
-
-### Orthogonal and Oblique Rotations
-
-R (and other software) will automatically produce some factors. These are just one possibility, and we can rotate them. There is nothing special about the originally produced factors.
-
-R (and other software) will typically produce *orthogonal* factors (perpendicular to each other in vector space), which implies that the factors are uncorrelated. The most common of these is called the *varimax method*.
-
-However, some rotations can be *oblique rotations*, which allow the factors to be correlated. The most common of these is called the *oblimin* or *geomin*.
+**Orthogonal** factors (perpendicular to each other in vector space) imply that the factors are uncorrelated. However, some rotations can be **oblique**rotations, which allow the factors to be correlated.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Visualisation of Orthogonal and Oblique Rotations
@@ -333,7 +307,7 @@ The below illustrates orthogonal and oblique rotations of factors:
 We can see that the obliquely rotated axes are not exactly perpendicular to each other.
 :::
 
-If the main goal of analysis is interpretation, and to use the latent variables, there is little reason to use an orthogonal rotation. There is no reason to believe that our actual latent variables must be uncorrelated in our data. Instead, we generally want to use an oblique rotation. This also shows if there are correlations between the factors.
+If the main goal of analysis is interpretation, we generally want to use an oblique rotation, as they are easier to interpret. This also shows if there are correlations between the factors.
 
 For data reduction purposes, the orthogonal rotation can be useful, as it avoids multicollinearity.
 

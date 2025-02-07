@@ -165,7 +165,7 @@ In any one sample, we actually are likely to have some imbalances in $X$ between
 You can adopt other randomisation procedures, such as stratified randomisation, to guarantee balance on $X$.
 :::
 
-We can text this assumption by finding the average $X$ values for both control and treatment groups, and see if there are any statistical significant differences in $X$ between control and treatment.
+We can test this assumption by finding the average $X$ values for both control and treatment groups, and see if there are any statistical significant differences in $X$ between control and treatment.
 
 <br />
 
@@ -408,11 +408,33 @@ For example, if your data is clustered in cities, you should re-sample by cities
 
 ### Stratified Randomisation
 
-Stratified (also called blocked or conditional) randomisation are when randomisation occurs separately within levels of some covariates(s) $X$.
+Stratified (also called blocked or conditional) randomisation are when randomisation occurs separately within levels of some covariates(s) $X$. Generally, you separate your sample of $N$ units into $J$ subgroups.
 
 For example, you could split people up into male or female, and random sample within each group, rather than everyone together.
 
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Stratification
+
+Let us say you have 4 subjects, with pre-treatment potential outcomes of $Y_{0i} = \{2, 2, 8, 8 \}$.
+
+If you just randomly assign, then there is a 33% chance that you end up with the random assignment where $\{8, 8\}$ are placed in one group, and $\{2, 2\}$ are placed in another group.
+
+This is a concern: our treatment and control groups would be very imbalanced in this situation, which violates our independence assumption.
+
+With blocking, we could divide our sample into $J = 2$ subgroups, having group 1 being $\{2, 2\}$, and group 2 being $\{8, 8\}$. Then, we randomly sample one from each group into the treatment. This way, we are guaranteed better balance.
+:::
+
 This can prevent imbalances as normal randomisation can have a high probability (in certain situations) of creating imbalances.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Estimation with Stratification
+
+To estimate the ATE, you will need a weighted average of the ATE for each subgroup $j$, with the weights being the proportion of units each group $j$ accounts for:
+
+$$
+\tau_{ATE} = \sum\limits_{j=1}^J \frac{N_j}{N} \tau_j
+$$
+:::
 
 <br />
 
@@ -425,19 +447,3 @@ For example, we could randomise development treatment at the village level, or r
 The main reason for this is to prevent SUTVA violations.
 
 For example, imagine you are testing the effects of a new curriculum. If you randomise by each student, students will talk to their friends, and treated individuals may teach control individuals about the new curriculum. But by randomising by school (either an entire school gets or does not get the new curriculum), this concern is not a huge issue.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-# **Extension: Survey Experiments**
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-# **Implementation in R**

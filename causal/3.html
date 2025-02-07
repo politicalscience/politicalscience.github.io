@@ -132,8 +132,6 @@ window.Quarto = {
   <li><a href="#stratified-randomisation" id="toc-stratified-randomisation" class="nav-link" data-scroll-target="#stratified-randomisation">Stratified Randomisation</a></li>
   <li><a href="#cluster-randomisation" id="toc-cluster-randomisation" class="nav-link" data-scroll-target="#cluster-randomisation">Cluster Randomisation</a></li>
   </ul></li>
-  <li><a href="#extension-survey-experiments" id="toc-extension-survey-experiments" class="nav-link" data-scroll-target="#extension-survey-experiments"><strong>Extension: Survey Experiments</strong></a></li>
-  <li><a href="#implementation-in-r" id="toc-implementation-in-r" class="nav-link" data-scroll-target="#implementation-in-r"><strong>Implementation in R</strong></a></li>
   </ul>
 </nav>
 </div>
@@ -280,7 +278,7 @@ Details on the Balancing Property
 </div>
 </div>
 </div>
-<p>We can text this assumption by finding the average <span class="math inline">X</span> values for both control and treatment groups, and see if there are any statistical significant differences in <span class="math inline">X</span> between control and treatment.</p>
+<p>We can test this assumption by finding the average <span class="math inline">X</span> values for both control and treatment groups, and see if there are any statistical significant differences in <span class="math inline">X</span> between control and treatment.</p>
 <p><br></p>
 </section>
 <section id="complications-and-limitations" class="level3">
@@ -553,9 +551,47 @@ Block Bootstrap
 <h1><strong>Other Randomisation Procedures</strong></h1>
 <section id="stratified-randomisation" class="level3">
 <h3 class="anchored" data-anchor-id="stratified-randomisation">Stratified Randomisation</h3>
-<p>Stratified (also called blocked or conditional) randomisation are when randomisation occurs separately within levels of some covariates(s) <span class="math inline">X</span>.</p>
+<p>Stratified (also called blocked or conditional) randomisation are when randomisation occurs separately within levels of some covariates(s) <span class="math inline">X</span>. Generally, you separate your sample of <span class="math inline">N</span> units into <span class="math inline">J</span> subgroups.</p>
 <p>For example, you could split people up into male or female, and random sample within each group, rather than everyone together.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Stratification
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us say you have 4 subjects, with pre-treatment potential outcomes of <span class="math inline">Y_{0i} = \{2, 2, 8, 8 \}</span>.</p>
+<p>If you just randomly assign, then there is a 33% chance that you end up with the random assignment where <span class="math inline">\{8, 8\}</span> are placed in one group, and <span class="math inline">\{2, 2\}</span> are placed in another group.</p>
+<p>This is a concern: our treatment and control groups would be very imbalanced in this situation, which violates our independence assumption.</p>
+<p>With blocking, we could divide our sample into <span class="math inline">J = 2</span> subgroups, having group 1 being <span class="math inline">\{2, 2\}</span>, and group 2 being <span class="math inline">\{8, 8\}</span>. Then, we randomly sample one from each group into the treatment. This way, we are guaranteed better balance.</p>
+</div>
+</div>
+</div>
 <p>This can prevent imbalances as normal randomisation can have a high probability (in certain situations) of creating imbalances.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Estimation with Stratification
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To estimate the ATE, you will need a weighted average of the ATE for each subgroup <span class="math inline">j</span>, with the weights being the proportion of units each group <span class="math inline">j</span> accounts for:</p>
+<p><span class="math display">
+\tau_{ATE} = \sum\limits_{j=1}^J \frac{N_j}{N} \tau_j
+</span></p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="cluster-randomisation" class="level3">
@@ -564,19 +600,7 @@ Block Bootstrap
 <p>For example, we could randomise development treatment at the village level, or randomise treatment of a cirriculum at the school level.</p>
 <p>The main reason for this is to prevent SUTVA violations.</p>
 <p>For example, imagine you are testing the effects of a new curriculum. If you randomise by each student, students will talk to their friends, and treated individuals may teach control individuals about the new curriculum. But by randomising by school (either an entire school gets or does not get the new curriculum), this concern is not a huge issue.</p>
-<p><br></p>
-<p><br></p>
-<hr>
 </section>
-</section>
-<section id="extension-survey-experiments" class="level1">
-<h1><strong>Extension: Survey Experiments</strong></h1>
-<p><br></p>
-<p><br></p>
-<hr>
-</section>
-<section id="implementation-in-r" class="level1">
-<h1><strong>Implementation in R</strong></h1>
 </section>
 
 </main>

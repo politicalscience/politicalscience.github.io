@@ -109,10 +109,8 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#pre-treatment-covariates" id="toc-pre-treatment-covariates" class="nav-link" data-scroll-target="#pre-treatment-covariates">Pre-Treatment Covariates</a></li>
   <li><a href="#identification-assumptions" id="toc-identification-assumptions" class="nav-link" data-scroll-target="#identification-assumptions">Identification Assumptions</a></li>
-  <li><a href="#identification-of-the-ate" id="toc-identification-of-the-ate" class="nav-link" data-scroll-target="#identification-of-the-ate">Identification of the ATE</a></li>
-  <li><a href="#identification-of-the-att" id="toc-identification-of-the-att" class="nav-link" data-scroll-target="#identification-of-the-att">Identification of the ATT</a></li>
+  <li><a href="#proof-of-identification" id="toc-proof-of-identification" class="nav-link" data-scroll-target="#proof-of-identification">Proof of Identification</a></li>
   <li><a href="#graphical-identification" id="toc-graphical-identification" class="nav-link" data-scroll-target="#graphical-identification">Graphical Identification</a></li>
-  <li><a href="#good-and-bad-controls" id="toc-good-and-bad-controls" class="nav-link" data-scroll-target="#good-and-bad-controls">Good and Bad Controls</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -125,25 +123,29 @@ window.Quarto = {
 
 
 
-<p>Randomisation is amazing, but it is not always possible. Often, the assignment mechanism is not under the researcher’s control.</p>
+<p>This chapter introduces the selection on observables framework, which allows us to identify causal effects by controlling for observable pre-treatment covariates. We discuss the main estimators, including subclassification, regression, and matching, as well as more advanced topics in sensitivity analysis and partial identification.</p>
 <hr>
 <section id="identification" class="level1">
 <h1><strong>Identification</strong></h1>
 <section id="pre-treatment-covariates" class="level3">
 <h3 class="anchored" data-anchor-id="pre-treatment-covariates">Pre-Treatment Covariates</h3>
-<p>Any variable <span class="math inline">X</span>, that are predetermined before treatment <span class="math inline">D</span>, are covariates. Thus, treatment <span class="math inline">D</span> does not affect the value of <span class="math inline">X_i</span> for any unit <span class="math inline">i</span>.</p>
-<p>However, <span class="math inline">X</span> and <span class="math inline">D</span> can still be associated - generally where <span class="math inline">X</span> values affect whether a unit <span class="math inline">i</span> takes the treatment <span class="math inline">D</span>.</p>
+<p>A variable <span class="math inline">X</span> is a pre-treatment covariate if:</p>
+<ol type="1">
+<li><span class="math inline">X</span> is not caused by <span class="math inline">D</span> (i.e.&nbsp;<span class="math inline">X</span> does not change as a result of treatment <span class="math inline">D</span>).</li>
+<li><span class="math inline">X</span> is associated with <span class="math inline">D</span> (it causes selection into treatment <span class="math inline">D</span>)</li>
+</ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-378311705.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
 </figure>
 </div>
-<p>Here, we can see <span class="math inline">X</span> is a pre-treatment covariate that affects <span class="math inline">D</span>, and is not caused by <span class="math inline">D</span>. <span class="math inline">V</span> is not a pre-treatment covariate, since it is caused by <span class="math inline">D</span>. <span class="math inline">Q</span> is also not a covariate.</p>
+<p>Above, we can see <span class="math inline">X</span> is a pre-treatment covariate that affects <span class="math inline">D</span>, and is not caused by <span class="math inline">D</span>. <span class="math inline">V</span> is not a pre-treatment covariate, since it is caused by <span class="math inline">D</span>. <span class="math inline">Q</span> is also not a covariate.</p>
 <p><br></p>
 </section>
 <section id="identification-assumptions" class="level3">
 <h3 class="anchored" data-anchor-id="identification-assumptions">Identification Assumptions</h3>
-<p>In randomisation, we assumed independence of treatment from potential outcomes (also called ignorability). However, without randomisation, we cannot assume this. We can weaken this assumption to the following:</p>
+<p>In randomisation, we assumed independence of treatment from potential outcomes (also called ignorability). However, without randomisation, this assumption is not met.</p>
+<p>For selection on observables, the assumptions needed for identification of causal effects are:</p>
 <ol type="1">
 <li><strong>Conditional Ignorability</strong> (also known as exogeneity or independence): Among units with identical covariate values <span class="math inline">X_i</span>, treatment <span class="math inline">D_i</span> is as-if randomly assigned. Or in other words, potential outcomes are independent from treatment within each specific covariate value <span class="math inline">X_i = x</span>.</li>
 </ol>
@@ -153,8 +155,8 @@ window.Quarto = {
 <p>This implies that for a given value of a covariate <span class="math inline">X_i = x</span>, we know:</p>
 <p><span class="math display">
 \begin{split}
-E(Y_{1i}|X_i = x) = E(Y_{1i}|D_i = 1, X_i = x) \\
-E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 0, X_i = x)
+E(Y_{1i}|X_i = x) = E(Y_{1i}|D_i = 1, X_i = x) = E(Y_{1i}|D_i = 0, X_i = x) \\
+E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 1, X_i = x) = E(Y_{0i}|D_i = 0, X_i = x)
 \end{split}
 </span></p>
 <ol start="2" type="1">
@@ -183,46 +185,77 @@ Example of Identification Assumptions
 </div>
 <p><br></p>
 </section>
-<section id="identification-of-the-ate" class="level3">
-<h3 class="anchored" data-anchor-id="identification-of-the-ate">Identification of the ATE</h3>
+<section id="proof-of-identification" class="level3">
+<h3 class="anchored" data-anchor-id="proof-of-identification">Proof of Identification</h3>
 <p>We have our assumptions as noted above. How do these assumptions help us find the ATE? We start with the conditional average treatment effect, conditional on some value of covariates <span class="math inline">x</span>:</p>
 <p><span class="math display">
 \begin{split}
 \tau_{CATE}(x) &amp; = E(Y_{1i} - Y_{0i} \ | \ X_i = x) \\
 &amp; = E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x) \\
-&amp; = \underbrace{E(Y_{1i}|D_i = 1, X_i = x)}_{\text{using conditional ignorability}} - \underbrace{E(Y_{0i}|D_i = 0X_i = x)}_{\text{using conditional ignorability}} \\
-&amp; = \underbrace{E(Y_i|D_i = 1, X_i = x)}_{\text{observable outcome}} - \underbrace{E(Y_i|D_i = 0, X_i = x)}_{\text{observable outcome})}
+&amp; = \underbrace{E(Y_{1i}|D_i = 1, X_i = x)}_{\text{by conditional ignorability} \\ } - \underbrace{E(Y_{0i}|D_i = 0X_i = x)}_{\text{by conditional ignorability}} \\
+&amp; = \underbrace{E(Y_i|D_i = 1, X_i = x)}_{\text{observable outcome}} - \underbrace{E(Y_i|D_i = 0, X_i = x)}_{\text{observable outcome}}
 \end{split}
 </span></p>
 <p>Now, let us discuss the ATE, and plug in the CATE to identify it:</p>
 <p><span class="math display">
 \begin{split}
 \tau_{ATE} &amp; = E(Y_{1i} - Y_{0i}) \\
-&amp; = \underbrace{\int \overbrace{E(Y_{1i} - Y_{0i} \ | \ X_i = x)}^{\text{CATE at }X_i = x} d \ \overbrace{Pr(X_i)}^{Pr(X_i = x)}}_{\text{weighted average, with weight being } Pr(X_i = x)} \\
-&amp; = \int(\underbrace{E(Y_i|D_i = 1, X_i) - E(Y_i|D_i = 0, X_i)}_{\text{using CATE proof above}})d \ Pr(X_i)
+&amp; = \underbrace{\int \overbrace{E(Y_{1i} - Y_{0i} \ | \ X_i = x)}^{\text{CATE at }X_i = x} d \ \overbrace{Pr(X_i = x)}^{\text{prob of }X_i = x}}_{\text{weighted average, with weight being } Pr(X_i = x)} \\
+&amp; = \int(\underbrace{E(Y_i|D_i = 1, X_i) - E(Y_i|D_i = 0, X_i)}_{\text{using CATE proof above}})d \ Pr(X_i = x)
 \end{split}
 </span></p>
 <p>This means the ATE is identified as the weighted average of all the conditional average treatment effects. The conditional average treatment effect is the difference-in-means of the observed <span class="math inline">Y_i</span> at every possible value of <span class="math inline">X_i = x</span>.</p>
-<p><br></p>
-</section>
-<section id="identification-of-the-att" class="level3">
-<h3 class="anchored" data-anchor-id="identification-of-the-att">Identification of the ATT</h3>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Identification of the ATT
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>We can weaken our initial assumptions, and still calculate the ATT.</p>
 <ol type="1">
-<li>Weakened conditional ignorability: Only <span class="math inline">Y_{0i}</span> needs to be independent of <span class="math inline">D_i</span> for units with the same covariates <span class="math inline">X_i</span>. Or in other words, <span class="math inline">(Y_{0i}) \perp D_i | X_i = x</span>.</li>
+<li>Weakened conditional ignorability: Only <span class="math inline">Y_{0i}</span> needs to be independent of <span class="math inline">D_i</span> for units with the same covariates <span class="math inline">X_i</span>. Or in other words, <span class="math inline">(Y_{0i}) \perp D_i | X_i = x</span>. This implies:</li>
+</ol>
+<p><span class="math display">
+E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 0, X_i = x) = E(Y_{0i}|D_i = 1, X_i = x)
+</span></p>
+<ol start="2" type="1">
 <li>Weakened common support: <span class="math inline">Pr(D_i = 1 |X_i = x) &lt; 1</span>.</li>
 </ol>
-<p>[Proof goes here]</p>
-<p>Even when all assumptions are met for identification of the ATE, the <span class="math inline">\tau_{ATE}</span> can be different than the <span class="math inline">\tau_{ATT}</span>.</p>
+<p>Let us start with the conditional ATT:</p>
+<p><span class="math display">
+\begin{split}
+\tau_{CATT}(x) &amp; = E(Y_{1i}-Y_{0i}|D_i = 1, X_i = x) \\
+&amp; = E(Y_{1i}|D_i = 1, X_i = x) - E(Y_{0i}|D_i = 1, X_i = x) \\
+&amp; = E(Y_{1i}|D_i = 1, X_i = x) - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\text{by weakened cond. ignorability}} \\
+&amp; = \underbrace{E(Y_i|D_i=1, X_i = x)}_{\text{observable outcome}} - \underbrace{E(Y_1|D_i = 0, X_i x)}_{\text{observable outcome}}
+\end{split}
+</span></p>
+<p>Now, look at the ATT, and plug in CATT to identify it.</p>
+<p><span class="math display">
+\begin{split}
+\tau_{ATT} &amp; = E(Y_{1i} - Y_{0i}|D_i = 1) \\
+&amp; = \underbrace{\int \overbrace{E(Y_{1i} - Y_{0i}|D_i = 1, X_i = x)}^{\text{CATT at }X_i = x}d \ \overbrace{Pr(X_i = x|D_i = 1)}^{Pr(X_i = x) \text{ within treatment}}}_{\text{weighted average, with weight being } Pr(X_i = x)} \\
+&amp; = \int (E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x))d \ Pr(X_i = x|D_i = 1)
+\end{split}
+</span></p>
+<p>Even when all assumptions are met for identification of the ATE, the <span class="math inline">\tau_{ATE}</span> can be different than the <span class="math inline">\tau_{ATT}</span>. This is because the weights <span class="math inline">Pr(X_i = x|D_i = 1)</span> for the ATT are different than the ATE <span class="math inline">Pr(X_i = x)</span>.</p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="graphical-identification" class="level3">
 <h3 class="anchored" data-anchor-id="graphical-identification">Graphical Identification</h3>
-<p>D-separation in DAGs corresponds to the assumption of conditional independence.</p>
-<p>A set of nodes <span class="math inline">S</span> can identify the causal effect of <span class="math inline">X \rightarrow Y</span>, if:</p>
+<p>D-separation in DAGs corresponds to the assumption of conditional independence. Controlling for a set of nodes <span class="math inline">S</span> can identify the causal effect of <span class="math inline">X \rightarrow Y</span>, if:</p>
 <ol type="1">
-<li>No element of <span class="math inline">S</span> is a descendant of <span class="math inline">X</span> (no element of <span class="math inline">S</span> results from <span class="math inline">X</span>):</li>
-<li>The elements of <span class="math inline">S</span> block all back-door paths from <span class="math inline">X \rightarrow Y</span>.</li>
+<li>No node within set <span class="math inline">S</span> is a descendant of <span class="math inline">X</span> (no element of <span class="math inline">S</span> results from <span class="math inline">X</span>):</li>
+<li>The nodes within set <span class="math inline">S</span> block all back-door paths from <span class="math inline">X \rightarrow Y</span>.</li>
 </ol>
 <p>Take this example: how can we identify the effect of <span class="math inline">D \rightarrow Y</span>?</p>
 <div class="quarto-figure quarto-figure-center">
@@ -230,17 +263,25 @@ Example of Identification Assumptions
 <p><img src="images/clipboard-2795492971.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
 </figure>
 </div>
-<p>The conditioning sets identify the total effect of <span class="math inline">D</span> on <span class="math inline">Y</span>:</p>
+<p>The sets identify the total effect of <span class="math inline">D</span> on <span class="math inline">Y</span> are:</p>
 <ol type="1">
 <li><span class="math inline">\{Z, M\}</span>:</li>
 <li><span class="math inline">\{M, Q\}</span>:</li>
 <li><span class="math inline">\{Z, Q, M\}</span>:</li>
 </ol>
 <p>Note that <span class="math inline">\{M\}</span> alone does not block - this is because <span class="math inline">M</span> is a collider. Similarly, <span class="math inline">\{Z, Q\}</span> alone leave the backdoor path open through <span class="math inline">M</span>.</p>
-<p><br></p>
-</section>
-<section id="good-and-bad-controls" class="level3">
-<h3 class="anchored" data-anchor-id="good-and-bad-controls">Good and Bad Controls</h3>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Good and Bad Controls
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>Good controls block backdoor paths, which facilitate identification of the causal effect.</p>
 <p>Bad controls are when we control for post-treatment variables. For example, <span class="math inline">P</span> below is a bad control, since it is caused by <span class="math inline">D</span>, so it is post-treatment.</p>
 <div class="quarto-figure quarto-figure-center">
@@ -255,6 +296,10 @@ Example of Identification Assumptions
 <p><img src="images/clipboard-1555756596.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
 </figure>
 </div>
+</div>
+</div>
+</div>
+<p><br></p>
 </section>
 </section>
 
