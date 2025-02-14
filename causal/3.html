@@ -108,10 +108,9 @@ window.Quarto = {
   <li><a href="#randomisation" id="toc-randomisation" class="nav-link active" data-scroll-target="#randomisation"><strong>Randomisation</strong></a>
   <ul class="collapse">
   <li><a href="#randomised-experiments" id="toc-randomised-experiments" class="nav-link" data-scroll-target="#randomised-experiments">Randomised Experiments</a></li>
-  <li><a href="#independence-and-unconfoundness" id="toc-independence-and-unconfoundness" class="nav-link" data-scroll-target="#independence-and-unconfoundness">Independence and Unconfoundness</a></li>
-  <li><a href="#randomisation-and-selection-bias" id="toc-randomisation-and-selection-bias" class="nav-link" data-scroll-target="#randomisation-and-selection-bias">Randomisation and Selection Bias</a></li>
+  <li><a href="#identification-assumptions" id="toc-identification-assumptions" class="nav-link" data-scroll-target="#identification-assumptions">Identification Assumptions</a></li>
+  <li><a href="#proof-of-identification" id="toc-proof-of-identification" class="nav-link" data-scroll-target="#proof-of-identification">Proof of Identification</a></li>
   <li><a href="#equivalence-of-estimands" id="toc-equivalence-of-estimands" class="nav-link" data-scroll-target="#equivalence-of-estimands">Equivalence of Estimands</a></li>
-  <li><a href="#graphical-representation" id="toc-graphical-representation" class="nav-link" data-scroll-target="#graphical-representation">Graphical Representation</a></li>
   <li><a href="#the-balancing-property" id="toc-the-balancing-property" class="nav-link" data-scroll-target="#the-balancing-property">The Balancing Property</a></li>
   <li><a href="#complications-and-limitations" id="toc-complications-and-limitations" class="nav-link" data-scroll-target="#complications-and-limitations">Complications and Limitations</a></li>
   </ul></li>
@@ -177,8 +176,8 @@ More on Randomisation
 </div>
 <p><br></p>
 </section>
-<section id="independence-and-unconfoundness" class="level3">
-<h3 class="anchored" data-anchor-id="independence-and-unconfoundness">Independence and Unconfoundness</h3>
+<section id="identification-assumptions" class="level3">
+<h3 class="anchored" data-anchor-id="identification-assumptions">Identification Assumptions</h3>
 <p>Randomisation implies that assignment probabilities, do not depend on the potential outcomes. The potential outcome values do not affect our chances of being selected for treatment.</p>
 <p><span class="math display">
 Pr(D=1|Y_0, Y_1) = Pr(D=1)
@@ -196,9 +195,9 @@ Pr(D=1|Y_0, Y_1) = Pr(D=1)
 </span></p>
 <p><br></p>
 </section>
-<section id="randomisation-and-selection-bias" class="level3">
-<h3 class="anchored" data-anchor-id="randomisation-and-selection-bias">Randomisation and Selection Bias</h3>
-<p>Let us return to our <a href="https://politicalscience.github.io/causal/2.html#naive-estimator-and-selection-bias">naive estimator</a> comparing observed outcomes, and our problem of selection bias:</p>
+<section id="proof-of-identification" class="level3">
+<h3 class="anchored" data-anchor-id="proof-of-identification">Proof of Identification</h3>
+<p>Let us return to our <a href="https://politicalscience.github.io/causal/2.html#naive-estimator-and-selection-bias">naive estimator</a>, and our problem of selection bias:</p>
 <p><span class="math display">
 \hat\tau_{\text{naive}} = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}}
 </span></p>
@@ -239,10 +238,18 @@ Pr(D=1|Y_0, Y_1) = Pr(D=1)
 \end{split}
 </span></p>
 <p>And now we see that <span class="math inline">\tau_{ATT}</span> and <span class="math inline">\tau_{ATE}</span> are equivalent under randomisation.</p>
-<p><br></p>
-</section>
-<section id="graphical-representation" class="level3">
-<h3 class="anchored" data-anchor-id="graphical-representation">Graphical Representation</h3>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Graphical Identification
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>Let us look at a direct acyclic graph:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -251,6 +258,9 @@ Pr(D=1|Y_0, Y_1) = Pr(D=1)
 </div>
 <p>Because we are randomly assigning treatment <span class="math inline">D</span>, we are exogenously determining <span class="math inline">D</span>. Thus, values of <span class="math inline">D</span> are not being caused by <span class="math inline">U</span>, they are being caused by randomisation.</p>
 <p>Thus, we can eliminate the arrow between <span class="math inline">U \rightarrow D</span>. This allows us to estimate <span class="math inline">D \rightarrow Y</span> without any confounders.</p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="the-balancing-property" class="level3">
@@ -259,7 +269,7 @@ Pr(D=1|Y_0, Y_1) = Pr(D=1)
 <p>This is because not only is <span class="math inline">(Y_1, Y_0) \perp D</span>, but also any covariate <span class="math inline">X</span> is also independent of treatment: <span class="math inline">X \perp D</span>.</p>
 <p>This means that if randomisation is successful, we should expect minimal differences between control and treatment groups for all pre-treatment characteristics values.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -268,7 +278,7 @@ Details on the Balancing Property
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>In any one sample, we actually are likely to have some imbalances in <span class="math inline">X</span> between control and treatment simply due to chance.</p>
 <ul>
@@ -291,7 +301,7 @@ Details on the Balancing Property
 </ol>
 <p>Randomisation does not help with external validity - the ability to extrapolate our results to external situations.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -300,7 +310,7 @@ More on External Validity
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>External validity asks if we can generalise our conclusions from our subjects, to other subjects outside our experiment. Can we extrapolate our estimates to to other populations?</p>
 <p>For example, if we measured the effect of migration on tolerance for our subjects in India, can we say the same effect is true of someone in Japan, the US, or Europe?</p>
@@ -341,7 +351,7 @@ Y_i = \hat\gamma + \hat\tau D_i + \hat\epsilon_i
 </span></p>
 <p>Here, <span class="math inline">\hat\tau</span> is our estimator of the ATE. This gives the same estimate as the difference-in-means estimator.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -350,7 +360,7 @@ Proof OLS is Equivalent to Difference-in-Means
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Remember that OLS is the best approximation of the conditional expectation function <span class="math inline">E(y|x)</span>.</p>
 <p>Thus, we can write the regression as:</p>
@@ -374,7 +384,7 @@ E(Y_i|D_i) = \hat\gamma + \hat\tau D_i + \hat\epsilon_i
 <p>We do not need to include covariates. This is because randomisation allows us to meet the <a href="https://politicalscience.github.io/causal/1.html#conditions-for-asymptotic-consistency">asymptotic consistency</a> condition of both randomisation and exogeneity.</p>
 <p>However, sometimes pre-treatment covariates are included. We should not include post-treatment covariates.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -383,7 +393,7 @@ Including Pre-Treatment Covariates
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>There are several reasons one might want to include pre-treatment covariates:</p>
 <ol type="1">
@@ -440,7 +450,7 @@ H_0^s : Y_1 = Y_0, \quad H_A^s : Y_1 ≠ Y_0
 <li>Calculate <span class="math inline">p</span>-value as the proportion of <span class="math inline">\widehat{\tau_j}</span> that are as or more extreme than the actually observed <span class="math inline">\hat\tau</span>.</li>
 </ol>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -449,7 +459,7 @@ Details on Randomisation Inference
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>If we have <span class="math inline">N</span> total units, and <span class="math inline">N_1</span> in the treatment group and <span class="math inline">N_0</span> in the control group, we can calculate all possible randomisation permutations as follows:</p>
 <p><span class="math display">
@@ -473,7 +483,7 @@ Details on Randomisation Inference
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -482,7 +492,7 @@ Pros/Cons of Randomisation Inference
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Randomisation Inference is assumption free - we do not need asymptotic properties or hypothetical sampling distributions.</p>
 <p>Since we also do not need asymptotic property inferences, we can do inference with very small samples as well.</p>
@@ -503,7 +513,7 @@ Pros/Cons of Randomisation Inference
 </ol>
 <p>You can also estimate the standard error of <span class="math inline">\hat\tau</span> using the standard deviation of the distribution. However, do not use these standard errors for confidence intervals or tests unless you are confident the sampling distribution is approximately normal.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -512,7 +522,7 @@ Pros/Cons of Bootstrap Inference
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The advantage of bootstrap is the following:</p>
 <ol type="1">
@@ -526,7 +536,7 @@ Pros/Cons of Bootstrap Inference
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -535,7 +545,7 @@ Block Bootstrap
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For blocked experiments, you should randomly sample blocks, not units, to create your bootstrap re-samples.</p>
 <p>For example, if your data is clustered in cities, you should re-sample by cities.</p>
@@ -554,7 +564,7 @@ Block Bootstrap
 <p>Stratified (also called blocked or conditional) randomisation are when randomisation occurs separately within levels of some covariates(s) <span class="math inline">X</span>. Generally, you separate your sample of <span class="math inline">N</span> units into <span class="math inline">J</span> subgroups.</p>
 <p>For example, you could split people up into male or female, and random sample within each group, rather than everyone together.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -563,7 +573,7 @@ Example of Stratification
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let us say you have 4 subjects, with pre-treatment potential outcomes of <span class="math inline">Y_{0i} = \{2, 2, 8, 8 \}</span>.</p>
 <p>If you just randomly assign, then there is a 33% chance that you end up with the random assignment where <span class="math inline">\{8, 8\}</span> are placed in one group, and <span class="math inline">\{2, 2\}</span> are placed in another group.</p>
@@ -574,7 +584,7 @@ Example of Stratification
 </div>
 <p>This can prevent imbalances as normal randomisation can have a high probability (in certain situations) of creating imbalances.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -583,7 +593,7 @@ Estimation with Stratification
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>To estimate the ATE, you will need a weighted average of the ATE for each subgroup <span class="math inline">j</span>, with the weights being the proportion of units each group <span class="math inline">j</span> accounts for:</p>
 <p><span class="math display">

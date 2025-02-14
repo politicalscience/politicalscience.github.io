@@ -29,32 +29,51 @@ This chapter introduces the selection on observables framework, which allows us 
 
 # **Identification**
 
-### Identification Assumptions
+### Graphical Identification
 
-Without randomisation, we need some other way to account for pre-treatment covariates that may be confounding and causing selection bias.
+Without randomisation, we need some other way to account for pre-treatment covariates that may be confounding and causing selection bias. Controlling for a set of nodes/confounders $X$ can identify the causal effect of $D \rightarrow Y$, if:
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Pre-Treatment Covariates
-
-A variable $X$ is a pre-treatment covariate if:
-
-1.  $X$ is not caused by $D$ (i.e. $X$ does not change as a result of treatment $D$).
-2.  $X$ is associated with $D$ (it causes selection into treatment $D$)
+1.  No node within set $X$ is a descendant of $D$ (no element within $X$ results from $D$).
+2.  The nodes within set $X$ [block all back-door paths](https://politicalscience.github.io/causal/2.html#blocked-paths) from $D \rightarrow Y$.
 
 ![](images/clipboard-378311705.png){fig-align="center" width="50%"}
 
-Above, we can see $X$ is a pre-treatment covariate that affects $D$, and is not caused by $D$. $V$ is not a pre-treatment covariate, since it is caused by $D$. $Q$ is also not a covariate.
+In the figure above, to identify the causal path $D \rightarrow Y$, we need to eliminate all back-door paths that are not $D \rightarrow Y$, but link $D$ to $Y$. The backdoor paths, and how they can be blocked, are:
+
+1.  Backdoor path $D \rightarrow X \rightarrow Y$. To block this path, we must control for $X$.
+2.  Backdoor path $D \rightarrow V \rightarrow Y$. We do not need to control for $V$, since it is post-treatment (a descendant of $D$). In fact, $V$ is a **bad control** (see below).
+
+Thus, to identify $D \rightarrow Y$ here, we only need to control for $X$, and no other variable.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Good and Bad Controls
+
+Good controls block backdoor paths, which facilitate identification of the causal effect.
+
+Bad controls are when we control for post-treatment variables. For example, $P$ below is a bad control, since it is caused by $D$, so it is post-treatment.
+
+![](images/clipboard-1369053188.png){fig-align="center" width="40%"}
+
+You also never want to control variables that only predict $D$. These are bad because controlling for these removes variation in $D$ that could be useful.
+
+Neutral controls are ones that don't identify the causal effect, but improve efficiency. For example, $Q$ below affects $Y$, but there is no backdoor path. Controlling $Q$ will not help identification, but can control noise in $Y$ which may increase efficiency.
+
+![](images/clipboard-1555756596.png){fig-align="center" width="40%"}
 :::
 
-For selection on observables, the idea is to control for these pre-treatment covariates. The assumptions needed for identification of causal effects are:
+<br />
 
-1.  **Conditional Ignorability** (also known as exogeneity or independence): Among units with identical pre-treatment covariate values $X_i$, treatment $D_i$ is as-if randomly assigned. Or in other words, potential outcomes are independent from treatment within each specific covariate value $X_i = x$.
+### Identification Assumptions
+
+Once we have determined the set of confounders $X$ that we need to control for to isolate the causal effect of interest, the assumptions needed for identification of causal effects are:
+
+1.  **Conditional Ignorability** (also known as exogeneity or independence): Among units with identical confounder values $X_i$, treatment $D_i$ is as-if randomly assigned. Or in other words, potential outcomes are independent from treatment within each specific confounder value $X_i = x$.
 
 $$
 (Y_{0i}, Y_{1i}) \perp D_i  \ | \ X_i = x, \quad \forall \ x \in \mathcal X
 $$
 
-This implies that for a given value of a covariate $X_i = x$, we know:
+This implies that for any given value of all confounders $X_i = x$, we know:
 
 $$
 \begin{split}
@@ -63,7 +82,7 @@ E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 1, X_i = x) = E(Y_{0i}|D_i = 0, X_i = x)
 \end{split}
 $$
 
-2.  **Common Support** assumption: a unit $i$ with value of $X_i$, there is a probability that they could be assigned to both control $D_i = 0$ or treatment $D_i = 1$. So, there is no value of $X_i$ where a unit $i$ can only be either treatment or control.
+2.  **Common Support**: for any unit $i$ with value of $X_i$, there is a non-zero probability that they could be assigned to both control $D_i = 0$ or treatment $D_i = 1$.
 
 $$
 0 < Pr(D_i = 1 \ | X_i = x) < 1 \quad \forall \ x \in \mathcal X
@@ -83,7 +102,7 @@ That means our theory is that age $X$ affects selection into treatment $D$. Youn
 
 ### Proof of Identification
 
-We have our assumptions as noted above. How do these assumptions help us find the ATE? We start with the conditional average treatment effect, conditional on some value of covariates $x$:
+With our assumptions above, we can identify the ATE. We start with the [conditional average treatment effect](https://politicalscience.github.io/causal/2.html#conditional-average-treatment-effect-cate), conditional on some value of confounders $X_i = x$:
 
 $$
 \begin{split}
@@ -160,43 +179,6 @@ $$
 
 <br />
 
-### Graphical Identification
-
-D-separation in DAGs corresponds to the assumption of conditional independence. Controlling for a set of nodes $S$ can identify the causal effect of $X \rightarrow Y$, if:
-
-1.  No node within set $S$ is a descendant of $X$ (no element within $S$ results from $D$):
-2.  The nodes within set $S$ [block all back-door paths](https://politicalscience.github.io/causal/2.html#blocked-paths) from $X \rightarrow Y$.
-
-Take this example: how can we identify the effect of $D \rightarrow Y$?
-
-![](images/clipboard-2795492971.png){fig-align="center" width="40%"}
-
-The sets identify the total effect of $D$ on $Y$ are:
-
-1.  $\{Z, M\}$: M blocks the lower path $D \rightarrow M \rightarrow Y$, and $Z$ blocks the upper path $D \rightarrow Z \rightarrow M \rightarrow Q \rightarrow Y$.
-2.  $\{M, Q\}$:M blocks the lower path $D \rightarrow M \rightarrow Y$, and $Q$ blocks the upper path $D \rightarrow Z \rightarrow M \rightarrow Q \rightarrow Y$.
-3.  $\{Z, Q, M\}$: M blocks the lower path $D \rightarrow M \rightarrow Y$, and $Z, Q$ blocks the upper path $D \rightarrow Z \rightarrow M \rightarrow Q \rightarrow Y$.
-
-Note that $\{M\}$ alone does not block - this is because $M$ is a collider. Similarly, $\{Z, Q\}$ alone leave the backdoor path open through $M$.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Good and Bad Controls
-
-Good controls block backdoor paths, which facilitate identification of the causal effect.
-
-Bad controls are when we control for post-treatment variables. For example, $P$ below is a bad control, since it is caused by $D$, so it is post-treatment.
-
-![](images/clipboard-1369053188.png){fig-align="center" width="40%"}
-
-You also never want to control variables that only predict $D$. These are bad because controlling for these removes variation in $D$ that could be useful.
-
-Neutral controls are ones that don't identify the causal effect, but improve efficiency. For example, $Q$ below affects $Y$, but there is no backdoor path. Controlling $Q$ will not help identification, but can control noise in $Y$ which may increase efficiency.
-
-![](images/clipboard-1555756596.png){fig-align="center" width="40%"}
-:::
-
-<br />
-
 <br />
 
 ------------------------------------------------------------------------
@@ -211,19 +193,27 @@ $$
 \tau_{ATE} = \sum\limits_{x \in \mathcal X} \underbrace{( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x))}_{\text{CATE at }X_i = x} \underbrace{Pr(X_i = x)}_{\text{weight}}
 $$
 
-We can calculate this within our give sample to get the subclassificaiton estimator:
+We can calculate this within our give sample to get the **subclassificaiton** estimator:
 
 $$
 \hat\tau_{ATE} = \sum\limits_{j=1}^M \underbrace{(\bar Y_{1j} - \bar Y_{0j})}_{\text{CATE at} X_i = x} \underbrace{\frac{n_j}{n}}_{\text{weight}}
 $$
 
--   Where $M$ is the number of strata (levels/categories of $X$), where $n_j$ is the number of units in a level/category $j$ of $X$, and where $\bar Y_{dj}$ is the mean outcome for units with $D_i = d$ in level/category $j$ of $X$.
+-   Where $M$ is the number of strata (levels/categories of $X$), and $j$ is one specific level/category of $X$.
+-   Where $n_j$ is the number of units in a level/category $j$ of $X$.
+-   Where $\bar Y_{dj}$ is the mean outcome for units with $D_i = d$ in level/category $j$ of $X$.
+
+For subclassificaion to be possible, within each level $j$ of covariate $X$, there must be at least one unit in control $D=0$ and treatment $D=1$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Intuitive Procedure of Subclassification
 
 More intuitively, the procedure is as follows:
 
 1.  Choose one specific value for all covaraites $X$. Find the average treatment effect within this specific value of $X$.
 2.  Multiply that average treatment effect by the number of observations that meet this specific value of $X$ divided by the total number of units.
 3.  Do this for every possible values of all covaraites $X$, then sum up all the weighted average treatment effects to get the overall ATE.
+:::
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Subclassification with Multiple Confounders
@@ -234,8 +224,6 @@ We would need to create $M=9$ levels of strata, for every possible combination o
 
 This illustrates how with large amounts of confounders, you will need a huge number of stratum. This makes subclassification infeasible in many cases.
 :::
-
-For subclassificaion to be possible, within each level $j$ of covariate $X$, there must be at least one unit in control $D=0$ and treatment $D=1$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Subclassification for the ATT
@@ -262,15 +250,17 @@ $$
 
 ### Matching Estimator
 
-We have a [missing data problem](https://politicalscience.github.io/causal/2.html#observed-outcomes-and-missing-data) in causal inference: we do not know all the potential outcomes. Matching "determines" missing potential outcomes of a unit, by using the closest unit or nearest neighbour to the unit in question.
+We have a [missing data problem](https://politicalscience.github.io/causal/2.html#observed-outcomes-and-missing-data) in causal inference: we do not know all the potential outcomes. Matching "estimates" missing potential outcomes of a unit.
 
-For each observation in the treated group, matching finds an observation in the untreated group that have the most similar values of a set of pre-treatment covariates $X$. Thus, we have pairs of observations. We can estimate the ATT as the average difference in observed outcomes between the pairs:
+For each observation in the treated group, matching finds an observation in the untreated group that have the most similar values of a set of pre-treatment covariates $X$. Thus, we have pairs of treatment-control observations that act as counterfactuals. We can estimate the ATT as the average difference in observed outcomes within the pairs:
 
 $$
 \hat\tau_{ATT} = \frac{1}{n_1} \sum\limits_{i:D_i = 1}(Y_i - \widetilde{Y_i})
 $$
 
-Where $n_1$ is the number of units in the treatment group, $Y_i$ is the unit's observed $Y$ in the treatment group, and $\tilde Y_i$ is unit $i$'s closest neighbour in the untreated group.
+-   Where $n_1$ is the number of units in the treatment group.
+-   Where $Y_i$ is the unit's observed $Y$ in the treatment group.
+-   Where $\tilde Y_i$ is unit $i$'s closest neighbour in the untreated group.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Choices during Matching
@@ -298,21 +288,29 @@ $$
 Where $\widetilde{Y_{i_m}}$ is the obsered outcome for the $m$th match of unit $i$.
 :::
 
+::: {.callout-note collapse="true" appearance="simple"}
+## Weaknesses of Matching
+
+Matching does not always create "perfect" matches. This means that the pairs matched together may not be identical to each other in terms of covariates $X$ or potential outcomes.
+
+The inability to find exact matches can cause bias, especially for the more covariates we match on (see below).
+:::
+
 Note: Matching is not a design - it is an estimator. You need a research design, such as selection on observables.
 
 <br />
 
 ### Matching with Multiple Covariates
 
-Consider that we have a more than one $X$ pre-treatment covariate. This implies that $X$ values are in a multidimensional space $\mathbb R^k$, where $k$ is the number of covariates.
+Consider that we $k>1$ number of confounders $X$. Now, we have to match observations in $k$ variables, which implies we are in a multidimensional $\mathbb R^k$ space.
 
-The most commonly used Distance Metric is Mahalanobis Distance - which measures the distance in $X$ between units $i$ and $j$:
+The most commonly used distance metric is **Mahalanobis** Distance - which measures the distance in $X_i$ between units $i$ and $j$:
 
 $$
 D_M (\mathbf X_i, \mathbf X_j) = \sqrt{(\mathbf X_i - \mathbf X_j)^T \boldsymbol\Sigma_X^{-1} (\mathbf X_i - \mathbf X_j)}
 $$
 
-Where $\boldsymbol \Sigma_X$ is the sample variance-covariance matrix of $\mathbf X_i$.
+-   Where $\boldsymbol \Sigma_X$ is the sample variance-covariance matrix of $\mathbf X_i$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Euclidean Distance
@@ -341,7 +339,7 @@ The search space increases exponentially as you increase the number of dimension
 
 Take a look at the figure on the left. If we only match on a one dimensional plane (lets say the horizontal line between 0 and 1), we can see our red line covers approximately 30% of the horizontal line. But in 3 dimensions, our red box covers a significantly less proportion of the entire cube.
 
-The figure on the left illustrates this. $d$ represents the dimensions. We can see as the dimensions increase, the fraction of volume increases significantly slower relative to distance.
+The figure on the right illustrates this. $d$ represents the dimensions. We can see as the dimensions increase, the fraction of volume increases significantly slower relative to distance.
 
 Thus, with a bigger space, the distance between two units increases, so you get worse matches.
 :::
@@ -358,31 +356,31 @@ The bias term as you increase the number of dimensions $k$, changes by $N^{(-1/k
 If $N_0$ (number of untreated units) is much larger than $N_1$ (number of treated units), bias will typically be smaller.
 
 There are ways to correct this bias, including Abadie and Imbens (2011) Bias Correction method.
+
+There is a new method: **Bias-corrected matching**, which estimates bias ineherent to mathching estimators via regression, then subtracts it from the matching estimate to correct for it.
 :::
 
 <br />
 
 ### Propensity Scores Matching
 
-Propensity Score matching is an alternative way to match over many dimensions.
-
-The propensity score is an unobserved property, defined as the probability of a unit $i$ of receiving treatment:
+Propensity Score matching is an alternative way to match over many dimensions. The **propensity score** is an unobserved property, defined as the probability of a unit $i$ of receiving treatment:
 
 $$
 \pi(X_i) \equiv Pr(D_i = 1|X_i)
 $$
 
-When supposing the conditional ignorability and common support assumptions, the propensity score $\pi(X_i)$ has the balancing property: $D_i \perp X_i \ | \ \pi(X_i)$. This implies that conditional ignorability holds, just on the propensity scores alone:
+When supposing the [conditional ignorability and common support assumptions](https://politicalscience.github.io/causal/4.html#identification-assumptions), the propensity score $\pi(X_i)$ has the balancing property: $D_i \perp X_i \ | \ \pi(X_i)$. This implies that conditional ignorability holds on the propensity scores alone:
 
 $$
 (Y_{1i}, Y_{0i}) \perp D_i \ | \ \pi(X_i)
 $$
 
-Thus, instead of conditioning on $X_i$ as we did in selection on observables, we can instead condition on $\pi (X_i)$, and still identify the causal estimands.
+Thus, instead of conditioning on $X_i$ as we did in selection on observables, we can instead condition on $\pi (X_i)$, and still identify the causal estimand.
 
-However, we do not actually observe $\pi (X_i)$. Generally, we estimate $\pi (X_i)$ with a logistic (or other binary response variable), with outcome variable $D_i$, and explanatory variables $X_i$. This will get us a predicted proability $Pr(D_i = 1) = \hat\pi(X_i)$.
+However, we do not actually observe $\pi (X_i)$. We estimate $\pi (X_i)$ with a binary response model, with outcome variable $D_i$, and explanatory variables $X_i$. This will get us a fitted probability $Pr(D_i = 1) = \hat\pi(X_i)$.
 
-Then, once we have the propensity score estimates $\hat\pi(X_i)$, we can do nearest neighbour matching with the propensity scores. This will allow us to identify the $\tau_{ATT}$.
+Then, once we have the propensity score estimates $\hat\pi(X_i)$, we can do nearest neighbour matching with the propensity scores (in 1-dimensional space). This will allow us to identify the $\tau_{ATT}$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Balance Checks
@@ -392,7 +390,7 @@ The accurate estimation of $\tau_{ATT}$ implies an accurate prediction of the pr
 
 <br />
 
-### Weighting Estimator
+### Inverse Probability Weighting Estimator
 
 An alternative use of the propensity score is weighting. Under both conditional ignorability and common support assumptions, we can identify the ATE and ATT as:
 
@@ -423,7 +421,7 @@ $$
 Now, let us reason about the ATE, and plug in the CATE when applicable:
 :::
 
-The **inverse probability weighting (IPW) estimator** would be:
+The **inverse probability weighting (IPW) estimator** would be the same calculation but in the sample:
 
 $$
 \begin{split}
@@ -459,7 +457,7 @@ The IPW estimator have very poor small sample properties. They are highly sensit
 
 ### OLS under Constant Treatment Effect
 
-When we think about controlling for covariates, we often think about regression. OLS is a natural approach, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](https://politicalscience.github.io/causal/1.html#regression-anatomy-theorem).
+When we think about controlling for covariates $X$, we often think about regression. OLS is a natural approach, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](https://politicalscience.github.io/causal/1.html#regression-anatomy-theorem).
 
 $\hat\beta_{OLS}$ a good estimator of $\tau_{ATE}$ in selection of observables under 2 conditions:
 
@@ -483,7 +481,7 @@ $$
 
 Thus, $\beta_1$ properly identifies the $\tau_i$ given the two above assumptions.
 
-We also know that under selection on observables, conditional ignorability implies zero-conditional mean. Thus $\beta_1$ is unbiased and asymptotically consistent.
+We also know that under selection on observables, conditional ignorability implies [zero-conditional mean](https://politicalscience.github.io/causal/1.html#conditions-for-unbiasedness). Thus $\beta_1$ is an unbiased and asymptotically consistent estimator of the ATE.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Non-Linearity
@@ -499,26 +497,28 @@ This does not mean it is good - just the best linear approximation.
 
 ### OLS under Heterogenous Treatment Effects
 
-Remember that the OLS is only an unbiased estimator of the ATE when there are constant treatment effects for all units, as mentioned above. What if there are heterogenous treatment effects (where $\tau_i$ is different between units)?
+What if there are heterogenous treatment effects (where $\tau_i$ is different between units)? OLS in this case is no longer an unbiased estimator of the ATE.
 
 Recall the subclassification estimator of the ATE:
 
 $$
-\hat\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) \underbrace{Pr(X_i = x)}_{\text{weight}} \\
+\hat\tau = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) \underbrace{Pr(X_i = x)}_{\text{weight}} \\
 $$
 
 OLS, when there are non constant treatment effects, can be rewritten as:
 
 $$
-\hat\beta_{OLS} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) \underbrace{ \frac{Var(D_i|X_i = X)Pr(X_i = x)}{\sum Var(D_i | X_i = x')Pr(X_i = x')} }_{\text{weight}} \\
+\hat\beta = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) \underbrace{ \frac{Var(D_i|X_i = X)Pr(X_i = x)}{\sum Var(D_i | X_i = x')Pr(X_i = x')} }_{\text{weight}} \\
 $$
 
-Notice how the weights are different. The weights in the OLS are the conditional variances of $D_i$.
+Notice how the weights are different. The weights in the OLS are the conditional variances of $D_i$. This means that OLS is not an unbiased estimator of the ATE or ATT, but rather, a weighted average of the ATT and ATU.
 
-This means the OLS actually provides an unbiased estimator of the **conditional variance weighted average treatment effect**. This is not the same as the ATE or the ATT. Thus, we should be careful when using this estimator with heterogenous treatment effects.
+We must be careful of this property when using the OLS estimator for heterogenous treatment effects.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Conditional Variance Weighted Average Treatment Effect
+
+OLS actually provides an unbiased estimator of the **conditional variance weighted average treatment effect**. This is not the same as the ATE or the ATT.
 
 This estimand can also be described as a weighted average of the ATT (average treatment effect on the treated) and the ATU (average treatment effect on the untreated):
 
@@ -535,7 +535,7 @@ w_0 & = 1 - w_1
 \end{split}
 $$
 
-The reason for this is because the OLS is predicting missing potential outcomes for the treated units.
+The reason for this is because regression is prone to extrapolation beyond common support - i.e. it can "estimate" potential outcomes for units that are not observed. This can lead to bias.
 
 This is in contrast to the subclassification estimator, which cannot be computed if there are missing observable outcomes for a substratum/category of $X$.
 
@@ -546,17 +546,29 @@ The weights of $D_i(X_i = x)$ can also be seen as propensity scores of $\pi(x)(1
 3.  OLS minimises estimation uncertainty by downweighting groups of $X_i$ where group-specific ATEs are less precisely estimated.
 :::
 
+::: {.callout-note collapse="true" appearance="simple"}
+## Solutions to the OLS Bias under Heterogeneity
+
+There are a few solutions to this issue of OLS bias under heterogeneity:
+
+1.  **Doubly-robust estimation** uses a weighted average of regression and IPW estimators, which will be asymptotically consistent as long as the regression model is correctly specified.
+2.  **Matching as pre-processing** uses matching to make treatment and control groups similar, then runs regression models to estimate causal effects.
+
+Finally, there is the fully interacted estimator, which is explained below.
+:::
+
 <br />
 
 ### Fully Interacted Estimator
 
-The Fully-Interacted Estimator, a newly developed large-sample regression estimator is as follows:
+The Fully-Interacted Estimator, a newly developed large-sample regression estimator, solves the heterogeneity bias in the OLS estimator. The fully-interacted estimator takes the form:
 
 $$
 Y_i = \hat\alpha + D_i \widehat{\tau}_{int} + (\mathbf X_i - \mathbf {\bar X}) \hat\beta +D_i (\mathbf X_i - \mathbf{\bar X}) \hat\gamma
 $$
 
-Where $X_i$ are covariate values sufficient to satisfy conditional independence, and $\bar X$ contains the sample means of all $X_i$ covariates.
+-   Where $X_i$ are covariate values sufficient to satisfy conditional independence.
+-   Where $\bar X$ contains the sample means of all $X_i$ covariates.
 
 This estimator $\hat\tau_{int}$ is technically biased when estimating $\tau_{ATE}$. However, the bias is arbitrarily small in large samples under conditional ignorability.
 
@@ -564,18 +576,8 @@ This estimator thus allows us to accurately estimate the ATE even under heteroge
 
 <br />
 
-### Choosing an Estimator and Modern Advances
+<br />
 
-There are advantages and disadvantages to all the estimators discussed.
+------------------------------------------------------------------------
 
-Regression is simple. However, regression also relies on many strong assumptions of linearity and uniform treatment effects. The fully-Interacted estimator can help with this.
-
-Regression is also prone to extrapolation beyond common support - i.e. it can "estimate" potential outcomes for units that are not observed. This can lead to bias.
-
-The advantage of matching is that it does not have model assumptions of linearity. It is also quite intuitive of an idea. However, the inability to find exact matches can cause bias, especially for the more covariates we match on.
-
-Modern approaches sometimes combine regression with matching or weighting:
-
-1.  **Bias-corrected matching** estimates bias ineherent to mathching estimators via regression, then subtracts it from the matching estimate to correct for it.
-2.  **Doubly-robust estimation** uses a weighted average of regression and IPW estimators, which will be asymptotically consistent as long as the regression model is correctly specified.
-3.  **Matching as pre-processing** uses matching to make treatment and control groups similar, then runs regression models to estimate causal effects.
+# **Partial Identification**
