@@ -124,18 +124,13 @@ window.Quarto = {
   <li><a href="#naive-estimator-and-selection-bias" id="toc-naive-estimator-and-selection-bias" class="nav-link" data-scroll-target="#naive-estimator-and-selection-bias">Naive Estimator and Selection Bias</a></li>
   <li><a href="#confounders" id="toc-confounders" class="nav-link" data-scroll-target="#confounders">Confounders</a></li>
   <li><a href="#omitted-variable-bias-in-regression" id="toc-omitted-variable-bias-in-regression" class="nav-link" data-scroll-target="#omitted-variable-bias-in-regression">Omitted Variable Bias in Regression</a></li>
+  <li><a href="#assignment-mechanism" id="toc-assignment-mechanism" class="nav-link" data-scroll-target="#assignment-mechanism">Assignment Mechanism</a></li>
   </ul></li>
   <li><a href="#directed-acyclic-graphs" id="toc-directed-acyclic-graphs" class="nav-link" data-scroll-target="#directed-acyclic-graphs"><strong>Directed Acyclic Graphs</strong></a>
   <ul class="collapse">
   <li><a href="#components-of-the-graphs" id="toc-components-of-the-graphs" class="nav-link" data-scroll-target="#components-of-the-graphs">Components of the Graphs</a></li>
   <li><a href="#representing-interventions" id="toc-representing-interventions" class="nav-link" data-scroll-target="#representing-interventions">Representing Interventions</a></li>
   <li><a href="#blocked-paths" id="toc-blocked-paths" class="nav-link" data-scroll-target="#blocked-paths">Blocked Paths</a></li>
-  <li><a href="#d-seperation" id="toc-d-seperation" class="nav-link" data-scroll-target="#d-seperation">D-Seperation</a></li>
-  </ul></li>
-  <li><a href="#assignment-mechanism" id="toc-assignment-mechanism" class="nav-link" data-scroll-target="#assignment-mechanism"><strong>Assignment Mechanism</strong></a>
-  <ul class="collapse">
-  <li><a href="#different-assignment-mechanisms" id="toc-different-assignment-mechanisms" class="nav-link" data-scroll-target="#different-assignment-mechanisms">Different Assignment Mechanisms</a></li>
-  <li><a href="#assignment-and-studies" id="toc-assignment-and-studies" class="nav-link" data-scroll-target="#assignment-and-studies">Assignment and Studies</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -212,8 +207,7 @@ Y_{1i} \quad \text{if } D_i = 1 \\
 Y_{0i} \quad \text{if } D_i = 0 \\
 \end{cases}
 </span></p>
-<p>Before the treatment (<em>A priori</em>), both potential outcomes could be observed.</p>
-<p>After the treatment, one is <strong>observed</strong>, and the other is <strong>counterfactual</strong>. For any given experiment, only one will ever be seen, and the counterfactual will never be seen (missing data problem).</p>
+<p>Before the treatment (<em>A priori</em>), both potential outcomes could be observed. After the treatment, one is <strong>observed</strong>, and the other is <strong>counterfactual</strong>. For any given experiment, only one will ever be seen, and the counterfactual will never be seen (missing data problem).</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -286,8 +280,7 @@ Examples of SUTVA Violations
 <section id="individual-treatment-effect" class="level3">
 <h3 class="anchored" data-anchor-id="individual-treatment-effect">Individual Treatment Effect</h3>
 <p>Remember the potential outcomes from parallel worlds <span class="math inline">Y_{1i}</span> and <span class="math inline">Y_{0i}</span>.</p>
-<p>Since these two parallel worlds are identical except for the fact one receives the treatment <span class="math inline">D</span> and the other does not, the causal effect of <span class="math inline">D</span> should logically be the difference between the potential outcomes of these two worlds.</p>
-<p>Thus, the individual treatment effect of a unit <span class="math inline">i</span> is:</p>
+<p>Since these two parallel worlds are identical except for the fact one receives the treatment <span class="math inline">D</span> and the other does not, the causal effect of <span class="math inline">D</span> should be the difference between the potential outcomes of these two worlds. Thus, the individual treatment effect of a unit <span class="math inline">i</span> is:</p>
 <p><span class="math display">
 \tau_i = Y_{1i} - Y_{0i}
 </span></p>
@@ -334,14 +327,14 @@ Group-Level Causal Estimands
 </section>
 <section id="average-treatment-effect-on-the-treated-att" class="level3">
 <h3 class="anchored" data-anchor-id="average-treatment-effect-on-the-treated-att">Average Treatment Effect on the Treated (ATT)</h3>
-<p>An alternative estimand to the ATE is the Average Treatment Effect on the Treated (ATT):</p>
+<p>An alternative estimand to the ATE is the <strong>Average Treatment Effect on the Treated (ATT)</strong>:</p>
 <p><span class="math display">
 \begin{split}
 \tau_{ATT} &amp; = E(Y_{1i} - Y_{0i} \ | \ D_i = 1) \\
 &amp; = \underbrace{\frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i}) \quad  \text{where } N_1 = \sum\limits_{i=1}^ND_i}_{\text{a formula for the average only for units }D_i = 1}
 \end{split}
 </span></p>
-<p>This is the causal effect of <u>only variables who have received the treatment</u>.</p>
+<p>This is the causal effect of <u>only units who have received the treatment</u>. Note that frequently the ATT is not equal to the ATE, so be aware of which estimand you are trying to estimate/identify.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -362,16 +355,18 @@ ATT vs.&nbsp;ATE
 </div>
 </div>
 </div>
+<p>The opposite estimand is the <strong>Average Treatment effect on the Untreated (ATU)</strong>, which only measures the causal effect of units who did not recieve the treatment.</p>
+<p>This is not used very often, since it is kind of uninituive to think about treatment effects on individuals who did not recieve treatment. However, it can be useful in understanding identification assumptions.</p>
 <p><br></p>
 </section>
 <section id="conditional-average-treatment-effect-cate" class="level3">
 <h3 class="anchored" data-anchor-id="conditional-average-treatment-effect-cate">Conditional Average Treatment Effect (CATE)</h3>
 <p>The conditional average treatment effect is any treatment effect where there is a condition on a characteristic/covariate:</p>
 <p><span class="math display">
-\tau_{CATE}(x) = E(Y_{1i} - Y_{0i} \ | \ X_i = x)
+\tau_{CATE}(x) = E(Y_{1i} - Y_{0i} \ | \ \underbrace{X_i = x}_{\text{condition}})
 </span></p>
-<p>This is the causal effect of only variables who meet the condition of the covariate specified. For example, you could find the conditional average treatment effect of only women (so the covariate which we are conditioning on is <em>gender</em>).</p>
-<p>This is often used for tailoring products/medicine/advertising to certain groups of people.</p>
+<p>This is the causal effect of only variables who meet the condition of the covariate specified. For example, you could find the conditional average treatment effect of only women (so the covariate which we are conditioning on is <em>gender</em>). You can also condition on multiple covariates.</p>
+<p>This is often used for tailoring products/medicine/advertising to certain groups of people. It is also frequently used in identification strategies.</p>
 <p>This estimand will go by other names, including the Local Average Treatment Effect (LATE).</p>
 <p><br></p>
 <p><br></p>
@@ -392,12 +387,87 @@ ATT vs.&nbsp;ATE
 <p><span class="math display">
 \begin{split}
 \hat\tau_{naive} &amp; = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
-&amp; = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) \\
-&amp; = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i}|D_i = 1)}_{\because \text{ this equals 0, so we can add it}} \\
-&amp; = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
+&amp; = \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
+&amp; = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) \color{red}{- E(Y_{0i}|D_i = 1)}}_{\because \text{ this equals 0, so we can add it}} \\
+&amp; = \underbrace{E(Y_{1i}|D_i = 1) \color{red}{- E(Y_{0i}|D_i = 1)}}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
 \end{split}
 </span></p>
 <p>We can see that our naive estimator produces the <span class="math inline">\tau_{ATT}</span> <strong>plus</strong> an extra bit (called the selection bias). Thus, our naive estimator is biased, so we should be careful about using this naive estimator (correlation does not equal causation).</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Naive Estimator Biased for ATU
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The proof above shows how the naive estimator is a biased estimator for the <span class="math inline">\tau_{ATT}</span>. We can also prove it is a biased estimator of the ATU:</p>
+<p><span class="math display">
+\begin{split}
+\hat\tau_{naive} &amp; = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
+&amp; = \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
+&amp; = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{1i}|D_i = 0) - E(Y_{1i}|D_i = 0)}_{\because \text{ this equals 0, so we can add it}} \\
+&amp; = \underbrace{E(Y_{1i}|D_i = 0)- E(Y_{0i}|D_i = 0)}_{\tau_{ATU}} + \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{1i} | D_i = 0)}_{\text{Selection Bias}} \\
+\end{split}
+</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Naive Estimator Biased for ATE
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The proofs above shows how the naive estimator is a biased estimator for the <span class="math inline">\tau_{ATT}</span> and <span class="math inline">\tau_{ATU}</span>. We can also prove it is a biased estimator of the ATE.</p>
+<p>Let us first start with the ATE. Let us call <span class="math inline">Y_{1i} - Y_{0i} := \tau_i</span> for notation simplicity:</p>
+<p><span class="math display">
+\begin{split}
+\tau_{ATE} &amp; = E(Y_{1i} - Y_{0i})  = E(\tau_i)\\
+&amp; = \underbrace{E(\tau_i|D_i = 1)Pr(D_i = 1) + E(\tau_i|D_i = 0)Pr(D_i = 0)}_{\because \text{ weighted average of ATE and ATU by proportion in }D_i = 1, 0} \\
+&amp; = E(\tau_i|D_i = 1)\underbrace{(1 -Pr(D_i = 0))}_{\because \text{ complement prob.}} + E(\tau_i|D_i = 0)Pr(D_i = 0) \\
+\end{split}
+</span></p>
+<p>Let us call <span class="math inline">Pr(D_i = 0) := \pi</span> for notation simplicity. Now, continue:</p>
+<p><span class="math display">
+\begin{split}
+&amp; = \underbrace{E(\Delta|D_i = 1) - \pi E(\Delta|D_i = 1)}_{\because \text{ distribute out}} + E(\tau_i|D_i = 0)\pi \\
+&amp; = E(\tau_i|D_i = 1) + \underbrace{\pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)]}_{\because \text{ factor out } \pi = Pr(D_i = 0)} \\
+&amp; = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 1) + \pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)] \\
+\end{split}
+</span></p>
+<p>Let us call the part <span class="math inline">\pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)] := \Pi(\tau_i)</span>. Now, continue to simplify:</p>
+<p><span class="math display">
+\begin{split}
+&amp; = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 1) + \Pi(\tau_i) + \underbrace{E(Y_{1i} |D_i = 0) - E(Y_{0i}|D_i = 0)}_{\because \text{ these two cancel out so we add 0}}  \\
+&amp; = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 0) + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; = \underbrace{E(Y_i|D_i = 1)}_{\because \text{ observed outcome}} - \underbrace{E(Y_i|D_i = 0)}_{\because \text{ observed outcome}} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; = \underbrace{E(Y_{i} |D_i = 1) - E(Y_{i}|D_i = 0)}_{\hat\tau_{naive}} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; = \hat\tau_{naive}+ E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i)
+\end{split}
+</span></p>
+<p>Thus, we can see that <span class="math inline">\tau_{ATE}</span> is not equivalent to <span class="math inline">\hat\tau_{naive}</span>. Let us isolate <span class="math inline">\hat\tau_{naive}</span> to identify the selection bias.</p>
+<p><span class="math display">
+\begin{split}
+&amp; \tau_{ATE} = \hat\tau_{naive}+ E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; -\hat\tau_{naive} = -\tau{ATE} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; \hat\tau_{naive} = \tau_{ATE} - E(Y_{1i} |D_i = 0) + E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; \hat\tau_{naive} = \tau_{ATE} + \underbrace{E(Y_{0i}|D_i = 1)- E(Y_{1i} |D_i = 0) + \Pi(\tau_i)}_{\text{selection bias}}
+\end{split}
+</span></p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="confounders" class="level3">
@@ -408,32 +478,33 @@ ATT vs.&nbsp;ATE
 </span></p>
 <p>If selection bias is non-zero, this essentially states that the expected potential outcome before treatment <span class="math inline">Y_{0i}</span> between the treatment and control groups is not equal.</p>
 <p>Or in other words, the treatment and control groups have some other variable causing differences even before treatment has begun. This implies that the differences between the treatment and control group may not be due to treatment <span class="math inline">D</span>, but due to the underlying differences before treatment even occurred.</p>
-<p><strong>Confounders</strong> are variables that cause the differences between treatment and control groups before the treatment has started. Confounders are correlate with both the treatment variable and the outcome.</p>
+<p><strong>Confounders</strong> are variables that cause the differences between treatment and control groups before the treatment has started. <u><strong>Confounders correlate with both the treatment variable and the outcome</strong></u>.</p>
+<ul>
+<li>If a variable only correlates with <span class="math inline">D</span> or <span class="math inline">Y</span>, then it is not a confounder. If must correlate with both <span class="math inline">D</span> <strong>and</strong> <span class="math inline">Y</span>.</li>
+</ul>
 <p>This is why correlation does not equal causation - if the treatment and control group are different before we start the experiment, we cannot say the difference between the two is purely a result of treatment <span class="math inline">D</span>.</p>
 <p><br></p>
 </section>
 <section id="omitted-variable-bias-in-regression" class="level3">
 <h3 class="anchored" data-anchor-id="omitted-variable-bias-in-regression">Omitted Variable Bias in Regression</h3>
-<p>We can demonstrate how confounders cause bias more generally in regression. Suppose there is some confounding variable <span class="math inline">z</span> that we have not included in a “short” regression. The actual, “true” regression of the population, would include this confounder <span class="math inline">z</span></p>
+<p>We can demonstrate how confounders cause bias in regression. Suppose there is some confounding variable <span class="math inline">z</span> that we have not included in a “short” regression. The actual, “true” regression of the population, would include this confounder <span class="math inline">z</span></p>
 <p><span class="math display">
-\begin{split}
-&amp; \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}_{\text{short regression}} \\
-&amp; \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}_{\text{true regression with } z}
-\end{split}
+\underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}_{\text{short regression}}
+\qquad \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}_{\text{true regression with } z}
 </span></p>
-<p>The OLS estimate of the “short regression” excluding confounder <span class="math inline">z</span> is:</p>
+<p>The <a href="https://politicalscience.github.io/causal/1.html#deriving-the-estimator">OLS estimate</a> of the “short regression” excluding confounder <span class="math inline">z</span> is:</p>
 <p><span class="math display">
 \boldsymbol{\hat\beta} = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
 </span></p>
 <p>Let us now plug in the “true” model into where <span class="math inline">\mathbf y</span> is:</p>
 <p><span class="math display">
 \begin{split}
-\boldsymbol{\hat\beta} &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{(\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u)}_{\text{true model } \mathbf y} \\
+\boldsymbol{\hat\beta} &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{(\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u)}_{\because \text{ true model } \mathbf y} \\
 &amp; = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\because \text{ inverses cancel}} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
 &amp; = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
 \end{split}
 </span></p>
-<p>Now, let us find the expected value of <span class="math inline">\boldsymbol{\hat\beta}</span>, which is conditional on <span class="math inline">\mathbf X, \mathbf z</span>:</p>
+<p>Now, let us find the expected value of <span class="math inline">\boldsymbol{\hat\beta}</span>, which is conditional on <span class="math inline">\mathbf X, \mathbf z</span>, and simplify (using <a href="https://politicalscience.github.io/causal/1.html#conditions-for-unbiasedness">zero conditional mean</a>):</p>
 <p><span class="math display">
 \begin{split}
 E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z) &amp; = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{E(\mathbf u | \mathbf X, \mathbf z)}_{= \ 0} \\
@@ -448,16 +519,27 @@ E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z) &amp; = \boldsymbol\beta + (\math
 <p><span class="math display">
 E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)  = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}
 </span></p>
-<p>Now, using the law of iterated expectations, we get (assuming we are using an unbiased estimator for <span class="math inline">\boldsymbol{\hat\pi}</span>:</p>
+<p>Now, using the law of iterated expectations, we get (assuming we are using an unbiased estimator for <span class="math inline">\boldsymbol{\hat\pi}</span> such that <span class="math inline">E(\boldsymbol{\hat\pi}) = \boldsymbol\pi</span>):</p>
 <p><span class="math display">
 \begin{split}
 E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)) \\
 &amp; = E(\boldsymbol\beta + \boldsymbol{\hat\pi \delta}) \\
 &amp; = \boldsymbol\beta + E(\boldsymbol{\hat\pi}) \boldsymbol \delta \\
-&amp; = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}
+&amp; = \boldsymbol\beta + \boldsymbol{\pi \delta}
 \end{split}
 </span></p>
 <p>Thus, we can see by not including confounder <span class="math inline">z</span> in our “short regression”, the estimator is now biased by <span class="math inline">\boldsymbol{\hat\pi \delta}</span>.</p>
+<p><br></p>
+</section>
+<section id="assignment-mechanism" class="level3">
+<h3 class="anchored" data-anchor-id="assignment-mechanism">Assignment Mechanism</h3>
+<p>The Assignment Mechanism is the procedure that determines the treatment status of each unit. In causal inference, we want to restrict the assignment mechanism, in order to remove the effect of selection bias.</p>
+<p>There are two types of studies that use different assignment mechanisms:</p>
+<ol type="1">
+<li>Randomisation Experiments: The assignment mechanism is both known, and controlled by the researcher. Generally, the researcher chooses some type of randomisation.</li>
+<li>Observational Studies: The assignment mechanism is not known to, or not under the control of the researcher. This means that confounders may be driving selection into treatment and control, inducing bias.</li>
+</ol>
+<p>Generally, the most credible studies are randomisation studies, since we can control interventions to parse out the effect of confounders. Observational studies generally rely on more assumptions that need to be met, and need to be defended for the study to be credible.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -474,7 +556,7 @@ E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf 
 <li>Directed Edges: Arrows that encode one-way causal theories between variables. For example, we might believe <span class="math inline">Z</span> causes <span class="math inline">X</span>, so we will draw an arrow from <span class="math inline">Z</span> to <span class="math inline">X</span>. These connections are <strong>observable</strong> (solid) or <strong>unobservable</strong> (dashed).</li>
 </ol>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -483,7 +565,7 @@ Example of Directed Acyclic Graphs
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Below is an example of a directed acyclic graph:</p>
 <div class="quarto-figure quarto-figure-center">
@@ -521,7 +603,7 @@ Example of Directed Acyclic Graphs
 <p>Treatments are represented by the <strong>do()</strong> operator. When the treatment is exogenous, we can break all the connections into that variable’s node.</p>
 <p>This is because we are determining the value of the variable, not any other variables.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -530,7 +612,7 @@ Example of Interventions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -564,48 +646,6 @@ Example of Interventions
 <li>The path <span class="math inline">D \leftarrow M \rightarrow Y</span> is blocked by set <span class="math inline">\{M\}</span>, because the node <span class="math inline">M</span> is one arrow-emitting node in the path <span class="math inline">D \leftarrow M \rightarrow Y</span>.</li>
 <li><span class="math inline">D \leftarrow Z \rightarrow M \rightarrow Y</span> is blocked by <span class="math inline">\{M\}</span>, <span class="math inline">\{Z\}</span>, or <span class="math inline">\{M, Z\}</span> - note <span class="math inline">D</span> and <span class="math inline">Y</span> do not emit arrows so they cannot block.</li>
 </ol>
-<p><br></p>
-</section>
-<section id="d-seperation" class="level3">
-<h3 class="anchored" data-anchor-id="d-seperation">D-Seperation</h3>
-<p>If set <span class="math inline">S</span> of nodes blocks all paths from <span class="math inline">D</span> to <span class="math inline">Y</span>, then set <span class="math inline">S</span> of nodes d-separates <span class="math inline">D</span> and <span class="math inline">Y</span>.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/clipboard-39157862.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
-</figure>
-</div>
-<p>We can see here that <span class="math inline">D</span> and <span class="math inline">Y</span> are d-separated by:</p>
-<ol type="1">
-<li><span class="math inline">\{Z, M\}</span>: The path would be <span class="math inline">D \rightarrow Z \rightarrow M \rightarrow Q \rightarrow Y</span>. <span class="math inline">Z</span> is an arrow emitting node, so it meets condition 1 of a blocked path. <span class="math inline">M</span> is a collision node</li>
-<li><span class="math inline">\{Q, M\}</span>:</li>
-<li><span class="math inline">\{Z, Q, M\}</span>:</li>
-</ol>
-<p><br></p>
-<p><br></p>
-<hr>
-</section>
-</section>
-<section id="assignment-mechanism" class="level1">
-<h1><strong>Assignment Mechanism</strong></h1>
-<section id="different-assignment-mechanisms" class="level3">
-<h3 class="anchored" data-anchor-id="different-assignment-mechanisms">Different Assignment Mechanisms</h3>
-<p>The Assignment Mechanism is the procedure that determines the treatment status of each unit. In causal inference, we want to restrict the assignment mechanism, in order to remove the effect of selection bias.</p>
-<p>There are three assumptions about assignment mechanisms that are needed for identifying causal effects.</p>
-<ol type="1">
-<li>Individualistic: Assignment does not depend on covariates, and does not depend on the potential outcomes of other units.</li>
-<li>Probabilistic: There is a non-zero probability for each treatment value, for each unit.</li>
-<li>Unconfounded: Assignment does not depend on the potential outcomes.</li>
-</ol>
-<p><br></p>
-</section>
-<section id="assignment-and-studies" class="level3">
-<h3 class="anchored" data-anchor-id="assignment-and-studies">Assignment and Studies</h3>
-<p>There are two types of studies that use different assignment mechanisms:</p>
-<ol type="1">
-<li>Randomisation Experiments: The assignment mechanism is both known, and controlled by the researcher. Generally, the researcher chooses some type of randomisation.</li>
-<li>Observational Studies: The assignment mechanism is not known to, or not under the control of the researcher.</li>
-</ol>
-<p>Generally, the most credible studies are randomisation studies, since we can control interventions to parse out the effect of confounders. Observational studies generally rely on more assumptions that need to be met, and need to be defended for the study to be credible.</p>
 </section>
 </section>
 

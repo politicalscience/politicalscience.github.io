@@ -91,9 +91,7 @@ Y_{0i} \quad \text{if } D_i = 0 \\
 \end{cases}
 $$
 
-Before the treatment (*A priori*), both potential outcomes could be observed.
-
-After the treatment, one is **observed**, and the other is **counterfactual**. For any given experiment, only one will ever be seen, and the counterfactual will never be seen (missing data problem).
+Before the treatment (*A priori*), both potential outcomes could be observed. After the treatment, one is **observed**, and the other is **counterfactual**. For any given experiment, only one will ever be seen, and the counterfactual will never be seen (missing data problem).
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Neyman Urn Model
@@ -153,9 +151,7 @@ When SUTVA is violated, potential outcomes become very messy, and we no longer h
 
 Remember the potential outcomes from parallel worlds $Y_{1i}$ and $Y_{0i}$.
 
-Since these two parallel worlds are identical except for the fact one receives the treatment $D$ and the other does not, the causal effect of $D$ should logically be the difference between the potential outcomes of these two worlds.
-
-Thus, the individual treatment effect of a unit $i$ is:
+Since these two parallel worlds are identical except for the fact one receives the treatment $D$ and the other does not, the causal effect of $D$ should be the difference between the potential outcomes of these two worlds. Thus, the individual treatment effect of a unit $i$ is:
 
 $$
 \tau_i = Y_{1i} - Y_{0i}
@@ -203,7 +199,7 @@ We cannot calculate this with observed data - since we need all potential outcom
 
 ### Average Treatment Effect on the Treated (ATT)
 
-An alternative estimand to the ATE is the Average Treatment Effect on the Treated (ATT):
+An alternative estimand to the ATE is the **Average Treatment Effect on the Treated (ATT)**:
 
 $$
 \begin{split}
@@ -212,7 +208,7 @@ $$
 \end{split}
 $$
 
-This is the causal effect of [only variables who have received the treatment]{.underline}.
+This is the causal effect of [only units who have received the treatment]{.underline}. Note that frequently the ATT is not equal to the ATE, so be aware of which estimand you are trying to estimate/identify.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## ATT vs. ATE
@@ -224,6 +220,10 @@ When does $\tau_{ATT} = \tau_{ATE}$?
 The opposite is also true: if the expectation of the potential outcomes of both the treated and control are different, then the two are not equal.
 :::
 
+The opposite estimand is the **Average Treatment effect on the Untreated (ATU)**, which only measures the causal effect of units who did not recieve the treatment.
+
+This is not used very often, since it is kind of uninituive to think about treatment effects on individuals who did not recieve treatment. However, it can be useful in understanding identification assumptions.
+
 <br />
 
 ### Conditional Average Treatment Effect (CATE)
@@ -231,12 +231,12 @@ The opposite is also true: if the expectation of the potential outcomes of both 
 The conditional average treatment effect is any treatment effect where there is a condition on a characteristic/covariate:
 
 $$
-\tau_{CATE}(x) = E(Y_{1i} - Y_{0i} \ | \ X_i = x)
+\tau_{CATE}(x) = E(Y_{1i} - Y_{0i} \ | \ \underbrace{X_i = x}_{\text{condition}})
 $$
 
-This is the causal effect of only variables who meet the condition of the covariate specified. For example, you could find the conditional average treatment effect of only women (so the covariate which we are conditioning on is *gender*).
+This is the causal effect of only variables who meet the condition of the covariate specified. For example, you could find the conditional average treatment effect of only women (so the covariate which we are conditioning on is *gender*). You can also condition on multiple covariates.
 
-This is often used for tailoring products/medicine/advertising to certain groups of people.
+This is often used for tailoring products/medicine/advertising to certain groups of people. It is also frequently used in identification strategies.
 
 This estimand will go by other names, including the Local Average Treatment Effect (LATE).
 
@@ -263,13 +263,77 @@ However, there is an issue - we can show this with algebra:
 $$
 \begin{split}
 \hat\tau_{naive} & = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
-& = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) \\
-& = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i}|D_i = 1)}_{\because \text{ this equals 0, so we can add it}} \\
-& = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
+& = \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
+& = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) \color{red}{- E(Y_{0i}|D_i = 1)}}_{\because \text{ this equals 0, so we can add it}} \\
+& = \underbrace{E(Y_{1i}|D_i = 1) \color{red}{- E(Y_{0i}|D_i = 1)}}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
 \end{split}
 $$
 
 We can see that our naive estimator produces the $\tau_{ATT}$ **plus** an extra bit (called the selection bias). Thus, our naive estimator is biased, so we should be careful about using this naive estimator (correlation does not equal causation).
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Naive Estimator Biased for ATU
+
+The proof above shows how the naive estimator is a biased estimator for the $\tau_{ATT}$. We can also prove it is a biased estimator of the ATU:
+
+$$
+\begin{split}
+\hat\tau_{naive} & = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
+& = \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
+& = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{1i}|D_i = 0) - E(Y_{1i}|D_i = 0)}_{\because \text{ this equals 0, so we can add it}} \\
+& = \underbrace{E(Y_{1i}|D_i = 0)- E(Y_{0i}|D_i = 0)}_{\tau_{ATU}} + \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{1i} | D_i = 0)}_{\text{Selection Bias}} \\
+\end{split}
+$$
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Naive Estimator Biased for ATE
+
+The proofs above shows how the naive estimator is a biased estimator for the $\tau_{ATT}$ and $\tau_{ATU}$. We can also prove it is a biased estimator of the ATE.
+
+Let us first start with the ATE. Let us call $Y_{1i} - Y_{0i} := \tau_i$ for notation simplicity:
+
+$$
+\begin{split}
+\tau_{ATE} & = E(Y_{1i} - Y_{0i})  = E(\tau_i)\\
+& = \underbrace{E(\tau_i|D_i = 1)Pr(D_i = 1) + E(\tau_i|D_i = 0)Pr(D_i = 0)}_{\because \text{ weighted average of ATE and ATU by proportion in }D_i = 1, 0} \\
+& = E(\tau_i|D_i = 1)\underbrace{(1 -Pr(D_i = 0))}_{\because \text{ complement prob.}} + E(\tau_i|D_i = 0)Pr(D_i = 0) \\
+\end{split}
+$$
+
+Let us call $Pr(D_i = 0) := \pi$ for notation simplicity. Now, continue:
+
+$$
+\begin{split}
+& = \underbrace{E(\Delta|D_i = 1) - \pi E(\Delta|D_i = 1)}_{\because \text{ distribute out}} + E(\tau_i|D_i = 0)\pi \\
+& = E(\tau_i|D_i = 1) + \underbrace{\pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)]}_{\because \text{ factor out } \pi = Pr(D_i = 0)} \\
+& = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 1) + \pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)] \\
+\end{split}
+$$
+
+Let us call the part $\pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)] := \Pi(\tau_i)$. Now, continue to simplify:
+
+$$
+\begin{split}
+& = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 1) + \Pi(\tau_i) + \underbrace{E(Y_{1i} |D_i = 0) - E(Y_{0i}|D_i = 0)}_{\because \text{ these two cancel out so we add 0}}  \\
+& = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 0) + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+& = \underbrace{E(Y_i|D_i = 1)}_{\because \text{ observed outcome}} - \underbrace{E(Y_i|D_i = 0)}_{\because \text{ observed outcome}} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+& = \underbrace{E(Y_{i} |D_i = 1) - E(Y_{i}|D_i = 0)}_{\hat\tau_{naive}} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+& = \hat\tau_{naive}+ E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i)
+\end{split}
+$$
+
+Thus, we can see that $\tau_{ATE}$ is not equivalent to $\hat\tau_{naive}$. Let us isolate $\hat\tau_{naive}$ to identify the selection bias.
+
+$$
+\begin{split}
+& \tau_{ATE} = \hat\tau_{naive}+ E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+& -\hat\tau_{naive} = -\tau{ATE} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+& \hat\tau_{naive} = \tau_{ATE} - E(Y_{1i} |D_i = 0) + E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+& \hat\tau_{naive} = \tau_{ATE} + \underbrace{E(Y_{0i}|D_i = 1)- E(Y_{1i} |D_i = 0) + \Pi(\tau_i)}_{\text{selection bias}}
+\end{split}
+$$
+:::
 
 <br />
 
@@ -285,7 +349,9 @@ If selection bias is non-zero, this essentially states that the expected potenti
 
 Or in other words, the treatment and control groups have some other variable causing differences even before treatment has begun. This implies that the differences between the treatment and control group may not be due to treatment $D$, but due to the underlying differences before treatment even occurred.
 
-**Confounders** are variables that cause the differences between treatment and control groups before the treatment has started. Confounders are correlate with both the treatment variable and the outcome.
+**Confounders** are variables that cause the differences between treatment and control groups before the treatment has started. [**Confounders correlate with both the treatment variable and the outcome**]{.underline}.
+
+-   If a variable only correlates with $D$ or $Y$, then it is not a confounder. If must correlate with both $D$ **and** $Y$.
 
 This is why correlation does not equal causation - if the treatment and control group are different before we start the experiment, we cannot say the difference between the two is purely a result of treatment $D$.
 
@@ -293,16 +359,14 @@ This is why correlation does not equal causation - if the treatment and control 
 
 ### Omitted Variable Bias in Regression
 
-We can demonstrate how confounders cause bias more generally in regression. Suppose there is some confounding variable $z$ that we have not included in a "short" regression. The actual, "true" regression of the population, would include this confounder $z$
+We can demonstrate how confounders cause bias in regression. Suppose there is some confounding variable $z$ that we have not included in a "short" regression. The actual, "true" regression of the population, would include this confounder $z$
 
 $$
-\begin{split}
-& \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}_{\text{short regression}} \\
-& \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}_{\text{true regression with } z}
-\end{split}
+\underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}_{\text{short regression}}
+ \qquad \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}_{\text{true regression with } z}
 $$
 
-The OLS estimate of the "short regression" excluding confounder $z$ is:
+The [OLS estimate](https://politicalscience.github.io/causal/1.html#deriving-the-estimator) of the "short regression" excluding confounder $z$ is:
 
 $$
 \boldsymbol{\hat\beta} = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
@@ -312,13 +376,13 @@ Let us now plug in the "true" model into where $\mathbf y$ is:
 
 $$
 \begin{split}
-\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{(\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u)}_{\text{true model } \mathbf y} \\
+\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{(\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u)}_{\because \text{ true model } \mathbf y} \\
 & = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\because \text{ inverses cancel}} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
 & = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
 \end{split}
 $$
 
-Now, let us find the expected value of $\boldsymbol{\hat\beta}$, which is conditional on $\mathbf X, \mathbf z$:
+Now, let us find the expected value of $\boldsymbol{\hat\beta}$, which is conditional on $\mathbf X, \mathbf z$, and simplify (using [zero conditional mean](https://politicalscience.github.io/causal/1.html#conditions-for-unbiasedness)):
 
 $$
 \begin{split}
@@ -339,18 +403,31 @@ $$
 E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)  = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}
 $$
 
-Now, using the law of iterated expectations, we get (assuming we are using an unbiased estimator for $\boldsymbol{\hat\pi}$:
+Now, using the law of iterated expectations, we get (assuming we are using an unbiased estimator for $\boldsymbol{\hat\pi}$ such that $E(\boldsymbol{\hat\pi}) = \boldsymbol\pi$):
 
 $$
 \begin{split}
 E(\boldsymbol{\hat\beta}) & = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)) \\
 & = E(\boldsymbol\beta + \boldsymbol{\hat\pi \delta}) \\
 & = \boldsymbol\beta + E(\boldsymbol{\hat\pi}) \boldsymbol \delta \\
-& = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}
+& = \boldsymbol\beta + \boldsymbol{\pi \delta}
 \end{split}
 $$
 
 Thus, we can see by not including confounder $z$ in our "short regression", the estimator is now biased by $\boldsymbol{\hat\pi \delta}$.
+
+<br />
+
+### Assignment Mechanism
+
+The Assignment Mechanism is the procedure that determines the treatment status of each unit. In causal inference, we want to restrict the assignment mechanism, in order to remove the effect of selection bias.
+
+There are two types of studies that use different assignment mechanisms:
+
+1.  Randomisation Experiments: The assignment mechanism is both known, and controlled by the researcher. Generally, the researcher chooses some type of randomisation.
+2.  Observational Studies: The assignment mechanism is not known to, or not under the control of the researcher. This means that confounders may be driving selection into treatment and control, inducing bias.
+
+Generally, the most credible studies are randomisation studies, since we can control interventions to parse out the effect of confounders. Observational studies generally rely on more assumptions that need to be met, and need to be defended for the study to be credible.
 
 <br />
 
@@ -438,46 +515,3 @@ We can see the following:
 1.  The path $D \rightarrow P \rightarrow Y$ is blocked by set $\{P\}$, because the node $P$ is one arrow-emitting node that is in the path $D \rightarrow P \rightarrow Y$.
 2.  The path $D \leftarrow M \rightarrow Y$ is blocked by set $\{M\}$, because the node $M$ is one arrow-emitting node in the path $D \leftarrow M \rightarrow Y$.
 3.  $D \leftarrow Z \rightarrow M \rightarrow Y$ is blocked by $\{M\}$, $\{Z\}$, or $\{M, Z\}$ - note $D$ and $Y$ do not emit arrows so they cannot block.
-
-<br />
-
-### D-Seperation
-
-If set $S$ of nodes blocks all paths from $D$ to $Y$, then set $S$ of nodes d-separates $D$ and $Y$.
-
-![](images/clipboard-39157862.png){fig-align="center" width="40%"}
-
-We can see here that $D$ and $Y$ are d-separated by:
-
-1.  $\{Z, M\}$: The path would be $D \rightarrow Z \rightarrow M \rightarrow Q \rightarrow Y$. $Z$ is an arrow emitting node, so it meets condition 1 of a blocked path. $M$ is a collision node
-2.  $\{Q, M\}$:
-3.  $\{Z, Q, M\}$:
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-# **Assignment Mechanism**
-
-### Different Assignment Mechanisms
-
-The Assignment Mechanism is the procedure that determines the treatment status of each unit. In causal inference, we want to restrict the assignment mechanism, in order to remove the effect of selection bias.
-
-There are three assumptions about assignment mechanisms that are needed for identifying causal effects.
-
-1.  Individualistic: Assignment does not depend on covariates, and does not depend on the potential outcomes of other units.
-2.  Probabilistic: There is a non-zero probability for each treatment value, for each unit.
-3.  Unconfounded: Assignment does not depend on the potential outcomes.
-
-<br />
-
-### Assignment and Studies
-
-There are two types of studies that use different assignment mechanisms:
-
-1.  Randomisation Experiments: The assignment mechanism is both known, and controlled by the researcher. Generally, the researcher chooses some type of randomisation.
-2.  Observational Studies: The assignment mechanism is not known to, or not under the control of the researcher.
-
-Generally, the most credible studies are randomisation studies, since we can control interventions to parse out the effect of confounders. Observational studies generally rely on more assumptions that need to be met, and need to be defended for the study to be credible.

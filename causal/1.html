@@ -145,22 +145,15 @@ window.Quarto = {
 <h1><strong>Ordinary Least Squares Estimator</strong></h1>
 <section id="deriving-the-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="deriving-the-estimator">Deriving the Estimator</h3>
-<p>To estimate the population parameters <span class="math inline">\beta_0, \dots, \beta_k</span>, we use our sample data, and try to find the values <span class="math inline">\widehat{\beta_0}, \dots, \widehat{\beta_k}</span> that <strong>minimise the square sum of residuals</strong> (SSR):</p>
-<p><span class="math display">
-\begin{split}
-SSR &amp; = (\mathbf y - \mathbf{\hat y})^T(\mathbf y - \mathbf{\hat y}) \\
-&amp; = (\mathbf y - \mathbf{Xb})^T(\mathbf y - \mathbf{Xb})
-\end{split}
-</span></p>
-<p>Let us define our estimation vector <span class="math inline">\boldsymbol{\hat{\beta}}</span> as the value of <span class="math inline">\boldsymbol{\hat{\beta}}</span> that minimises the sum of squared errors:</p>
+<p>Let us define our estimation vector <span class="math inline">\boldsymbol{\hat{\beta}}</span> as the value of <span class="math inline">\boldsymbol{\hat{\beta}}</span> that minimises the <a href="https://politicalscience.github.io/regression/1.html#estimation-process">sum of squared errors</a>:</p>
 <p><span class="math display">
 \boldsymbol{\hat{\beta}} = \min\limits_{b} (\mathbf y - \mathbf{Xb})^T (\mathbf y - \mathbf{Xb}) = \min\limits_b S(\mathbf b)
 </span></p>
 <p>We can expand <span class="math inline">S(\mathbf b)</span> as follows:</p>
 <p><span class="math display">
 \begin{split}
-S(\mathbf b) &amp; = \mathbf y^T \mathbf y - \mathbf b^T \mathbf X^T \mathbf y - \mathbf y^T \mathbf{Xb} + \mathbf b^T \mathbf X^T \mathbf{Xb} \\
-&amp; = \mathbf y^T \mathbf y - 2\mathbf b^T \mathbf X^T \mathbf y + \mathbf b^T \mathbf X^T \mathbf{Xb}
+S(\mathbf b) &amp; = \mathbf y^T \mathbf y \color{red}{ - \mathbf b^T \mathbf X^T \mathbf y - \mathbf y^T \mathbf{Xb}} \color{black} + \mathbf b^T \mathbf X^T \mathbf{Xb} \\
+&amp; = \mathbf y^T \mathbf y \color{red}{- 2\mathbf b^T \mathbf X^T \mathbf y} \color{black} + \mathbf b^T \mathbf X^T \mathbf{Xb}
 \end{split}
 </span></p>
 <p>Taking the partial derivative in respect to <span class="math inline">b</span>:</p>
@@ -188,27 +181,26 @@ S(\mathbf b) &amp; = \mathbf y^T \mathbf y - \mathbf b^T \mathbf X^T \mathbf y -
 </section>
 <section id="regression-anatomy-theorem" class="level3">
 <h3 class="anchored" data-anchor-id="regression-anatomy-theorem">Regression Anatomy Theorem</h3>
-<p>Regression Anaotmy Theorem allows us to interpret our OLS estimates <span class="math inline">\hat\beta_j</span> as the effect <span class="math inline">x_j \rightarrow y</span>, when partialling out the effects of other regressions <span class="math inline">x_1, \dots, x_k ≠ x_j</span>.</p>
 <p>Take our standard multiple linear regression:</p>
 <p><span class="math display">
 y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + ... + \beta_k x_{ki} + u_i
 </span></p>
-<p>Let us say we are interested in <span class="math inline">x_1</span> (this can be generalised to any explanatory variable <span class="math inline">x_j</span>). Let us make <span class="math inline">x_1</span> the outcome variable of a regression with explanatory variables <span class="math inline">x_2, ..., x_k</span>:</p>
+<p>Let us say we are interested in <span class="math inline">x_1</span> (this can be generalised to any <span class="math inline">x_j</span>). Let us make <span class="math inline">x_1</span> the outcome variable of a regression with explanatory variables <span class="math inline">x_2, ..., x_k</span>:</p>
 <p><span class="math display">
 x_{1i} = \gamma_0 + \gamma_1 x_{2i} + ... + \gamma_{k-1}x_{ki} + \widetilde{r_{1i}}
 </span></p>
-<p>The error term is <span class="math inline">\widetilde{r_{1i}}</span>, which represents the part of <span class="math inline">x_{1i}</span> that are uncorrelated to <span class="math inline">x_2, ..., x_k</span>. In other words, <span class="math inline">\widetilde{r_{1i}}</span> is the part of <span class="math inline">x_1</span> that cannot be explained by any other explanatory variable <span class="math inline">x_2, ..., x_k</span>. (uncorrelated with them)</p>
-<p><br></p>
+<ul>
+<li>The error term is <span class="math inline">\widetilde{r_{1i}}</span>, which represents the part of <span class="math inline">x_{1i}</span> that are uncorrelated to <span class="math inline">x_2, ..., x_k</span>. In other words, <span class="math inline">\widetilde{r_{1i}}</span> is the part of <span class="math inline">x_1</span> that cannot be explained by any other explanatory variable <span class="math inline">x_2, ..., x_k</span>. (uncorrelated with them)</li>
+</ul>
 <p>Now, take the regression of with outcome variable <span class="math inline">y</span>, with all explanatory variables <u>except</u> <span class="math inline">x_1</span>:</p>
 <p><span class="math display">
 y_i = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \widetilde{y_i}
 </span></p>
-<p>The error term is <span class="math inline">\widetilde{y_i}</span>, which is the part of <span class="math inline">y_i</span> that cannot be explained by <span class="math inline">x_2, ..., x_k</span> (uncorrelated with them). Since <span class="math inline">\widetilde{y_i}</span> is not explained by <span class="math inline">x_2, ..., x_k</span>, variable <span class="math inline">x_1</span> must be the one explaining <span class="math inline">\widetilde{y_i}</span>.</p>
 <ul>
+<li>The error term is <span class="math inline">\widetilde{y_i}</span>, which is the part of <span class="math inline">y_i</span> that cannot be explained by <span class="math inline">x_2, ..., x_k</span> (uncorrelated with them). Since <span class="math inline">\widetilde{y_i}</span> is not explained by <span class="math inline">x_2, ..., x_k</span>, variable <span class="math inline">x_1</span> must be the one explaining <span class="math inline">\widetilde{y_i}</span>.</li>
 <li>But, it is not the whole of <span class="math inline">x_1</span> explaining <span class="math inline">\tilde{y_i}</span>. This is since <span class="math inline">x_1</span> may also correlated with <span class="math inline">x_2, ..., x_k</span>, and the correlated parts of <span class="math inline">x_1</span> with <span class="math inline">x_2, ..., x_k</span> are already picked up in the regression by the coefficients of <span class="math inline">x_2, ..., x_k</span>.</li>
+<li>Thus, <span class="math inline">\widetilde{y_i}</span> must be explained by the part of <span class="math inline">x_1</span> that is uncorrelated and not explained by <span class="math inline">x_2, ..., x_k</span>, which we derived earlier as <span class="math inline">\widetilde{r_{1i}}</span>.</li>
 </ul>
-<p>Thus, <span class="math inline">\widetilde{y_i}</span> must be explained by the part of <span class="math inline">x_1</span> that is uncorrelated and not explained by <span class="math inline">x_2, ..., x_k</span>, which we derived earlier as <span class="math inline">\widetilde{r_{1i}}</span>.</p>
-<p><br></p>
 <p>Thus, we can create another regression with explanatory variable <span class="math inline">\widetilde{x_{1i}}</span> and outcome variable <span class="math inline">\widetilde{y_i}</span>.</p>
 <p><span class="math display">
 \widetilde{y_i} = \alpha_0 + \alpha_1 \widetilde{r_{1i}} + u_i
@@ -217,14 +209,12 @@ y_i = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \widetilde{y_i}
 <p><span class="math display">
 \begin{split}
 y_i &amp; = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \widetilde{y_i} \\
-y_i &amp; = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \underbrace{\alpha_0 + \alpha_1 \widetilde{r_{1i}} + u_i}_{\text{plug in } \widetilde{y_i}} \\
+y_i &amp; = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \underbrace{\alpha_0 + \alpha_1 \widetilde{r_{1i}} + u_i}_{\because \text{ plug in } \widetilde{y_i}} \\
 y_i  &amp; = \underbrace{(\delta_0 + \alpha_0)}_{\beta_0} + \underbrace{\alpha_1 \widetilde{r_{1i}}}_{\beta_1 x_{1i}} + \underbrace{\delta_1x_{2i}}_{\beta_2 x_{2i}} + ... + \underbrace{\delta_{k-1} x_{ki}}_{\beta_kx_{ki}} + \underbrace{u_i}_{u_i}
 \end{split}
 </span></p>
-<p>As we can see, this new regression mirrors the original standard multiple linear regression:</p>
-<p>Importantly we know the <span class="math inline">\beta_1 x_{1i}</span> in the original is analogous to <span class="math inline">\alpha_1 \widetilde{r_{1i}}</span>. Thus, <u>the estimate of <span class="math inline">\alpha_1</span> will be the same as <span class="math inline">\beta_1</span> in the original regression</u>.</p>
-<p>The coefficient <span class="math inline">\alpha_1</span> (which is equal to <span class="math inline">\beta_1</span>) explains the expected change in <span class="math inline">y</span>, given an increase in the part of <span class="math inline">x_1</span> uncorrelated with <span class="math inline">x_2, ..., x_k</span>.</p>
-<p>So essentially, <u>we have <strong>partialed out</strong> the effect of the other explanatory variables, and only focus on the effect on <span class="math inline">y</span> of the uncorrelated part of <span class="math inline">x_1</span> (which is <span class="math inline">\widetilde{r_{1i}}</span>)</u></p>
+<p>As we can see, this new regression mirrors the original standard multiple linear regression: Importantly we know the <span class="math inline">\beta_1 x_{1i}</span> in the original is analogous to <span class="math inline">\alpha_1 \widetilde{r_{1i}}</span>. Thus, <u>the estimate of <span class="math inline">\alpha_1</span> will be the same as <span class="math inline">\beta_1</span> in the original regression</u>.</p>
+<p>The coefficient <span class="math inline">\alpha_1</span> (which is equal to <span class="math inline">\beta_1</span>) explains the expected change in <span class="math inline">y</span>, given an increase in the part of <span class="math inline">x_1</span> uncorrelated with <span class="math inline">x_2, ..., x_k</span>. So essentially, <u>we have <strong>partialed out</strong> the effect of the other explanatory variables, and only focus on the effect on <span class="math inline">y</span> of the uncorrelated part of <span class="math inline">x_1</span> (which is <span class="math inline">\widetilde{r_{1i}}</span>)</u></p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -483,6 +473,19 @@ Vector Notation
 <h1><strong>Further Properties of OLS</strong></h1>
 <section id="ols-as-a-conditional-expectation-function" class="level3">
 <h3 class="anchored" data-anchor-id="ols-as-a-conditional-expectation-function">OLS as a Conditional Expectation Function</h3>
+<p>OLS is a best-linear approximation of the conditional expectation function.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Conditional Expectation Functions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>A <strong>conditional expectation function</strong> (CEF) says that the value of <span class="math inline">E(y)</span> depends on the value of <span class="math inline">x</span>. We notate a conditional expectation function as <span class="math inline">E(y|x)</span>. As we noted earlier, the linear regression model can be a conditional expectation function of <span class="math inline">E(y|x)</span>.</p>
 <p>A <strong>best linear approximation</strong> of a conditional expectation function can take the following form:</p>
 <p><span class="math display">
@@ -495,7 +498,10 @@ MSE &amp; = E(y_i - E(y_i|x_i))^2 \\
 &amp; = \frac{1}{n}\sum\limits_{i=1}^n( y_i - E(y_i|x_i))^2
 \end{split}
 </span></p>
-<p>OLS also best-approximates the conditional expectation function. Suppose we have the conditional expectation function:</p>
+</div>
+</div>
+</div>
+<p>Suppose we have the conditional expectation function:</p>
 <p><span class="math display">
 E(y_i|x_i) = b_0 + b_1x_i
 </span></p>
@@ -534,15 +540,14 @@ MSE &amp; = \min\limits_{b_0, b_1} E(y_i - E(y_i|x_i))^2 \\
 &amp; = \min\limits_{b_0, b_1} E(y_i - \beta_0 - \beta_1x_i)^2
 \end{split}
 </span></p>
-<p>The first order conditions are (using chain rule and partial derivatives, just like in the OLS derivation):</p>
+<p>The first order conditions are (using chain rule and partial derivatives):</p>
 <p><span class="math display">
 \begin{split}
 &amp; E(y_i - b_0 - b_1x_i) = 0 \\
 &amp; E(x_i(y_i - b_0 - b_1x_i) = 0
 \end{split}
 </span></p>
-<p><br></p>
-<p>Now, recall our OLS minimisation conditions:</p>
+<p>Now, recall our OLS minimisation conditions (simple linear regression):</p>
 <p><span class="math display">
 \begin{split}
 &amp; \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0 \\
@@ -570,12 +575,9 @@ MSE &amp; = \min\limits_{b_0, b_1} E(y_i - E(y_i|x_i))^2 \\
 <section id="ols-as-a-method-of-moments-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="ols-as-a-method-of-moments-estimator">OLS as a Method of Moments Estimator</h3>
 <p>The Method of Moments Estimator is another estimator of the true value of populations in the parameter. The estimator defines key population <strong>moments</strong> of interest - which are the population parameters written in terms of expected value functions set equal to 0.</p>
-<p>Then, the Method of Moments uses the sample equivalents of the population moments to estimate the population parameter.</p>
-<ul>
-<li>For example, to estimate the population mean, the Method of Moments uses the sample mean.</li>
-</ul>
+<p>Then, the Method of Moments uses the sample equivalents of the population moments to estimate the population parameter. For example, to estimate the population mean, the Method of Moments uses the sample mean.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -584,7 +586,7 @@ Details of the Method of Moments Estimator
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>In order to define a method of moments for a set of parameters <span class="math inline">\theta_1, \dots, \theta_k</span>, we need to specify at least one population moment per parameter. Or in other words, we must have more than <span class="math inline">k</span> population moments.</p>
 <p>Our population moments can be defined as the expected value of some function <span class="math inline">m(\theta; y)</span> that consists of both the variable <span class="math inline">y</span> and our unknown parameter <span class="math inline">\theta</span>. The expectation of the function <span class="math inline">m(\theta; y)</span> should equal 0.</p>
@@ -602,7 +604,7 @@ E(m(\theta; y)) = 0
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -611,7 +613,7 @@ Example of the Method of Moments Estimator
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let us say that we have some random variable <span class="math inline">y</span>, with a true population mean <span class="math inline">\mu</span>. We want to estimate <span class="math inline">\mu</span>, but we only have a sample of the population.</p>
 <p>How can we define our true population parameter <span class="math inline">\mu</span> in an expectation equation of the form: <span class="math inline">E(m(\mu, y)) = 0</span>?</p>
@@ -641,8 +643,7 @@ E(y_i - \hat\mu) = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \hat\mu) = 0
 </div>
 </div>
 </div>
-<p>OLS is a special case of the Method of Moments Estimator. This property is useful as the Instrumental Variables Design is built on this idea.</p>
-<p>Consider the bivariate regression model:</p>
+<p>OLS is a special case of the Method of Moments Estimator. Consider the bivariate regression model:</p>
 <p><span class="math display">
 y = \beta_0 + \beta_1x + u
 </span></p>
@@ -667,8 +668,7 @@ y = \beta_0 + \beta_1x + u
 &amp; E(x(y - \hat\beta_0 - \hat\beta_1 x)) = 0
 \end{split}
 </span></p>
-<p><br></p>
-<p>Let us prove that OLS is a special case of the method of moments estimator. Remember our OLS minimisation conditions:</p>
+<p>Remember our OLS minimisation conditions:</p>
 <p><span class="math display">
 \begin{split}
 &amp; \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0 \\
@@ -689,13 +689,12 @@ y = \beta_0 + \beta_1x + u
 &amp; E(x_i(y_i - \hat\beta_0 - \hat\beta_1x_i)) = 0
 \end{split}
 </span></p>
-<p>Which as we can see, are the exact same minimisation conditions as the method of moments estimator. Thus, the OLS estimator is a special case of the Method of Moments estimator, and they produce the same coefficients.</p>
+<p>Which as we can see, are the exact same minimisation conditions as the method of moments estimator. Thus, the OLS estimator is a special case of the Method of Moments estimator, and they produce the same coefficients. This is an important property for the instrumental variables method that will be covered later.</p>
 <p><br></p>
 </section>
 <section id="ols-as-a-maximum-likelihood-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="ols-as-a-maximum-likelihood-estimator">OLS as a Maximum Likelihood Estimator</h3>
-<p>The Maximum Likelihood Estimator is an estimation procedure that is used for Logistic Regression and Count Regression (and many other statistical concepts). Refer to the regression notes to see the details of the maximum likelihood estimator.</p>
-<p>OLS is a special case of the maximum likelihood estimator under two conditions:</p>
+<p>The Maximum Likelihood Estimator is an estimation procedure that is used for Logistic Regression and Count Regression (and many other statistical concepts). OLS is a special case of the maximum likelihood estimator under two conditions:</p>
 <ol type="1">
 <li>The error term <span class="math inline">u</span> must be normally distributed, such that <span class="math inline">n \sim \mathcal N(0, \sigma^2)</span>.</li>
 <li>We assume homoscedasticity: <span class="math inline">Var(u|x) = \sigma^2</span>.</li>
