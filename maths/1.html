@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Vectors and Matrices</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="1_files/libs/quarto-html/quarto.js"></script>
+<script src="1_files/libs/quarto-html/popper.min.js"></script>
+<script src="1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: true
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Vectors and Matrices</h1>
+            <p class="subtitle lead">Mathematics Materials</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#vectors" id="toc-vectors" class="nav-link active" data-scroll-target="#vectors"><strong>Vectors</strong></a>
+  <ul class="collapse">
+  <li><a href="#scalars-and-vectors" id="toc-scalars-and-vectors" class="nav-link" data-scroll-target="#scalars-and-vectors">Scalars and Vectors</a></li>
+  <li><a href="#vector-additionsubtraction" id="toc-vector-additionsubtraction" class="nav-link" data-scroll-target="#vector-additionsubtraction">Vector Addition/Subtraction</a></li>
+  <li><a href="#vector-scalar-multiplication" id="toc-vector-scalar-multiplication" class="nav-link" data-scroll-target="#vector-scalar-multiplication">Vector Scalar Multiplication</a></li>
+  <li><a href="#vector-normalisation" id="toc-vector-normalisation" class="nav-link" data-scroll-target="#vector-normalisation">Vector Normalisation</a></li>
+  <li><a href="#scalar-product" id="toc-scalar-product" class="nav-link" data-scroll-target="#scalar-product">Scalar Product</a></li>
+  </ul></li>
+  <li><a href="#matrices" id="toc-matrices" class="nav-link" data-scroll-target="#matrices"><strong>Matrices</strong></a>
+  <ul class="collapse">
+  <li><a href="#definition-of-matrix" id="toc-definition-of-matrix" class="nav-link" data-scroll-target="#definition-of-matrix">Definition of Matrix</a></li>
+  <li><a href="#types-of-matrices" id="toc-types-of-matrices" class="nav-link" data-scroll-target="#types-of-matrices">Types of Matrices</a></li>
+  </ul></li>
+  <li><a href="#matrix-algebra" id="toc-matrix-algebra" class="nav-link" data-scroll-target="#matrix-algebra"><strong>Matrix Algebra</strong></a>
+  <ul class="collapse">
+  <li><a href="#matrix-transpose" id="toc-matrix-transpose" class="nav-link" data-scroll-target="#matrix-transpose">Matrix Transpose</a></li>
+  <li><a href="#matrix-additionsubtraction" id="toc-matrix-additionsubtraction" class="nav-link" data-scroll-target="#matrix-additionsubtraction">Matrix Addition/Subtraction</a></li>
+  <li><a href="#matrix-scalar-multiplication" id="toc-matrix-scalar-multiplication" class="nav-link" data-scroll-target="#matrix-scalar-multiplication">Matrix Scalar Multiplication</a></li>
+  <li><a href="#matrix-plain-multiplication" id="toc-matrix-plain-multiplication" class="nav-link" data-scroll-target="#matrix-plain-multiplication">Matrix Plain Multiplication</a></li>
+  <li><a href="#kronecker-product" id="toc-kronecker-product" class="nav-link" data-scroll-target="#kronecker-product">Kronecker Product</a></li>
+  <li><a href="#trace-of-a-matrix" id="toc-trace-of-a-matrix" class="nav-link" data-scroll-target="#trace-of-a-matrix">Trace of a Matrix</a></li>
+  <li><a href="#determinant-of-a-matrix" id="toc-determinant-of-a-matrix" class="nav-link" data-scroll-target="#determinant-of-a-matrix">Determinant of a Matrix</a></li>
+  <li><a href="#laplace-expansion-and-cofactors" id="toc-laplace-expansion-and-cofactors" class="nav-link" data-scroll-target="#laplace-expansion-and-cofactors">Laplace Expansion and Cofactors</a></li>
+  <li><a href="#matrix-inverse" id="toc-matrix-inverse" class="nav-link" data-scroll-target="#matrix-inverse">Matrix Inverse</a></li>
+  </ul></li>
+  <li><a href="#properties-of-matrices" id="toc-properties-of-matrices" class="nav-link" data-scroll-target="#properties-of-matrices"><strong>Properties of Matrices</strong></a>
+  <ul class="collapse">
+  <li><a href="#associative-distributive-commutative" id="toc-associative-distributive-commutative" class="nav-link" data-scroll-target="#associative-distributive-commutative">Associative, Distributive, Commutative</a></li>
+  <li><a href="#properties-of-traces" id="toc-properties-of-traces" class="nav-link" data-scroll-target="#properties-of-traces">Properties of Traces</a></li>
+  <li><a href="#properties-of-transposes" id="toc-properties-of-transposes" class="nav-link" data-scroll-target="#properties-of-transposes">Properties of Transposes</a></li>
+  <li><a href="#properties-of-a-determinant" id="toc-properties-of-a-determinant" class="nav-link" data-scroll-target="#properties-of-a-determinant">Properties of a Determinant</a></li>
+  <li><a href="#properties-of-inverses" id="toc-properties-of-inverses" class="nav-link" data-scroll-target="#properties-of-inverses">Properties of Inverses</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>Use the sidebar for easy navigation.</p>
+<hr>
+<section id="vectors" class="level1">
+<h1><strong>Vectors</strong></h1>
+<section id="scalars-and-vectors" class="level3">
+<h3 class="anchored" data-anchor-id="scalars-and-vectors">Scalars and Vectors</h3>
+<p>A scalar is any single element or component, like a real number (ex. <span class="math inline">x_1 \in \mathbb{R}</span>.</p>
+<p>A vector is a collection of scalars: <span class="math inline">(x_1 \ x_2 \ x_3 \ x_4)</span>. Each scalar is considered a element/component.</p>
+<ul>
+<li>Vectors can be both row vectors (horiztonal), and column vectors (vertical).</li>
+</ul>
+<p>The dimension of a vector is the number of components/scalars/elements in the vector.</p>
+<p>Vectors will be denoted with a bold lowercase letter: <span class="math inline">\mathbf x</span>, to distinguish them from scalars <span class="math inline">x</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Graphical Visualisation of a Vector
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Vectors can be visualised graphically. Each element corresponds to a distance in a direction.</p>
+<p>For example, take the vector <span class="math inline">(3 \ 2)</span>. Graphically:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3989564868.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
+</figure>
+</div>
+<p>If a vector has 3 dimensions, the graphical representation will be in 3 dimensions, and so on.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="vector-additionsubtraction" class="level3">
+<h3 class="anchored" data-anchor-id="vector-additionsubtraction">Vector Addition/Subtraction</h3>
+<p>Vector addition and subtraction is done just by adding the respective elements to each other:</p>
+<p><span class="math display">
+\begin{pmatrix} 1 \\ 2 \end{pmatrix} + \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 1+3 \\ 2+4 \end{pmatrix} = \begin{pmatrix} 4 \\ 6 \end{pmatrix}
+</span></p>
+<ul>
+<li>Vector addition only works if the two vectors are of the same dimensionality.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Graphical Visualisation of Vector Addition
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Vector addition can be viewed graphically. Take two 2-dimensional vectors <span class="math inline">\mathbf A</span> and <span class="math inline">\mathbf B</span>:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1838693072.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="vector-scalar-multiplication" class="level3">
+<h3 class="anchored" data-anchor-id="vector-scalar-multiplication">Vector Scalar Multiplication</h3>
+<p>Vector scalar multiplication is done by multiplying all elements of the vector by the scalar:</p>
+<p><span class="math display">
+4 \times \begin{pmatrix} 1 \\ 2 \end{pmatrix} = \begin{pmatrix} 4 \times 1 \\ 4 \times 2 \end{pmatrix} = \begin{pmatrix} 4 \\ 8 \end{pmatrix}
+</span></p>
+<p>Graphically, this just multiplies the length of the vector by the scalar (and if the scalar is negative, the direction switches 180 degrees).</p>
+<p><br></p>
+</section>
+<section id="vector-normalisation" class="level3">
+<h3 class="anchored" data-anchor-id="vector-normalisation">Vector Normalisation</h3>
+<p>The norm of a vector is its length (when thinking graphically):</p>
+<p><span class="math display">
+|| \mathbf{x}|| = \sqrt{x_1^2 + x_2^2 + \dots + x_n^2}
+</span></p>
+<p><strong>Normalizing</strong> a vector is scalar multiplying the vector by <span class="math inline">1/||\mathbf{x} ||</span>.</p>
+<ul>
+<li>This results in the norm of the vector equaling 1. This can be useful if you want to standardise and compare vectors.</li>
+</ul>
+<p><br></p>
+</section>
+<section id="scalar-product" class="level3">
+<h3 class="anchored" data-anchor-id="scalar-product">Scalar Product</h3>
+<p>Scalar product, also known as dot product, takes two vectors and creates a scalar.</p>
+<p><span class="math display">
+\mathbf a \cdot \mathbf b = \sum_i a_ib_i = a_1 b_1 + a_2 b_2+ \dots a_n b_n
+</span></p>
+<ul>
+<li>Essentially, multiply each respective element with each other. Then sum all of the products.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Scalar Product
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us do an example of scalar product:</p>
+<p><span class="math display">
+\begin{pmatrix} 2 \\ 3 \end{pmatrix} \cdot \begin{pmatrix} 4 \\ 5 \end{pmatrix}
+</span></p>
+<p>We multiply each respective element with each other, then sum all of the products:</p>
+<p><span class="math display">
+2 \times 4 + 3 \times 5 = 8 + 15 = 23
+</span></p>
+</div>
+</div>
+</div>
+<p>Dot product calculates the projection/shadow of vector <span class="math inline">\mathbf a</span> on vector <span class="math inline">\mathbf b</span>. This is useful for multicollinearity.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Graphical Visualisation of Dot Product
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The dot product calcualtes the length of the blue-highlighted line segment:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2938344011.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>From here, we can tell if the two vectors are perpendicular, then the dot product would be 0.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="matrices" class="level1">
+<h1><strong>Matrices</strong></h1>
+<section id="definition-of-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="definition-of-matrix">Definition of Matrix</h3>
+<p>A matrix is a collection of scalars, that are put in a <span class="math inline">n \times m</span> order with <span class="math inline">n</span> number of rows, and <span class="math inline">m</span> number of columns.</p>
+<p><span class="math display">
+\mathbf A_{2 \times 3} = \begin{pmatrix}
+2 &amp; 3 &amp; 2 \\
+1 &amp; 4 &amp; 1
+\end{pmatrix}
+</span></p>
+<p>Matrices can be viewed as a set of row vectors combined, or a set of column vectors combined (this is how datasets are arranged).</p>
+<p>Each element by the matrix can be denoted <span class="math inline">a_{ij}</span>, which is the element in the <span class="math inline">i</span>th row and <span class="math inline">j</span>th column:</p>
+<p><span class="math display">
+\mathbf A_{2 \times 3} = \begin{pmatrix}
+a_{11} &amp; a_{12} &amp; a_{13} \\
+a_{21} &amp; a_{22} &amp; a_{23}
+\end{pmatrix}
+</span></p>
+<p><br></p>
+</section>
+<section id="types-of-matrices" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-matrices">Types of Matrices</h3>
+<p>There are several very common types of matrices that you need to know.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Square and Zero Matrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Square Matrix</strong> is a matrix that have an equal number of rows and columns.</p>
+<p><span class="math display">
+\mathbf A_{2 \times 2} = \begin{pmatrix}
+a_{11} &amp; a_{12} \\
+a_{21} &amp; a_{22}
+\end{pmatrix}
+</span></p>
+<p>These are useful because many matrix manipulations, like inversions and determinants.</p>
+<p><strong>Zero Matrix</strong> is a square matrix with all 0’s.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Diagonal, Identity, and Lower/Upper Triangular Matrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Diagonal matrices</strong> only have elements along the top-left bottom-right diagonal.</p>
+<p><span class="math display">
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+a_{11} &amp; 0 &amp; 0 \\
+0 &amp; a_{22} &amp; 0 \\
+0 &amp; 0 &amp; a_{33} \\
+\end{pmatrix}
+</span></p>
+<p>An <strong>identity matrix</strong> (notated <span class="math inline">\mathbf I</span>)is a diagonal matrix, but all the diagonal elements equal 1:</p>
+<p><span class="math display">
+\mathbf I_{2 \times 2} = \begin{pmatrix}
+1 &amp; 0 \\
+0 &amp; 1
+\end{pmatrix}
+</span></p>
+<ul>
+<li>Any matrix times <span class="math inline">\mathbf I</span> equals itself (like a 1 in normal multiplication).</li>
+</ul>
+<p>A <strong>Lower/Upper Triangular Matrix</strong> is a matrix where only has values above/below the diagonal. For example, the following is a lower triangular matrix:</p>
+<p><span class="math display">
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+1 &amp; 0 &amp; 0 \\
+3 &amp; 4 &amp; 0 \\
+3 &amp; 3 &amp; 4
+\end{pmatrix}
+</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Submatrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A submatrix is a matrix if you were to remove a row and a column (that is specified by an element).</p>
+<p>For example, take this 3 by 3 matrix:</p>
+<p><span class="math display">
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+a_{11} &amp; a_{12} &amp; a_{13} \\
+a_{21} &amp; a_{22} &amp; a_{23} \\
+a_{31} &amp; a_{32} &amp; a_{33}
+\end{pmatrix}
+</span></p>
+<p>Let us find the submatrix of <span class="math inline">a_{21}</span>. This means we will eliminate the 2nd row, and 1st column:</p>
+<p><span class="math display">
+\mathbf A_{2 \times 2} = \begin{pmatrix}
+a_{12} &amp; a_{13} \\
+a_{32} &amp; a_{33}
+\end{pmatrix}
+</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Permutation Matrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A permutation matrix is a matrix that only has one non-zero element in each row and column.</p>
+<p><span class="math display">
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1 \\
+0 &amp; 1 &amp; 0
+\end{pmatrix}
+</span></p>
+<p>The identity matrix is a permutation matrix.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Singular/Non-Singular Matrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A <strong>singular matrix</strong> is one who’s determinant is zero. These cannot be inverted.</p>
+<p>A <strong>non-singular matrix</strong> is one who’s determinant is not zero. These can be inverted. For non-singular matrices:</p>
+<p><span class="math display">
+AA^{-1} = I
+</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Block/Partitioned/Block Diagonal Matrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A block or partitioned matrix is a matrix which contains matrices within.</p>
+<p><span class="math display">
+\mathbf A_{4 \times 4} = \begin{pmatrix}
+\mathbf A_{2 \times 2} &amp; \mathbf B_{2 \times 2} \\
+\mathbf C_{2 \times 2} &amp; \mathbf D_{2 \times 2}
+\end{pmatrix}
+</span></p>
+<ul>
+<li>Note how the block matrix is 4 by 4, since if we expand out each matrix within, we would get a 4 by 4 matrix.</li>
+</ul>
+<p>A <strong>block diagonal</strong> matrix is a block/partitioned matrix with only matrices on its diagonal:</p>
+<p><span class="math display">
+\mathbf A_{4 \times 4} = \begin{pmatrix}
+\mathbf A_{2 \times 2} &amp; 0 \\
+0 &amp; \mathbf D_{2 \times 2}
+\end{pmatrix}
+</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Orthogonal/Orthonormal Matrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>An <strong>orthogonal matrix</strong> is one with columns perpendicular to each other (when treating each column as a vector). In other words, the dot product of any two columns is zero.</p>
+<p><span class="math display">
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 5 \\
+0 &amp; 3 &amp; 0
+\end{pmatrix}
+</span></p>
+<ul>
+<li>The identity matrix is also orthogonal.</li>
+<li>Any matrix with one element in each row and column will be orthogonal.</li>
+</ul>
+<p>An <strong>orthonormal matrix</strong> is an orthogonal matrix but the lengths/norms of all the columns is 1:</p>
+<p><span class="math display">
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1 \\
+0 &amp; 1 &amp; 0
+\end{pmatrix}
+</span></p>
+</div>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="matrix-algebra" class="level1">
+<h1><strong>Matrix Algebra</strong></h1>
+<section id="matrix-transpose" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-transpose">Matrix Transpose</h3>
+<p>The matrix transpose is a matrix flipped along its diagonal.</p>
+<p>Or in other words, the rows and column locations of each element are inverted (essentially elements <span class="math inline">a^T_{ij} = a_{ji}</span>):</p>
+<p><span class="math display">
+\begin{pmatrix}
+2 &amp; 3 &amp; 5 \\
+1 &amp; 4 &amp; 6
+\end{pmatrix}^T = \begin{pmatrix}
+2 &amp; 1 \\
+3 &amp; 4 \\
+5 &amp; 6
+\end{pmatrix}
+</span></p>
+<ul>
+<li>Notice how the first column became the first row, the second column became the second row.</li>
+<li>You can also get the transpose of a vector.</li>
+</ul>
+<p><br></p>
+</section>
+<section id="matrix-additionsubtraction" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-additionsubtraction">Matrix Addition/Subtraction</h3>
+<p>Matrix addition/subtraction is the same as vector addition - add the respective elements together:</p>
+<p><span class="math display">
+\begin{pmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{pmatrix} + \begin{pmatrix}
+5 &amp; 6 \\
+7 &amp; 8
+\end{pmatrix} = \begin{pmatrix}
+1 + 5 &amp; 2 +6 \\
+3+7 &amp; 4 + 8
+\end{pmatrix} = \begin{pmatrix}
+6 &amp; 8 \\
+10 &amp; 12
+\end{pmatrix}
+</span></p>
+<p>The dimensions of the matrix must be the same for addition to occur.</p>
+<p><br></p>
+</section>
+<section id="matrix-scalar-multiplication" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-scalar-multiplication">Matrix Scalar Multiplication</h3>
+<p>Matrix scalar multiplication is the same as vector scalar multiplication - multiply each element by the scalar:</p>
+<p><span class="math display">
+3 \times \begin{pmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{pmatrix} = \begin{pmatrix}
+3 \times 1 &amp; 3 \times 2 \\
+3 \times 3 &amp; 3 \times 4
+\end{pmatrix} = \begin{pmatrix}
+3 &amp; 6 \\
+9 &amp; 12
+\end{pmatrix}
+</span></p>
+<p><br></p>
+</section>
+<section id="matrix-plain-multiplication" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-plain-multiplication">Matrix Plain Multiplication</h3>
+<p>Let us say you want to multiple matrix <span class="math inline">\mathbf A</span> and <span class="math inline">\mathbf B</span> to get a new matrix <span class="math inline">\mathbf C</span>. The elements of <span class="math inline">\mathbf C</span> are calculated as follows:</p>
+<p><span class="math display">
+c_{ij} = \sum_ka_{ik}b_{kj} = a_{i1}b_{1j} + a_{i2}b_{2j} + a_{i3}b_{3j}\dots
+</span></p>
+<p>In other words, <span class="math inline">c_{ij}</span> is the dot product of the <span class="math inline">i</span>th row of <span class="math inline">\mathbf A</span>, and the <span class="math inline">j</span>th column of <span class="math inline">\mathbf B</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Matrix Multiplication
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us solve the following problem:</p>
+<p><span class="math display">
+\begin{pmatrix}
+2 &amp; 1 \\
+3 &amp; 5 \end{pmatrix} \begin{pmatrix}
+6 &amp; 1 \\
+2 &amp; 3 \end{pmatrix} = \mathbf C
+</span></p>
+<p>Let us do each dot product for each element of <span class="math inline">\mathbf C</span>:</p>
+<ul>
+<li><span class="math inline">c_{11}</span> is the dot product of the 1st row of the 1st matrix, and the 1st column of the 2nd matrix: <span class="math inline">(2 \ 1) \cdot (6 \ 2)</span>. That means <span class="math inline">c_{11} = 2 \times 6 + 1 \times 2 = 12+2 = 14</span>.</li>
+<li><span class="math inline">c_{12}</span> is the dot product of the 1st row of the 1st matrix, and the 2nd column of the 2nd matrix: <span class="math inline">(2 \ 1) \cdot (1 \ 3)</span>. That means <span class="math inline">c_{12} = 2 \times 1 + 1 \times 3 = 2 + 3 = 5</span>.</li>
+<li><span class="math inline">c_{21}</span> is the dot product of the 2nd row of the 1st matrix, and the 1st column of the 2nd matrix: <span class="math inline">(3 \ 5) \cdot (6 \ 2)</span>. That means <span class="math inline">c_{21} = 3 \times 6 + 5 \times 2 = 18 + 10 = 28</span>.</li>
+<li><span class="math inline">c_{22}</span> is the dot product of the 2nd row of the 1st matrix, and the 2nd column of the 2nd matrix: <span class="math inline">(3 \ 5) \cdot (1 \ 3)</span>. That means <span class="math inline">c_{22} = 3 \times 1 + 5 \times 3 = 3 + 15 = 18</span>.</li>
+</ul>
+<p>Thus, we now have our answer:</p>
+<p><span class="math display">
+\begin{pmatrix}
+2 &amp; 1 \\
+3 &amp; 5 \end{pmatrix} \begin{pmatrix}
+6 &amp; 1 \\
+2 &amp; 3 \end{pmatrix} = \begin{pmatrix}
+14 &amp; 5 \\
+28 &amp; 18 \end{pmatrix}
+</span></p>
+</div>
+</div>
+</div>
+<p>Matrix multiplication is only possible when the number of columns in <span class="math inline">\mathbf A</span> is equal to the number of rows in <span class="math inline">\mathbf B</span>.</p>
+<ul>
+<li>So for example, we can multiply <span class="math inline">\mathbf A_{2 \times 3}</span> and <span class="math inline">\mathbf B_{3 \times 4}</span>.</li>
+<li>We <strong>cannot</strong> multiply <span class="math inline">\mathbf A_{2 \times 3}</span> and <span class="math inline">\mathbf B_{2 \times 3}</span>.</li>
+</ul>
+<p>The dimensions of product <span class="math inline">\mathbf C</span> is the number of rows in <span class="math inline">\mathbf A</span> and the number of columns in <span class="math inline">\mathbf B</span>.</p>
+<ul>
+<li>So for example, if we multiply <span class="math inline">\mathbf A_{2 \times 3}</span> and <span class="math inline">\mathbf B_{3 \times 4}</span>, we will get <span class="math inline">\mathbf C_{2 \times 4}</span>.</li>
+</ul>
+<p>Also note: Matrix Multiplication does not have the commutative property: <span class="math inline">\mathbf A \mathbf B ≠ \mathbf B \mathbf A</span>.</p>
+<ul>
+<li>Although there are two exceptions: <span class="math inline">\mathbf A \mathbf I = \mathbf I \mathbf A</span>, and <span class="math inline">\mathbf A \mathbf A^{-1} = \mathbf A^{-1}  \mathbf A</span>.</li>
+</ul>
+<p><br></p>
+</section>
+<section id="kronecker-product" class="level3">
+<h3 class="anchored" data-anchor-id="kronecker-product">Kronecker Product</h3>
+<p>Take the Kronecker Product of <span class="math inline">\mathbf A</span> and <span class="math inline">\mathbf B</span>:</p>
+<p><span class="math display">
+\mathbf A \otimes \mathbf B = \mathbf C
+</span></p>
+<p>Let us define <span class="math inline">\mathbf A</span> and <span class="math inline">\mathbf B</span> as the following:</p>
+<p><span class="math display">
+\mathbf A_{2 \times 2} = \begin{pmatrix}
+a_{11} &amp; a_{12} \\
+a_{21} &amp; a_{22}
+\end{pmatrix}, \ \mathbf B_{2 \times 2} = \begin{pmatrix}
+b_{11} &amp; b_{12} \\
+b_{21} &amp; b_{22}
+\end{pmatrix}
+</span></p>
+<p>The resulting Kronecker Product <span class="math inline">\mathbf C</span> would be defined as a block matrix:</p>
+<p><span class="math display">
+\mathbf C_{4 \times 4} = \begin{pmatrix}
+a_{11}\mathbf B &amp; a_{12} \mathbf B \\
+a_{21} \mathbf B &amp; a_{22} \mathbf B
+\end{pmatrix}
+</span></p>
+<p>Essentially, we treat <span class="math inline">\mathbf A</span> as a collection of scalars. We scalar multiply each scalar element of <span class="math inline">\mathbf A</span> by the matrix of <span class="math inline">\mathbf B</span>.</p>
+<p>If <span class="math inline">\mathbf A</span> has dimensions <span class="math inline">n \times m</span>, and <span class="math inline">\mathbf B</span> has dimensions <span class="math inline">p \times q</span>, then <span class="math inline">\mathbf C</span> will have dimensions <span class="math inline">np \times mq</span>.</p>
+<p><br></p>
+</section>
+<section id="trace-of-a-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="trace-of-a-matrix">Trace of a Matrix</h3>
+<p>The trace of <span class="math inline">\mathbf A</span> is a sum of all diagonal elements.</p>
+<p><span class="math display">
+Tr(\mathbf A) = \sum_i a_{ii} = a_{11} + a_{22} + \dots
+</span></p>
+<p>Traces are used in Eigenvalues.</p>
+<p><br></p>
+</section>
+<section id="determinant-of-a-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="determinant-of-a-matrix">Determinant of a Matrix</h3>
+<p>Determinants tell us if a matrix is singular (and thus has no inverse). If the determinant is 0, then the matrix is singular.</p>
+<p>The determinant is only computable for square matrices. For a 2 by 2 matrix:</p>
+<p><span class="math display">
+|\mathbf A_{2 \times 2}| = \left| \begin{pmatrix}
+a_{11} &amp; a_{12} \\
+a_{21} &amp; a_{22}
+\end{pmatrix} \right | = a_{11} a_{22} - a_{12}a_{21}
+</span></p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of a Determinant
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us find the determinant of the following matrix:</p>
+<p><span class="math display">
+\mathbf B_{2 \times 2} = \begin{pmatrix}
+2 &amp; 3 \\
+1 &amp; 4
+\end{pmatrix}
+</span></p>
+<p>Using the formula above:</p>
+<p><span class="math display">
+|\mathbf B| = 2 \times 4 - 3 \times 1 = 8 - 3 = 5
+</span></p>
+<p>Thus, this matrix is non-singular.</p>
+</div>
+</div>
+</div>
+<p>For 3 by 3, there is a method called the butterfly method to find the determinant. Take this matrix.</p>
+<p><span class="math display">
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+a_{11} &amp; a_{12} &amp; a_{13} \\
+a_{21} &amp; a_{22} &amp; a_{23} \\
+a_{31} &amp; a_{32} &amp; a_{33}
+\end{pmatrix}
+</span></p>
+<p>The determinant is defined as following:</p>
+<p><span class="math display">
+\begin{split}
+| \mathbf A| = &amp; a_{11}a_{22}a_{33} + a_{12} a_{23} a_{31} + a_{13}a_{21}a_{32} \\
+&amp; -a_{31}a_{22}a_{13} - a_{11}a_{23}a_{32} - a{12}a_{21}a_{33}
+\end{split}
+</span></p>
+<p><br></p>
+</section>
+<section id="laplace-expansion-and-cofactors" class="level3">
+<h3 class="anchored" data-anchor-id="laplace-expansion-and-cofactors">Laplace Expansion and Cofactors</h3>
+<p>For anything larger than a 3 by 3 matrix, we should us a Laplace expansion to find the determinant.</p>
+<p>You choose a row or column of the matrix.</p>
+<ul>
+<li>For every element in that row or column, find the submatrix of that element.</li>
+<li>Calculate the determinant of each of the submatrices. This is called the <em>minor</em>.</li>
+<li>Now, convert the minors to <strong>cofactors</strong>. The cofactor is the minor times <span class="math inline">(-1)^{i+j}</span>.</li>
+<li>Then, take each element, multiply by its cofactor. Sum all of these products together.</li>
+</ul>
+<p>The final sum is the determinant of the matrix.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Laplace Expansion
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For example, take this matrix:</p>
+<p><span class="math display">
+\mathbf A = \begin{pmatrix}
+1 &amp; 2 &amp; 1 \\
+0 &amp; 1 &amp; 1 \\
+5 &amp; 3 &amp; 0
+\end{pmatrix}
+</span></p>
+<p>Let us expand over the 1st row <span class="math inline">(1 \ 2 \ 1 )</span>. We expand over the submatrices of each element in that row.</p>
+<ul>
+<li>For <span class="math inline">a_{11} = 1</span>, the submatrix is <span class="math inline">\begin{pmatrix} 1 &amp; 1 \\ 3 &amp; 0 \end{pmatrix}</span>, and the determinant/minor of that is <span class="math inline">1 \times 0 - 1 \times 3 = -3</span>.</li>
+<li>For <span class="math inline">a_{12} = 2</span>, the submatrix is <span class="math inline">\begin{pmatrix} 0 &amp; 1 \\ 5 &amp; 0 \end{pmatrix}</span>. The determinant/minor of that is <span class="math inline">0 - 5 = -5</span>.</li>
+<li>For <span class="math inline">a_{13} = 1</span>, the submatrix is <span class="math inline">\begin{pmatrix} 0 &amp; 1 \\ 5 &amp; 3 \end{pmatrix}</span>. The determinant/minor of that is <span class="math inline">0 - 5 = -5</span>.</li>
+</ul>
+<p>Now, let us find the cofactors <span class="math inline">(-1)^{i + j} \times \text{minor}</span>:</p>
+<ul>
+<li>For <span class="math inline">a_{11}</span>, the cofactor is <span class="math inline">(-1)^2 \times -3 = 1 \times -3 = -3</span>.</li>
+<li>For <span class="math inline">a_{12}</span>, the cofactor is <span class="math inline">(-1)^3 \times -5 = -1 \times -5 = 5</span>.</li>
+<li>For <span class="math inline">a_{13}</span>, the cofactor is <span class="math inline">(-1)^4 \times -5 = 1 \times -5 = -5</span>.</li>
+</ul>
+<p>Now, take each element, multiply by its cofactor. Sum all of these products together.</p>
+<p><span class="math display">
+1(-3) + 2(5) + 1(-5) = -3 + 10 - 5 = 2
+</span></p>
+<p>Thus, the determinant of the matrix is <span class="math inline">2</span>.</p>
+</div>
+</div>
+</div>
+<p>This works for any matrix of any size, for any row or any column.</p>
+<ul>
+<li>So, you should choose rows/columns with more 0’s, since the final sum involves multiplying the element with the cofactor, and if the element is 0, then you don’t have to consider it.</li>
+</ul>
+<p><br></p>
+</section>
+<section id="matrix-inverse" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-inverse">Matrix Inverse</h3>
+<p>If you take a matrix <span class="math inline">\mathbf A</span>, and multiply by the inverse <span class="math inline">\mathbf A^{-1}</span>, the result will be the identity matrix <span class="math inline">\mathbf{I}</span>.</p>
+<p>You can invert any square matrix that does not have a determinant of a 0. This is because the inverse is defined as the following:</p>
+<p><span class="math display">
+\mathbf A^{-1} = \frac{1}{|\mathbf A|} \mathbf C^T
+</span></p>
+<ul>
+<li>Where <span class="math inline">| \mathbf A|</span> is the determinant of the matrix <span class="math inline">\mathbf A</span>, and <span class="math inline">\mathbf C^T</span> is the transpose of the cofactor matrix (consisting of the cofactor of every element of <span class="math inline">\mathbf A</span>.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of a 2 by 2 Matrix Inverse
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us solve for the matrix inverse of a 2 by 2 matrix.</p>
+<p><span class="math display">
+\mathbf A_{2 \times 2} = \begin{pmatrix}
+a_{11} &amp; a_{12} \\
+a_{21} &amp; a_{22}
+\end{pmatrix}
+</span></p>
+<p>We know the determinant of <span class="math inline">\mathbf A</span> with the formula for 2 by 2 matrix determinants:</p>
+<p><span class="math display">
+| \mathbf A | = a_{11}a_{22} - a_{12} a_{21}
+</span></p>
+<p>Now, let us find the cofactors (note, the determinant of a scalar is just the scalar):</p>
+<ul>
+<li><span class="math inline">c_{11} = (-1)^{1+1}a_{22} = a_{22}</span></li>
+<li><span class="math inline">c_{12} = (-1)^{1+2}a_{21} = -a_{21}</span></li>
+<li><span class="math inline">c_{21} = (-1)^{2+1} a_{12} = -a_{12}</span></li>
+<li><span class="math inline">c_{22} = (-1)^{2+2} a_{11} = a_{11}</span></li>
+</ul>
+<p>Thus, our cofactor matrix is:</p>
+<p><span class="math display">
+\mathbf C_{2 \times 2} = \begin{pmatrix}
+a_{22} &amp; -a_{21} \\
+-a_{12} &amp; a_{11}
+\end{pmatrix}
+</span></p>
+<p>The transpoe of the cofactor matrix is thus (flipping rows to columns):</p>
+<p><span class="math display">
+\mathbf C^T = \begin{pmatrix}
+a_{22} &amp; -a_{12} \\
+-a_{21} &amp; a_{11}
+\end{pmatrix}
+</span></p>
+<p>Thus, the inverse is:</p>
+<p><span class="math display">
+\mathbf A^{-1} = \frac{1}{|\mathbf A|} \mathbf C^T = \frac{1}{a_{11}a_{22} - a_{12} a_{21}} \begin{pmatrix}
+a_{22} &amp; -a_{12} \\
+-a_{21} &amp; a_{11}
+\end{pmatrix}
+</span></p>
+<p>Thus, for example, the following is true:</p>
+<p><span class="math display">
+\mathbf A = \begin{pmatrix}
+3 &amp; 1 \\
+5 &amp; 2
+\end{pmatrix}, \ \mathbf A^T = \mathbf A_{2 \times 2} = \begin{pmatrix}
+2 &amp; -1 \\
+-5 &amp; 3
+\end{pmatrix}
+</span></p>
+</div>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="properties-of-matrices" class="level1">
+<h1><strong>Properties of Matrices</strong></h1>
+<section id="associative-distributive-commutative" class="level3">
+<h3 class="anchored" data-anchor-id="associative-distributive-commutative">Associative, Distributive, Commutative</h3>
+<p>The <strong>Associative property</strong> applies to addition/subtraction and multiplication:</p>
+<p><span class="math display">
+\begin{split}
+&amp; (\mathbf A + \mathbf B) + \mathbf C = \mathbf A + (\mathbf B + \mathbf C) \\
+&amp; (\mathbf A \mathbf B)\mathbf C = \mathbf A(\mathbf B \mathbf C)
+\end{split}
+</span></p>
+<p>The <strong>Distributive Property</strong> states the following is true:</p>
+<p><span class="math display">
+(\mathbf A + \mathbf B) \mathbf C = \mathbf A \mathbf C + \mathbf B \mathbf C
+</span></p>
+<p>The <strong>Commutative Property</strong> applies <u>only to addition/subtraction, not multiplication</u>. Commutative property also applies to dot products.</p>
+<p><span class="math display">
+\begin{split}
+&amp; \mathbf A + \mathbf B = \mathbf B + \mathbf A \\
+&amp; \mathbf a \cdot \mathbf b = \mathbf b \cdot \mathbf a
+\end{split}
+</span></p>
+<p><br></p>
+</section>
+<section id="properties-of-traces" class="level3">
+<h3 class="anchored" data-anchor-id="properties-of-traces">Properties of Traces</h3>
+<p>The <strong>Addition Property</strong> of traces states that the trace of the sum of two matrices is equivalent to the sum of the traces of each individual matrix:</p>
+<p><span class="math display">
+Tr(\mathbf A + \mathbf B) =Tr(\mathbf A) + Tr(\mathbf B) = Tr(\mathbf B) + Tr(\mathbf A)
+</span></p>
+<p>The <strong>Transpose Property</strong> says the trace of the transpose is equal to the trace of the original (since the diagonal remains the same):</p>
+<p><span class="math display">
+Tr(\mathbf A^T) = Tr(\mathbf A)
+</span></p>
+<p>The <strong>Multiplication Property</strong> says that the trace of multiplication has the commutative property (only for two matrices):</p>
+<p><span class="math display">
+Tr(\mathbf{AB}) = Tr(\mathbf{BA})
+</span></p>
+<p><br></p>
+</section>
+<section id="properties-of-transposes" class="level3">
+<h3 class="anchored" data-anchor-id="properties-of-transposes">Properties of Transposes</h3>
+<p>The <strong>Vector Property</strong> says that the dot product of vectors can be written with transposes:</p>
+<p><span class="math display">
+\mathbf a \cdot \mathbf b = \mathbf a^T\mathbf b
+</span></p>
+<p>The <strong>Inverse Property</strong> says that the transpose of a transpose is the original matrix:</p>
+<p><span class="math display">
+\left(\mathbf A^T \right)^T = \mathbf A
+</span></p>
+<p>The <strong>Addition Property</strong> states that the transpose of a sum of two matrices, is equal to the individual transposes of both matrices added together:</p>
+<p><span class="math display">
+(\mathbf A + \mathbf B)^T = \mathbf A^T + \mathbf B^T = \mathbf B^T + \mathbf A^T
+</span></p>
+<p>The <strong>Multiplication Property</strong> says the following (note the order of multiplication):</p>
+<p><span class="math display">
+( \mathbf{AB})^T = \mathbf B^T \mathbf A^T
+</span></p>
+<p>The Symmetrical <strong>Property</strong> says that a matrix that is symmetrical does not change when inversed:</p>
+<p><span class="math display">
+\mathbf A^T = \mathbf A \quad \text{s.t.} \quad \mathbf A \text{ is symmetrical}
+</span></p>
+<p>The <strong>Inverse Transpose Property</strong> says the following about inverses and transposes:</p>
+<p><span class="math display">
+\left( \mathbf A^{-1} \right)^T = \left( \mathbf A^T \right)^{-1}
+</span></p>
+<p><br></p>
+</section>
+<section id="properties-of-a-determinant" class="level3">
+<h3 class="anchored" data-anchor-id="properties-of-a-determinant">Properties of a Determinant</h3>
+<p>The <strong>Transpose Property</strong> states that the determinant of a transpose is equal to the determinant of the original:</p>
+<p><span class="math display">
+\det(\mathbf A^T) = \det(\mathbf A)
+</span></p>
+<p>The <strong>Identity Property</strong> states that the determinant of an identity matrix is 1:</p>
+<p><span class="math display">
+\det (\mathbf I)=1
+</span></p>
+<p>The <strong>Multiplication Property</strong> states that the determinant of a product is equal to the individual determinants multiplied:</p>
+<p><span class="math display">
+\det (\mathbf {AB}) = \det (\mathbf A) \det (\mathbf B)
+</span></p>
+<p>The <strong>Inverse Property</strong> says that the determinant of an inverse is the inverse of the determinant of the original matrix:</p>
+<p><span class="math display">
+\det(\mathbf A^{-1}) = \frac{1}{\det(\mathbf A)}
+</span></p>
+<p>The <strong>Triangular/Diagonal Property</strong> is the product of all diagonal elements:</p>
+<p><span class="math display">
+\det (\mathbf A) = \prod_i a_{ii}
+</span></p>
+<p><br></p>
+</section>
+<section id="properties-of-inverses" class="level3">
+<h3 class="anchored" data-anchor-id="properties-of-inverses">Properties of Inverses</h3>
+<p>The <strong>Inverse Property</strong> states that the inverse of an inverse is the original matrix:</p>
+<p><span class="math display">
+\left( \mathbf A^{-1} \right)^{-1} = \mathbf A
+</span></p>
+<p>The <strong>Multiplication Property</strong> states the inverse of a product is the following (note the order of the multiplication):</p>
+<p><span class="math display">
+(\mathbf{AB})^{-1}=\mathbf B^{-1} \mathbf A^{-1}
+</span></p>
+<p>The <strong>Scalar Multiplication Property</strong> states that the scalar product is the following:</p>
+<p><span class="math display">
+(c \mathbf A)^{-1} = \frac{1}{c} \mathbf A^{-1}, \quad \text{s.t.} \quad  c ≠ 0
+</span></p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
