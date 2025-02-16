@@ -1,0 +1,267 @@
+---
+title: "Spatial Regression Models"
+subtitle: "Regression and Extensions"
+format:
+    html:
+        page-layout: article
+        grid:
+          sidebar-width: 350px
+          body-width: 700px
+          margin-width: 250px
+          gutter-width: 2em
+        fontsize: 12pt
+        theme: default
+        toc: TRUE
+        toc-depth: 3
+        toc-location: left
+        toc-expand: true
+        toc-title: "Table of Contents"
+        mainfont: "Computer Modern"
+        title-block-banner: true
+        classoption: fleqn
+        html-math-method: katex
+editor: visual
+---
+
+So far, we have mostly looked at models that deal with cross-sectional data. In this chapter, we introduce spatial data - data that has a spatial component, and how we can account for the complexities of this.
+
+------------------------------------------------------------------------
+
+# **Spatial Data**
+
+### Effects Through Space
+
+When we typically conduct regression models, we often ignore the spatial element. At most, we might include some region-fixed effects. Our typical, non-spatial model takes the form:
+
+$$
+\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u
+$$
+
+However, this fails to consider how nearby geographies might affect each other. There are three primary ways in which neighbours could affect each other.
+
+1.  The values of $y$ in a region might impact or correlate with the values of $y$ in a neighbouring region. This is called a **lagged y model**.
+2.  The values of $\mathbf x$ in a region might impact or correlate with the values of $y$ in a neighbouring region. This is called a **lag x model**.
+3.  The residuals $u$ could impact or correlated with the residuals $u$ of a neighbouring region. This is called **spatial autocorrelation**.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Examples of Spatial Relationships
+
+Here are a few examples of spatial relationships.
+
+-   Perhaps one state's high unemployment rate might impact a neighbouring region's unemployment rate. This is a lagged y model.
+-   Perhaps one state's income levels might affect a neighbouring region's unemployment rate, since a state's residents might spend more money in neighbouring states. This is a lag x model.
+-   Perhaps something that is causing unexplained variation in unemployment levels in our region, are also present in neighbouring region. This might occur because there is some industry that is prominent in a certain area with neighbouring regions. Thus, all regions in this area might have unexpectedly high unemployment rates. This is spatial autocorrelation.
+:::
+
+We can measure which regions are "neighbours" with a spatial weights matrix $\mathbf W$. By including $\mathbf W$ in our models, we can address this issue of ignoring spatial relationships.
+
+<br />
+
+### Contiguity Neighbour Matrix
+
+The spatial weights matrix $\mathbf W$ can define which units "neighbour" each other. There are many different ways to determine neighbours:
+
+-   **Queen** contiguity matrices counts a neighbour if the region borders it either on an edge or a corner. It is called a Queen contiguity matrix because queens can move diagonally or on the grid in chess.
+-   **Rook** contiguity matrices only count a neighbour if the region directly borders it. It ignores corners. It is named after how the rook behaves on a chessboard.
+-   We could also consider any region who's central point or boundaries is within some radius of our region's central point or boundaries as neighbours.
+-   We could also be more nuanced: a closer region to our region is a stronger neighbour, and a further region is a weaker neighbour.
+
+Let us say we have $m$ number of regions $1, \dots ,m$. The contiguity neighbour matrix is a $m \times m$ matrix $\mathbf W_{m \times m}$. Each row $i$ is a different region $1, \dots, m$, and each column $j$ is also a different region $1, \dots, m$.
+
+Element $w_{ij}$ of the matrix $\mathbf W_{m \times m}$ can have two values: $w_{ij} = 1$ if region $i$ and region $j$ are neighbours, and $w_{ij} = 0$ if region $i$ and region $j$ are not neighbours. If $i = j$, then $w_{ij} = 0$, since a region cannot be its own neighbour.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of a Contiguity Neighbour Matrix
+
+Let us say we have three regions: 1, 2, and 3. They are arranged in a line, where 1 borders 2, and 2 borders 3.
+
+We can construct a continuity neighbour matrix (using the queen or rook method) as follows. The matrix will be $3 \times 3$, since we have 3 regions:
+
+$$
+\mathbf W_{3 \times 3} = \begin{pmatrix}
+0 & 1 & 0 \\
+1 & 0 & 1 \\
+0 & 1 & 0
+\end{pmatrix}
+$$
+
+We can test this is true with any element $w_{ij}$. Remember that $w_{ij} = 1$ only if region $i$ and region $j$ are neighbours.
+
+-   Let us look at $w_{21}$ in the matrix. We can seen $w_{21} = 1$. This is correct, since we know region 2 and 1 border each other.
+-   Let us look at $w_{31}$ in the matrix. We can see $w_{31}=0$. This is correct, since we know region 3 and 1 do not border each other.
+:::
+
+<br />
+
+### Contiguity Weights Matrix
+
+After we have a contiguity neighbour matrix, we can "row-standardise" it to get a **contiguity weights matrix**. Essentially, this means each row's weights should equal 1.
+
+To implement this, we first find the sum of all elements in each row. We then divide each element within a row by its sum to standardise it.
+
+For example, take this contiguity neighbour matrix:
+
+$$
+\mathbf W_{3 \times 3} = \begin{pmatrix}
+0 & 1 & 0 \\
+1 & 0 & 1 \\
+0 & 1 & 0
+\end{pmatrix}
+$$
+
+We can see the sum of the elements of the 1st row is 1, the sum of the 2nd row is 2, and the sum of the 3rd row is 1. That means we should divide each element within row 1 by 1, each element in row 2 by 2, and each element in row 3 by 1. We will get this following contiguity weights matrix:
+
+$$
+\mathbf W_{3 \times 3} = \begin{pmatrix}
+0 & 1 & 0 \\
+0.5 & 0 & 0.5 \\
+0 & 1 & 0
+\end{pmatrix}
+$$
+
+We can see that the elements of each row sum to 1. We typically always want to standardise to get a contiguity weights matrix, since it gives each area equal weight to the computation of our models.
+
+-   It also makes regression estimates more interpretatable.
+-   It also makes any correlation measures standardised between 0 and 1 (think covariance vs. correlation).
+
+<br />
+
+### Spatial Correlations
+
+Spatial Correlations are the covariation of properties within a geographic space. For example, locations in nearby locations might seem to be correlated, either positively or negatively.
+
+Spatial correlations will introduce spatial autocorrelation, which is an issue that is not dealt with by the standard OLS model. **Moran's I** is the most commonly used way of quantifying spatial correlations. The formula is as follows:
+
+$$
+I = \frac{N}{\underbrace{\sum_i \sum_jw_{ij}}_{\text{sum of all of }\mathbf W}} \times \frac{\sum_i \sum_j w_{ij}(x_i - \bar x) (x_j - \bar x)}{\sum_i(x_i - \bar x)^2}
+$$
+
+-   Where $N$ is the number of spatial regions.
+-   Where $x$ is the variable of interest that we want to see if it is correlated through space. $\bar x$ is the mean of $x$.
+-   $w_{ij}$ are elements of the of the spatial matrix $\mathbf W$.
+
+Moran's I is always between -1 and 1 if using a standardised contiguity weights matrix. However, $I = 0$ isn't actually the value of no spatial correlation. The expected value of no spatial correlation is defined as:
+
+$$
+E(I) = \frac{-1}{N-1}
+$$
+
+As sample size increases, the closer this value becomes to 0.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Spatial Models**
+
+### Manski Model
+
+Before, we talked about three ways neighbouring regions can affect each other: lagged y, lagged x, and spatial autocorrelation.
+
+We can include all three elements in our regression (along with our spatial weights matrix $\mathbf W$), creating the **manski model**:
+
+$$
+\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
+$$
+
+-   Where $\rho$ is some fraction (generally less than 1) multiplier that affects the lag in $y$.
+-   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
+-   Where $\boldsymbol\theta$ is some vector of a lot of slope parameters that determines how the region's neighbour's explanatory variables affect its outcome $y$.
+-   Where $\lambda$ is some fraction multiple that affects the spatial autocorrelation.
+-   Where $\boldsymbol\epsilon$ is the stochastic error term.
+
+The Manski Model is the "fullest model". However, it is very difficult to estimate and identify all the parameter values. With so many parameters, their might be strong multicollinearity that makes estimates not very precise, and there is a degrees of freedom problem.
+
+<br />
+
+### Kelejian-Prucha Model
+
+Since the Manski model is often too difficult to estimate, most people will drop either lag y, lag x, or spatial autocorrelation terms from the model.
+
+The **Kelejian-Prucha Model** only considers lag y and spatial autocorrelation, and drops lag x. This is making the assumption $\boldsymbol\theta = 0$, that neighbouring explanatory variables do not affect a region's outcome $y$:
+
+$$
+\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta +  + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
+$$
+
+-   Where $\rho$ is some fraction (generally less than 1) multiplier that affects the lag in $y$.
+-   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
+-   Where $\lambda$ is some fraction multiple that affects the spatial autocorrelation.
+-   Where $\boldsymbol\epsilon$ is the stochastic error term.
+
+This model is generally identifiable, and is quite popular as a starting point.
+
+<br />
+
+### Spatial Durbin Model
+
+The **Spatial Durbin Model** (SDM) only considers lag y and lag x, and drops spatial autocorrelation. This is making the assumption $\lambda = 0$, that there is no spatial autocorrelation:
+
+$$
+\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \boldsymbol\epsilon
+$$
+
+-   Where $\rho$ is some fraction (generally less than 1) multiplier that affects the lag in $y$.
+-   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
+-   Where $\boldsymbol\theta$ is some vector of a lot of slope parameters that determines how the region's neighbour's explanatory variables affect its outcome $y$.
+-   Where $\boldsymbol\epsilon$ is the stochastic error term.
+
+The Spatial Durbin Model is popular because it is the starting point of further reductions in parameters, as we will see with the Spatially Lagged X model, the Spatial Autorgressive Model, and the Spatial Error Model.
+
+If you do not know what type of model you should run (and what types of lags/autocorrelation), you should generally start with the Spatial Durbin Model.
+
+<br />
+
+### Spatially Lagged X Model
+
+The **Spatially Lagged X Model** (SLX) is a simplification of the Spatial Durbin Model, getting rid of the lag y effect.
+
+Thus, the model only contains lag x (as implied by the name). As a result, the model assumes $\rho = 0$ (no lag y) and $\lambda = 0$ (no spatial autocorrelation):
+
+$$
+\mathbf y =  \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \boldsymbol\epsilon
+$$
+
+-   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
+-   Where $\boldsymbol\theta$ is some vector of a lot of slope parameters that determines how the region's neighbour's explanatory variables affect its outcome $y$.
+-   Where $\boldsymbol\epsilon$ is the stochastic error term.
+
+<br >
+
+### Spatial Autoregressive Model
+
+The **Spatial Autoregressive Model** (SAR), also called the spatial lag model, is another simplification of the Spatial Durbin Model, getting rid of the lag x effect.
+
+Thus, the model only contains lag y. As a result, the model assumes $\boldsymbol\theta = 0$ (no lag X), and $\lambda = 0$ (no spatial autocorrelation).
+
+$$
+\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \boldsymbol\epsilon
+$$
+
+-   Where $\rho$ is some fraction (generally less than 1) multiplier that affects the lag in $y$.
+-   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
+-   Where $\boldsymbol\epsilon$ is the stochastic error term.
+
+<br />
+
+### Spatial Error Model
+
+The Spatial Durbin model can also be simplified in an interesting way. Instead of assuming the lag-X coefficients $\boldsymbol\theta = 0$ as was assumed in the spatial autoregressive model, we can instead make the assumption $\boldsymbol\theta = -\rho \boldsymbol\beta$.
+
+This assumption $\boldsymbol\theta = -\rho \boldsymbol\beta$ basically says that the lag-X effect is equivalent to the strength of the lag-y effect multiplied to our own $\mathbf x$ effect on $y$.
+
+This assumption (and a bit of matrix algebra) allows us to achieve the **Spatial Error Model**:
+
+$$
+\mathbf y = \mathbf{X} \boldsymbol\beta + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
+$$
+
+-   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
+-   Where $\lambda$ is some fraction multiple that affects the spatial autocorrelation.
+-   Where $\boldsymbol\epsilon$ is the stochastic error term.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Proof of Derivation of the Spatial Error Model
+:::

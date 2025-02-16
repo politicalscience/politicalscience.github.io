@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Spatial Regression Models</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="4_files/libs/clipboard/clipboard.min.js"></script>
+<script src="4_files/libs/quarto-html/quarto.js"></script>
+<script src="4_files/libs/quarto-html/popper.min.js"></script>
+<script src="4_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="4_files/libs/quarto-html/anchor.min.js"></script>
+<link href="4_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="4_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="4_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="4_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="4_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: true
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Spatial Regression Models</h1>
+            <p class="subtitle lead">Regression and Extensions</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#spatial-data" id="toc-spatial-data" class="nav-link active" data-scroll-target="#spatial-data"><strong>Spatial Data</strong></a>
+  <ul class="collapse">
+  <li><a href="#effects-through-space" id="toc-effects-through-space" class="nav-link" data-scroll-target="#effects-through-space">Effects Through Space</a></li>
+  <li><a href="#contiguity-neighbour-matrix" id="toc-contiguity-neighbour-matrix" class="nav-link" data-scroll-target="#contiguity-neighbour-matrix">Contiguity Neighbour Matrix</a></li>
+  <li><a href="#contiguity-weights-matrix" id="toc-contiguity-weights-matrix" class="nav-link" data-scroll-target="#contiguity-weights-matrix">Contiguity Weights Matrix</a></li>
+  <li><a href="#spatial-correlations" id="toc-spatial-correlations" class="nav-link" data-scroll-target="#spatial-correlations">Spatial Correlations</a></li>
+  </ul></li>
+  <li><a href="#spatial-models" id="toc-spatial-models" class="nav-link" data-scroll-target="#spatial-models"><strong>Spatial Models</strong></a>
+  <ul class="collapse">
+  <li><a href="#manski-model" id="toc-manski-model" class="nav-link" data-scroll-target="#manski-model">Manski Model</a></li>
+  <li><a href="#kelejian-prucha-model" id="toc-kelejian-prucha-model" class="nav-link" data-scroll-target="#kelejian-prucha-model">Kelejian-Prucha Model</a></li>
+  <li><a href="#spatial-durbin-model" id="toc-spatial-durbin-model" class="nav-link" data-scroll-target="#spatial-durbin-model">Spatial Durbin Model</a></li>
+  <li><a href="#spatially-lagged-x-model" id="toc-spatially-lagged-x-model" class="nav-link" data-scroll-target="#spatially-lagged-x-model">Spatially Lagged X Model</a></li>
+  <li><a href="#spatial-autoregressive-model" id="toc-spatial-autoregressive-model" class="nav-link" data-scroll-target="#spatial-autoregressive-model">Spatial Autoregressive Model</a></li>
+  <li><a href="#spatial-error-model" id="toc-spatial-error-model" class="nav-link" data-scroll-target="#spatial-error-model">Spatial Error Model</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>So far, we have mostly looked at models that deal with cross-sectional data. In this chapter, we introduce spatial data - data that has a spatial component, and how we can account for the complexities of this.</p>
+<hr>
+<section id="spatial-data" class="level1">
+<h1><strong>Spatial Data</strong></h1>
+<section id="effects-through-space" class="level3">
+<h3 class="anchored" data-anchor-id="effects-through-space">Effects Through Space</h3>
+<p>When we typically conduct regression models, we often ignore the spatial element. At most, we might include some region-fixed effects. Our typical, non-spatial model takes the form:</p>
+<p><span class="math display">
+\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u
+</span></p>
+<p>However, this fails to consider how nearby geographies might affect each other. There are three primary ways in which neighbours could affect each other.</p>
+<ol type="1">
+<li>The values of <span class="math inline">y</span> in a region might impact or correlate with the values of <span class="math inline">y</span> in a neighbouring region. This is called a <strong>lagged y model</strong>.</li>
+<li>The values of <span class="math inline">\mathbf x</span> in a region might impact or correlate with the values of <span class="math inline">y</span> in a neighbouring region. This is called a <strong>lag x model</strong>.</li>
+<li>The residuals <span class="math inline">u</span> could impact or correlated with the residuals <span class="math inline">u</span> of a neighbouring region. This is called <strong>spatial autocorrelation</strong>.</li>
+</ol>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Examples of Spatial Relationships
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Here are a few examples of spatial relationships.</p>
+<ul>
+<li>Perhaps one state’s high unemployment rate might impact a neighbouring region’s unemployment rate. This is a lagged y model.</li>
+<li>Perhaps one state’s income levels might affect a neighbouring region’s unemployment rate, since a state’s residents might spend more money in neighbouring states. This is a lag x model.</li>
+<li>Perhaps something that is causing unexplained variation in unemployment levels in our region, are also present in neighbouring region. This might occur because there is some industry that is prominent in a certain area with neighbouring regions. Thus, all regions in this area might have unexpectedly high unemployment rates. This is spatial autocorrelation.</li>
+</ul>
+</div>
+</div>
+</div>
+<p>We can measure which regions are “neighbours” with a spatial weights matrix <span class="math inline">\mathbf W</span>. By including <span class="math inline">\mathbf W</span> in our models, we can address this issue of ignoring spatial relationships.</p>
+<p><br></p>
+</section>
+<section id="contiguity-neighbour-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="contiguity-neighbour-matrix">Contiguity Neighbour Matrix</h3>
+<p>The spatial weights matrix <span class="math inline">\mathbf W</span> can define which units “neighbour” each other. There are many different ways to determine neighbours:</p>
+<ul>
+<li><strong>Queen</strong> contiguity matrices counts a neighbour if the region borders it either on an edge or a corner. It is called a Queen contiguity matrix because queens can move diagonally or on the grid in chess.</li>
+<li><strong>Rook</strong> contiguity matrices only count a neighbour if the region directly borders it. It ignores corners. It is named after how the rook behaves on a chessboard.</li>
+<li>We could also consider any region who’s central point or boundaries is within some radius of our region’s central point or boundaries as neighbours.</li>
+<li>We could also be more nuanced: a closer region to our region is a stronger neighbour, and a further region is a weaker neighbour.</li>
+</ul>
+<p>Let us say we have <span class="math inline">m</span> number of regions <span class="math inline">1, \dots ,m</span>. The contiguity neighbour matrix is a <span class="math inline">m \times m</span> matrix <span class="math inline">\mathbf W_{m \times m}</span>. Each row <span class="math inline">i</span> is a different region <span class="math inline">1, \dots, m</span>, and each column <span class="math inline">j</span> is also a different region <span class="math inline">1, \dots, m</span>.</p>
+<p>Element <span class="math inline">w_{ij}</span> of the matrix <span class="math inline">\mathbf W_{m \times m}</span> can have two values: <span class="math inline">w_{ij} = 1</span> if region <span class="math inline">i</span> and region <span class="math inline">j</span> are neighbours, and <span class="math inline">w_{ij} = 0</span> if region <span class="math inline">i</span> and region <span class="math inline">j</span> are not neighbours. If <span class="math inline">i = j</span>, then <span class="math inline">w_{ij} = 0</span>, since a region cannot be its own neighbour.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of a Contiguity Neighbour Matrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us say we have three regions: 1, 2, and 3. They are arranged in a line, where 1 borders 2, and 2 borders 3.</p>
+<p>We can construct a continuity neighbour matrix (using the queen or rook method) as follows. The matrix will be <span class="math inline">3 \times 3</span>, since we have 3 regions:</p>
+<p><span class="math display">
+\mathbf W_{3 \times 3} = \begin{pmatrix}
+0 &amp; 1 &amp; 0 \\
+1 &amp; 0 &amp; 1 \\
+0 &amp; 1 &amp; 0
+\end{pmatrix}
+</span></p>
+<p>We can test this is true with any element <span class="math inline">w_{ij}</span>. Remember that <span class="math inline">w_{ij} = 1</span> only if region <span class="math inline">i</span> and region <span class="math inline">j</span> are neighbours.</p>
+<ul>
+<li>Let us look at <span class="math inline">w_{21}</span> in the matrix. We can seen <span class="math inline">w_{21} = 1</span>. This is correct, since we know region 2 and 1 border each other.</li>
+<li>Let us look at <span class="math inline">w_{31}</span> in the matrix. We can see <span class="math inline">w_{31}=0</span>. This is correct, since we know region 3 and 1 do not border each other.</li>
+</ul>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="contiguity-weights-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="contiguity-weights-matrix">Contiguity Weights Matrix</h3>
+<p>After we have a contiguity neighbour matrix, we can “row-standardise” it to get a <strong>contiguity weights matrix</strong>. Essentially, this means each row’s weights should equal 1.</p>
+<p>To implement this, we first find the sum of all elements in each row. We then divide each element within a row by its sum to standardise it.</p>
+<p>For example, take this contiguity neighbour matrix:</p>
+<p><span class="math display">
+\mathbf W_{3 \times 3} = \begin{pmatrix}
+0 &amp; 1 &amp; 0 \\
+1 &amp; 0 &amp; 1 \\
+0 &amp; 1 &amp; 0
+\end{pmatrix}
+</span></p>
+<p>We can see the sum of the elements of the 1st row is 1, the sum of the 2nd row is 2, and the sum of the 3rd row is 1. That means we should divide each element within row 1 by 1, each element in row 2 by 2, and each element in row 3 by 1. We will get this following contiguity weights matrix:</p>
+<p><span class="math display">
+\mathbf W_{3 \times 3} = \begin{pmatrix}
+0 &amp; 1 &amp; 0 \\
+0.5 &amp; 0 &amp; 0.5 \\
+0 &amp; 1 &amp; 0
+\end{pmatrix}
+</span></p>
+<p>We can see that the elements of each row sum to 1. We typically always want to standardise to get a contiguity weights matrix, since it gives each area equal weight to the computation of our models.</p>
+<ul>
+<li>It also makes regression estimates more interpretatable.</li>
+<li>It also makes any correlation measures standardised between 0 and 1 (think covariance vs.&nbsp;correlation).</li>
+</ul>
+<p><br></p>
+</section>
+<section id="spatial-correlations" class="level3">
+<h3 class="anchored" data-anchor-id="spatial-correlations">Spatial Correlations</h3>
+<p>Spatial Correlations are the covariation of properties within a geographic space. For example, locations in nearby locations might seem to be correlated, either positively or negatively.</p>
+<p>Spatial correlations will introduce spatial autocorrelation, which is an issue that is not dealt with by the standard OLS model. <strong>Moran’s I</strong> is the most commonly used way of quantifying spatial correlations. The formula is as follows:</p>
+<p><span class="math display">
+I = \frac{N}{\underbrace{\sum_i \sum_jw_{ij}}_{\text{sum of all of }\mathbf W}} \times \frac{\sum_i \sum_j w_{ij}(x_i - \bar x) (x_j - \bar x)}{\sum_i(x_i - \bar x)^2}
+</span></p>
+<ul>
+<li>Where <span class="math inline">N</span> is the number of spatial regions.</li>
+<li>Where <span class="math inline">x</span> is the variable of interest that we want to see if it is correlated through space. <span class="math inline">\bar x</span> is the mean of <span class="math inline">x</span>.</li>
+<li><span class="math inline">w_{ij}</span> are elements of the of the spatial matrix <span class="math inline">\mathbf W</span>.</li>
+</ul>
+<p>Moran’s I is always between -1 and 1 if using a standardised contiguity weights matrix. However, <span class="math inline">I = 0</span> isn’t actually the value of no spatial correlation. The expected value of no spatial correlation is defined as:</p>
+<p><span class="math display">
+E(I) = \frac{-1}{N-1}
+</span></p>
+<p>As sample size increases, the closer this value becomes to 0.</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="spatial-models" class="level1">
+<h1><strong>Spatial Models</strong></h1>
+<section id="manski-model" class="level3">
+<h3 class="anchored" data-anchor-id="manski-model">Manski Model</h3>
+<p>Before, we talked about three ways neighbouring regions can affect each other: lagged y, lagged x, and spatial autocorrelation.</p>
+<p>We can include all three elements in our regression (along with our spatial weights matrix <span class="math inline">\mathbf W</span>), creating the <strong>manski model</strong>:</p>
+<p><span class="math display">
+\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
+</span></p>
+<ul>
+<li>Where <span class="math inline">\rho</span> is some fraction (generally less than 1) multiplier that affects the lag in <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\boldsymbol\theta</span> is some vector of a lot of slope parameters that determines how the region’s neighbour’s explanatory variables affect its outcome <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\lambda</span> is some fraction multiple that affects the spatial autocorrelation.</li>
+<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
+</ul>
+<p>The Manski Model is the “fullest model”. However, it is very difficult to estimate and identify all the parameter values. With so many parameters, their might be strong multicollinearity that makes estimates not very precise, and there is a degrees of freedom problem.</p>
+<p><br></p>
+</section>
+<section id="kelejian-prucha-model" class="level3">
+<h3 class="anchored" data-anchor-id="kelejian-prucha-model">Kelejian-Prucha Model</h3>
+<p>Since the Manski model is often too difficult to estimate, most people will drop either lag y, lag x, or spatial autocorrelation terms from the model.</p>
+<p>The <strong>Kelejian-Prucha Model</strong> only considers lag y and spatial autocorrelation, and drops lag x. This is making the assumption <span class="math inline">\boldsymbol\theta = 0</span>, that neighbouring explanatory variables do not affect a region’s outcome <span class="math inline">y</span>:</p>
+<p><span class="math display">
+\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta +  + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
+</span></p>
+<ul>
+<li>Where <span class="math inline">\rho</span> is some fraction (generally less than 1) multiplier that affects the lag in <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\lambda</span> is some fraction multiple that affects the spatial autocorrelation.</li>
+<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
+</ul>
+<p>This model is generally identifiable, and is quite popular as a starting point.</p>
+<p><br></p>
+</section>
+<section id="spatial-durbin-model" class="level3">
+<h3 class="anchored" data-anchor-id="spatial-durbin-model">Spatial Durbin Model</h3>
+<p>The <strong>Spatial Durbin Model</strong> (SDM) only considers lag y and lag x, and drops spatial autocorrelation. This is making the assumption <span class="math inline">\lambda = 0</span>, that there is no spatial autocorrelation:</p>
+<p><span class="math display">
+\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \boldsymbol\epsilon
+</span></p>
+<ul>
+<li>Where <span class="math inline">\rho</span> is some fraction (generally less than 1) multiplier that affects the lag in <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\boldsymbol\theta</span> is some vector of a lot of slope parameters that determines how the region’s neighbour’s explanatory variables affect its outcome <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
+</ul>
+<p>The Spatial Durbin Model is popular because it is the starting point of further reductions in parameters, as we will see with the Spatially Lagged X model, the Spatial Autorgressive Model, and the Spatial Error Model.</p>
+<p>If you do not know what type of model you should run (and what types of lags/autocorrelation), you should generally start with the Spatial Durbin Model.</p>
+<p><br></p>
+</section>
+<section id="spatially-lagged-x-model" class="level3">
+<h3 class="anchored" data-anchor-id="spatially-lagged-x-model">Spatially Lagged X Model</h3>
+<p>The <strong>Spatially Lagged X Model</strong> (SLX) is a simplification of the Spatial Durbin Model, getting rid of the lag y effect.</p>
+<p>Thus, the model only contains lag x (as implied by the name). As a result, the model assumes <span class="math inline">\rho = 0</span> (no lag y) and <span class="math inline">\lambda = 0</span> (no spatial autocorrelation):</p>
+<p><span class="math display">
+\mathbf y =  \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \boldsymbol\epsilon
+</span></p>
+<ul>
+<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\boldsymbol\theta</span> is some vector of a lot of slope parameters that determines how the region’s neighbour’s explanatory variables affect its outcome <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
+</ul>
+<p><br></p>
+</section>
+<section id="spatial-autoregressive-model" class="level3">
+<h3 class="anchored" data-anchor-id="spatial-autoregressive-model">Spatial Autoregressive Model</h3>
+<p>The <strong>Spatial Autoregressive Model</strong> (SAR), also called the spatial lag model, is another simplification of the Spatial Durbin Model, getting rid of the lag x effect.</p>
+<p>Thus, the model only contains lag y. As a result, the model assumes <span class="math inline">\boldsymbol\theta = 0</span> (no lag X), and <span class="math inline">\lambda = 0</span> (no spatial autocorrelation).</p>
+<p><span class="math display">
+\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \boldsymbol\epsilon
+</span></p>
+<ul>
+<li>Where <span class="math inline">\rho</span> is some fraction (generally less than 1) multiplier that affects the lag in <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
+</ul>
+<p><br></p>
+</section>
+<section id="spatial-error-model" class="level3">
+<h3 class="anchored" data-anchor-id="spatial-error-model">Spatial Error Model</h3>
+<p>The Spatial Durbin model can also be simplified in an interesting way. Instead of assuming the lag-X coefficients <span class="math inline">\boldsymbol\theta = 0</span> as was assumed in the spatial autoregressive model, we can instead make the assumption <span class="math inline">\boldsymbol\theta = -\rho \boldsymbol\beta</span>.</p>
+<p>This assumption <span class="math inline">\boldsymbol\theta = -\rho \boldsymbol\beta</span> basically says that the lag-X effect is equivalent to the strength of the lag-y effect multiplied to our own <span class="math inline">\mathbf x</span> effect on <span class="math inline">y</span>.</p>
+<p>This assumption (and a bit of matrix algebra) allows us to achieve the <strong>Spatial Error Model</strong>:</p>
+<p><span class="math display">
+\mathbf y = \mathbf{X} \boldsymbol\beta + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
+</span></p>
+<ul>
+<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
+<li>Where <span class="math inline">\lambda</span> is some fraction multiple that affects the spatial autocorrelation.</li>
+<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Proof of Derivation of the Spatial Error Model
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
