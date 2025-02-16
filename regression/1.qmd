@@ -23,7 +23,7 @@ format:
 editor: visual
 ---
 
-This lesson introduces multiple linear regression, the foundational model for all of statistics. We cover the specification of the model, estimation and statistical inference, as well as extensions.
+This chapter introduces multiple linear regression, the foundational model for all of statistics. We cover the specification of the model, estimation and statistical inference, as well as extensions.
 
 ------------------------------------------------------------------------
 
@@ -570,6 +570,69 @@ Each coefficient $\beta_j$'s statistical significance is a difference-in-means s
 
 <br />
 
+### Fixed Effects
+
+When we have hierarchical or panel data, we need to control for differences between clusters. We essentially include the cluster variable as a categorical variable in our regression.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Hierarchical/Clustered Data
+
+Hierarchical data is data where the basic units of analysis $i$ are clustered, grouped, or nested into clusters.
+
+For example, let us say we are measuring how income affects voter turnout in european countries. We have observations from France, Switzerland, Germany, and many other countries. However, these observations can be grouped by the country they came from.
+
+Why is this grouping important? This is because there may be something in common between observations within the same cluster. For example, Switzerland might just have higher voter turnout in general due to something about Swiss institutions or culture.
+
+This means that observations aren't random - i.e. we know that if we select from switzerland, it is likely to have higher turnout - observations from the same country are correlated. Thus, we need some way to account for this clustering of observations. We will explore this below.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Panel Data
+
+Panel data is data that can be clustered in two ways - by unit, and by time. For example, let us say we have a dataset on all countries and their GDP between 1960-2020.
+
+-   We will have clusters based on country: Germany will have an observation in 1960, in 1961, ..., to 2020. Same for every other country. These observations are grouped by the unit (country in this case).
+-   We will also have clusters based on time: We will have all GDP observations for all countries in 1960, in 1961, etc. These observations are grouped by the time (year in this case).
+:::
+
+Let us say we have $m$ number of clusters $i = 1, \dots, m$. Within each cluster, we will have units $t = 1, \dots, n$. Our cluster fixed effects model will take the form:
+
+$$
+\begin{split}
+y_{it} & = \alpha_i + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
+& \text{where } \alpha_i = \beta_{00} + \underbrace{\beta_{02}D_{i2} + \beta_{03}D_{i3} + \dots + \beta_{0m}D_{im}}_{\text{unique intercepts for each cluster } 2, \dots, m}
+\end{split}
+$$
+
+-   Where $D_{i2}, D_{i3}, \dots, D_{im}$ are dummy variables for clusters $2, \dots, m$. Cluster 1 is the reference category.
+-   $y_{it}$ indicates the $y$ value of the $t$th individual in the $i$th cluster.
+
+For panel data, we use two-way fixed effects, which is basically just two fixed effects for different clustering. Let us say we have $i = 1, \dots, m$ units with $t = 1, \dots, n$ different numbers of time periods. Our two way fixed effects model takes the form:
+
+$$
+\begin{split}
+y_{it} & = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
+& \text{where } \alpha_i =  \alpha_{00} + \underbrace{\alpha_{02}D_{i2} + \alpha_{03}D_{i3} + \dots + \alpha_{0m}D_{im}}_{\text{unique intercepts for each unit } 2, \dots, m} \\
+& \text{where } \gamma_t =  \gamma_{00} + \underbrace{\gamma_{02}T_{i2} + \gamma_{03}D_{t3} + \dots + \gamma_{0n}T_{in}}_{\text{unique intercepts for each time }2, \dots, n} \\
+\end{split}
+$$
+
+-   Where $D_{i2}, D_{i3}, \dots, D_{im}$ are dummy variables for units $2, \dots, m$., and $T_{i2}, T_{i3}, \dots, T_{in}$ are dummy variables for time periods $2, \dots, n$.
+-   $y_{it}$ indicates the observation of unit $i$ in time period $t$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Intuitive Explanation of Fixed Effects
+
+For one-way fixed effects, we essentially add a unique intercept term for every cluster, accounting for the average differences in $y$ between each category.
+
+-   $\beta_{00}$ is the intercept for the reference category 1.
+-   $\beta_{00} + \beta_{0i}$ is the intercept for the $i$th category.
+
+For two-way fixed effects, we add a unique intercept term for every year and country, accounting for the average differences in $y$ between each country, and the average differences in $y$ between each year.
+:::
+
+<br />
+
 ### Interaction Effects
 
 An interaction between two variables means they are multiplied in the regression equation:
@@ -823,6 +886,26 @@ feols(y ~ x1 + as.factor(x2) + x3, data = mydata, se = "hetero")
 ```
 
 You can do the same for $y$ or $x$. Just remember, $y$ cannot be a categorical variable (use multinomial logsitic regression instead).
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Fixed Effects
+
+You can include one-way fixed effects by adding a \| after your regression formula in *feols()*:
+
+```{r, eval = FALSE}
+model <- feols(y ~ x1 + x2 + x3 | cluster,
+               data = mydata, se = "hetero")
+summary(model)
+```
+
+You can add two-way fixed effects as follows:
+
+```{r, eval = FALSE}
+model <- feols(y ~ x1 + x2 + x3 | unit + year,
+               data = mydata, se = "hetero")
+summary(model)
+```
 :::
 
 ::: {.callout-note collapse="true" appearance="simple"}

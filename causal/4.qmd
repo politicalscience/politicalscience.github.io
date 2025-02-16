@@ -640,3 +640,217 @@ There are a few other solutions to this issue of OLS bias under heterogeneity:
 ------------------------------------------------------------------------
 
 # **Partial Identification**
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Implementation in R**
+
+For all methods, you will need the *tidyverse* package:
+
+```{r, eval = FALSE}
+library(tidyverse)
+```
+
+See how to perform each estimator in R:
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Distance Matching
+
+For matching, you will need the *MatchIt* package:
+
+```{r, eval = FALSE}
+library(MatchIt)
+```
+
+First, let us conduct nearest neighbour matching with Mahalanobis distance by using the *matchit()* function.
+
+```{r, eval = FALSE}
+match_object = MatchIt::matchit(D ~ X1 + X2 + X3,
+                                data = my_data,
+                                method = "nearest", #distance matching
+                                distance = "mahalanobis")
+
+# for output summary
+summary(match_object)
+```
+
+Second, let us save the matched data with the *match.data()* function.
+
+```{r, eval = FALSE}
+match_data <- MatchIt::match.data(match_object,
+                                  weights = 'nn_weights')
+```
+
+Third, we can test if matching worked by using a balance table and a love plot:
+
+```{r, eval = FALSE}
+# balance table
+cobalt::bal.tab(D ~ X1 + X2 + X3, 
+                data = match_data, # from the 2nd step
+                weights = "nn_weights",
+                disp = c("means", "sds"))
+
+#love plot
+cobalt::love.plot(match_object,
+                  data = my_data, #original dataset
+                  stars = 'raw')
+```
+
+Finally, we can estimate the treatment effect. There are two options - either using a weighted regression, or using the matching algorithm:
+
+```{r, eval = FALSE}
+# using weighted regression
+estimate <- lm_robust(Y ~ D,
+                      data = match_data, #data from step 2
+                      weights = nn_weights)
+summary(estimate)
+
+## using the Matching package:
+estimate = Matching::Match(Y = my_data$Y, #outcome
+                           Tr = my_data$D, #treatment
+                           X = my_data[,c("X1", "X2", "X3")], #covariates
+                           M=1, #number of neighbours
+                           BiasAdjust = TRUE, #for biased adjustment
+                           Weight = 2)
+summary(estimate)
+```
+
+You will have the estimates that you can use.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Propensity Score Matching
+
+First, we want to estimate propoensity scores with a logistic regression (or a random forest):
+
+```{r, eval = FALSE}
+#logistic model
+pscore_model = glm(D ~ X1 + X2,
+                   data = my_data,
+                   family = "binomial")
+
+# estimate propensity scores
+my_data$pscore_estimate = predict(pscore_model,
+                                  type = "response")
+```
+
+Now, let us match with propensity scores:
+
+```{r, eval = FALSE}
+# match
+match_object = MatchIt::matchit(D ~ pscore_estimate,
+                                data = my_data,
+                                method = "nearest",
+                                distance = "Mahalanobis")
+
+# save matched data
+match_data <- MatchIt::match.data(match_object,
+                                  weights = 'pscore_weights')
+```
+
+Third, we can test if matching worked with a balance table and a love plot:
+
+```{r, eval = FALSE}
+#balance table
+cobalt::bal.tab(D ~ X1 + X2 + X3,
+                data = match_data, #matched data from step 2
+                weights = "pscore_weights",
+                disp = c("means", "sds"))
+
+#love plot
+cobalt::love.plot(match_object,
+                  data = my_data, #original dataset
+                  addl = ~ X1 + X2 + X3,
+                  stars = 'raw')
+```
+
+Finally, let us do the estimation:
+
+```{r, eval = FALSE}
+estimate <- lm_robust(Y ~ D,
+                      data = match_data, #from step 2
+                      weights = pscore_weights)
+summary(estimate)
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Inverse Probability Weighting
+
+First, we want to estimate propoensity scores with a logistic regression (or a random forest):
+
+```{r, eval = FALSE}
+#logistic model
+pscore_model = glm(D ~ X1 + X2,
+                   data = my_data,
+                   family = "binomial")
+
+# estimate propensity scores
+my_data$pscore_estimate = predict(pscore_model,
+                                  type = "response")
+```
+
+Second, we calculate the inverse probability weights based on the formula from earlier:
+
+```{r, eval = FALSE}
+my_data$ipweight = ifelse(my_data$D == 1, # condition
+                       1/my_data$pscore_estimate,
+                       1/(1-my_data$pscore_estimate))
+```
+
+Finally, we can estimate the ATE, or ATT, or use a weighted regression for the ATE:
+
+```{r, eval = FALSE}
+# ATE estimator
+mean((my_data$D * my_data$Y) * my_data$ipweight - ((1 - my_data$D) * my_data$Y) * my_data$ipweight)
+
+# ATT estimator
+sum(my_data$D * my_data$Y - (1 - my_data$D) * my_data$Y * (my_data$pscore_estimate/(1 - my_data$pscore_estimate)))/sum(my_data$D)
+
+# ATE with weighted regression
+estimate <- lm_robust(Y ~ D, 
+                      data = my_data,
+                      weights = ipweight)
+summary(estimate)
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## OLS Estimator
+
+For the OLS estimator, we can use the *lm_robust()* function:
+
+```{r, eval = FALSE}
+estimate <- lm_robust(Y ~ D + X1 + X2 + X3,
+                      data = my_data)
+summary(estimate)
+```
+
+We can also use the *fixest* package and the *feols()* function:
+
+```{r, eval = FALSE}
+library(fixest)
+
+estimate <- feols(Y ~ D + X1 + X2 + X3,
+                  data = my_data,
+                  se = "hetero")
+summary(estimate)
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Fully Interacted Estimator
+
+For the fully interacted estimator, we can use the *lm_lin()* function.
+
+```{r, eval = FALSE}
+estimate <- lm_lin(Y ~ D,
+                   covariates = ~ X1 + X2 + X3,
+                   data = my_data)
+summary(estimate)
+```
+:::
