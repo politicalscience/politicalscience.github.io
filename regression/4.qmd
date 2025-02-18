@@ -1,6 +1,6 @@
 ---
-title: "Spatial Regression Models"
-subtitle: "Regression and Extensions"
+title: "Random Forest and Bagging"
+subtitle: "Statistical Models"
 format:
     html:
         page-layout: article
@@ -23,130 +23,96 @@ format:
 editor: visual
 ---
 
-So far, we have mostly looked at models that deal with cross-sectional data. In this chapter, we introduce spatial data - data that has a spatial component, and how we can account for the complexities of this.
+So far, we have covered traditional statistical models. In this chapter, we introduce a data science model - Random Forests and Bagging, and how they can be used for accurate prediction and classification tasks.
 
 ------------------------------------------------------------------------
 
-# **Spatial Data**
+# **Regression Trees**
 
-### Effects Through Space
+### Trees and Stratification
 
-When we typically conduct regression models, we often ignore the spatial element. At most, we might include some region-fixed effects. Our typical, non-spatial model takes the form:
+Regression Trees are an alternative way to obtain predictions of an outcome $y$ from explanatory variables $x$.
+
+Instead of modelling how $y$ changes with every unit increase in $x$, regression trees instead model stratification.
+
+Tree-based methods will divide the independent variable $x_j$ into 2 regions, splitting $x$ at some value $x = s$. For example, if we had an $x$ variable such that $x \in [0, 100]$, we could split the variable at $x = s$ to create two regions: $x^{(1)} \in [0, s]$ and $x^{(2)} \in [s, 100]$.
+
+Then, tree-based methods will calculate the mean $y$ value in each region created: $\bar y^{(1)}$ and $\bar y^{(2)}$. These means will be the predictions of $\hat y$.
+
+-   If a unit $i$ has an $x$ value that falls into region $x^{(1)} \in [0, s]$, their predicted $\hat y = \bar y^{(1)}$.
+-   If a unit $i$ has an $x$ value that falls into region $x^{(2)} \in [s,100]$, their prediction $\hat y = \bar y^{(2)}$.
+
+<br />
+
+### Determining the Thresholds
+
+So we know that trees will stratify/divide our observations into groups by some threshold $x = s$. But how do we decide which threshold $s$,?
+
+For continuous $y$ variables, to determine the threshold $s$ in which to split $x$, the algorithm of tree regressions will find the optimal threshold $x = s$ that reduces the **residual sum of squares** (RSS) of the predictions the most:
 
 $$
-\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u
+RSS = \sum\limits_{i=1}^n(y_i - \hat y_i)^2
 $$
 
-However, this fails to consider how nearby geographies might affect each other. There are three primary ways in which neighbours could affect each other.
+Essentially, the computer tests every possible threshold value of $x_j = s$, and finds the threshold that reduces the sum of squares the most.
 
-1.  The values of $y$ in a region might impact or correlate with the values of $y$ in a neighbouring region. This is called a **lagged y model**.
-2.  The values of $\mathbf x$ in a region might impact or correlate with the values of $y$ in a neighbouring region. This is called a **lag x model**.
-3.  The residuals $u$ could impact or correlated with the residuals $u$ of a neighbouring region. This is called **spatial autocorrelation**.
+For binary $y$ variables, trees will determine the threshold $s$ in which to split $x$, based on the threshold $x=s$ that reduces the **classification error rate**.
+
+The classification error is essentially how many predictions $\hat y$ do not match to the actual $y$.
+
+<br />
+
+### Growing a Tree
+
+The process of growing a tree is as follows. Assume now we have more than one explanatory variable.
+
+1.  Test all possible thresholds $x_j = s$ for each $x_j \in \{x_1, \dots, x_k\}$.
+2.  Identify the specific variable $x_p \in \{x_2, \dots, x_k\}$ which has a specific threshold $x_p = s^*$ that has the greatest reduction in residual sum of squares (or classification error rate), for all combinations of $x_j$ and threshold $s$.
+3.  Now, divide that specific $x_p$ at that specific threshold $s^*$, creating two regions $x_p^{(1)}, x_p^{(2)}$.
+4.  Now, we repeat the process of testing all possible thresholds $x_j = s$ for each $x_j \in \{x_1, \dots, x_k \}$ and finding the specific variable-threshold $x_m = s^{**}$ that results the in the greatest reduction in RSS (or classification error rate) within $x_p^{(1)}$. Create 2 more groups from within $x_p^{(1)}$.
+5.  Then, do the same for $x_p^{(2)}$. Create 2 more groups from with $x_p^{(2)}$.
+6.  Keep on going, finding the variable-thresholds which reduce the RSS the most from each previous subregion we have created.
+7.  Continue doing this until some stopping criteria. Find the average $y$ in each of the groups you have, and those are the predicted $\hat y$.
+
+It is possible for a variable to occur multiple times with different thresholds.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Examples of Spatial Relationships
+## Example of Growing a Tree
 
-Here are a few examples of spatial relationships.
+Below is an example of growing a tree:
 
--   Perhaps one state's high unemployment rate might impact a neighbouring region's unemployment rate. This is a lagged y model.
--   Perhaps one state's income levels might affect a neighbouring region's unemployment rate, since a state's residents might spend more money in neighbouring states. This is a lag x model.
--   Perhaps something that is causing unexplained variation in unemployment levels in our region, are also present in neighbouring region. This might occur because there is some industry that is prominent in a certain area with neighbouring regions. Thus, all regions in this area might have unexpectedly high unemployment rates. This is spatial autocorrelation.
+![](images/clipboard-3372306608.png){fig-align="center" width="80%"}
+
+We can see that the first (top) split is in the variable *taxpercent*, at threshold 34.2935. That means that specific variable-threshold split reduced the RSS the most of any variable-threshold combination.
+
+Notice how after the first split, we only divide each subregion. We do not go back to the top/whole data set.
+
+Notice how *taxpercent* re-appears again on the right side of the tree. It is possible for a variable to occur multiple times.
+
+At the end, you can see the numbers at the bottom. These are called leaves, and are the final categories/groups of the tree with their mean $y$ labelled. Those mean $y$ will be the predictions for each observation that falls into that group.
 :::
 
-We can measure which regions are "neighbours" with a spatial weights matrix $\mathbf W$. By including $\mathbf W$ in our models, we can address this issue of ignoring spatial relationships.
+The earlier a variable is split, the more *influential* the variable is. We will discuss this idea further later in the chapter.
 
 <br />
 
-### Contiguity Neighbour Matrix
+### Benefits and Drawbacks
 
-The spatial weights matrix $\mathbf W$ can define which units "neighbour" each other. There are many different ways to determine neighbours:
+Simple regression trees have both benefits and drawbacks.
 
--   **Queen** contiguity matrices counts a neighbour if the region borders it either on an edge or a corner. It is called a Queen contiguity matrix because queens can move diagonally or on the grid in chess.
--   **Rook** contiguity matrices only count a neighbour if the region directly borders it. It ignores corners. It is named after how the rook behaves on a chessboard.
--   We could also consider any region who's central point or boundaries is within some radius of our region's central point or boundaries as neighbours.
--   We could also be more nuanced: a closer region to our region is a stronger neighbour, and a further region is a weaker neighbour.
+One of the best things about decision trees is that they incorporate interactions between variables. Lower-level splits of variables are interacting with higher-level splits of variables. This allows regression trees to be excellent for non-linear predictions.
 
-Let us say we have $m$ number of regions $1, \dots ,m$. The contiguity neighbour matrix is a $m \times m$ matrix $\mathbf W_{m \times m}$. Each row $i$ is a different region $1, \dots, m$, and each column $j$ is also a different region $1, \dots, m$.
+Regression trees are also great for visualisation, and are quite easy to explain visually without invoking complex statistics or mathematics.
 
-Element $w_{ij}$ of the matrix $\mathbf W_{m \times m}$ can have two values: $w_{ij} = 1$ if region $i$ and region $j$ are neighbours, and $w_{ij} = 0$ if region $i$ and region $j$ are not neighbours. If $i = j$, then $w_{ij} = 0$, since a region cannot be its own neighbour.
+The downside of regression trees is that they have extremely high variance. If you just slightly change the data, your predicted results will be completely different, and even the order of variables and thresholds will completely change. This is called **overfitting**.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Example of a Contiguity Neighbour Matrix
-
-Let us say we have three regions: 1, 2, and 3. They are arranged in a line, where 1 borders 2, and 2 borders 3.
-
-We can construct a continuity neighbour matrix (using the queen or rook method) as follows. The matrix will be $3 \times 3$, since we have 3 regions:
-
-$$
-\mathbf W_{3 \times 3} = \begin{pmatrix}
-0 & 1 & 0 \\
-1 & 0 & 1 \\
-0 & 1 & 0
-\end{pmatrix}
-$$
-
-We can test this is true with any element $w_{ij}$. Remember that $w_{ij} = 1$ only if region $i$ and region $j$ are neighbours.
-
--   Let us look at $w_{21}$ in the matrix. We can seen $w_{21} = 1$. This is correct, since we know region 2 and 1 border each other.
--   Let us look at $w_{31}$ in the matrix. We can see $w_{31}=0$. This is correct, since we know region 3 and 1 do not border each other.
+## The Problem of Overfitting
 :::
 
-<br />
+This is not a good thing - after all, we want to be able to predict unseen data. Overfitting causes simple regression trees to be poor predictors on their own.
 
-### Contiguity Weights Matrix
-
-After we have a contiguity neighbour matrix, we can "row-standardise" it to get a **contiguity weights matrix**. Essentially, this means each row's weights should equal 1.
-
-To implement this, we first find the sum of all elements in each row. We then divide each element within a row by its sum to standardise it.
-
-For example, take this contiguity neighbour matrix:
-
-$$
-\mathbf W_{3 \times 3} = \begin{pmatrix}
-0 & 1 & 0 \\
-1 & 0 & 1 \\
-0 & 1 & 0
-\end{pmatrix}
-$$
-
-We can see the sum of the elements of the 1st row is 1, the sum of the 2nd row is 2, and the sum of the 3rd row is 1. That means we should divide each element within row 1 by 1, each element in row 2 by 2, and each element in row 3 by 1. We will get this following contiguity weights matrix:
-
-$$
-\mathbf W_{3 \times 3} = \begin{pmatrix}
-0 & 1 & 0 \\
-0.5 & 0 & 0.5 \\
-0 & 1 & 0
-\end{pmatrix}
-$$
-
-We can see that the elements of each row sum to 1. We typically always want to standardise to get a contiguity weights matrix, since it gives each area equal weight to the computation of our models.
-
--   It also makes regression estimates more interpretatable.
--   It also makes any correlation measures standardised between 0 and 1 (think covariance vs. correlation).
-
-<br />
-
-### Spatial Correlations
-
-Spatial Correlations are the covariation of properties within a geographic space. For example, locations in nearby locations might seem to be correlated, either positively or negatively.
-
-Spatial correlations will introduce spatial autocorrelation, which is an issue that is not dealt with by the standard OLS model. **Moran's I** is the most commonly used way of quantifying spatial correlations. The formula is as follows:
-
-$$
-I = \frac{N}{\underbrace{\sum_i \sum_jw_{ij}}_{\text{sum of all of }\mathbf W}} \times \frac{\sum_i \sum_j w_{ij}(x_i - \bar x) (x_j - \bar x)}{\sum_i(x_i - \bar x)^2}
-$$
-
--   Where $N$ is the number of spatial regions.
--   Where $x$ is the variable of interest that we want to see if it is correlated through space. $\bar x$ is the mean of $x$.
--   $w_{ij}$ are elements of the of the spatial matrix $\mathbf W$.
-
-Moran's I is always between -1 and 1 if using a standardised contiguity weights matrix. However, $I = 0$ isn't actually the value of no spatial correlation. The expected value of no spatial correlation is defined as:
-
-$$
-E(I) = \frac{-1}{N-1}
-$$
-
-As sample size increases, the closer this value becomes to 0.
+Thus, we almost never use simple regression trees for prediction. We tend to use more advanced models, Random Forest and Bagging, which build on regression trees, but solve this issue of overfitting.
 
 <br />
 
@@ -154,114 +120,220 @@ As sample size increases, the closer this value becomes to 0.
 
 ------------------------------------------------------------------------
 
-# **Spatial Models**
+# **Bagging and Random Forest**
 
-### Manski Model
+### Bootstrap Sampling
 
-Before, we talked about three ways neighbouring regions can affect each other: lagged y, lagged x, and spatial autocorrelation.
+While regression trees have some benefits, they suffer from overfitting and high variance. **Bootstrap Aggregation** is a procedure for reducing the variance of a statistical learning method.
 
-We can include all three elements in our regression (along with our spatial weights matrix $\mathbf W$), creating the **manski model**:
+This procedure builds on a simple statistical idea: in a set of $n$ samples $Z_1, \dots, Z_n$ each with variance $\sigma^2$, the variance of the means $\bar Z$ of all the samples is $\frac{\sigma^2}{n}$. Since $n$ is in the denominator, that implies increasing the number of samples $n$ will reduce the variance of our predictions.
 
-$$
-\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
-$$
+However, we typically only have one sample of data. How can we increase $n$ if we only have one sample? The answer is **Bootstrap Sampling**. Essentially, we sample with replacement from our original sample.
 
--   Where $\rho$ is some fraction (generally less than 1) multiplier that affects the lag in $y$.
--   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
--   Where $\boldsymbol\theta$ is some vector of a lot of slope parameters that determines how the region's neighbour's explanatory variables affect its outcome $y$.
--   Where $\lambda$ is some fraction multiple that affects the spatial autocorrelation.
--   Where $\boldsymbol\epsilon$ is the stochastic error term.
+To create a bootstrap sample, we choose 1 observation at random from our original sample. We add that observation to our bootstrap sample, and replace it back into our original sample. Then, we draw another observation, add it to our bootstrap sample, and replace it back. We do this $n$ times ($n$ being the sample size of our sample).
 
-The Manski Model is the "fullest model". However, it is very difficult to estimate and identify all the parameter values. With so many parameters, their might be strong multicollinearity that makes estimates not very precise, and there is a degrees of freedom problem.
+If we do this procedure multiple times, we will end up with a few similar, but slightly different data sets. We are essentially replicating the process of obtaining new data sets, without gathering more data. Now, with our multiple data sets, we can use bootstrap aggregation to reduce our variance.
 
 <br />
 
-### Kelejian-Prucha Model
+### Bagging Models
 
-Since the Manski model is often too difficult to estimate, most people will drop either lag y, lag x, or spatial autocorrelation terms from the model.
+**Bagging** models apply bootstrap sampling to tree regressions.
 
-The **Kelejian-Prucha Model** only considers lag y and spatial autocorrelation, and drops lag x. This is making the assumption $\boldsymbol\theta = 0$, that neighbouring explanatory variables do not affect a region's outcome $y$:
+1.  We first generate $B$ number of bootstrap samples.
+2.  Then, we train a tree on each different sample $b$, creating a prediction function $f_b(x) = \hat y_b$ for each sample, which specifies what values of $x$ result in what predicted $\hat y$ according to the tree.
+3.  Then we average all of the sample predictions together to obtain our final prediction function $f_{bag}(x)$.
 
 $$
-\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta +  + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
+f_{bag}(x) = \frac{1}{B}\sum\limits_{b=1}^Bf_b(x)
 $$
 
--   Where $\rho$ is some fraction (generally less than 1) multiplier that affects the lag in $y$.
--   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
--   Where $\lambda$ is some fraction multiple that affects the spatial autocorrelation.
--   Where $\boldsymbol\epsilon$ is the stochastic error term.
+Bagging reduces the variance of trees, and is one of the most accurate prediction methods, frequently outperforming both linear and non-linear methods.
 
-This model is generally identifiable, and is quite popular as a starting point.
+However, bagging is still not perfect. This is because bagging trees are heavily correlated: in general, the trees will have the same top-level $x_p$ variable, especially if there is one very strong predictor in our explanatory variables.
+
+This is an issue - highly correlated trees, even if averaged, do not reduce the variance as much as we might need. This is where the next class of models, Random Forests, come in.
 
 <br />
 
-### Spatial Durbin Model
+### Random Forest Models
 
-The **Spatial Durbin Model** (SDM) only considers lag y and lag x, and drops spatial autocorrelation. This is making the assumption $\lambda = 0$, that there is no spatial autocorrelation:
+Bagging has an issue of having highly correlated trees, which may not reduce variance as much as we desire. **Random Forests** solve this issue by not only bootstrapping observations like Bagging does, but also sampling a subset of explanatory variables for each tree.
 
-$$
-\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \boldsymbol\epsilon
-$$
+For example, let us say you a set of explanatory variables $\mathcal X = \{x_1, \dots  x_k\}$. For every bootstrap sample of observations $b$ that we did in bagging, Random forest will also sample a subset of explanatory variables $\mathcal X_b$, which contains only $g<k$ number of explanatory variables.
 
--   Where $\rho$ is some fraction (generally less than 1) multiplier that affects the lag in $y$.
--   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
--   Where $\boldsymbol\theta$ is some vector of a lot of slope parameters that determines how the region's neighbour's explanatory variables affect its outcome $y$.
--   Where $\boldsymbol\epsilon$ is the stochastic error term.
+This means that each tree Random Forest produces only has a subset of $g$ explanatory variables, not the total number of $k$ explanatory variables. This means that sometimes, influential variables $x_p$ will not be included in the subset $\mathcal X_b$, which will allow for other predictors to get a chance to shine.
 
-The Spatial Durbin Model is popular because it is the starting point of further reductions in parameters, as we will see with the Spatially Lagged X model, the Spatial Autorgressive Model, and the Spatial Error Model.
+Thus, Random Forest will have less correlated trees, and thus, will typically have more accurate predictions.
 
-If you do not know what type of model you should run (and what types of lags/autocorrelation), you should generally start with the Spatial Durbin Model.
+Generally, the size of the subset of explanatory variables $\mathcal X_b$ will typically be $g=\sqrt{k}$, the square root of the total number of explanatory variables. However, you can play around with this (discussed in the next section).
 
 <br />
 
-### Spatially Lagged X Model
+<br />
 
-The **Spatially Lagged X Model** (SLX) is a simplification of the Spatial Durbin Model, getting rid of the lag y effect.
+------------------------------------------------------------------------
 
-Thus, the model only contains lag x (as implied by the name). As a result, the model assumes $\rho = 0$ (no lag y) and $\lambda = 0$ (no spatial autocorrelation):
+# **Model Selection**
 
-$$
-\mathbf y =  \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \boldsymbol\epsilon
-$$
+### Model Selection for Prediction
 
--   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
--   Where $\boldsymbol\theta$ is some vector of a lot of slope parameters that determines how the region's neighbour's explanatory variables affect its outcome $y$.
--   Where $\boldsymbol\epsilon$ is the stochastic error term.
+There are a few choices you must make when specifying the model you are using.
+
+1.  Should you use Random Forest or Bagging? Typically, Random Forest is better, but this is not always the case.
+2.  If you do choose Random Forest, what size of the subset of explanatory variables $\mathcal X_b$ should you use? Typically, the standard is to use the square root of the number of explanatory variables, but this is not a fixed rule.
+
+**Mean of squared residuals** is a general measure of how well the model performed. It is the mean of the squared errors, where the errors are the differences between the actual dataset $y_i$ value and the predicted $\hat y_i$ value.
+
+In R, the mean of squared residuals metric is calculated on testing data - testing the model on units that were not included in a specific bootstrap sample. Thus, this is a good measure of how predictive your model is, without worrying about overfitting.
+
+You should test all different possibilities of model selection choices, and see which one reduces the mean of squared residuals the most.
+
+<br />
+
+### Model Selection for Classification
+
+For classification tasks, you have the same decisions (bagging vs. random forest, what size $\mathcal X_b$) as prediction tasks.
+
+The simplest metric to help you make the decision is the **error rate**. This is simply the percentage of observations the model got wrong (predicted one category when it should have been the other).
+
+We can also dig into more detail.
+
+-   The **False Positive Rate** is the observations that are $y=0$, but our model predicted incorrectly as $\hat y = 1$.
+-   The **False Negative Rate** is the observations that are $y=1$, but our model predicted incorrectly as $\hat y = 0$.
+
+The inverses of false positives/negatives are specificity and sensitivity:
+
+-   **Specificity** is the percentage of observations that are $y=0$, that our model correctly predicted as $\hat y =0$.
+-   **Sensitivity** is the percentage of observations that are $y=1$, that our model correctly predicted as $\hat y = 1$.
+
+The metric on which to focus on depends on our goals of classification. Choosing the right model requires some subjectivity. For example, if we are trying to predict if a patient has a serious disease, we probably want more false positives rather than under-detecting people who are actually sick. But for judicial systems, since we do not want to put an innocent person in jail, we might prefer lower false positives, and more false negatives.
 
 <br >
 
-### Spatial Autoregressive Model
+<br />
 
-The **Spatial Autoregressive Model** (SAR), also called the spatial lag model, is another simplification of the Spatial Durbin Model, getting rid of the lag x effect.
+------------------------------------------------------------------------
 
-Thus, the model only contains lag y. As a result, the model assumes $\boldsymbol\theta = 0$ (no lag X), and $\lambda = 0$ (no spatial autocorrelation).
+# **Interpretation**
 
-$$
-\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \boldsymbol\epsilon
-$$
+### Model Summary Statistics
 
--   Where $\rho$ is some fraction (generally less than 1) multiplier that affects the lag in $y$.
--   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
--   Where $\boldsymbol\epsilon$ is the stochastic error term.
+There are several model summary statistics for prediction tasks:
+
+1.  **Mean of squared residuals** is a general measure of how well the model performed. This can tell us how confident we are in our model.
+2.  **% Var Explained** is how well our explanatory variables explain the variation in $y$. This is almost identical to the interpretation of the $R^2$ metric in linear regression.
+
+For classification tasks, summary statistics include:
+
+1.  The **Error Rate** is simply the percentage of observations the model got wrong (predicted one category when it should have been the other).
+2.  A **Confusion Matrix** is a table that has rows for actual $y = 0, 1$, and volumes for predicted $\hat y = 0 ,1$. This allows you to calculate false positive/negative rates and sensitivity/specificity.
+
+These summary statistics are all provided in the R output.
 
 <br />
 
-### Spatial Error Model
+### Importance Statistics
 
-The Spatial Durbin model can also be simplified in an interesting way. Instead of assuming the lag-X coefficients $\boldsymbol\theta = 0$ as was assumed in the spatial autoregressive model, we can instead make the assumption $\boldsymbol\theta = -\rho \boldsymbol\beta$.
+One of the downsides of Bagging and Random Forest is that they are harder to interpret than Regression Trees.
 
-This assumption $\boldsymbol\theta = -\rho \boldsymbol\beta$ basically says that the lag-X effect is equivalent to the strength of the lag-y effect multiplied to our own $\mathbf x$ effect on $y$.
+Regression Trees produce a nice diagram, with the most important variables near the top. However, Bagging and Random Forest average hundreds or thousands of different trees, so we cannot really draw a diagram out.
 
-This assumption (and a bit of matrix algebra) allows us to achieve the **Spatial Error Model**:
+This is where importance statistics comes in. To calculate importance, we "remember" the reduction in RSS (or error rate) every time we split a tree, for every bagging sample $b$. Then, we figure out which variables on average reduce the RSS (or error rate) the most.
 
-$$
-\mathbf y = \mathbf{X} \boldsymbol\beta + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
-$$
+![](images/clipboard-364907520.png){fig-align="center" width="80%"}
 
--   Where $\boldsymbol\beta$ is a vector coefficients that determine how the region's own explanatory variables affect its outcome $y$.
--   Where $\lambda$ is some fraction multiple that affects the spatial autocorrelation.
--   Where $\boldsymbol\epsilon$ is the stochastic error term.
+Above is an example of the importance plot. This allows us to determine which explanatory variables are the most influential in determining the predictions, which can be useful in interpretation.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Implementation in R**
+
+You will need the *randomForest* and *tidyverse* packages.
+
+```{r, eval = FALSE}
+library(randomForest)
+library(tidyverse)
+```
+
+For replication purposes (if you are publishing a paper), you may also want to set a random seed, which will ensure your bootstrap and variable sampling remains consistent in replication.
+
+```{r, eval = FALSE}
+set.seed(1234) #any number will work
+```
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Proof of Derivation of the Spatial Error Model
+## Bagging Model
+
+You can train a bagging model with the *randomForest()* function:
+
+```{r, eval = FALSE}
+model <- randomForest(Y ~ x1 + x2 + x3 + x4,
+                      data = mydata,
+                      na.action = na.omit,
+                      mtry = 4, #equal to k
+                      importance = TRUE)
+
+#call object to see output
+model
+```
+
+The output will contain summary statistics.
+
+Note: you can also do $Y \sim .$ in the formula. The $.$ symbolises that you want to include all other variables not $Y$ within your dataframe into your model. This speeds up the process of writing every single explanatory variable out.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Random Forest Model
+
+You can train a random forest model with the *randomForest()* function:
+
+```{r, eval = FALSE}
+model <- randomForest(Y ~ x1 + x2 + x3 + x4,
+                      data = mydata,
+                      na.action = na.omit,
+                      mtry = 2, #equal to sqrt of k
+                      importance = TRUE)
+
+#call object to see output
+model
+```
+
+The output will contain summary statistics.
+
+Note: you can also do $Y \sim .$ in the formula. The $.$ symbolises that you want to include all other variables not $Y$ within your dataframe into your model. This speeds up the process of writing every single explanatory variable out.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Predictions
+
+You probably want to make predictions with your model (that is kind of the point of these models).
+
+We can use the *predict()* function to generate predictions:
+
+```{r, eval = FALSE}
+mypredictions <- predict(model, newdata = my_new_data)
+```
+
+*my_new_data* is a dataframe with a bunch of explanatory variable values (for every explanatory variable) for a collection of observations, that you wish to predict $\hat y$ for.
+
+*model* is the name of the object in which you stored your trained model to.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Importance Plot
+
+To see the importance of each explanatory variable, we can use the *varImpPlot()* function:
+
+```{r, eval = FALSE}
+varImpPlot(model,
+           main = "Title of the Graph",
+           type = 2)
+```
+
+Do not change type = 2. That specifies something technical that you do not need to worry about.
 :::

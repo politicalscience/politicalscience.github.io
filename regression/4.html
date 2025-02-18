@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Spatial Regression Models</title>
+<title>Random Forest and Bagging</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -85,8 +119,8 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Spatial Regression Models</h1>
-            <p class="subtitle lead">Regression and Extensions</p>
+      <h1 class="title">Random Forest and Bagging</h1>
+            <p class="subtitle lead">Statistical Models</p>
                       </div>
   </div>
     
@@ -105,22 +139,30 @@ window.Quarto = {
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#spatial-data" id="toc-spatial-data" class="nav-link active" data-scroll-target="#spatial-data"><strong>Spatial Data</strong></a>
+  <li><a href="#regression-trees" id="toc-regression-trees" class="nav-link active" data-scroll-target="#regression-trees"><strong>Regression Trees</strong></a>
   <ul class="collapse">
-  <li><a href="#effects-through-space" id="toc-effects-through-space" class="nav-link" data-scroll-target="#effects-through-space">Effects Through Space</a></li>
-  <li><a href="#contiguity-neighbour-matrix" id="toc-contiguity-neighbour-matrix" class="nav-link" data-scroll-target="#contiguity-neighbour-matrix">Contiguity Neighbour Matrix</a></li>
-  <li><a href="#contiguity-weights-matrix" id="toc-contiguity-weights-matrix" class="nav-link" data-scroll-target="#contiguity-weights-matrix">Contiguity Weights Matrix</a></li>
-  <li><a href="#spatial-correlations" id="toc-spatial-correlations" class="nav-link" data-scroll-target="#spatial-correlations">Spatial Correlations</a></li>
+  <li><a href="#trees-and-stratification" id="toc-trees-and-stratification" class="nav-link" data-scroll-target="#trees-and-stratification">Trees and Stratification</a></li>
+  <li><a href="#determining-the-thresholds" id="toc-determining-the-thresholds" class="nav-link" data-scroll-target="#determining-the-thresholds">Determining the Thresholds</a></li>
+  <li><a href="#growing-a-tree" id="toc-growing-a-tree" class="nav-link" data-scroll-target="#growing-a-tree">Growing a Tree</a></li>
+  <li><a href="#benefits-and-drawbacks" id="toc-benefits-and-drawbacks" class="nav-link" data-scroll-target="#benefits-and-drawbacks">Benefits and Drawbacks</a></li>
   </ul></li>
-  <li><a href="#spatial-models" id="toc-spatial-models" class="nav-link" data-scroll-target="#spatial-models"><strong>Spatial Models</strong></a>
+  <li><a href="#bagging-and-random-forest" id="toc-bagging-and-random-forest" class="nav-link" data-scroll-target="#bagging-and-random-forest"><strong>Bagging and Random Forest</strong></a>
   <ul class="collapse">
-  <li><a href="#manski-model" id="toc-manski-model" class="nav-link" data-scroll-target="#manski-model">Manski Model</a></li>
-  <li><a href="#kelejian-prucha-model" id="toc-kelejian-prucha-model" class="nav-link" data-scroll-target="#kelejian-prucha-model">Kelejian-Prucha Model</a></li>
-  <li><a href="#spatial-durbin-model" id="toc-spatial-durbin-model" class="nav-link" data-scroll-target="#spatial-durbin-model">Spatial Durbin Model</a></li>
-  <li><a href="#spatially-lagged-x-model" id="toc-spatially-lagged-x-model" class="nav-link" data-scroll-target="#spatially-lagged-x-model">Spatially Lagged X Model</a></li>
-  <li><a href="#spatial-autoregressive-model" id="toc-spatial-autoregressive-model" class="nav-link" data-scroll-target="#spatial-autoregressive-model">Spatial Autoregressive Model</a></li>
-  <li><a href="#spatial-error-model" id="toc-spatial-error-model" class="nav-link" data-scroll-target="#spatial-error-model">Spatial Error Model</a></li>
+  <li><a href="#bootstrap-sampling" id="toc-bootstrap-sampling" class="nav-link" data-scroll-target="#bootstrap-sampling">Bootstrap Sampling</a></li>
+  <li><a href="#bagging-models" id="toc-bagging-models" class="nav-link" data-scroll-target="#bagging-models">Bagging Models</a></li>
+  <li><a href="#random-forest-models" id="toc-random-forest-models" class="nav-link" data-scroll-target="#random-forest-models">Random Forest Models</a></li>
   </ul></li>
+  <li><a href="#model-selection" id="toc-model-selection" class="nav-link" data-scroll-target="#model-selection"><strong>Model Selection</strong></a>
+  <ul class="collapse">
+  <li><a href="#model-selection-for-prediction" id="toc-model-selection-for-prediction" class="nav-link" data-scroll-target="#model-selection-for-prediction">Model Selection for Prediction</a></li>
+  <li><a href="#model-selection-for-classification" id="toc-model-selection-for-classification" class="nav-link" data-scroll-target="#model-selection-for-classification">Model Selection for Classification</a></li>
+  </ul></li>
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation"><strong>Interpretation</strong></a>
+  <ul class="collapse">
+  <li><a href="#model-summary-statistics" id="toc-model-summary-statistics" class="nav-link" data-scroll-target="#model-summary-statistics">Model Summary Statistics</a></li>
+  <li><a href="#importance-statistics" id="toc-importance-statistics" class="nav-link" data-scroll-target="#importance-statistics">Importance Statistics</a></li>
+  </ul></li>
+  <li><a href="#implementation-in-r" id="toc-implementation-in-r" class="nav-link" data-scroll-target="#implementation-in-r"><strong>Implementation in R</strong></a></li>
   </ul>
 </nav>
 </div>
@@ -132,246 +174,321 @@ window.Quarto = {
 
 
 
-<p>So far, we have mostly looked at models that deal with cross-sectional data. In this chapter, we introduce spatial data - data that has a spatial component, and how we can account for the complexities of this.</p>
+<p>So far, we have covered traditional statistical models. In this chapter, we introduce a data science model - Random Forests and Bagging, and how they can be used for accurate prediction and classification tasks.</p>
 <hr>
-<section id="spatial-data" class="level1">
-<h1><strong>Spatial Data</strong></h1>
-<section id="effects-through-space" class="level3">
-<h3 class="anchored" data-anchor-id="effects-through-space">Effects Through Space</h3>
-<p>When we typically conduct regression models, we often ignore the spatial element. At most, we might include some region-fixed effects. Our typical, non-spatial model takes the form:</p>
+<section id="regression-trees" class="level1">
+<h1><strong>Regression Trees</strong></h1>
+<section id="trees-and-stratification" class="level3">
+<h3 class="anchored" data-anchor-id="trees-and-stratification">Trees and Stratification</h3>
+<p>Regression Trees are an alternative way to obtain predictions of an outcome <span class="math inline">y</span> from explanatory variables <span class="math inline">x</span>.</p>
+<p>Instead of modelling how <span class="math inline">y</span> changes with every unit increase in <span class="math inline">x</span>, regression trees instead model stratification.</p>
+<p>Tree-based methods will divide the independent variable <span class="math inline">x_j</span> into 2 regions, splitting <span class="math inline">x</span> at some value <span class="math inline">x = s</span>. For example, if we had an <span class="math inline">x</span> variable such that <span class="math inline">x \in [0, 100]</span>, we could split the variable at <span class="math inline">x = s</span> to create two regions: <span class="math inline">x^{(1)} \in [0, s]</span> and <span class="math inline">x^{(2)} \in [s, 100]</span>.</p>
+<p>Then, tree-based methods will calculate the mean <span class="math inline">y</span> value in each region created: <span class="math inline">\bar y^{(1)}</span> and <span class="math inline">\bar y^{(2)}</span>. These means will be the predictions of <span class="math inline">\hat y</span>.</p>
+<ul>
+<li>If a unit <span class="math inline">i</span> has an <span class="math inline">x</span> value that falls into region <span class="math inline">x^{(1)} \in [0, s]</span>, their predicted <span class="math inline">\hat y = \bar y^{(1)}</span>.</li>
+<li>If a unit <span class="math inline">i</span> has an <span class="math inline">x</span> value that falls into region <span class="math inline">x^{(2)} \in [s,100]</span>, their prediction <span class="math inline">\hat y = \bar y^{(2)}</span>.</li>
+</ul>
+<p><br></p>
+</section>
+<section id="determining-the-thresholds" class="level3">
+<h3 class="anchored" data-anchor-id="determining-the-thresholds">Determining the Thresholds</h3>
+<p>So we know that trees will stratify/divide our observations into groups by some threshold <span class="math inline">x = s</span>. But how do we decide which threshold <span class="math inline">s</span>,?</p>
+<p>For continuous <span class="math inline">y</span> variables, to determine the threshold <span class="math inline">s</span> in which to split <span class="math inline">x</span>, the algorithm of tree regressions will find the optimal threshold <span class="math inline">x = s</span> that reduces the <strong>residual sum of squares</strong> (RSS) of the predictions the most:</p>
 <p><span class="math display">
-\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u
+RSS = \sum\limits_{i=1}^n(y_i - \hat y_i)^2
 </span></p>
-<p>However, this fails to consider how nearby geographies might affect each other. There are three primary ways in which neighbours could affect each other.</p>
+<p>Essentially, the computer tests every possible threshold value of <span class="math inline">x_j = s</span>, and finds the threshold that reduces the sum of squares the most.</p>
+<p>For binary <span class="math inline">y</span> variables, trees will determine the threshold <span class="math inline">s</span> in which to split <span class="math inline">x</span>, based on the threshold <span class="math inline">x=s</span> that reduces the <strong>classification error rate</strong>.</p>
+<p>The classification error is essentially how many predictions <span class="math inline">\hat y</span> do not match to the actual <span class="math inline">y</span>.</p>
+<p><br></p>
+</section>
+<section id="growing-a-tree" class="level3">
+<h3 class="anchored" data-anchor-id="growing-a-tree">Growing a Tree</h3>
+<p>The process of growing a tree is as follows. Assume now we have more than one explanatory variable.</p>
 <ol type="1">
-<li>The values of <span class="math inline">y</span> in a region might impact or correlate with the values of <span class="math inline">y</span> in a neighbouring region. This is called a <strong>lagged y model</strong>.</li>
-<li>The values of <span class="math inline">\mathbf x</span> in a region might impact or correlate with the values of <span class="math inline">y</span> in a neighbouring region. This is called a <strong>lag x model</strong>.</li>
-<li>The residuals <span class="math inline">u</span> could impact or correlated with the residuals <span class="math inline">u</span> of a neighbouring region. This is called <strong>spatial autocorrelation</strong>.</li>
+<li>Test all possible thresholds <span class="math inline">x_j = s</span> for each <span class="math inline">x_j \in \{x_1, \dots, x_k\}</span>.</li>
+<li>Identify the specific variable <span class="math inline">x_p \in \{x_2, \dots, x_k\}</span> which has a specific threshold <span class="math inline">x_p = s^*</span> that has the greatest reduction in residual sum of squares (or classification error rate), for all combinations of <span class="math inline">x_j</span> and threshold <span class="math inline">s</span>.</li>
+<li>Now, divide that specific <span class="math inline">x_p</span> at that specific threshold <span class="math inline">s^*</span>, creating two regions <span class="math inline">x_p^{(1)}, x_p^{(2)}</span>.</li>
+<li>Now, we repeat the process of testing all possible thresholds <span class="math inline">x_j = s</span> for each <span class="math inline">x_j \in \{x_1, \dots, x_k \}</span> and finding the specific variable-threshold <span class="math inline">x_m = s^{**}</span> that results the in the greatest reduction in RSS (or classification error rate) within <span class="math inline">x_p^{(1)}</span>. Create 2 more groups from within <span class="math inline">x_p^{(1)}</span>.</li>
+<li>Then, do the same for <span class="math inline">x_p^{(2)}</span>. Create 2 more groups from with <span class="math inline">x_p^{(2)}</span>.</li>
+<li>Keep on going, finding the variable-thresholds which reduce the RSS the most from each previous subregion we have created.</li>
+<li>Continue doing this until some stopping criteria. Find the average <span class="math inline">y</span> in each of the groups you have, and those are the predicted <span class="math inline">\hat y</span>.</li>
 </ol>
+<p>It is possible for a variable to occur multiple times with different thresholds.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Examples of Spatial Relationships
+Example of Growing a Tree
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Here are a few examples of spatial relationships.</p>
-<ul>
-<li>Perhaps one state’s high unemployment rate might impact a neighbouring region’s unemployment rate. This is a lagged y model.</li>
-<li>Perhaps one state’s income levels might affect a neighbouring region’s unemployment rate, since a state’s residents might spend more money in neighbouring states. This is a lag x model.</li>
-<li>Perhaps something that is causing unexplained variation in unemployment levels in our region, are also present in neighbouring region. This might occur because there is some industry that is prominent in a certain area with neighbouring regions. Thus, all regions in this area might have unexpectedly high unemployment rates. This is spatial autocorrelation.</li>
-</ul>
+<p>Below is an example of growing a tree:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3372306608.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+<p>We can see that the first (top) split is in the variable <em>taxpercent</em>, at threshold 34.2935. That means that specific variable-threshold split reduced the RSS the most of any variable-threshold combination.</p>
+<p>Notice how after the first split, we only divide each subregion. We do not go back to the top/whole data set.</p>
+<p>Notice how <em>taxpercent</em> re-appears again on the right side of the tree. It is possible for a variable to occur multiple times.</p>
+<p>At the end, you can see the numbers at the bottom. These are called leaves, and are the final categories/groups of the tree with their mean <span class="math inline">y</span> labelled. Those mean <span class="math inline">y</span> will be the predictions for each observation that falls into that group.</p>
 </div>
 </div>
 </div>
-<p>We can measure which regions are “neighbours” with a spatial weights matrix <span class="math inline">\mathbf W</span>. By including <span class="math inline">\mathbf W</span> in our models, we can address this issue of ignoring spatial relationships.</p>
+<p>The earlier a variable is split, the more <em>influential</em> the variable is. We will discuss this idea further later in the chapter.</p>
 <p><br></p>
 </section>
-<section id="contiguity-neighbour-matrix" class="level3">
-<h3 class="anchored" data-anchor-id="contiguity-neighbour-matrix">Contiguity Neighbour Matrix</h3>
-<p>The spatial weights matrix <span class="math inline">\mathbf W</span> can define which units “neighbour” each other. There are many different ways to determine neighbours:</p>
-<ul>
-<li><strong>Queen</strong> contiguity matrices counts a neighbour if the region borders it either on an edge or a corner. It is called a Queen contiguity matrix because queens can move diagonally or on the grid in chess.</li>
-<li><strong>Rook</strong> contiguity matrices only count a neighbour if the region directly borders it. It ignores corners. It is named after how the rook behaves on a chessboard.</li>
-<li>We could also consider any region who’s central point or boundaries is within some radius of our region’s central point or boundaries as neighbours.</li>
-<li>We could also be more nuanced: a closer region to our region is a stronger neighbour, and a further region is a weaker neighbour.</li>
-</ul>
-<p>Let us say we have <span class="math inline">m</span> number of regions <span class="math inline">1, \dots ,m</span>. The contiguity neighbour matrix is a <span class="math inline">m \times m</span> matrix <span class="math inline">\mathbf W_{m \times m}</span>. Each row <span class="math inline">i</span> is a different region <span class="math inline">1, \dots, m</span>, and each column <span class="math inline">j</span> is also a different region <span class="math inline">1, \dots, m</span>.</p>
-<p>Element <span class="math inline">w_{ij}</span> of the matrix <span class="math inline">\mathbf W_{m \times m}</span> can have two values: <span class="math inline">w_{ij} = 1</span> if region <span class="math inline">i</span> and region <span class="math inline">j</span> are neighbours, and <span class="math inline">w_{ij} = 0</span> if region <span class="math inline">i</span> and region <span class="math inline">j</span> are not neighbours. If <span class="math inline">i = j</span>, then <span class="math inline">w_{ij} = 0</span>, since a region cannot be its own neighbour.</p>
+<section id="benefits-and-drawbacks" class="level3">
+<h3 class="anchored" data-anchor-id="benefits-and-drawbacks">Benefits and Drawbacks</h3>
+<p>Simple regression trees have both benefits and drawbacks.</p>
+<p>One of the best things about decision trees is that they incorporate interactions between variables. Lower-level splits of variables are interacting with higher-level splits of variables. This allows regression trees to be excellent for non-linear predictions.</p>
+<p>Regression trees are also great for visualisation, and are quite easy to explain visually without invoking complex statistics or mathematics.</p>
+<p>The downside of regression trees is that they have extremely high variance. If you just slightly change the data, your predicted results will be completely different, and even the order of variables and thresholds will completely change. This is called <strong>overfitting</strong>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Example of a Contiguity Neighbour Matrix
+The Problem of Overfitting
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Let us say we have three regions: 1, 2, and 3. They are arranged in a line, where 1 borders 2, and 2 borders 3.</p>
-<p>We can construct a continuity neighbour matrix (using the queen or rook method) as follows. The matrix will be <span class="math inline">3 \times 3</span>, since we have 3 regions:</p>
-<p><span class="math display">
-\mathbf W_{3 \times 3} = \begin{pmatrix}
-0 &amp; 1 &amp; 0 \\
-1 &amp; 0 &amp; 1 \\
-0 &amp; 1 &amp; 0
-\end{pmatrix}
-</span></p>
-<p>We can test this is true with any element <span class="math inline">w_{ij}</span>. Remember that <span class="math inline">w_{ij} = 1</span> only if region <span class="math inline">i</span> and region <span class="math inline">j</span> are neighbours.</p>
-<ul>
-<li>Let us look at <span class="math inline">w_{21}</span> in the matrix. We can seen <span class="math inline">w_{21} = 1</span>. This is correct, since we know region 2 and 1 border each other.</li>
-<li>Let us look at <span class="math inline">w_{31}</span> in the matrix. We can see <span class="math inline">w_{31}=0</span>. This is correct, since we know region 3 and 1 do not border each other.</li>
-</ul>
+
 </div>
 </div>
 </div>
-<p><br></p>
-</section>
-<section id="contiguity-weights-matrix" class="level3">
-<h3 class="anchored" data-anchor-id="contiguity-weights-matrix">Contiguity Weights Matrix</h3>
-<p>After we have a contiguity neighbour matrix, we can “row-standardise” it to get a <strong>contiguity weights matrix</strong>. Essentially, this means each row’s weights should equal 1.</p>
-<p>To implement this, we first find the sum of all elements in each row. We then divide each element within a row by its sum to standardise it.</p>
-<p>For example, take this contiguity neighbour matrix:</p>
-<p><span class="math display">
-\mathbf W_{3 \times 3} = \begin{pmatrix}
-0 &amp; 1 &amp; 0 \\
-1 &amp; 0 &amp; 1 \\
-0 &amp; 1 &amp; 0
-\end{pmatrix}
-</span></p>
-<p>We can see the sum of the elements of the 1st row is 1, the sum of the 2nd row is 2, and the sum of the 3rd row is 1. That means we should divide each element within row 1 by 1, each element in row 2 by 2, and each element in row 3 by 1. We will get this following contiguity weights matrix:</p>
-<p><span class="math display">
-\mathbf W_{3 \times 3} = \begin{pmatrix}
-0 &amp; 1 &amp; 0 \\
-0.5 &amp; 0 &amp; 0.5 \\
-0 &amp; 1 &amp; 0
-\end{pmatrix}
-</span></p>
-<p>We can see that the elements of each row sum to 1. We typically always want to standardise to get a contiguity weights matrix, since it gives each area equal weight to the computation of our models.</p>
-<ul>
-<li>It also makes regression estimates more interpretatable.</li>
-<li>It also makes any correlation measures standardised between 0 and 1 (think covariance vs.&nbsp;correlation).</li>
-</ul>
-<p><br></p>
-</section>
-<section id="spatial-correlations" class="level3">
-<h3 class="anchored" data-anchor-id="spatial-correlations">Spatial Correlations</h3>
-<p>Spatial Correlations are the covariation of properties within a geographic space. For example, locations in nearby locations might seem to be correlated, either positively or negatively.</p>
-<p>Spatial correlations will introduce spatial autocorrelation, which is an issue that is not dealt with by the standard OLS model. <strong>Moran’s I</strong> is the most commonly used way of quantifying spatial correlations. The formula is as follows:</p>
-<p><span class="math display">
-I = \frac{N}{\underbrace{\sum_i \sum_jw_{ij}}_{\text{sum of all of }\mathbf W}} \times \frac{\sum_i \sum_j w_{ij}(x_i - \bar x) (x_j - \bar x)}{\sum_i(x_i - \bar x)^2}
-</span></p>
-<ul>
-<li>Where <span class="math inline">N</span> is the number of spatial regions.</li>
-<li>Where <span class="math inline">x</span> is the variable of interest that we want to see if it is correlated through space. <span class="math inline">\bar x</span> is the mean of <span class="math inline">x</span>.</li>
-<li><span class="math inline">w_{ij}</span> are elements of the of the spatial matrix <span class="math inline">\mathbf W</span>.</li>
-</ul>
-<p>Moran’s I is always between -1 and 1 if using a standardised contiguity weights matrix. However, <span class="math inline">I = 0</span> isn’t actually the value of no spatial correlation. The expected value of no spatial correlation is defined as:</p>
-<p><span class="math display">
-E(I) = \frac{-1}{N-1}
-</span></p>
-<p>As sample size increases, the closer this value becomes to 0.</p>
+<p>This is not a good thing - after all, we want to be able to predict unseen data. Overfitting causes simple regression trees to be poor predictors on their own.</p>
+<p>Thus, we almost never use simple regression trees for prediction. We tend to use more advanced models, Random Forest and Bagging, which build on regression trees, but solve this issue of overfitting.</p>
 <p><br></p>
 <p><br></p>
 <hr>
 </section>
 </section>
-<section id="spatial-models" class="level1">
-<h1><strong>Spatial Models</strong></h1>
-<section id="manski-model" class="level3">
-<h3 class="anchored" data-anchor-id="manski-model">Manski Model</h3>
-<p>Before, we talked about three ways neighbouring regions can affect each other: lagged y, lagged x, and spatial autocorrelation.</p>
-<p>We can include all three elements in our regression (along with our spatial weights matrix <span class="math inline">\mathbf W</span>), creating the <strong>manski model</strong>:</p>
-<p><span class="math display">
-\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
-</span></p>
-<ul>
-<li>Where <span class="math inline">\rho</span> is some fraction (generally less than 1) multiplier that affects the lag in <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\boldsymbol\theta</span> is some vector of a lot of slope parameters that determines how the region’s neighbour’s explanatory variables affect its outcome <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\lambda</span> is some fraction multiple that affects the spatial autocorrelation.</li>
-<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
-</ul>
-<p>The Manski Model is the “fullest model”. However, it is very difficult to estimate and identify all the parameter values. With so many parameters, their might be strong multicollinearity that makes estimates not very precise, and there is a degrees of freedom problem.</p>
+<section id="bagging-and-random-forest" class="level1">
+<h1><strong>Bagging and Random Forest</strong></h1>
+<section id="bootstrap-sampling" class="level3">
+<h3 class="anchored" data-anchor-id="bootstrap-sampling">Bootstrap Sampling</h3>
+<p>While regression trees have some benefits, they suffer from overfitting and high variance. <strong>Bootstrap Aggregation</strong> is a procedure for reducing the variance of a statistical learning method.</p>
+<p>This procedure builds on a simple statistical idea: in a set of <span class="math inline">n</span> samples <span class="math inline">Z_1, \dots, Z_n</span> each with variance <span class="math inline">\sigma^2</span>, the variance of the means <span class="math inline">\bar Z</span> of all the samples is <span class="math inline">\frac{\sigma^2}{n}</span>. Since <span class="math inline">n</span> is in the denominator, that implies increasing the number of samples <span class="math inline">n</span> will reduce the variance of our predictions.</p>
+<p>However, we typically only have one sample of data. How can we increase <span class="math inline">n</span> if we only have one sample? The answer is <strong>Bootstrap Sampling</strong>. Essentially, we sample with replacement from our original sample.</p>
+<p>To create a bootstrap sample, we choose 1 observation at random from our original sample. We add that observation to our bootstrap sample, and replace it back into our original sample. Then, we draw another observation, add it to our bootstrap sample, and replace it back. We do this <span class="math inline">n</span> times (<span class="math inline">n</span> being the sample size of our sample).</p>
+<p>If we do this procedure multiple times, we will end up with a few similar, but slightly different data sets. We are essentially replicating the process of obtaining new data sets, without gathering more data. Now, with our multiple data sets, we can use bootstrap aggregation to reduce our variance.</p>
 <p><br></p>
 </section>
-<section id="kelejian-prucha-model" class="level3">
-<h3 class="anchored" data-anchor-id="kelejian-prucha-model">Kelejian-Prucha Model</h3>
-<p>Since the Manski model is often too difficult to estimate, most people will drop either lag y, lag x, or spatial autocorrelation terms from the model.</p>
-<p>The <strong>Kelejian-Prucha Model</strong> only considers lag y and spatial autocorrelation, and drops lag x. This is making the assumption <span class="math inline">\boldsymbol\theta = 0</span>, that neighbouring explanatory variables do not affect a region’s outcome <span class="math inline">y</span>:</p>
+<section id="bagging-models" class="level3">
+<h3 class="anchored" data-anchor-id="bagging-models">Bagging Models</h3>
+<p><strong>Bagging</strong> models apply bootstrap sampling to tree regressions.</p>
+<ol type="1">
+<li>We first generate <span class="math inline">B</span> number of bootstrap samples.</li>
+<li>Then, we train a tree on each different sample <span class="math inline">b</span>, creating a prediction function <span class="math inline">f_b(x) = \hat y_b</span> for each sample, which specifies what values of <span class="math inline">x</span> result in what predicted <span class="math inline">\hat y</span> according to the tree.</li>
+<li>Then we average all of the sample predictions together to obtain our final prediction function <span class="math inline">f_{bag}(x)</span>.</li>
+</ol>
 <p><span class="math display">
-\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta +  + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
+f_{bag}(x) = \frac{1}{B}\sum\limits_{b=1}^Bf_b(x)
 </span></p>
-<ul>
-<li>Where <span class="math inline">\rho</span> is some fraction (generally less than 1) multiplier that affects the lag in <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\lambda</span> is some fraction multiple that affects the spatial autocorrelation.</li>
-<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
-</ul>
-<p>This model is generally identifiable, and is quite popular as a starting point.</p>
+<p>Bagging reduces the variance of trees, and is one of the most accurate prediction methods, frequently outperforming both linear and non-linear methods.</p>
+<p>However, bagging is still not perfect. This is because bagging trees are heavily correlated: in general, the trees will have the same top-level <span class="math inline">x_p</span> variable, especially if there is one very strong predictor in our explanatory variables.</p>
+<p>This is an issue - highly correlated trees, even if averaged, do not reduce the variance as much as we might need. This is where the next class of models, Random Forests, come in.</p>
 <p><br></p>
 </section>
-<section id="spatial-durbin-model" class="level3">
-<h3 class="anchored" data-anchor-id="spatial-durbin-model">Spatial Durbin Model</h3>
-<p>The <strong>Spatial Durbin Model</strong> (SDM) only considers lag y and lag x, and drops spatial autocorrelation. This is making the assumption <span class="math inline">\lambda = 0</span>, that there is no spatial autocorrelation:</p>
-<p><span class="math display">
-\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \boldsymbol\epsilon
-</span></p>
-<ul>
-<li>Where <span class="math inline">\rho</span> is some fraction (generally less than 1) multiplier that affects the lag in <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\boldsymbol\theta</span> is some vector of a lot of slope parameters that determines how the region’s neighbour’s explanatory variables affect its outcome <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
-</ul>
-<p>The Spatial Durbin Model is popular because it is the starting point of further reductions in parameters, as we will see with the Spatially Lagged X model, the Spatial Autorgressive Model, and the Spatial Error Model.</p>
-<p>If you do not know what type of model you should run (and what types of lags/autocorrelation), you should generally start with the Spatial Durbin Model.</p>
+<section id="random-forest-models" class="level3">
+<h3 class="anchored" data-anchor-id="random-forest-models">Random Forest Models</h3>
+<p>Bagging has an issue of having highly correlated trees, which may not reduce variance as much as we desire. <strong>Random Forests</strong> solve this issue by not only bootstrapping observations like Bagging does, but also sampling a subset of explanatory variables for each tree.</p>
+<p>For example, let us say you a set of explanatory variables <span class="math inline">\mathcal X = \{x_1, \dots  x_k\}</span>. For every bootstrap sample of observations <span class="math inline">b</span> that we did in bagging, Random forest will also sample a subset of explanatory variables <span class="math inline">\mathcal X_b</span>, which contains only <span class="math inline">g&lt;k</span> number of explanatory variables.</p>
+<p>This means that each tree Random Forest produces only has a subset of <span class="math inline">g</span> explanatory variables, not the total number of <span class="math inline">k</span> explanatory variables. This means that sometimes, influential variables <span class="math inline">x_p</span> will not be included in the subset <span class="math inline">\mathcal X_b</span>, which will allow for other predictors to get a chance to shine.</p>
+<p>Thus, Random Forest will have less correlated trees, and thus, will typically have more accurate predictions.</p>
+<p>Generally, the size of the subset of explanatory variables <span class="math inline">\mathcal X_b</span> will typically be <span class="math inline">g=\sqrt{k}</span>, the square root of the total number of explanatory variables. However, you can play around with this (discussed in the next section).</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="model-selection" class="level1">
+<h1><strong>Model Selection</strong></h1>
+<section id="model-selection-for-prediction" class="level3">
+<h3 class="anchored" data-anchor-id="model-selection-for-prediction">Model Selection for Prediction</h3>
+<p>There are a few choices you must make when specifying the model you are using.</p>
+<ol type="1">
+<li>Should you use Random Forest or Bagging? Typically, Random Forest is better, but this is not always the case.</li>
+<li>If you do choose Random Forest, what size of the subset of explanatory variables <span class="math inline">\mathcal X_b</span> should you use? Typically, the standard is to use the square root of the number of explanatory variables, but this is not a fixed rule.</li>
+</ol>
+<p><strong>Mean of squared residuals</strong> is a general measure of how well the model performed. It is the mean of the squared errors, where the errors are the differences between the actual dataset <span class="math inline">y_i</span> value and the predicted <span class="math inline">\hat y_i</span> value.</p>
+<p>In R, the mean of squared residuals metric is calculated on testing data - testing the model on units that were not included in a specific bootstrap sample. Thus, this is a good measure of how predictive your model is, without worrying about overfitting.</p>
+<p>You should test all different possibilities of model selection choices, and see which one reduces the mean of squared residuals the most.</p>
 <p><br></p>
 </section>
-<section id="spatially-lagged-x-model" class="level3">
-<h3 class="anchored" data-anchor-id="spatially-lagged-x-model">Spatially Lagged X Model</h3>
-<p>The <strong>Spatially Lagged X Model</strong> (SLX) is a simplification of the Spatial Durbin Model, getting rid of the lag y effect.</p>
-<p>Thus, the model only contains lag x (as implied by the name). As a result, the model assumes <span class="math inline">\rho = 0</span> (no lag y) and <span class="math inline">\lambda = 0</span> (no spatial autocorrelation):</p>
-<p><span class="math display">
-\mathbf y =  \mathbf{X} \boldsymbol\beta + \underbrace{\mathbf{WX} \boldsymbol\theta}_{\text{lag }X} + \boldsymbol\epsilon
-</span></p>
+<section id="model-selection-for-classification" class="level3">
+<h3 class="anchored" data-anchor-id="model-selection-for-classification">Model Selection for Classification</h3>
+<p>For classification tasks, you have the same decisions (bagging vs.&nbsp;random forest, what size <span class="math inline">\mathcal X_b</span>) as prediction tasks.</p>
+<p>The simplest metric to help you make the decision is the <strong>error rate</strong>. This is simply the percentage of observations the model got wrong (predicted one category when it should have been the other).</p>
+<p>We can also dig into more detail.</p>
 <ul>
-<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\boldsymbol\theta</span> is some vector of a lot of slope parameters that determines how the region’s neighbour’s explanatory variables affect its outcome <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
+<li>The <strong>False Positive Rate</strong> is the observations that are <span class="math inline">y=0</span>, but our model predicted incorrectly as <span class="math inline">\hat y = 1</span>.</li>
+<li>The <strong>False Negative Rate</strong> is the observations that are <span class="math inline">y=1</span>, but our model predicted incorrectly as <span class="math inline">\hat y = 0</span>.</li>
 </ul>
+<p>The inverses of false positives/negatives are specificity and sensitivity:</p>
+<ul>
+<li><strong>Specificity</strong> is the percentage of observations that are <span class="math inline">y=0</span>, that our model correctly predicted as <span class="math inline">\hat y =0</span>.</li>
+<li><strong>Sensitivity</strong> is the percentage of observations that are <span class="math inline">y=1</span>, that our model correctly predicted as <span class="math inline">\hat y = 1</span>.</li>
+</ul>
+<p>The metric on which to focus on depends on our goals of classification. Choosing the right model requires some subjectivity. For example, if we are trying to predict if a patient has a serious disease, we probably want more false positives rather than under-detecting people who are actually sick. But for judicial systems, since we do not want to put an innocent person in jail, we might prefer lower false positives, and more false negatives.</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="interpretation" class="level1">
+<h1><strong>Interpretation</strong></h1>
+<section id="model-summary-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="model-summary-statistics">Model Summary Statistics</h3>
+<p>There are several model summary statistics for prediction tasks:</p>
+<ol type="1">
+<li><strong>Mean of squared residuals</strong> is a general measure of how well the model performed. This can tell us how confident we are in our model.</li>
+<li><strong>% Var Explained</strong> is how well our explanatory variables explain the variation in <span class="math inline">y</span>. This is almost identical to the interpretation of the <span class="math inline">R^2</span> metric in linear regression.</li>
+</ol>
+<p>For classification tasks, summary statistics include:</p>
+<ol type="1">
+<li>The <strong>Error Rate</strong> is simply the percentage of observations the model got wrong (predicted one category when it should have been the other).</li>
+<li>A <strong>Confusion Matrix</strong> is a table that has rows for actual <span class="math inline">y = 0, 1</span>, and volumes for predicted <span class="math inline">\hat y = 0 ,1</span>. This allows you to calculate false positive/negative rates and sensitivity/specificity.</li>
+</ol>
+<p>These summary statistics are all provided in the R output.</p>
 <p><br></p>
 </section>
-<section id="spatial-autoregressive-model" class="level3">
-<h3 class="anchored" data-anchor-id="spatial-autoregressive-model">Spatial Autoregressive Model</h3>
-<p>The <strong>Spatial Autoregressive Model</strong> (SAR), also called the spatial lag model, is another simplification of the Spatial Durbin Model, getting rid of the lag x effect.</p>
-<p>Thus, the model only contains lag y. As a result, the model assumes <span class="math inline">\boldsymbol\theta = 0</span> (no lag X), and <span class="math inline">\lambda = 0</span> (no spatial autocorrelation).</p>
-<p><span class="math display">
-\mathbf y = \underbrace{\rho \mathbf{Wy}}_{\text{lag }y} + \mathbf{X} \boldsymbol\beta + \boldsymbol\epsilon
-</span></p>
-<ul>
-<li>Where <span class="math inline">\rho</span> is some fraction (generally less than 1) multiplier that affects the lag in <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
-</ul>
+<section id="importance-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="importance-statistics">Importance Statistics</h3>
+<p>One of the downsides of Bagging and Random Forest is that they are harder to interpret than Regression Trees.</p>
+<p>Regression Trees produce a nice diagram, with the most important variables near the top. However, Bagging and Random Forest average hundreds or thousands of different trees, so we cannot really draw a diagram out.</p>
+<p>This is where importance statistics comes in. To calculate importance, we “remember” the reduction in RSS (or error rate) every time we split a tree, for every bagging sample <span class="math inline">b</span>. Then, we figure out which variables on average reduce the RSS (or error rate) the most.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-364907520.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+<p>Above is an example of the importance plot. This allows us to determine which explanatory variables are the most influential in determining the predictions, which can be useful in interpretation.</p>
 <p><br></p>
+<p><br></p>
+<hr>
 </section>
-<section id="spatial-error-model" class="level3">
-<h3 class="anchored" data-anchor-id="spatial-error-model">Spatial Error Model</h3>
-<p>The Spatial Durbin model can also be simplified in an interesting way. Instead of assuming the lag-X coefficients <span class="math inline">\boldsymbol\theta = 0</span> as was assumed in the spatial autoregressive model, we can instead make the assumption <span class="math inline">\boldsymbol\theta = -\rho \boldsymbol\beta</span>.</p>
-<p>This assumption <span class="math inline">\boldsymbol\theta = -\rho \boldsymbol\beta</span> basically says that the lag-X effect is equivalent to the strength of the lag-y effect multiplied to our own <span class="math inline">\mathbf x</span> effect on <span class="math inline">y</span>.</p>
-<p>This assumption (and a bit of matrix algebra) allows us to achieve the <strong>Spatial Error Model</strong>:</p>
-<p><span class="math display">
-\mathbf y = \mathbf{X} \boldsymbol\beta + \underbrace{\lambda \mathbf{Wu}}_{\text{autocor.}} + \boldsymbol\epsilon
-</span></p>
-<ul>
-<li>Where <span class="math inline">\boldsymbol\beta</span> is a vector coefficients that determine how the region’s own explanatory variables affect its outcome <span class="math inline">y</span>.</li>
-<li>Where <span class="math inline">\lambda</span> is some fraction multiple that affects the spatial autocorrelation.</li>
-<li>Where <span class="math inline">\boldsymbol\epsilon</span> is the stochastic error term.</li>
-</ul>
+</section>
+<section id="implementation-in-r" class="level1">
+<h1><strong>Implementation in R</strong></h1>
+<p>You will need the <em>randomForest</em> and <em>tidyverse</em> packages.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For replication purposes (if you are publishing a paper), you may also want to set a random seed, which will ensure your bootstrap and variable sampling remains consistent in replication.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="co">#any number will work</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Proof of Derivation of the Spatial Error Model
+Bagging Model
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-
+<p>You can train a bagging model with the <em>randomForest()</em> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3 <span class="sc">+</span> x4,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> mydata,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">na.action =</span> na.omit,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">mtry =</span> <span class="dv">4</span>, <span class="co">#equal to k</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#call object to see output</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The output will contain summary statistics.</p>
+<p>Note: you can also do <span class="math inline">Y \sim .</span> in the formula. The <span class="math inline">.</span> symbolises that you want to include all other variables not <span class="math inline">Y</span> within your dataframe into your model. This speeds up the process of writing every single explanatory variable out.</p>
 </div>
 </div>
 </div>
-</section>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Random Forest Model
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You can train a random forest model with the <em>randomForest()</em> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3 <span class="sc">+</span> x4,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> mydata,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">na.action =</span> na.omit,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">mtry =</span> <span class="dv">2</span>, <span class="co">#equal to sqrt of k</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#call object to see output</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The output will contain summary statistics.</p>
+<p>Note: you can also do <span class="math inline">Y \sim .</span> in the formula. The <span class="math inline">.</span> symbolises that you want to include all other variables not <span class="math inline">Y</span> within your dataframe into your model. This speeds up the process of writing every single explanatory variable out.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Predictions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You probably want to make predictions with your model (that is kind of the point of these models).</p>
+<p>We can use the <em>predict()</em> function to generate predictions:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mypredictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, <span class="at">newdata =</span> my_new_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><em>my_new_data</em> is a dataframe with a bunch of explanatory variable values (for every explanatory variable) for a collection of observations, that you wish to predict <span class="math inline">\hat y</span> for.</p>
+<p><em>model</em> is the name of the object in which you stored your trained model to.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Importance Plot
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To see the importance of each explanatory variable, we can use the <em>varImpPlot()</em> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">varImpPlot</span>(model,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="st">"Title of the Graph"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">type =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Do not change type = 2. That specifies something technical that you do not need to worry about.</p>
+</div>
+</div>
+</div>
 </section>
 
 </main>
