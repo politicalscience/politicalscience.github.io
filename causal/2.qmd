@@ -1,6 +1,6 @@
 ---
-title: "Causal Frameworks and Estimands"
-subtitle: "Methods for Causal Inference"
+title: "Randomised Experiments"
+subtitle: "Quantitative Methods (Causal Inference)"
 format:
     html:
         page-layout: article
@@ -23,222 +23,185 @@ format:
 editor: visual
 ---
 
-This chapter introduces the main causal frameworks (potential outcomes, causal graphs), the main causal estimands used in causal inference, and the idea of selection bias and confounders.
+This chapter introduces the "gold standard" of causal inference: randomised controlled trials. This chapter also covers extensions, such as stratified experiments and survey experiments.
 
 ------------------------------------------------------------------------
 
-# **Potential Outcomes Framework**
+# **Randomisation**
 
-### Treatment Variables
+### Randomised Experiments
 
-In causal inference, we are interested in how one variable $D$ causes some effect on some outcome variable $Y$.
+Experiments are a research design where the assignment mechanism is controlled by the researcher.
 
-$D$ is our treatment variable. The indicator of treatment for each unit $i$ is $D_i$.
+Randomised Experiments use randomisation as the assignment mechanism. Treatment values are assigned to $N$ units at **random**, with both **known** and **positive** **probabilities** of being assigned to treatment and control groups.
 
-$$
-D_i = \begin{cases}
-1 \quad \text{if unit } i \text{ recieved the treatment} \\
-0 \quad \text{if unit } i \text{ did not recieve the treatment}
-\end{cases}
-$$
+Quick notation for randomised experiments:
+
+-   We have $N$ total number of units in our experiment.
+-   A randomly subset of $N_1$ units are assigned to treatment $D = 1$.
+-   The remaining $N_0 = N - N_1$ are assigned to control.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Further information on Treatment Variables
+## More on Randomisation
 
-Causal variables/treatments must occur before the outcome. A variable cannot cause something to occur in the past.
+$N_1$, the number of individuals assigned to treatment, does not necessarily need to be 50% (although this is quite a common number).
 
-Causal variables/treatments must be able to be manipulated (in order to imagine a world where the treatment did not occur).
+Also note that when you fix the number of units to be treated at $N_1$, technically, not all units have an independent probability of being selected. This is because once you have assigned $N_1$ individuals to treatment, we know the remaining individuals must be assigned to control. This usually is not a huge issue.
 
--   For example, $D$ cannot be sex assigned at birth, ethnicity, etc.
--   For example, major global events (how did 9/11 cause the Arab spring?)
+You can use bernoulli randomisation (simple randomisation) to avoid this issue. Bernoulli gives every individual a certain chance of being selected. This does mean that with different randomisation trials, we will get different numbers of treated individuals for each trial.
 :::
 
 <br />
 
-### Potential Outcomes
+### Identification Assumptions
 
-Imagine there are two hypothetical parallel worlds - one where unit $i$ receives the treatment $D$, and one where unit $i$ does not receive the treatment $D$. Everything else in these worlds is identical.
-
-Potential Outcomes for unit $i$ are denoted:
+Randomisation implies that assignment probabilities, do not depend on the potential outcomes. The potential outcome values do not affect our chances of being selected for treatment.
 
 $$
-Y_{di} =\begin{cases}
-& Y_{1i} \quad \text{Outcome for unit } i \text{ when } D_i = 1 \\
-& Y_{0i} \quad \text{Outcome for unit } i \text{ when } D_i = 0 \\
-\end{cases}
+Pr(D=1|Y_0, Y_1) = Pr(D=1)
 $$
 
-For example, imagine we are interested in finding the effect of democracy $D$ on GDP growth $Y$. Potential outcome $Y_{1i}$ is the potential GDP growth of country $i$ if they were a democracy, and outcome $Y_{0i}$ is the potential GDP growth of a country $i$ if they were not a democracy.
-
-<br />
-
-### Observed Outcomes and "Missing Data"
-
-Of course, there is not two parallel worlds with 2 potential outcomes. In the real world, each unit $i$ either receives treatment $D$, or does not. We do not observe the other potential outcome.
-
-$Y_i$ is the observed outcome for unit $i$. This is given by formula:
+Or in other words, treatment is **independent** of potential outcomes (also unconfounded or ignorability):
 
 $$
-Y_i = D_i \cdot Y_{1i} + (1-D_i) \cdot Y_{0i}
+(Y_1, Y_0)  \perp D
 $$
 
-If we plug in $D_i = 0, 1$ to the equation above, we get the observed outcomes:
-
-$$
-Y_i = \begin{cases}
-Y_{1i} \quad \text{if } D_i = 1 \\
-Y_{0i} \quad \text{if } D_i = 0 \\
-\end{cases}
-$$
-
-Before the treatment (*A priori*), both potential outcomes could be observed. After the treatment, one is **observed**, and the other is **counterfactual**. For any given experiment, only one will ever be seen, and the counterfactual will never be seen (missing data problem).
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Neyman Urn Model
-
-Potential Outcomes can be visualised with the Neyman Urn Model.
-
-Before the treatment, we have a box (we cannot see) with both potential outcomes.
-
-![](images/clipboard-802589608.png){fig-align="center" width="55%"}
-
-Then, when we apply treatment, we stick our hand into the box that we cannot see, and pull out one observed outcome.
-
-![](images/clipboard-2975134148.png){fig-align="center" width="60%"}
-
-We are essentially sampling from potential outcomes to get observed outcomes.
-:::
-
-This missing data problem is called the **fundamental problem of causal inference**.
-
-<br />
-
-### Stable Unit Treatment Value Assumption
-
-The above given observed and potential outcome frameworks depends on the Stable Unit Treatment Value Assumption (SUTVA).
-
-$$
-\underbrace{Y_{(D_1, D_2, \dots, D_N)i}}_{\text{Observed } D_i} = \underbrace{Y_{(D_1', D_2', \dots, D_N')i}}_{\text{All alternative } D_i}
-$$
-
-Or more intuitively, the potential outcomes of unit $i$ only depends on their own treatment status, and no other unit's treatment status. The treatment is also the same for everyone (treatment is stable and consistent)
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Examples of SUTVA Violations
-
--   Spill-over effects: If we are testing a new curriculum, one student $j$ getting the new curriculum may teach their friend $i$ the new curriculum, thus affecting the potential outcomes of $i$.
-
--   Contagion: If we are studying a disease, diseases can spread, so another unit $j$ getting a disease affects the potential outcomes of unit $i$.
-
--   Dilution: If we are studying vaccines - there is herd immunity - other people getting the vaccine also reduces our chances of getting the disease.
-
--   Variable levels of treatment: If we are doing a drug trial, if some people got two doses, while others only got one dose. This is not a consistent treatment.
-
--   Technical errors: If someone who is supposed to be treated accidentally is not treated. This is not a consistent treatment.
-:::
-
-When SUTVA is violated, potential outcomes become very messy, and we no longer have the neat framework as before.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-# **Causal Estimands**
-
-### Individual Treatment Effect
-
-Remember the potential outcomes from parallel worlds $Y_{1i}$ and $Y_{0i}$.
-
-Since these two parallel worlds are identical except for the fact one receives the treatment $D$ and the other does not, the causal effect of $D$ should be the difference between the potential outcomes of these two worlds. Thus, the individual treatment effect of a unit $i$ is:
-
-$$
-\tau_i = Y_{1i} - Y_{0i}
-$$
-
-This is the specific treatment effect for a specific unit $i$. This cannot be observed, because we do not see both potential outcomes for the same unit $i$.
-
-This is also very hard to estimate, as we cannot reliably fill in the missing potential outcome for any one unit $i$. Thus, we almost never use individual treatment effects, and use group treatment effects.
-
-<br />
-
-### Average Treatment Effect (ATE)
-
-ATE is a group-level causal estimand.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Group-Level Causal Estimands
-
-Consider a population of units $i = 1, \dots, N$.
-
-The population has potential outcomes represented in two (only partially observed) vectors:
+This implies that $E(Y_{0i})$ is the same between treatment and control groups, and $E(Y_{1i})$ is also the same between treatment and control:
 
 $$
 \begin{split}
-& Y_1 = (Y_{11}, Y_{12}, \dots, Y_{1N}) \\
-& Y_0 = (Y_{01}, Y_{02}, \dots, Y_{0N})
+& E(Y_{0i} | D_i = 1) = E(Y_{0i} | D_i = 0) = E(Y_{0i})\\
+& E(Y_{1i} | D_i = 1) = E(Y_{1i} | D_i = 0) = E(Y_{1i})
 \end{split}
 $$
-
-We compare these two vectors of potential outcomes. The most common way to do this is to use their expected values.
-:::
-
-The Average Treatment Effect is defined as:
-
-$$
-\begin{split}
-\tau_{ATE} & = E(Y_{1i} - Y_{0i}) \\
-& = \underbrace{\frac{1}{N} \sum\limits_{i=1}^N (Y_{1i} - Y_{0i})}_{\text{a formula for average}}
-\end{split}
-$$
-
-We cannot calculate this with observed data - since we need all potential outcomes to do this. We can estimate this (covered throughout this course).
 
 <br />
 
-### Average Treatment Effect on the Treated (ATT)
+### Proof of Identification
 
-An alternative estimand to the ATE is the **Average Treatment Effect on the Treated (ATT)**:
+Let us return to our [naive estimator](https://politicalscience.github.io/causal/2.html#naive-estimator-and-selection-bias), and our problem of selection bias:
+
+$$
+\hat\tau_{\text{naive}} = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}}
+$$
+
+But as discussed before, under randomisation, we know that:
 
 $$
 \begin{split}
-\tau_{ATT} & = E(Y_{1i} - Y_{0i} \ | \ D_i = 1) \\
-& = \underbrace{\frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i}) \quad  \text{where } N_1 = \sum\limits_{i=1}^ND_i}_{\text{a formula for the average only for units }D_i = 1}
+& E(Y_{0i} | D_i = 1) = E(Y_{0i} | D_i = 0) = E(Y_{0i})\\
+& E(Y_{1i} | D_i = 1) = E(Y_{1i} | D_i = 0) = E(Y_{1i})
 \end{split}
 $$
 
-This is the causal effect of [only units who have received the treatment]{.underline}. Note that frequently the ATT is not equal to the ATE, so be aware of which estimand you are trying to estimate/identify.
+Using these properties, we can simplify:
+
+$$
+\begin{split}
+\hat\tau_{\text{naive}} & = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
+& = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}) - E(Y_{0i})}_{\text{Selection Bias}} \\
+& = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + 0
+\end{split}
+$$
+
+Thus, under randomisation, selection bias is equal to 0, and thus our comparison of observed outcomes is now an unbiased estimator of the Average Treatment Effect on the Treated (ATT).
+
+<br />
+
+### Equivalence of Estimands
+
+Recall that randomisation (and independence from potential outcomes) says:
+
+$$
+\begin{split}
+& E(Y_{0i} | D_i = 1) = E(Y_{0i} | D_i = 0) = E(Y_{0i})\\
+& E(Y_{1i} | D_i = 1) = E(Y_{1i} | D_i = 0) = E(Y_{1i})
+\end{split}
+$$
+
+Now look at the formula for the [ATT](https://politicalscience.github.io/causal/2.html#average-treatment-effect-on-the-treated-att). We can simplify as follows:
+
+$$
+\begin{split}
+\tau_{ATT} & = E(Y_{1i} -Y_{0i}|D_i = 1)\\
+& = E(Y_{1i} |D_i = 1) - E(Y_{0i} | D_i = 1) \\
+& = \underbrace{E(Y_{1i} )}_{\because \text{ independence}} - \underbrace{E(Y_{0i})}_{\because \text{ independence}} \\
+& = \underbrace{E(Y_{1i} - Y_{0i})}_{\tau_{ATE}}
+\end{split}
+$$
+
+And now we see that $\tau_{ATT}$ and $\tau_{ATE}$ are equivalent under randomisation.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## ATT vs. ATE
+## Graphical Identification
 
-When does $\tau_{ATT} = \tau_{ATE}$?
+Let us look at a direct acyclic graph:
 
--   When the expectation of the potential outcomes of both the treated and control are the same, then the two equal each other.
+![](images/clipboard-1726123470.png){fig-align="center" width="50%"}
 
-The opposite is also true: if the expectation of the potential outcomes of both the treated and control are different, then the two are not equal.
+Because we are randomly assigning treatment $D$, we are exogenously determining $D$. Thus, values of $D$ are not being caused by $U$, they are being caused by randomisation.
+
+Thus, we can eliminate the arrow between $U \rightarrow D$. This allows us to estimate $D \rightarrow Y$ without any confounders.
 :::
-
-The opposite estimand is the **Average Treatment effect on the Untreated (ATU)**, which only measures the causal effect of units who did not recieve the treatment.
-
-This is not used very often, since it is kind of uninituive to think about treatment effects on individuals who did not recieve treatment. However, it can be useful in understanding identification assumptions.
 
 <br />
 
-### Conditional Average Treatment Effect (CATE)
+### The Balancing Property
 
-The conditional average treatment effect is any treatment effect where there is a condition on a characteristic/covariate:
+Randomisation balances all observed and unobserved pre-treatment characteristics between units between the treatment and control.
+
+This is because not only is $(Y_1, Y_0) \perp D$, but also any covariate $X$ is also independent of treatment: $X \perp D$.
+
+This means that if randomisation is successful, we should expect minimal differences between control and treatment groups for all pre-treatment characteristics values.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Details on the Balancing Property
+
+In any one sample, we actually are likely to have some imbalances in $X$ between control and treatment simply due to chance.
+
+-   You could control for imbalanced covariates, but you do not have to (we will discuss this later).
+
+You can adopt other randomisation procedures, such as stratified randomisation, to guarantee balance on $X$.
+:::
+
+We can test this assumption by finding the average $X$ values for both control and treatment groups, and see if there are any statistical significant differences in $X$ between control and treatment. This is typically done with a t-test or a regression:
 
 $$
-\tau_{CATE}(x) = E(Y_{1i} - Y_{0i} \ | \ \underbrace{X_i = x}_{\text{condition}})
+X_i = \alpha + \gamma D_i + u_i \quad \text{test if } \gamma \text{ is significant}
 $$
 
-This is the causal effect of only variables who meet the condition of the covariate specified. For example, you could find the conditional average treatment effect of only women (so the covariate which we are conditioning on is *gender*). You can also condition on multiple covariates.
+<br />
 
-This is often used for tailoring products/medicine/advertising to certain groups of people. It is also frequently used in identification strategies.
+### Complications and Limitations
 
-This estimand will go by other names, including the Local Average Treatment Effect (LATE).
+Randomisation can be complicated by a few factors:
+
+1.  Missing data (often due to individuals dropping out). We are concerned that there is some covariate that is causing some people to drop out, which re-introduces selection bias.
+2.  Measurement Problems: Hawthorne Effect - subjects know what you are studying, and will change their behaviour as a result.
+3.  Non-Compliance: Some units assigned to treatment might not take the treatment, and some units assigned to control may take the treatment (this can often be dealt with by using an instrumental variable design).
+
+Randomisation does not help with external validity - the ability to extrapolate our results to external situations.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## More on External Validity
+
+External validity asks if we can generalise our conclusions from our subjects, to other subjects outside our experiment. Can we extrapolate our estimates to to other populations?
+
+For example, if we measured the effect of migration on tolerance for our subjects in India, can we say the same effect is true of someone in Japan, the US, or Europe?
+
+This is important - if we cannot extrapolate, some results may be very niche.
+
+To extrapolate to a greater population, our actual sample of observations in our experiment, should be representative of the greater population. This is often violated, as random sample for experiments is very very difficult.
+
+This is called 𝑋-Validity: we can study this with data - to see how representative our population is compared to the population.
+
+Non-representative programme of treatment is another threat: Sometimes, treatments will differ between areas.
+
+For example, if we are encouraging people to migrate to test how that changes their tolerance, how are the governmental/ngo/private agencies working with you affecting the process. Would less capable agencies create different effects?
+
+This is called $C$-validity, and we cannot measure this with data, unless you redo your experiment in another context.
+:::
 
 <br />
 
@@ -246,188 +209,80 @@ This estimand will go by other names, including the Local Average Treatment Effe
 
 ------------------------------------------------------------------------
 
-# **Selection Bias and Confounders**
+# **Causal Estimation**
 
-### Naive Estimator and Selection Bias
+### Difference in Means Estimator
 
-A natural way to estimate the ATE is to use a naive estimator: find the average difference of [observed]{.underline} outcomes. This is called the naive estimator:
-
-$$
-\begin{split}
-\hat\tau_{naive} = \underbrace{E(Y_i|D_i = 1)}_{\text{Observed }Y \text{ for treatment}} - \underbrace{E(Y_i|D_i = 0)}_{\text{Observed }Y \text{ for control}}
-\end{split}
-$$
-
-However, there is an issue - we can show this with algebra:
+Our causal estimand is the Average Treatment Effect (ATE):
 
 $$
-\begin{split}
-\hat\tau_{naive} & = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
-& = \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
-& = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) \color{red}{- E(Y_{0i}|D_i = 1)}}_{\because \text{ this equals 0, so we can add it}} \\
-& = \underbrace{E(Y_{1i}|D_i = 1) \color{red}{- E(Y_{0i}|D_i = 1)}}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
-\end{split}
+\tau_{ATE} = E(Y_{1i}) - E(Y_{0i})
 $$
 
-We can see that our naive estimator produces the $\tau_{ATT}$ **plus** an extra bit (called the selection bias). Thus, our naive estimator is biased, so we should be careful about using this naive estimator (correlation does not equal causation).
+We can estimate this using the difference-in-means estimator, by taking the sample mean $Y$ of the treatment group, minus the sample mean $Y$ of the control group:
+
+$$
+\hat\tau_{ATE} = \bar Y_1 - \bar Y_0
+$$
+
+This is an unbiased estimator because selection bias is eliminated with randomisation. This is also an asymptotically consistent estimator due to the [law of large numbers](https://politicalscience.github.io/causal/1.html#asymptotically-consistent-estimators).
+
+<br />
+
+### Ordinary Least Squares Estimator
+
+We can also estimate the $\tau_{ATE}$ with a bivariate regression:
+
+$$
+Y_i = \hat\gamma + \hat\tau D_i + \hat\epsilon_i
+$$
+
+Here, $\hat\tau$ is our estimator of the ATE. This gives the same estimate as the difference-in-means estimator.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Naive Estimator Biased for ATU
+## Proof OLS is Equivalent to Difference-in-Means
 
-The proof above shows how the naive estimator is a biased estimator for the $\tau_{ATT}$. We can also prove it is a biased estimator of the ATU:
+Remember that OLS is the best approximation of the conditional expectation function $E(y|x)$.
+
+Thus, we can write the regression as:
+
+$$
+E(Y_i|D_i) = \hat\gamma + \hat\tau D_i + \hat\epsilon_i
+$$
+
+Now, let us find the difference between treatment $E(Y_i|D_i =1)$ and control $E(Y_i|D_i = 0)$:
 
 $$
 \begin{split}
-\hat\tau_{naive} & = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
-& = \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
-& = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{1i}|D_i = 0) - E(Y_{1i}|D_i = 0)}_{\because \text{ this equals 0, so we can add it}} \\
-& = \underbrace{E(Y_{1i}|D_i = 0)- E(Y_{0i}|D_i = 0)}_{\tau_{ATU}} + \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{1i} | D_i = 0)}_{\text{Selection Bias}} \\
+& E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
+= & \ \hat\gamma + \hat\tau(1) - (\hat\gamma + \hat\tau(0)) \\
+= & \ \hat\gamma + \hat\tau - \hat\gamma \\
+= & \ \hat\tau
 \end{split}
 $$
+
+Thus, the difference in means is equivalent to $\hat\tau$ regression coefficient.
 :::
+
+Furthermore, $\hat\gamma$ is equivalent to the average $Y$ in the control group $\bar Y_0$.
+
+We do not need to include covariates. This is because randomisation allows us to meet the [asymptotic consistency](https://politicalscience.github.io/causal/1.html#conditions-for-asymptotic-consistency) condition of both randomisation and exogeneity.
+
+However, sometimes pre-treatment covariates are included. We should not include post-treatment covariates.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Naive Estimator Biased for ATE
+## Including Pre-Treatment Covariates
 
-The proofs above shows how the naive estimator is a biased estimator for the $\tau_{ATT}$ and $\tau_{ATU}$. We can also prove it is a biased estimator of the ATE.
+There are several reasons one might want to include pre-treatment covariates:
 
-Let us first start with the ATE. Let us call $Y_{1i} - Y_{0i} := \tau_i$ for notation simplicity:
+1.  Can increase precision (reduce standard error), by getting better predictions of $Y$.
+2.  Can control for observable imbalance that was observed in the balance tables. Many researchers will compare a model without and with an imbalanced covariate, to show that the covariate does not matter significantly.
+3.  Can allow for estimation of heterogenous treatment effects by including interactions in the model.
 
-$$
-\begin{split}
-\tau_{ATE} & = E(Y_{1i} - Y_{0i})  = E(\tau_i)\\
-& = \underbrace{E(\tau_i|D_i = 1)Pr(D_i = 1) + E(\tau_i|D_i = 0)Pr(D_i = 0)}_{\because \text{ weighted average of ATE and ATU by proportion in }D_i = 1, 0} \\
-& = E(\tau_i|D_i = 1)\underbrace{(1 -Pr(D_i = 0))}_{\because \text{ complement prob.}} + E(\tau_i|D_i = 0)Pr(D_i = 0) \\
-\end{split}
-$$
+There is one risk: it may introduce small-sample bias. This will be discussed later in the discussion of the fully-interacted estimator.
 
-Let us call $Pr(D_i = 0) := \pi$ for notation simplicity. Now, continue:
-
-$$
-\begin{split}
-& = \underbrace{E(\Delta|D_i = 1) - \pi E(\Delta|D_i = 1)}_{\because \text{ distribute out}} + E(\tau_i|D_i = 0)\pi \\
-& = E(\tau_i|D_i = 1) + \underbrace{\pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)]}_{\because \text{ factor out } \pi = Pr(D_i = 0)} \\
-& = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 1) + \pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)] \\
-\end{split}
-$$
-
-Let us call the part $\pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)] := \Pi(\tau_i)$. Now, continue to simplify:
-
-$$
-\begin{split}
-& = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 1) + \Pi(\tau_i) + \underbrace{E(Y_{1i} |D_i = 0) - E(Y_{0i}|D_i = 0)}_{\because \text{ these two cancel out so we add 0}}  \\
-& = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 0) + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& = \underbrace{E(Y_i|D_i = 1)}_{\because \text{ observed outcome}} - \underbrace{E(Y_i|D_i = 0)}_{\because \text{ observed outcome}} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& = \underbrace{E(Y_{i} |D_i = 1) - E(Y_{i}|D_i = 0)}_{\hat\tau_{naive}} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& = \hat\tau_{naive}+ E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i)
-\end{split}
-$$
-
-Thus, we can see that $\tau_{ATE}$ is not equivalent to $\hat\tau_{naive}$. Let us isolate $\hat\tau_{naive}$ to identify the selection bias.
-
-$$
-\begin{split}
-& \tau_{ATE} = \hat\tau_{naive}+ E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& -\hat\tau_{naive} = -\tau{ATE} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& \hat\tau_{naive} = \tau_{ATE} - E(Y_{1i} |D_i = 0) + E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& \hat\tau_{naive} = \tau_{ATE} + \underbrace{E(Y_{0i}|D_i = 1)- E(Y_{1i} |D_i = 0) + \Pi(\tau_i)}_{\text{selection bias}}
-\end{split}
-$$
+We should not include post-treatment covariates. Anything that is measured post-treatment could be measuring a treatment effect (something that results from the treatment). This may "model away" your treatment effect.
 :::
-
-<br />
-
-### Confounders
-
-Take the selection bias formula from above:
-
-$$
-\underbrace{E(Y_{0i}|D_i = 1)}_{Y_{0i}\text{ for treatment}} - \underbrace{E(Y_{0i} | D_i = 0)}_{Y_{0i}\text{ for control}}
-$$
-
-If selection bias is non-zero, this essentially states that the expected potential outcome before treatment $Y_{0i}$ between the treatment and control groups is not equal.
-
-Or in other words, the treatment and control groups have some other variable causing differences even before treatment has begun. This implies that the differences between the treatment and control group may not be due to treatment $D$, but due to the underlying differences before treatment even occurred.
-
-**Confounders** are variables that cause the differences between treatment and control groups before the treatment has started. [**Confounders correlate with both the treatment variable and the outcome**]{.underline}.
-
--   If a variable only correlates with $D$ or $Y$, then it is not a confounder. If must correlate with both $D$ **and** $Y$.
-
-This is why correlation does not equal causation - if the treatment and control group are different before we start the experiment, we cannot say the difference between the two is purely a result of treatment $D$.
-
-<br />
-
-### Omitted Variable Bias in Regression
-
-We can demonstrate how confounders cause bias in regression. Suppose there is some confounding variable $z$ that we have not included in a "short" regression. The actual, "true" regression of the population, would include this confounder $z$
-
-$$
-\underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}_{\text{short regression}}
- \qquad \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}_{\text{true regression with } z}
-$$
-
-The [OLS estimate](https://politicalscience.github.io/causal/1.html#deriving-the-estimator) of the "short regression" excluding confounder $z$ is:
-
-$$
-\boldsymbol{\hat\beta} = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
-$$
-
-Let us now plug in the "true" model into where $\mathbf y$ is:
-
-$$
-\begin{split}
-\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{(\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u)}_{\because \text{ true model } \mathbf y} \\
-& = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\because \text{ inverses cancel}} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-\end{split}
-$$
-
-Now, let us find the expected value of $\boldsymbol{\hat\beta}$, which is conditional on $\mathbf X, \mathbf z$, and simplify (using [zero conditional mean](https://politicalscience.github.io/causal/1.html#conditions-for-unbiasedness)):
-
-$$
-\begin{split}
-E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z) & = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{E(\mathbf u | \mathbf X, \mathbf z)}_{= \ 0} \\
-& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta
-\end{split}
-$$
-
-Now, what if we had a regression of outcome variable being the confounder $z$, on the explanatory variables $\mathbf X$, such that $\mathbf z = \mathbf X \boldsymbol\pi + \mathbf v$. Our OLS estimate would have the solution:
-
-$$
-\boldsymbol{\hat\pi} = (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf z
-$$
-
-Now, we can plug $\boldsymbol{\hat\pi}$ into our expected value of $\boldsymbol{\hat\beta}$:
-
-$$
-E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)  = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}
-$$
-
-Now, using the law of iterated expectations, we get (assuming we are using an unbiased estimator for $\boldsymbol{\hat\pi}$ such that $E(\boldsymbol{\hat\pi}) = \boldsymbol\pi$):
-
-$$
-\begin{split}
-E(\boldsymbol{\hat\beta}) & = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)) \\
-& = E(\boldsymbol\beta + \boldsymbol{\hat\pi \delta}) \\
-& = \boldsymbol\beta + E(\boldsymbol{\hat\pi}) \boldsymbol \delta \\
-& = \boldsymbol\beta + \boldsymbol{\pi \delta}
-\end{split}
-$$
-
-Thus, we can see by not including confounder $z$ in our "short regression", the estimator is now biased by $\boldsymbol{\hat\pi \delta}$.
-
-<br />
-
-### Assignment Mechanism
-
-The Assignment Mechanism is the procedure that determines the treatment status of each unit. In causal inference, we want to restrict the assignment mechanism, in order to remove the effect of selection bias.
-
-There are two types of studies that use different assignment mechanisms:
-
-1.  Randomisation Experiments: The assignment mechanism is both known, and controlled by the researcher. Generally, the researcher chooses some type of randomisation.
-2.  Observational Studies: The assignment mechanism is not known to, or not under the control of the researcher. This means that confounders may be driving selection into treatment and control, inducing bias.
-
-Generally, the most credible studies are randomisation studies, since we can control interventions to parse out the effect of confounders. Observational studies generally rely on more assumptions that need to be met, and need to be defended for the study to be credible.
 
 <br />
 
@@ -435,83 +290,164 @@ Generally, the most credible studies are randomisation studies, since we can con
 
 ------------------------------------------------------------------------
 
-# **Directed Acyclic Graphs**
+# **Statistical Inference**
 
-### Components of the Graphs
+### Inference with T-Test
 
-Causal Diagrams are a visual way to represent causal theories and frameworks, which allows us to visualise how variables interact with each other.
+We can use a **t**-test for statistical inference.
 
-Each Directed Acyclic Graph (DAG) has the following components:
+1.  Estimate the $\hat\tau_{ATE}$ and robust standard error $\widehat{rse}(\hat\tau_{ATE})$.
+2.  State hypotheses, normally $H_0 : \tau_{ATE} = 0$ and $H_1 \tau_{ATE} ≠ 0$.
+3.  Calculate the t-test statistic $\hat\tau /\widehat{rse}(\hat\tau)$.
+4.  Refer to the relevant t-distribution, and calculate the p-value.
 
-1.  Nodes: representing variables (which are also called vertices).
-2.  Directed Edges: Arrows that encode one-way causal theories between variables. For example, we might believe $Z$ causes $X$, so we will draw an arrow from $Z$ to $X$. These connections are **observable** (solid) or **unobservable** (dashed).
+Generally, we use a statistical significance level of $\alpha = 0.05$, so we reject the null if $|t|>1.96$.
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Example of Directed Acyclic Graphs
-
-Below is an example of a directed acyclic graph:
-
-![](images/clipboard-3648393347.png){fig-align="center" width="50%"}
-
-What does this diagram show?
-
--   We have two unobserved variables: $Q$ and $Y$
--   We have three observed variables: $Z$, $D$, and $Y$.
--   We can see the causal theories represented by arrows.
-
-What can we learn from this diagram?
-
--   $Z \rightarrow Y$ is confounded by $W$: $W$ is affecting who gets treatment $Z$, and causing $Y$. Thus, $W$ is affecting who gets selected into treatment $Z$, and selecting your potential outcome $Y$. Thus, this is an example of selection bias.
--   $D \rightarrow Y$ is confounded by $Q$.
--   $Z \rightarrow D$ is not confounded, so we can estimate this causal effect.
-
-Note: All these conclusions are only true if our causal theory is correct (we have specified all the possible variables, and we have specified the correct causal relationships).
-:::
-
-Features of a Directed Acyclic Graph:
-
-1.  They must be acyclic: This means that they are not circular - $A$ does not terminate back at $A$.
-2.  Non-Connections: The absence of relationships between variables.
+For more complex randomisation schemes, you will need different standard errors. For example, if you use a cluster randomisation scheme, you might need clustered standard errors.
 
 <br />
 
-### Representing Interventions
+### Sharp Null Hypothesis
 
-Treatments (interventions by the researcher, for example) are when we determine one variable exogenously (such as by randomisation).
+For our $t$-tests, the null hypothesis was that the ATE was equal to 0. The issue is, the ATE is the expectation of treatment - a ATE of 0 could result from half of the population having $\tau = -10$ and half of the population having $\tau = 10$.
 
-Or in other words, one variable is determined randomly externally, not caused by any variables within the directed acyclic graphs.
+Consider a new **sharp null hypothesis**, that all individual causal effects are zero:
 
-Treatments are represented by the **do()** operator. When the treatment is exogenous, we can break all the connections into that variable's node.
+$$
+H_0^s : Y_1 = Y_0, \quad H_A^s : Y_1 ≠ Y_0
+$$
 
-This is because we are determining the value of the variable, not any other variables.
+Assuming $H_0$ is true, we can actually fully construct the potential outcomes $Y_{0i}$ and $Y_{1i}$, since we know every unit has 0 individual treatment effect.
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Example of Interventions
-
-![](images/clipboard-1438441757.png){fig-align="center" width="50%"}
-
-An intervention here is on variable $D$. That means the value of $D$ is being chosen outside of this graph (by randomisation, or the researcher).
-
-This allows us to delete the arrow between $Q \rightarrow D$ and $Z \rightarrow D$. This is because we are exogenously determining $D$, so $Q$ and $Z$ are not determining the value of $D$.
-:::
-
-With exogenously determined variables, we can find the causal effect that variable is causing on another.
+Thus, under the sharp null, we can actually observe both potential outcomes.
 
 <br />
 
-### Blocked Paths
+### Randomisation Inference
 
-A set of nodes $\{ \mathbf S \}$ blocks a path $p$ if either:
+Using the sharp null hypothesis, we can construct the full population $Y_{0i}$ and $Y_{1i}$ under the null hypothesis. Once constructed, we can imagine what different treatments we would observe under different randomization schemes (given $H_0$ is true).
 
-1.  If the path $p$ contains at least one arrow-emitting node included in the set of nodes $S$, or
-2.  The path $p$ contains at least one collision node (multiple arrows point into it) that is outside the set of nodes $S$, and the collision node has no descendant within the set of nodes $S$ (no arrows go out of it to another node).
+-   Thus, we can construct the sampling distribution, so we do not need to "imagine" a hypothetical sampling distribution.
 
-Take this directed acyclic graph:
+Procedure for conducting randomisation inference (also called permutation test or Fisher's exact test) is as follows:
 
-![](images/clipboard-2373065460.png){fig-align="center" width="40%"}
+1.  Calculate the total number of randomisations possible. This is calculated as a permutation of $_NP_{N_1}$ ($N$ choose $N_1$).
+2.  Calculate and store the value of $\widehat{\tau_j}$ of each permuted dataset $j$. Thus, we will have a distribution of $\widehat{\tau_j}$.
+3.  Calculate $p$-value as the proportion of $\widehat{\tau_j}$ that are as or more extreme than the actually observed $\hat\tau$.
 
-We can see the following:
+::: {.callout-note collapse="true" appearance="simple"}
+## Details on Randomisation Inference
 
-1.  The path $D \rightarrow P \rightarrow Y$ is blocked by set $\{P\}$, because the node $P$ is one arrow-emitting node that is in the path $D \rightarrow P \rightarrow Y$.
-2.  The path $D \leftarrow M \rightarrow Y$ is blocked by set $\{M\}$, because the node $M$ is one arrow-emitting node in the path $D \leftarrow M \rightarrow Y$.
-3.  $D \leftarrow Z \rightarrow M \rightarrow Y$ is blocked by $\{M\}$, $\{Z\}$, or $\{M, Z\}$ - note $D$ and $Y$ do not emit arrows so they cannot block.
+If we have $N$ total units, and $N_1$ in the treatment group and $N_0$ in the control group, we can calculate all possible randomisation permutations as follows:
+
+$$
+\begin{pmatrix} N \\ N_1 \end{pmatrix} = \frac{N!}{N_1 ! N_0 !}
+$$
+
+This is the total number of assignments possible given $N$, $N_1$, and $N_0$.
+
+Then, we can calculate the $\widehat{\tau_j}$ of every possible randomisation assignment. The figure below shows this:
+
+![](images/clipboard-717815317.png){fig-align="center" width="70%"}
+
+Now, plot all $\widehat{\tau_j}$ in a distribution:
+
+![](images/clipboard-3711064458.png){fig-align="center" width="60%"}
+
+Let us say our sample $\hat\tau = 6$. We would simply find the area under the curve that is above $\hat\tau = 6$, and below $-\hat\tau = -6$.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Pros/Cons of Randomisation Inference
+
+Randomisation Inference is assumption free - we do not need asymptotic properties or hypothetical sampling distributions.
+
+Since we also do not need asymptotic property inferences, we can do inference with very small samples as well.
+
+Downsides: the randomisation inference only tests if the sharp null hypothesis is true, but sometimes, that might not be something we want to test.
+:::
+
+<br />
+
+### Nonparametric Bootstrap
+
+The bootstrap is a method to simulate the sampling distribution. This is done by re-sampling from the sample with replacement. The procedure is as follows:
+
+1.  You take the sample you observe, and randomly sample from that sample with replacement (so allowing observations to repeat in our re-sample).
+2.  Continue to do this over and over again to get $B$ number of re-samples.
+3.  For each re-sample $b$, you should calculate the $\widehat{\tau_b}$. Plot all of the sample $\widehat{\tau_b}$ in a distribution.
+4.  Then calculate $p$-value as the proportion of $\widehat{\tau_b}$ that are as or more extreme than the actually observed sample $\hat\tau$.
+
+You can also estimate the standard error of $\hat\tau$ using the standard deviation of the distribution. However, do not use these standard errors for confidence intervals or tests unless you are confident the sampling distribution is approximately normal.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Pros/Cons of Bootstrap Inference
+
+The advantage of bootstrap is the following:
+
+1.  When the sampling variance of an estimator is too difficult to calculate or estimate.
+2.  When data is so skewed that inference based on asymptotic normality does not make sense.
+3.  When you have a small sample, so the asymptotic properties of the central limit theorem do not kick in.
+
+These advantages make bootstrap a very popular tool in modern inference.
+
+The downside is that it can be computationally intensive. Also, it is not always a general solution for a small samples.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Block Bootstrap
+
+For blocked experiments, you should randomly sample blocks, not units, to create your bootstrap re-samples.
+
+For example, if your data is clustered in cities, you should re-sample by cities.
+:::
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Other Randomisation Procedures**
+
+### Stratified Randomisation
+
+Stratified (also called blocked or conditional) randomisation are when randomisation occurs separately within levels of some covariates(s) $X$. Generally, you separate your sample of $N$ units into $J$ subgroups.
+
+For example, you could split people up into male or female, and random sample within each group, rather than everyone together.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Stratification
+
+Let us say you have 4 subjects, with pre-treatment potential outcomes of $Y_{0i} = \{2, 2, 8, 8 \}$.
+
+If you just randomly assign, then there is a 33% chance that you end up with the random assignment where $\{8, 8\}$ are placed in one group, and $\{2, 2\}$ are placed in another group.
+
+This is a concern: our treatment and control groups would be very imbalanced in this situation, which violates our independence assumption.
+
+With blocking, we could divide our sample into $J = 2$ subgroups, having group 1 being $\{2, 2\}$, and group 2 being $\{8, 8\}$. Then, we randomly sample one from each group into the treatment. This way, we are guaranteed better balance.
+:::
+
+This can prevent imbalances as normal randomisation can have a high probability (in certain situations) of creating imbalances.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Estimation with Stratification
+
+To estimate the ATE, you will need a weighted average of the ATE for each subgroup $j$, with the weights being the proportion of units each group $j$ accounts for:
+
+$$
+\tau_{ATE} = \sum\limits_{j=1}^J \frac{N_j}{N} \tau_j
+$$
+:::
+
+<br />
+
+### Cluster Randomisation
+
+Cluster randomisation is when we randomly assign units (or have individuals naturally) in groups. Every unit within a group (called a cluster) will get the same treatment. We randomly sample the groups to get the treatment or control.
+
+For example, we could randomise development treatment at the village level, or randomise treatment of a cirriculum at the school level.
+
+The main reason for this is to prevent SUTVA violations.
+
+For example, imagine you are testing the effects of a new curriculum. If you randomise by each student, students will talk to their friends, and treated individuals may teach control individuals about the new curriculum. But by randomising by school (either an entire school gets or does not get the new curriculum), this concern is not a huge issue.
