@@ -177,7 +177,7 @@ window.Quarto = {
 <p>Without randomisation, we need some other way to account for pre-treatment covariates that may be confounding and causing selection bias. Controlling for a set of nodes/confounders <span class="math inline">X</span> can identify the causal effect of <span class="math inline">D \rightarrow Y</span>, if:</p>
 <ol type="1">
 <li>No node within set <span class="math inline">X</span> is a descendant of <span class="math inline">D</span> (no element within <span class="math inline">X</span> results from <span class="math inline">D</span>).</li>
-<li>The nodes within set <span class="math inline">X</span> <a href="https://politicalscience.github.io/causal/2.html#blocked-paths">block all back-door paths</a> from <span class="math inline">D \rightarrow Y</span>.</li>
+<li>The nodes within set <span class="math inline">X</span> <a href="https://politicalscience.github.io/causal/1.html#blocked-paths">block all back-door paths</a> from <span class="math inline">D \rightarrow Y</span>.</li>
 </ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -265,7 +265,7 @@ Example of Identification Assumptions
 </section>
 <section id="proof-of-identification" class="level3">
 <h3 class="anchored" data-anchor-id="proof-of-identification">Proof of Identification</h3>
-<p>With our assumptions above, we can identify the ATE. We start with the <a href="https://politicalscience.github.io/causal/2.html#conditional-average-treatment-effect-cate">conditional average treatment effect</a>, conditional on some value of confounders <span class="math inline">X_i = x</span>:</p>
+<p>With our assumptions above, we can identify the ATE. We start with the <a href="https://politicalscience.github.io/causal/1.html#conditional-average-treatment-effect-cate">conditional average treatment effect</a>, conditional on some value of confounders <span class="math inline">X_i = x</span>:</p>
 <p><span class="math display">
 \begin{split}
 \tau_{CATE}(x) &amp; = E(Y_{1i} - Y_{0i} \ | \ X_i = x) \\
@@ -444,7 +444,7 @@ Subclassification for the ATT
 </section>
 <section id="matching-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="matching-estimator">Matching Estimator</h3>
-<p>We have a <a href="https://politicalscience.github.io/causal/2.html#observed-outcomes-and-missing-data">missing data problem</a> in causal inference: we do not know all the potential outcomes. Matching “estimates” missing potential outcomes of a unit.</p>
+<p>We have a <a href="https://politicalscience.github.io/causal/1.html#observed-outcomes-and-missing-data">missing data problem</a> in causal inference: we do not know all the potential outcomes. Matching “estimates” missing potential outcomes of a unit.</p>
 <p>For each observation in the treated group, matching finds an observation in the untreated group that have the most similar values of a set of pre-treatment covariates <span class="math inline">X</span>. Thus, we have pairs of treatment-control observations that act as counterfactuals. We can estimate the ATT as the average difference in observed outcomes within the pairs:</p>
 <p><span class="math display">
 \hat\tau_{ATT} = \frac{1}{n_1} \sum\limits_{i:D_i = 1}(Y_i - \widetilde{Y_i})
@@ -570,7 +570,7 @@ Curse of Dimensionality
 </div>
 </div>
 </div>
-<p>This curse of dimensionality creates a bias problem - since we get non-exact matches. The more dimensions you add, the worse it becomes.</p>
+<p>This curse of dimensionality creates a <a href="https://politicalscience.github.io/causal/0.html#unbiased-estimators">bias</a> problem - since we get non-exact matches. The more dimensions you add, the worse it becomes.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -599,7 +599,7 @@ More on Bias
 <p><span class="math display">
 \pi(X_i) \equiv Pr(D_i = 1|X_i)
 </span></p>
-<p>When supposing the <a href="https://politicalscience.github.io/causal/4.html#identification-assumptions">conditional ignorability and common support assumptions</a>, the propensity score <span class="math inline">\pi(X_i)</span> has the balancing property: <span class="math inline">D_i \perp X_i \ | \ \pi(X_i)</span>. This implies that conditional ignorability holds on the propensity scores alone:</p>
+<p>When supposing the <a href="https://politicalscience.github.io/causal/3.html#identification-assumptions">conditional ignorability and common support assumptions</a>, the propensity score <span class="math inline">\pi(X_i)</span> has the balancing property: <span class="math inline">D_i \perp X_i \ | \ \pi(X_i)</span>. This implies that conditional ignorability holds on the propensity scores alone:</p>
 <p><span class="math display">
 (Y_{1i}, Y_{0i}) \perp D_i \ | \ \pi(X_i)
 </span></p>
@@ -741,12 +741,12 @@ Weighting Estimator for ATT
 </div>
 </div>
 </div>
-<p>The IPW estimator have very poor small sample properties. They are highly sensitive to extreme values of <span class="math inline">\hat\pi(X_i)</span>. This generates high variance (inefficiency), and can produce significant bias under model mispecification. Thus, you typically do not want to use it in small-sample situations.</p>
+<p>The IPW estimator is <a href="https://politicalscience.github.io/causal/0.html#asymptotically-consistent-estimators">asymptotically consistent</a>, but has very poor small sample properties. They are highly sensitive to extreme values of <span class="math inline">\hat\pi(X_i)</span>. This generates high variance (inefficiency), and can produce significant bias under model mispecification. Thus, you typically do not want to use it in small-sample situations.</p>
 <p><br></p>
 </section>
 <section id="ordinary-least-squares-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="ordinary-least-squares-estimator">Ordinary Least Squares Estimator</h3>
-<p>When we think about controlling for covariates <span class="math inline">X</span>, we often think about regression. OLS is a natural approach, since <span class="math inline">\hat\beta_{OLS}</span> estimates <a href="https://politicalscience.github.io/causal/1.html#regression-anatomy-theorem">partial out the effects of covariates</a>. <span class="math inline">\hat\beta_{OLS}</span> a good estimator of <span class="math inline">\tau_{ATE}</span> in selection of observables under 2 conditions:</p>
+<p>When we think about controlling for covariates <span class="math inline">X</span>, we often think about regression. OLS is a natural approach, since <span class="math inline">\hat\beta_{OLS}</span> estimates <a href="https://politicalscience.github.io/causal/0.html#regression-anatomy-theorem">partial out the effects of covariates</a>. <span class="math inline">\hat\beta_{OLS}</span> a good estimator of <span class="math inline">\tau_{ATE}</span> in selection of observables under 2 conditions:</p>
 <ol type="1">
 <li><strong>Constant treatment effect</strong>: <span class="math inline">\tau_i = Y_{1i} - Y_{0i}</span> for all units <span class="math inline">i</span>.</li>
 <li><strong>Linearity</strong>: Potential outcomes are linear, and can be written as:</li>
@@ -764,7 +764,7 @@ Y_i(d) = \beta_0 + d\beta_1 + \mathbf X_i \gamma + \epsilon_i \quad \text{for} \
 \end{split}
 </span></p>
 <p>Thus, <span class="math inline">\beta_1</span> properly identifies the <span class="math inline">\tau_i</span> given the two above assumptions.</p>
-<p>We also know that conditional ignorability implies <a href="https://politicalscience.github.io/causal/1.html#conditions-for-unbiasedness">zero-conditional mean</a>. Thus <span class="math inline">\beta_1</span> is an unbiased and asymptotically consistent estimator of the ATE.</p>
+<p>We also know that conditional ignorability implies <a href="https://politicalscience.github.io/causal/0.html#conditions-for-unbiasedness">zero-conditional mean</a>. Thus <span class="math inline">\beta_1</span> is an unbiased and asymptotically consistent estimator of the ATE.</p>
 <p>You should be cautious using OLS when assumption 2, <strong>linearity</strong>, is violated. OLS is the best linear estimator, but how far your data is from linearity will determine if the estimator is useful.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
@@ -779,12 +779,12 @@ Non-Linearity
 <div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>What if potential outcomes <span class="math inline">Y_i(d)</span> is an unknown and non-linear function of <span class="math inline">d</span> and <span class="math inline">X_i</span>.</p>
-<p>We know the OLS is the <a href="https://politicalscience.github.io/causal/1.html#ols-as-a-conditional-expectation-function">best linear predictor of the conditional expectation function</a> in terms of mean squared error. Thus, <span class="math inline">\beta_1</span> will provide the best linear approximation to the population regression function.</p>
+<p>We know the OLS is the <a href="https://politicalscience.github.io/causal/0.html#ols-as-a-conditional-expectation-function">best linear predictor of the conditional expectation function</a> in terms of mean squared error. Thus, <span class="math inline">\beta_1</span> will provide the best linear approximation to the population regression function.</p>
 <p>This does not mean it is good - just the best linear approximation.</p>
 </div>
 </div>
 </div>
-<p>You <strong>should not use</strong> OLS if you believe assumption 1, heterogeneity, is violated. The resoning is explained below.</p>
+<p>You <strong>should not use</strong> OLS if you believe assumption 1, heterogeneity, is violated. The reasoning is explained below.</p>
 <p><br></p>
 </section>
 <section id="fully-interacted-estimator" class="level3">

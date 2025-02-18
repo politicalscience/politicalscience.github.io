@@ -400,14 +400,17 @@ Thus, OLS is unbiased under the 4 conditions above.
 
 <br />
 
-### Variance of the OLS Estimator
+### Gauss-Markov Theorem
 
-We will only derive homoscedastic (normal) standard errors. The robust standard error derivation for heteroscedasticity is beyond the scope of this lesson (just trust the computer that it will calculate it properly).
+The Gauss-Markov Theorem states that the OLS estimator is the **best linear unbiased estimator** (BLUE) - the unbiased linear estimator with the lowest variance, under 5 conditions:
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Homoscedasticity and Heteroscedasticity
+1.  Linearity (see unbiasedness conditions)
+2.  Random Sampling (...)
+3.  No Perfect Multicollinearity (...)
+4.  Zero-Conditional Mean (...)
+5.  **Homoscedasticity** (the new condition).
 
-[Homoscedasticity]{.underline} is defined as:
+Homoscedasticity is when no matter the values of any explanatory variable, the error term variance is **constant** at $\sigma^2$. The error term variance does not change based on the values of the explanatory variables:
 
 $$
 Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
@@ -418,7 +421,8 @@ Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
 \end{pmatrix}
 $$
 
-Or in other words, no matter the values of any explanatory variable, the error term variance is **constant**. If this is false, then we have [heteroscedasticity]{.underline}.
+::: {.callout-note collapse="true" appearance="simple"}
+## Visualisation of Homoscedasticity
 
 An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all $\widehat{u_i}$):
 
@@ -431,7 +435,13 @@ The heteroscedasticity residuals have a clear pattern - the up-down variance is 
 Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.
 :::
 
-We want to find the variance of our estimator, $Var(\boldsymbol{\hat\beta} | \mathbf X)$. Let us start off with our OLS solution. We can simplify as follows:
+The Gauss-Markov Theorem is one of the main reasons we focus so heavily on the OLS estimator. If we believe our data-generating structure to be linear, then OLS is the best unbiased estimator we can use, since it has the lowest variance.
+
+<br />
+
+### Deriving Variance
+
+Let us assume homoscedasticity. We want to find the variance of our estimator, $Var(\boldsymbol{\hat\beta} | \mathbf X)$. Let us start off with our OLS solution. We can simplify as follows:
 
 $$
 \begin{split}
@@ -475,13 +485,13 @@ Var(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^T \mathbf X)^{-1} \mathbf
 \end{split}
 $$
 
-However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed previously). The standard errors are the square root of the variance. Thus, our standard errors for any coefficient estimate $\hat\beta_j$ are:
+However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed [here](https://politicalscience.github.io/regression/1.html#residual-standard-deviation)). The standard errors are the square root of the variance. Thus, our standard errors for any coefficient estimate $\hat\beta_j$ are:
 
 $$
 se(\hat\beta_j) = \hat\sigma \sqrt{(\mathbf X^T \mathbf X)^{-1}_{jj}}
 $$
 
-We can use these standard errors for hypothesis testing.
+We can use these standard errors for [hypothesis testing](https://politicalscience.github.io/regression/1.html#t-tests), if we believe homoscedasticity is met. If not, we will need to use **robust standard errors**, which we will not derive here. In modern econometrics, it has become more common to use [robust standard errors by default]{.underline}, unless we can definitively prove homoscedasticity is met.
 
 <br />
 

@@ -120,7 +120,8 @@ window.Quarto = {
   <li><a href="#regression-anatomy-theorem" id="toc-regression-anatomy-theorem" class="nav-link" data-scroll-target="#regression-anatomy-theorem">Regression Anatomy Theorem</a></li>
   <li><a href="#conditions-for-unbiasedness" id="toc-conditions-for-unbiasedness" class="nav-link" data-scroll-target="#conditions-for-unbiasedness">Conditions for Unbiasedness</a></li>
   <li><a href="#proof-of-unbiasedness" id="toc-proof-of-unbiasedness" class="nav-link" data-scroll-target="#proof-of-unbiasedness">Proof of Unbiasedness</a></li>
-  <li><a href="#variance-of-the-ols-estimator" id="toc-variance-of-the-ols-estimator" class="nav-link" data-scroll-target="#variance-of-the-ols-estimator">Variance of the OLS Estimator</a></li>
+  <li><a href="#gauss-markov-theorem" id="toc-gauss-markov-theorem" class="nav-link" data-scroll-target="#gauss-markov-theorem">Gauss-Markov Theorem</a></li>
+  <li><a href="#deriving-variance" id="toc-deriving-variance" class="nav-link" data-scroll-target="#deriving-variance">Deriving Variance</a></li>
   <li><a href="#conditions-for-asymptotic-consistency" id="toc-conditions-for-asymptotic-consistency" class="nav-link" data-scroll-target="#conditions-for-asymptotic-consistency">Conditions for Asymptotic Consistency</a></li>
   <li><a href="#proof-of-asymptotic-consistency" id="toc-proof-of-asymptotic-consistency" class="nav-link" data-scroll-target="#proof-of-asymptotic-consistency">Proof of Asymptotic Consistency</a></li>
   <li><a href="#ols-as-a-conditional-expectation-function" id="toc-ols-as-a-conditional-expectation-function" class="nav-link" data-scroll-target="#ols-as-a-conditional-expectation-function">OLS as a Conditional Expectation Function</a></li>
@@ -499,22 +500,17 @@ E(X) = E(E(X|Y))
 <p>Thus, OLS is unbiased under the 4 conditions above.</p>
 <p><br></p>
 </section>
-<section id="variance-of-the-ols-estimator" class="level3">
-<h3 class="anchored" data-anchor-id="variance-of-the-ols-estimator">Variance of the OLS Estimator</h3>
-<p>We will only derive homoscedastic (normal) standard errors. The robust standard error derivation for heteroscedasticity is beyond the scope of this lesson (just trust the computer that it will calculate it properly).</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Homoscedasticity and Heteroscedasticity
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p><u>Homoscedasticity</u> is defined as:</p>
+<section id="gauss-markov-theorem" class="level3">
+<h3 class="anchored" data-anchor-id="gauss-markov-theorem">Gauss-Markov Theorem</h3>
+<p>The Gauss-Markov Theorem states that the OLS estimator is the <strong>best linear unbiased estimator</strong> (BLUE) - the unbiased linear estimator with the lowest variance, under 5 conditions:</p>
+<ol type="1">
+<li>Linearity (see unbiasedness conditions)</li>
+<li>Random Sampling (…)</li>
+<li>No Perfect Multicollinearity (…)</li>
+<li>Zero-Conditional Mean (…)</li>
+<li><strong>Homoscedasticity</strong> (the new condition).</li>
+</ol>
+<p>Homoscedasticity is when no matter the values of any explanatory variable, the error term variance is <strong>constant</strong> at <span class="math inline">\sigma^2</span>. The error term variance does not change based on the values of the explanatory variables:</p>
 <p><span class="math display">
 Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
 \sigma^2 &amp; 0 &amp; \dots &amp; 0 \\
@@ -523,7 +519,18 @@ Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
 0 &amp; 0 &amp; \dots &amp; \sigma^2
 \end{pmatrix}
 </span></p>
-<p>Or in other words, no matter the values of any explanatory variable, the error term variance is <strong>constant</strong>. If this is false, then we have <u>heteroscedasticity</u>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Visualisation of Homoscedasticity
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all <span class="math inline">\widehat{u_i}</span>):</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -536,7 +543,12 @@ Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
 </div>
 </div>
 </div>
-<p>We want to find the variance of our estimator, <span class="math inline">Var(\boldsymbol{\hat\beta} | \mathbf X)</span>. Let us start off with our OLS solution. We can simplify as follows:</p>
+<p>The Gauss-Markov Theorem is one of the main reasons we focus so heavily on the OLS estimator. If we believe our data-generating structure to be linear, then OLS is the best unbiased estimator we can use, since it has the lowest variance.</p>
+<p><br></p>
+</section>
+<section id="deriving-variance" class="level3">
+<h3 class="anchored" data-anchor-id="deriving-variance">Deriving Variance</h3>
+<p>Let us assume homoscedasticity. We want to find the variance of our estimator, <span class="math inline">Var(\boldsymbol{\hat\beta} | \mathbf X)</span>. Let us start off with our OLS solution. We can simplify as follows:</p>
 <p><span class="math display">
 \begin{split}
 \boldsymbol{\hat\beta} &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y \\
@@ -581,11 +593,11 @@ Var(\boldsymbol{\hat\beta} | \mathbf X) &amp; = (\mathbf X^T \mathbf X)^{-1} \ma
 &amp; =  \sigma^2 (\mathbf X^T \mathbf X)^{-1}
 \end{split}
 </span></p>
-<p>However, we do not actually know what <span class="math inline">\sigma^2</span> is. We can estimate it with <span class="math inline">\hat\sigma^2</span> (discussed previously). The standard errors are the square root of the variance. Thus, our standard errors for any coefficient estimate <span class="math inline">\hat\beta_j</span> are:</p>
+<p>However, we do not actually know what <span class="math inline">\sigma^2</span> is. We can estimate it with <span class="math inline">\hat\sigma^2</span> (discussed <a href="https://politicalscience.github.io/regression/1.html#residual-standard-deviation">here</a>). The standard errors are the square root of the variance. Thus, our standard errors for any coefficient estimate <span class="math inline">\hat\beta_j</span> are:</p>
 <p><span class="math display">
 se(\hat\beta_j) = \hat\sigma \sqrt{(\mathbf X^T \mathbf X)^{-1}_{jj}}
 </span></p>
-<p>We can use these standard errors for hypothesis testing.</p>
+<p>We can use these standard errors for <a href="https://politicalscience.github.io/regression/1.html#t-tests">hypothesis testing</a>, if we believe homoscedasticity is met. If not, we will need to use <strong>robust standard errors</strong>, which we will not derive here. In modern econometrics, it has become more common to use <u>robust standard errors by default</u>, unless we can definitively prove homoscedasticity is met.</p>
 <p><br></p>
 </section>
 <section id="conditions-for-asymptotic-consistency" class="level3">
