@@ -292,7 +292,7 @@ We should not include post-treatment covariates. Anything that is measured post-
 
 # **Statistical Inference**
 
-### Inference with T-Test
+### Standard Inference
 
 We can use a **t**-test for statistical inference.
 
@@ -304,6 +304,16 @@ We can use a **t**-test for statistical inference.
 Generally, we use a statistical significance level of $\alpha = 0.05$, so we reject the null if $|t|>1.96$.
 
 For more complex randomisation schemes, you will need different standard errors. For example, if you use a cluster randomisation scheme, you might need clustered standard errors.
+
+We can also use Nonparametric Bootstrap to create our sampling distribution for statistical inference, instead of relying on asymptotic normality of the standard t-test.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Block Bootstrap
+
+For blocked experiments, you should randomly sample blocks, not units, to create your bootstrap re-samples.
+
+For example, if your data is clustered in cities, you should re-sample by cities.
+:::
 
 <br />
 
@@ -369,41 +379,6 @@ Downsides: the randomisation inference only tests if the sharp null hypothesis i
 
 <br />
 
-### Nonparametric Bootstrap
-
-The bootstrap is a method to simulate the sampling distribution. This is done by re-sampling from the sample with replacement. The procedure is as follows:
-
-1.  You take the sample you observe, and randomly sample from that sample with replacement (so allowing observations to repeat in our re-sample).
-2.  Continue to do this over and over again to get $B$ number of re-samples.
-3.  For each re-sample $b$, you should calculate the $\widehat{\tau_b}$. Plot all of the sample $\widehat{\tau_b}$ in a distribution.
-4.  Then calculate $p$-value as the proportion of $\widehat{\tau_b}$ that are as or more extreme than the actually observed sample $\hat\tau$.
-
-You can also estimate the standard error of $\hat\tau$ using the standard deviation of the distribution. However, do not use these standard errors for confidence intervals or tests unless you are confident the sampling distribution is approximately normal.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Pros/Cons of Bootstrap Inference
-
-The advantage of bootstrap is the following:
-
-1.  When the sampling variance of an estimator is too difficult to calculate or estimate.
-2.  When data is so skewed that inference based on asymptotic normality does not make sense.
-3.  When you have a small sample, so the asymptotic properties of the central limit theorem do not kick in.
-
-These advantages make bootstrap a very popular tool in modern inference.
-
-The downside is that it can be computationally intensive. Also, it is not always a general solution for a small samples.
-:::
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Block Bootstrap
-
-For blocked experiments, you should randomly sample blocks, not units, to create your bootstrap re-samples.
-
-For example, if your data is clustered in cities, you should re-sample by cities.
-:::
-
-<br />
-
 <br />
 
 ------------------------------------------------------------------------
@@ -451,3 +426,17 @@ For example, we could randomise development treatment at the village level, or r
 The main reason for this is to prevent SUTVA violations.
 
 For example, imagine you are testing the effects of a new curriculum. If you randomise by each student, students will talk to their friends, and treated individuals may teach control individuals about the new curriculum. But by randomising by school (either an entire school gets or does not get the new curriculum), this concern is not a huge issue.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Survey Experiments**
+
+### Framing/Endorsement Experiments
+
+### Priming Experiments
+
+### List Experiments

@@ -121,15 +121,20 @@ window.Quarto = {
   </ul></li>
   <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference"><strong>Statistical Inference</strong></a>
   <ul class="collapse">
-  <li><a href="#inference-with-t-test" id="toc-inference-with-t-test" class="nav-link" data-scroll-target="#inference-with-t-test">Inference with T-Test</a></li>
+  <li><a href="#standard-inference" id="toc-standard-inference" class="nav-link" data-scroll-target="#standard-inference">Standard Inference</a></li>
   <li><a href="#sharp-null-hypothesis" id="toc-sharp-null-hypothesis" class="nav-link" data-scroll-target="#sharp-null-hypothesis">Sharp Null Hypothesis</a></li>
   <li><a href="#randomisation-inference" id="toc-randomisation-inference" class="nav-link" data-scroll-target="#randomisation-inference">Randomisation Inference</a></li>
-  <li><a href="#nonparametric-bootstrap" id="toc-nonparametric-bootstrap" class="nav-link" data-scroll-target="#nonparametric-bootstrap">Nonparametric Bootstrap</a></li>
   </ul></li>
   <li><a href="#other-randomisation-procedures" id="toc-other-randomisation-procedures" class="nav-link" data-scroll-target="#other-randomisation-procedures"><strong>Other Randomisation Procedures</strong></a>
   <ul class="collapse">
   <li><a href="#stratified-randomisation" id="toc-stratified-randomisation" class="nav-link" data-scroll-target="#stratified-randomisation">Stratified Randomisation</a></li>
   <li><a href="#cluster-randomisation" id="toc-cluster-randomisation" class="nav-link" data-scroll-target="#cluster-randomisation">Cluster Randomisation</a></li>
+  </ul></li>
+  <li><a href="#survey-experiments" id="toc-survey-experiments" class="nav-link" data-scroll-target="#survey-experiments"><strong>Survey Experiments</strong></a>
+  <ul class="collapse">
+  <li><a href="#framingendorsement-experiments" id="toc-framingendorsement-experiments" class="nav-link" data-scroll-target="#framingendorsement-experiments">Framing/Endorsement Experiments</a></li>
+  <li><a href="#priming-experiments" id="toc-priming-experiments" class="nav-link" data-scroll-target="#priming-experiments">Priming Experiments</a></li>
+  <li><a href="#list-experiments" id="toc-list-experiments" class="nav-link" data-scroll-target="#list-experiments">List Experiments</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -416,8 +421,8 @@ Including Pre-Treatment Covariates
 </section>
 <section id="statistical-inference" class="level1">
 <h1><strong>Statistical Inference</strong></h1>
-<section id="inference-with-t-test" class="level3">
-<h3 class="anchored" data-anchor-id="inference-with-t-test">Inference with T-Test</h3>
+<section id="standard-inference" class="level3">
+<h3 class="anchored" data-anchor-id="standard-inference">Standard Inference</h3>
 <p>We can use a <strong>t</strong>-test for statistical inference.</p>
 <ol type="1">
 <li>Estimate the <span class="math inline">\hat\tau_{ATE}</span> and robust standard error <span class="math inline">\widehat{rse}(\hat\tau_{ATE})</span>.</li>
@@ -427,6 +432,24 @@ Including Pre-Treatment Covariates
 </ol>
 <p>Generally, we use a statistical significance level of <span class="math inline">\alpha = 0.05</span>, so we reject the null if <span class="math inline">|t|&gt;1.96</span>.</p>
 <p>For more complex randomisation schemes, you will need different standard errors. For example, if you use a cluster randomisation scheme, you might need clustered standard errors.</p>
+<p>We can also use Nonparametric Bootstrap to create our sampling distribution for statistical inference, instead of relying on asymptotic normality of the standard t-test.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Block Bootstrap
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For blocked experiments, you should randomly sample blocks, not units, to create your bootstrap re-samples.</p>
+<p>For example, if your data is clustered in cities, you should re-sample by cities.</p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="sharp-null-hypothesis" class="level3">
@@ -453,7 +476,7 @@ H_0^s : Y_1 = Y_0, \quad H_A^s : Y_1 ≠ Y_0
 <li>Calculate <span class="math inline">p</span>-value as the proportion of <span class="math inline">\widehat{\tau_j}</span> that are as or more extreme than the actually observed <span class="math inline">\hat\tau</span>.</li>
 </ol>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -462,7 +485,7 @@ Details on Randomisation Inference
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>If we have <span class="math inline">N</span> total units, and <span class="math inline">N_1</span> in the treatment group and <span class="math inline">N_0</span> in the control group, we can calculate all possible randomisation permutations as follows:</p>
 <p><span class="math display">
@@ -486,7 +509,7 @@ Details on Randomisation Inference
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -495,63 +518,11 @@ Pros/Cons of Randomisation Inference
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Randomisation Inference is assumption free - we do not need asymptotic properties or hypothetical sampling distributions.</p>
 <p>Since we also do not need asymptotic property inferences, we can do inference with very small samples as well.</p>
 <p>Downsides: the randomisation inference only tests if the sharp null hypothesis is true, but sometimes, that might not be something we want to test.</p>
-</div>
-</div>
-</div>
-<p><br></p>
-</section>
-<section id="nonparametric-bootstrap" class="level3">
-<h3 class="anchored" data-anchor-id="nonparametric-bootstrap">Nonparametric Bootstrap</h3>
-<p>The bootstrap is a method to simulate the sampling distribution. This is done by re-sampling from the sample with replacement. The procedure is as follows:</p>
-<ol type="1">
-<li>You take the sample you observe, and randomly sample from that sample with replacement (so allowing observations to repeat in our re-sample).</li>
-<li>Continue to do this over and over again to get <span class="math inline">B</span> number of re-samples.</li>
-<li>For each re-sample <span class="math inline">b</span>, you should calculate the <span class="math inline">\widehat{\tau_b}</span>. Plot all of the sample <span class="math inline">\widehat{\tau_b}</span> in a distribution.</li>
-<li>Then calculate <span class="math inline">p</span>-value as the proportion of <span class="math inline">\widehat{\tau_b}</span> that are as or more extreme than the actually observed sample <span class="math inline">\hat\tau</span>.</li>
-</ol>
-<p>You can also estimate the standard error of <span class="math inline">\hat\tau</span> using the standard deviation of the distribution. However, do not use these standard errors for confidence intervals or tests unless you are confident the sampling distribution is approximately normal.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Pros/Cons of Bootstrap Inference
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The advantage of bootstrap is the following:</p>
-<ol type="1">
-<li>When the sampling variance of an estimator is too difficult to calculate or estimate.</li>
-<li>When data is so skewed that inference based on asymptotic normality does not make sense.</li>
-<li>When you have a small sample, so the asymptotic properties of the central limit theorem do not kick in.</li>
-</ol>
-<p>These advantages make bootstrap a very popular tool in modern inference.</p>
-<p>The downside is that it can be computationally intensive. Also, it is not always a general solution for a small samples.</p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Block Bootstrap
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>For blocked experiments, you should randomly sample blocks, not units, to create your bootstrap re-samples.</p>
-<p>For example, if your data is clustered in cities, you should re-sample by cities.</p>
 </div>
 </div>
 </div>
@@ -567,7 +538,7 @@ Block Bootstrap
 <p>Stratified (also called blocked or conditional) randomisation are when randomisation occurs separately within levels of some covariates(s) <span class="math inline">X</span>. Generally, you separate your sample of <span class="math inline">N</span> units into <span class="math inline">J</span> subgroups.</p>
 <p>For example, you could split people up into male or female, and random sample within each group, rather than everyone together.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -576,7 +547,7 @@ Example of Stratification
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let us say you have 4 subjects, with pre-treatment potential outcomes of <span class="math inline">Y_{0i} = \{2, 2, 8, 8 \}</span>.</p>
 <p>If you just randomly assign, then there is a 33% chance that you end up with the random assignment where <span class="math inline">\{8, 8\}</span> are placed in one group, and <span class="math inline">\{2, 2\}</span> are placed in another group.</p>
@@ -587,7 +558,7 @@ Example of Stratification
 </div>
 <p>This can prevent imbalances as normal randomisation can have a high probability (in certain situations) of creating imbalances.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -596,7 +567,7 @@ Estimation with Stratification
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>To estimate the ATE, you will need a weighted average of the ATE for each subgroup <span class="math inline">j</span>, with the weights being the proportion of units each group <span class="math inline">j</span> accounts for:</p>
 <p><span class="math display">
@@ -613,6 +584,21 @@ Estimation with Stratification
 <p>For example, we could randomise development treatment at the village level, or randomise treatment of a cirriculum at the school level.</p>
 <p>The main reason for this is to prevent SUTVA violations.</p>
 <p>For example, imagine you are testing the effects of a new curriculum. If you randomise by each student, students will talk to their friends, and treated individuals may teach control individuals about the new curriculum. But by randomising by school (either an entire school gets or does not get the new curriculum), this concern is not a huge issue.</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="survey-experiments" class="level1">
+<h1><strong>Survey Experiments</strong></h1>
+<section id="framingendorsement-experiments" class="level3">
+<h3 class="anchored" data-anchor-id="framingendorsement-experiments">Framing/Endorsement Experiments</h3>
+</section>
+<section id="priming-experiments" class="level3">
+<h3 class="anchored" data-anchor-id="priming-experiments">Priming Experiments</h3>
+</section>
+<section id="list-experiments" class="level3">
+<h3 class="anchored" data-anchor-id="list-experiments">List Experiments</h3>
 </section>
 </section>
 
