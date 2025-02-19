@@ -516,6 +516,8 @@ We can see the following:
 2.  The path $D \leftarrow M \rightarrow Y$ is blocked by set $\{M\}$, because the node $M$ is one arrow-emitting node in the path $D \leftarrow M \rightarrow Y$.
 3.  $D \leftarrow Z \rightarrow M \rightarrow Y$ is blocked by $\{M\}$, $\{Z\}$, or $\{M, Z\}$ - note $D$ and $Y$ do not emit arrows so they cannot block.
 
+Blocking paths is important, since in order to estimate $D \rightarrow Y$, we need to block any other path between $D$ and $Y$ that is not directly $D \rightarrow Y$.
+
 <br />
 
 <br />
@@ -524,4 +526,51 @@ We can see the following:
 
 # **Implementation in R**
 
-Insert GGdag stuff.
+This section will show how you can create DAGs in R. We will need the *ggdag* and *dagitty* packages.
+
+```{r, eval = FALSE}
+library(ggdag)
+library(dagitty)
+```
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Simple DAGs with Dagify
+
+You can create a very simple DAG with dagify as follows:
+
+```{r, eval = FALSE}
+
+dag_object <- dagify(
+  Y ~ X + D, #Y is caused by X and D
+  D ~ X #D is caused by X
+)
+
+ggdag(dag_object) + theme_dag()
+```
+
+This dag is not very customisable. This can be an issue if you want nodes to be in a specific location. See below for a more customisable DAG.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Custom DAGs with Dagitty
+
+You can create more complex DAGs with Dagitty. Dagitty allows us to position nodes in a coordinate system, which is useful in some purposes.
+
+```{r, eval = FALSE}
+
+dag_object <- dagitty('dag {
+      D [pos = "0, 1"]
+      Y [pos = "2, 1"]
+      X [pos = "1, 2"]
+      
+      D -> Y
+      D <- X -> Y
+  }')
+
+ggdag(dag_object) + theme_dag()
+```
+
+The *pos* arguments have the coordinates of where you want to put each node.
+
+Below are the path connections, where you can use -\> and \<- to indicate relationships.
+:::
