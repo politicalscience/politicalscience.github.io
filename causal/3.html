@@ -155,7 +155,18 @@ window.Quarto = {
   <li><a href="#ordinary-least-squares-estimator" id="toc-ordinary-least-squares-estimator" class="nav-link" data-scroll-target="#ordinary-least-squares-estimator">Ordinary Least Squares Estimator</a></li>
   <li><a href="#fully-interacted-estimator" id="toc-fully-interacted-estimator" class="nav-link" data-scroll-target="#fully-interacted-estimator">Fully Interacted Estimator</a></li>
   </ul></li>
-  <li><a href="#partial-identification" id="toc-partial-identification" class="nav-link" data-scroll-target="#partial-identification"><strong>Partial Identification</strong></a></li>
+  <li><a href="#falsification-tests" id="toc-falsification-tests" class="nav-link" data-scroll-target="#falsification-tests"><strong>Falsification Tests</strong></a>
+  <ul class="collapse">
+  <li><a href="#testing-assumptions-with-falsification" id="toc-testing-assumptions-with-falsification" class="nav-link" data-scroll-target="#testing-assumptions-with-falsification">Testing Assumptions with Falsification</a></li>
+  <li><a href="#placebo-outcome-test" id="toc-placebo-outcome-test" class="nav-link" data-scroll-target="#placebo-outcome-test">Placebo Outcome Test</a></li>
+  <li><a href="#placebo-treatment-test" id="toc-placebo-treatment-test" class="nav-link" data-scroll-target="#placebo-treatment-test">Placebo Treatment Test</a></li>
+  </ul></li>
+  <li><a href="#partial-identification" id="toc-partial-identification" class="nav-link" data-scroll-target="#partial-identification"><strong>Partial Identification</strong></a>
+  <ul class="collapse">
+  <li><a href="#decomposing-the-ate" id="toc-decomposing-the-ate" class="nav-link" data-scroll-target="#decomposing-the-ate">Decomposing the ATE</a></li>
+  <li><a href="#nonparametric-bounds" id="toc-nonparametric-bounds" class="nav-link" data-scroll-target="#nonparametric-bounds">Nonparametric Bounds</a></li>
+  <li><a href="#monotone-treatment-selection-assumption" id="toc-monotone-treatment-selection-assumption" class="nav-link" data-scroll-target="#monotone-treatment-selection-assumption">Monotone Treatment Selection Assumption</a></li>
+  </ul></li>
   <li><a href="#implementation-in-r" id="toc-implementation-in-r" class="nav-link" data-scroll-target="#implementation-in-r"><strong>Implementation in R</strong></a></li>
   </ul>
 </nav>
@@ -884,21 +895,164 @@ Other Solutions to the OLS Bias under Heterogeneity
 <hr>
 </section>
 </section>
-<section id="partial-identification" class="level1">
-<h1><strong>Partial Identification</strong></h1>
+<section id="falsification-tests" class="level1">
+<h1><strong>Falsification Tests</strong></h1>
+<section id="testing-assumptions-with-falsification" class="level3">
+<h3 class="anchored" data-anchor-id="testing-assumptions-with-falsification">Testing Assumptions with Falsification</h3>
+<p>The stronger (bolder) our assumptions for identification, the less credible our results are. Selection on Observables involves a very strong and hard to verify assumption: <a href="https://politicalscience.github.io/causal/3.html#identification-assumptions">conditional ignorability</a>. Can we really be sure that we have controlled for all confounders <span class="math inline">X_i</span> needed to satisfy conditional ignorability?</p>
+<p><strong>Placebo tests</strong> are a type of falsification test to show evidence against our assumptions. Suppose that we make the assumption of conditional ignorability <span class="math inline">(Y_{0i}, Y_{1i}) \perp D_i | X_i</span>. Suppose we are concerned about the presence of another confounder <span class="math inline">U</span> that is not included in <span class="math inline">X_i</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1922523996.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
+</figure>
+</div>
+<p>The presence of <span class="math inline">U</span> will <strong>falsify</strong> our conditional ignorability assumption, and means we cannot identify the causal effect of <span class="math inline">D \rightarrow Y</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Falsification vs.&nbsp;Validation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Falsification is a principle of trying to criticise our own research, rather than defend it. Falsification is about testing if our assumptions are not met. Failing a test provides evidence that our assumption is not met.</p>
+<ul>
+<li>Ex. Covariates are balanced - thus there is <strong>no evidence</strong> that our assumptions are not met. We are not saying that our assumption is correct, just that there is no evidence against it.</li>
+</ul>
+<p>Validation is the opposite - we test to see if there is evidence in favour of our assumptions.</p>
+<ul>
+<li>Ex. Covariates are balanced - thus our assumptions are met.</li>
+</ul>
+</div>
+</div>
+</div>
+<p>For falsification tests, we should not just pay attention to statistical significance - we must also pay attention to the magnitude of the point estimation.</p>
+<p><br></p>
+</section>
+<section id="placebo-outcome-test" class="level3">
+<h3 class="anchored" data-anchor-id="placebo-outcome-test">Placebo Outcome Test</h3>
+<p>A <strong>placebo outcome test</strong> utilities another alternative outcome variable <span class="math inline">Y'</span> that is caused by our hypothesised unobserved confounder <span class="math inline">U</span>:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1507754175.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
+</figure>
+</div>
+<p>We can see that if <span class="math inline">U</span> does not exist, <span class="math inline">D</span> should have zero effect on the new outcome <span class="math inline">Y'</span>. Thus, if <span class="math inline">U</span> is present, we should find a relationship between <span class="math inline">D</span> and <span class="math inline">Y'</span>.</p>
+<p><span class="math display">
+Y'_i = \gamma + \delta D_i + u_i
+</span></p>
+<ul>
+<li>If we find that there is an effect of <span class="math inline">D</span> on the new outcome <span class="math inline">Y'</span> (non-zero <span class="math inline">\delta</span>), that is <strong>evidence</strong> that <span class="math inline">U</span> exists, and is <strong>evidence to reject</strong> our conditional ignorability assumption (falsifies our design - red flag!).</li>
+<li>If you do not find an effect of <span class="math inline">D</span> on new outcome <span class="math inline">Y'</span> (<span class="math inline">\delta = 0</span>) you find <strong>no evidence</strong> of <span class="math inline">U</span>, and <strong>no evidence to reject</strong> our conditional ignorability assumption (fails to falsify our design).</li>
+</ul>
+<p>We must be sure that <span class="math inline">Y</span> is not related to <span class="math inline">Y'</span> except through <span class="math inline">D</span> and <span class="math inline">U</span>. If this is true, we just run our original research design but replace <span class="math inline">Y</span> with <span class="math inline">Y'</span>.</p>
+<p><br></p>
+</section>
+<section id="placebo-treatment-test" class="level3">
+<h3 class="anchored" data-anchor-id="placebo-treatment-test">Placebo Treatment Test</h3>
+<p>A <strong>placebo treatment test</strong> involves some other treatment <span class="math inline">D'</span>, that was assigned at the same time</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2903631229.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
+</figure>
+</div>
+<p>We can see that if <span class="math inline">U</span> does not exist, the effect of <span class="math inline">D'</span> should have no effect on <span class="math inline">Y</span>. If <span class="math inline">U</span> does exist, there should be some effect of <span class="math inline">D'</span> on <span class="math inline">Y</span>.</p>
+<p><span class="math display">
+Y_i = \gamma + \delta D'_i + u_i
+</span></p>
+<ul>
+<li>If we find that there is an effect of <span class="math inline">D'</span> on <span class="math inline">Y</span> (non-zero <span class="math inline">\delta</span>), that is <strong>evidence</strong> that <span class="math inline">U</span> exists, and is <strong>evidence to reject</strong> our conditional ignorability assumption (falsifies our design - red flag!).</li>
+<li>If you do not find an effect of <span class="math inline">D'</span> on <span class="math inline">Y</span> (<span class="math inline">\delta = 0</span>) you find <strong>no evidence</strong> of <span class="math inline">U</span>, and <strong>no evidence to reject</strong> our conditional ignorability assumption (fails to falsify our design).</li>
+</ul>
+<p>We must be sure that <span class="math inline">Y</span> is not related to <span class="math inline">D'</span> except through <span class="math inline">D</span> and <span class="math inline">U</span>. If this is true, we just run our original research design but replace <span class="math inline">D</span> with <span class="math inline">D'</span>.</p>
 <p><br></p>
 <p><br></p>
 <hr>
+</section>
+</section>
+<section id="partial-identification" class="level1">
+<h1><strong>Partial Identification</strong></h1>
+<section id="decomposing-the-ate" class="level3">
+<h3 class="anchored" data-anchor-id="decomposing-the-ate">Decomposing the ATE</h3>
+<p>With falsification, we were concerned with what assumptions we needed to be not-false in order to identify the ATE. However, we can take a different approach - what can we learn about the ATE without any assumptions?</p>
+<p>Let us decompose the ATE into parts:</p>
+<p><span class="math display">
+\begin{split}
+\tau_{ATE}  = &amp; E(Y_{1i} - Y_{0i}) \\
+= &amp; \underbrace{E(Y_{1i} - Y_{0i} | D_i = 1) Pr(D_i = 1) - E(Y_{1i} - Y_{0i}|D_i = 0)Pr(D_i = 0)}_{\because \text{ weighted average}} \\
+= &amp; [ \overbrace{E(Y_i |D_i = 1)}^{\text{observed}} - \overbrace{E(Y_{0i}|D_i = 1)}^{\text{unobservered}}] Pr(D_i = 1) \\
+&amp; + [ \underbrace{E(Y_{1i}|D_i = 0)}_{\text{unobserved}} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0)
+\end{split}
+</span></p>
+<p>Some of the quantities are observed, and some of the quantities are unobserved. Previously, we made assumptions (conditional ignorability, common support) to fill the unobserved quantities. But, we can make actually any assumption as possible.</p>
+<p><br></p>
+</section>
+<section id="nonparametric-bounds" class="level3">
+<h3 class="anchored" data-anchor-id="nonparametric-bounds">Nonparametric Bounds</h3>
+<p>One way to fill in our unobserved outcomes through the “best” and “worst” possible outcomes. This allows us to construct a plausible range of the ATE.</p>
+<p>First, let us construct the worst-case scenario - the lowest possible <span class="math inline">\tau</span>.</p>
+<ol type="1">
+<li><span class="math inline">E(Y_{0i}|D_i = 1) = Y_H</span>. Units in the treated <span class="math inline">D_i=1</span>, their potential outcome <span class="math inline">Y_{0i}</span> will be the highest <span class="math inline">Y</span> possible, <span class="math inline">Y_H</span>.</li>
+<li><span class="math inline">E(Y_{1i}|D_i = 0) = Y_L</span>. Units in the control <span class="math inline">D_i=0</span>, their unobserved potential outcome <span class="math inline">Y_{1i}</span> will be the lowest <span class="math inline">Y</span> possible, <span class="math inline">Y_L</span>.</li>
+</ol>
+<p>Thus, the lowest possible <span class="math inline">\tau</span> (sharp lower bound) is:</p>
+<p><span class="math display">
+\underline \tau = [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{Y_H} \color{black}] Pr(D_i = 1)
++ [ \color{red}{Y_L} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0)
+</span></p>
+<p>Now, let us construct the best-case scenario - the highest possible <span class="math inline">\tau</span>.</p>
+<ol type="1">
+<li><span class="math inline">E(Y_{0i}|D_i = 1) = Y_L</span>. Units in the treated <span class="math inline">D_i=1</span>, their potential outcome <span class="math inline">Y_{0i}</span> will be the lowest <span class="math inline">Y</span> possible, <span class="math inline">Y_L</span>.</li>
+<li><span class="math inline">E(Y_{1i}|D_i = 0) = Y_H</span>. Units in the control <span class="math inline">D_i=0</span>, their unobserved potential outcome <span class="math inline">Y_{1i}</span> will be the highest <span class="math inline">Y</span> possible, <span class="math inline">Y_H</span>.</li>
+</ol>
+<p>Thus, the highest possible <span class="math inline">\tau</span> (sharp upper bound) is:</p>
+<p><span class="math display">
+\overline \tau = [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{Y_L} \color{black}] Pr(D_i = 1)
++ [ \color{red}{Y_H} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0)
+</span></p>
+<p>We know that the true <span class="math inline">\tau_{ATE} \in [\underline \tau, \overline \tau]</span></p>
+<p><br></p>
+</section>
+<section id="monotone-treatment-selection-assumption" class="level3">
+<h3 class="anchored" data-anchor-id="monotone-treatment-selection-assumption">Monotone Treatment Selection Assumption</h3>
+<p>Our extreme case from above is not very useful. However, we can layer on assumptions to lower the possible <span class="math inline">\tau</span> values.</p>
+<p>One assumption is the <strong>Monotone Treatment Selection (MTS)</strong> assumption. This assumption basically says that potential outcomes for units in treatment, are always higher than for those in the control.</p>
+<p><span class="math display">
+\begin{split}
+&amp; E(Y_{0i}|D_i = 0) ≤ \overbrace{E(Y_{0i}|D_i = 1)}^{\text{unobserved}} \\
+&amp; \underbrace{E(Y_{1i} |D_i = 0)}_{\text{unobserved}} ≤ E(Y_{1i} |D_i = 1)
+\end{split}
+</span></p>
+<p>This is basically saying that selection bias is one-direction.</p>
+<p>This implies a tighter sharp upper bound on <span class="math inline">\tau</span>.</p>
+<p><span class="math display">
+\begin{split}
+\overline \tau = &amp; [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{E(Y_{0i}|D_i = 0)} \color{black}] Pr(D_i = 1) \\
+&amp; + [ \color{red}{E(Y_{1i}|D_i =1)} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0) \\
+= &amp; E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
+\end{split}
+</span></p>
+<p>We can also make the reverse assumption, where selection bias is in the opposite direction. This means a tighter sharp lower bound <span class="math inline">\underline\tau</span>. These assumptions help narrow our possible <span class="math inline">\tau_{ATE}</span> values, and can allow us to test if our estimated <span class="math inline">\hat\tau</span> is reasonable (within the plausible bounds).</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
 </section>
 <section id="implementation-in-r" class="level1">
 <h1><strong>Implementation in R</strong></h1>
 <p>For all methods, you will need the <em>tidyverse</em> package:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MatchIt)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(estimatr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>See how to perform each estimator in R:</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -907,7 +1061,7 @@ Distance Matching
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For matching, you will need the <em>MatchIt</em> package:</p>
 <div class="cell">
@@ -963,7 +1117,7 @@ Distance Matching
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -972,7 +1126,7 @@ Propensity Score Matching
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>First, we want to estimate propoensity scores with a logistic regression (or a random forest):</p>
 <div class="cell">
@@ -1022,7 +1176,7 @@ Propensity Score Matching
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1031,7 +1185,7 @@ Inverse Probability Weighting
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-23" class="callout-23-contents callout-collapse collapse">
+<div id="callout-24" class="callout-24-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>First, we want to estimate propoensity scores with a logistic regression (or a random forest):</p>
 <div class="cell">
@@ -1068,7 +1222,7 @@ Inverse Probability Weighting
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-25-contents" aria-controls="callout-25" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1077,7 +1231,7 @@ OLS Estimator
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div id="callout-25" class="callout-25-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For the OLS estimator, we can use the <em>lm_robust()</em> function:</p>
 <div class="cell">
@@ -1098,7 +1252,7 @@ OLS Estimator
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-25-contents" aria-controls="callout-25" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-26-contents" aria-controls="callout-26" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1107,7 +1261,7 @@ Fully Interacted Estimator
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-25" class="callout-25-contents callout-collapse collapse">
+<div id="callout-26" class="callout-26-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For the fully interacted estimator, we can use the <em>lm_lin()</em> function.</p>
 <div class="cell">
