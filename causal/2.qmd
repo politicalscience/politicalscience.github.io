@@ -55,7 +55,7 @@ You can use bernoulli randomisation (simple randomisation) to avoid this issue. 
 
 ### Identification Assumptions
 
-Randomisation implies that assignment probabilities, do not depend on the potential outcomes. The potential outcome values do not affect our chances of being selected for treatment.
+Randomisation implies that assignment probabilities do not depend on the potential outcomes. The potential outcome values do not affect our chances of being selected for treatment.
 
 $$
 Pr(D=1|Y_0, Y_1) = Pr(D=1)
@@ -80,22 +80,7 @@ $$
 
 ### Proof of Identification
 
-Let us return to our [naive estimator](https://politicalscience.github.io/causal/1.html#naive-estimator-and-selection-bias), and our problem of selection bias:
-
-$$
-\hat\tau_{\text{naive}} = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}}
-$$
-
-But as discussed before, under randomisation, we know that:
-
-$$
-\begin{split}
-& E(Y_{0i} | D_i = 1) = E(Y_{0i} | D_i = 0) = E(Y_{0i})\\
-& E(Y_{1i} | D_i = 1) = E(Y_{1i} | D_i = 0) = E(Y_{1i})
-\end{split}
-$$
-
-Using these properties, we can simplify:
+Let us return to our [naive estimator](https://politicalscience.github.io/causal/1.html#naive-estimator-and-selection-bias), and our problem of selection bias. Using the above property of independence, we can simplify:
 
 $$
 \begin{split}
@@ -105,22 +90,7 @@ $$
 \end{split}
 $$
 
-Thus, under randomisation, selection bias is equal to 0, and thus our comparison of observed outcomes is now an unbiased estimator of the Average Treatment Effect on the Treated (ATT).
-
-<br />
-
-### Equivalence of Estimands
-
-Recall that randomisation (and independence from potential outcomes) says:
-
-$$
-\begin{split}
-& E(Y_{0i} | D_i = 1) = E(Y_{0i} | D_i = 0) = E(Y_{0i})\\
-& E(Y_{1i} | D_i = 1) = E(Y_{1i} | D_i = 0) = E(Y_{1i})
-\end{split}
-$$
-
-Now look at the formula for the [ATT](https://politicalscience.github.io/causal/1.html#average-treatment-effect-on-the-treated-att). We can simplify as follows:
+Thus, under randomisation, selection bias is equal to 0, and thus our comparison of observed outcomes is now an unbiased estimator of $\tau_{ATT}$. Now look at the formula for the [ATT](https://politicalscience.github.io/causal/1.html#average-treatment-effect-on-the-treated-att) estimand. We can simplify as follows:
 
 $$
 \begin{split}
@@ -131,7 +101,7 @@ $$
 \end{split}
 $$
 
-And now we see that $\tau_{ATT}$ and $\tau_{ATE}$ are equivalent under randomisation.
+And now we see that $\tau_{ATT}$ and $\tau_{ATE}$ are equivalent under randomisation, and we can identify the $\tau_{ATE}$ with our observed data.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Graphical Identification
@@ -317,11 +287,9 @@ For example, if your data is clustered in cities, you should re-sample by cities
 
 <br />
 
-### Sharp Null Hypothesis
+### Randomisation Inference
 
-For our $t$-tests, the null hypothesis was that the ATE was equal to 0. The issue is, the ATE is the expectation of treatment - a ATE of 0 could result from half of the population having $\tau = -10$ and half of the population having $\tau = 10$.
-
-Consider a new **sharp null hypothesis**, that all individual causal effects are zero:
+Consider a new **sharp null hypothesis**, that all individual causal effects are zero (not just the average causal effect):
 
 $$
 H_0^s : Y_1 = Y_0, \quad H_A^s : Y_1 ≠ Y_0
@@ -329,15 +297,7 @@ $$
 
 Assuming $H_0$ is true, we can actually fully construct the potential outcomes $Y_{0i}$ and $Y_{1i}$, since we know every unit has 0 individual treatment effect.
 
-Thus, under the sharp null, we can actually observe both potential outcomes.
-
-<br />
-
-### Randomisation Inference
-
-Using the sharp null hypothesis, we can construct the full population $Y_{0i}$ and $Y_{1i}$ under the null hypothesis. Once constructed, we can imagine what different treatments we would observe under different randomization schemes (given $H_0$ is true).
-
--   Thus, we can construct the sampling distribution, so we do not need to "imagine" a hypothetical sampling distribution.
+Once constructed, we can imagine what different treatments we would observe under different randomization schemes (given $H_0$ is true). Thus, we can construct the sampling distribution, so we do not need to "imagine" a hypothetical sampling distribution.
 
 Procedure for conducting randomisation inference (also called permutation test or Fisher's exact test) is as follows:
 

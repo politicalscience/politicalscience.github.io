@@ -23,22 +23,22 @@ format:
 editor: visual
 ---
 
-This chapter introduces the selection on observables framework, which allows us to identify causal effects by controlling for observable pre-treatment covariates. We discuss the main estimators, including subclassification, regression, and matching, as well as more advanced topics in sensitivity analysis and partial identification.
+This chapter introduces the selection on observables framework, which allows us to identify causal effects by controlling for observable pre-treatment covariates. We discuss the main estimators, including subclassification, regression, and matching.
 
 ------------------------------------------------------------------------
 
 # **Identification**
 
-### Graphical Identification
+### Blocking Backdoor Paths
 
 Without randomisation, we need some other way to account for pre-treatment covariates that may be confounding and causing selection bias. Controlling for a set of nodes/confounders $X$ can identify the causal effect of $D \rightarrow Y$, if:
 
 1.  No node within set $X$ is a descendant of $D$ (no element within $X$ results from $D$).
 2.  The nodes within set $X$ [block all back-door paths](https://politicalscience.github.io/causal/1.html#blocked-paths) from $D \rightarrow Y$.
 
-![](images/clipboard-378311705.png){fig-align="center" width="50%"}
+![](images/clipboard-378311705.png){fig-align="center" width="45%"}
 
-In the figure above, to identify the causal path $D \rightarrow Y$, we need to eliminate all back-door paths that are not $D \rightarrow Y$, but link $D$ to $Y$. The backdoor paths, and how they can be blocked, are:
+In the figure above, let us block the backdoor paths between $D \rightarrow Y$:
 
 1.  Backdoor path $D \rightarrow X \rightarrow Y$. To block this path, we must control for $X$.
 2.  Backdoor path $D \rightarrow V \rightarrow Y$. We do not need to control for $V$, since it is post-treatment (a descendant of $D$). In fact, $V$ is a **bad control** (see below).
@@ -65,7 +65,7 @@ Neutral controls are ones that don't identify the causal effect, but improve eff
 
 ### Identification Assumptions
 
-Once we have determined the set of confounders $X$ that we need to control for to isolate the causal effect of interest, the assumptions needed for identification of causal effects are:
+Once we have determined the set of confounders $X$ that we need to control to block all backdoor paths, the assumptions needed for identification of causal effects are:
 
 1.  **Conditional Ignorability** (also known as exogeneity or independence): Among units with identical confounder values $X_i$, treatment $D_i$ is as-if randomly assigned. Or in other words, potential outcomes are independent from treatment within each specific confounder value $X_i = x$.
 
@@ -123,7 +123,7 @@ $$
 \end{split}
 $$
 
-This means the ATE is identified as the weighted average of all the conditional average treatment effects. The conditional average treatment effect is the difference-in-means of the observed $Y_i$ at every possible value of $X_i = x$.
+Thus $\tau_{ATE}$ is identified as the weighted average of all the CATEs, who themselves are difference-in-means of the observed $Y_i$ at every possible value of $X_i = x$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Identification of the ATT
@@ -190,7 +190,7 @@ $$
 When pre-treatment covariate $X$ is discrete, we know the identification result of the ATE is:
 
 $$
-\tau_{ATE} = \sum\limits_{x \in \mathcal X} \underbrace{( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x))}_{\text{CATE at }X_i = x} \underbrace{Pr(X_i = x)}_{\text{weight}}
+\sum\limits_{x \in \mathcal X} \underbrace{( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x))}_{\text{CATE at }X_i = x} \underbrace{Pr(X_i = x)}_{\text{weight}}
 $$
 
 We can calculate this within our give sample to get the **subclassificaiton** estimator:
@@ -296,8 +296,6 @@ Matching does not always create "perfect" matches. This means that the pairs mat
 The inability to find exact matches can cause bias, especially for the more covariates we match on (see below).
 :::
 
-Note: Matching is not a design - it is an estimator. You need a research design, such as selection on observables.
-
 <br />
 
 ### Matching with Multiple Covariates
@@ -380,7 +378,7 @@ Thus, instead of conditioning on $X_i$ as we did in selection on observables, we
 
 However, we do not actually observe $\pi (X_i)$. We estimate $\pi (X_i)$ with a binary response model, with outcome variable $D_i$, and explanatory variables $X_i$. This will get us a fitted probability $Pr(D_i = 1) = \hat\pi(X_i)$.
 
-Then, once we have the propensity score estimates $\hat\pi(X_i)$, we can do nearest neighbour matching with the propensity scores (in 1-dimensional space). This will allow us to identify the $\tau_{ATT}$.
+Then, once we have the propensity score estimates $\hat\pi(X_i)$, we can do nearest neighbour matching with the propensity scores (in $\mathbb R^1$). This will allow us to identify the $\tau_{ATT}$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Balance Checks
@@ -392,7 +390,7 @@ The accurate estimation of $\tau_{ATT}$ implies an accurate prediction of the pr
 
 ### Inverse Probability Weighting Estimator
 
-An alternative use of the propensity score is weighting. Under both conditional ignorability and common support assumptions, we can identify the ATE as:
+An alternative use of propensity scores is weighting. Under conditional ignorability and common support, we can identify the ATE as:
 
 $$
 \tau_{ATE} = E\left[ Y_i \times \underbrace{\frac{D_i - \pi(X_i)}{\pi(X_i) (1 - \pi(X_i))}}_{\text{weight}}\right]
@@ -480,7 +478,7 @@ $$
 And thus, we have identified the ATE.
 :::
 
-The **inverse probability weighting (IPW) estimator** would be the same calculation but in the sample:
+The **inverse probability weighting (IPW) estimator** is the sample estimator:
 
 $$
 \begin{split}
@@ -488,8 +486,6 @@ $$
 & = \frac{1}{N} \sum\limits_{i=1}^N \left(\frac{D_i Y_i}{\hat\pi(X_i)} - \frac{(1-D_i) Y_i}{1 - \hat\pi(X_i)} \right)
 \end{split}
 $$
-
--   The second equation is equivalent to the first - see the proof above for derivation.
 
 Essentially, those who are unlikely to be treated but do get treated get weighted more, and individuals who are likely to be treated but do not get treated get weighted more.
 
@@ -512,13 +508,13 @@ $$
 $$
 :::
 
-The IPW estimator is [asymptotically consistent](https://politicalscience.github.io/causal/0.html#asymptotically-consistent-estimators), but has very poor small sample properties. They are highly sensitive to extreme values of $\hat\pi(X_i)$. This generates high variance (inefficiency), and can produce significant bias under model mispecification. Thus, you typically do not want to use it in small-sample situations.
+The IPW estimator is [asymptotically consistent](https://politicalscience.github.io/causal/0.html#asymptotically-consistent-estimators), but has very poor small sample properties. They are highly sensitive to extreme values of $\hat\pi(X_i)$. This generates high variance (inefficiency), and can produce significant bias under model mispecification.
 
 <br />
 
 ### Ordinary Least Squares Estimator
 
-When we think about controlling for covariates $X$, we often think about regression. OLS is a natural approach, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](https://politicalscience.github.io/causal/0.html#regression-anatomy-theorem). $\hat\beta_{OLS}$ a good estimator of $\tau_{ATE}$ in selection of observables under 2 conditions:
+OLS is a natural approach for controlling for confounders $X$, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](https://politicalscience.github.io/causal/0.html#regression-anatomy-theorem). OLS is a good estimator of $\tau_{ATE}$ under 2 conditions:
 
 1.  **Constant treatment effect**: $\tau_i = Y_{1i} - Y_{0i}$ for all units $i$.
 2.  **Linearity**: Potential outcomes are linear, and can be written as:
@@ -527,7 +523,7 @@ $$
 Y_i(d) = \beta_0 + d\beta_1 + \mathbf X_i \gamma + \epsilon_i \quad \text{for} \quad d = 0, 1
 $$
 
-Why is this the case? Suppose we have the above linear potential outcomes. We can show:
+Why these conditions? Suppose we have the above linear potential outcomes. We can show:
 
 $$
 \begin{split}
@@ -537,8 +533,6 @@ $$
 & = \beta_1
 \end{split}
 $$
-
-Thus, $\beta_1$ properly identifies the $\tau_i$ given the two above assumptions.
 
 We also know that conditional ignorability implies [zero-conditional mean](https://politicalscience.github.io/causal/0.html#conditions-for-unbiasedness). Thus $\beta_1$ is an unbiased and asymptotically consistent estimator of the ATE.
 
@@ -720,13 +714,16 @@ Let us decompose the ATE into parts:
 $$
 \begin{split}
 \tau_{ATE}  = & E(Y_{1i} - Y_{0i}) \\
- = & \underbrace{E(Y_{1i} - Y_{0i} | D_i = 1) Pr(D_i = 1) - E(Y_{1i} - Y_{0i}|D_i = 0)Pr(D_i = 0)}_{\because \text{ weighted average}} \\
-= & [ \overbrace{E(Y_i |D_i = 1)}^{\text{observed}} - \overbrace{E(Y_{0i}|D_i = 1)}^{\text{unobservered}}] Pr(D_i = 1) \\
-& + [ \underbrace{E(Y_{1i}|D_i = 0)}_{\text{unobserved}} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0)
+& \\
+ = & E(Y_{1i} - Y_{0i} | D_i = 1) Pr(D_i = 1) \\
+& \quad - E(Y_{1i} - Y_{0i}|D_i = 0)Pr(D_i = 0) \\
+& \\
+= & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}- \color{red}{E(Y_{0i}|D_i = 1)} \color{black}] Pr(D_i = 1) \\
+& \quad + [ \color{red}{E(Y_{1i}|D_i = 0)} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0)
 \end{split}
 $$
 
-Some of the quantities are observed, and some of the quantities are unobserved. Previously, we made assumptions (conditional ignorability, common support) to fill the unobserved quantities. But, we can make actually any assumption as possible.
+Some of the quantities are observed (in blue), and some of the quantities are unobserved (in red). Previously, we made assumptions (conditional ignorability, common support) to fill the unobserved quantities. But, we can make actually any assumption as possible.
 
 <br />
 
@@ -742,8 +739,10 @@ First, let us construct the worst-case scenario - the lowest possible $\tau$.
 Thus, the lowest possible $\tau$ (sharp lower bound) is:
 
 $$
-\underline \tau = [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{Y_H} \color{black}] Pr(D_i = 1)
-+ [ \color{red}{Y_L} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0)
+\begin{split}
+\tau_L = & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_H} \color{black}] Pr(D_i = 1) \\
+& \quad + [ \color{red}{Y_L} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0)
+\end{split}
 $$
 
 Now, let us construct the best-case scenario - the highest possible $\tau$.
@@ -754,11 +753,13 @@ Now, let us construct the best-case scenario - the highest possible $\tau$.
 Thus, the highest possible $\tau$ (sharp upper bound) is:
 
 $$
-\overline \tau = [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{Y_L} \color{black}] Pr(D_i = 1)
-+ [ \color{red}{Y_H} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0)
+\begin{split}
+\tau_H = & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_L} \color{black}] Pr(D_i = 1) \\
+& \quad + [ \color{red}{Y_H} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0)
+\end{split}
 $$
 
-We know that the true $\tau_{ATE} \in [\underline \tau, \overline \tau]$
+We know that the true $\tau_{ATE} \in [\tau_L, \tau_H]$.
 
 <br />
 
@@ -781,11 +782,13 @@ This implies a tighter sharp upper bound on $\tau$.
 
 $$
 \begin{split}
-\overline \tau = & [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{E(Y_{0i}|D_i = 0)} \color{black}] Pr(D_i = 1) \\
-& + [ \color{red}{E(Y_{1i}|D_i =1)} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0) \\
+\tau_H = & [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{E(Y_{0i}|D_i = 0)} \color{black}] Pr(D_i = 1) \\
+& \quad + [ \color{red}{E(Y_{1i}|D_i =1)} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0) \\
 = & E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
 \end{split}
 $$
+
+This indicates that the upper bound of plausible $\tau_{ATE}$ values is the naive estimator of differences in observed outcomes.
 
 We can also make the reverse assumption, where selection bias is in the opposite direction. This means a tighter sharp lower bound $\underline\tau$. These assumptions help narrow our possible $\tau_{ATE}$ values, and can allow us to test if our estimated $\hat\tau$ is reasonable (within the plausible bounds).
 

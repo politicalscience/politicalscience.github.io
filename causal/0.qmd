@@ -31,13 +31,13 @@ This background chapter introduces some key econometric theory needed for causal
 
 ### Estimands and Estimators
 
-An **estimand** is the true value of some parameter $\theta$ in the population we are trying to measure. For example, it could be the true relationship between two variables in the population, or the true average of some variable in the population.
+An **estimand** is the true value of some parameter $\theta$ in the population we are trying to measure.
 
-However, we often cannot find the true value of $\theta$ in the population, because it is often too hard, or even impossible to ask everyone in the population. Thus, we usually use a sample from the population, and use an **estimator** to produce a sample **estimate** $\hat\theta$.
+However, we often cannot find the true value of $\theta$ in the population, because it is often too hard, or even impossible to ask everyone in the population. Thus, we usually use a sample from the population, and use an **estimator** (procedure) to produce a sample **estimate** $\hat\theta$.
 
-The estimator is the procedure for taking our sample data to produce an estimate $\hat\theta$ of the true population value $\theta$. However, because of sampling variability (not all random samples will be identical), taking another sample will result in a different estimate $\hat\theta$ than the original.
+However, because of sampling variability (not all random samples will be identical), taking another sample will result in a different estimate $\hat\theta$ than the original.
 
-If we keep taking $n$ number of samples, we will have $n$ number of estimates $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_n$. Thus, any specific estimate $\theta_i$ from sample $i$ can be thought of as a random draw from the **sampling distribution** $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_n$.
+If we keep taking $N$ number of samples, we will have $N$ number of estimates $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$. Thus, any specific estimate $\theta_n$ from sample $i$ can be thought of as a random draw from the **sampling distribution** $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Example of a Sampling Distribution
@@ -55,7 +55,7 @@ We plot all of these samples into a distribution as follows:
 This indicates the potential estimates we can get. If we were to conduct only one sample, we would essentially be selecting a random $\hat\theta_i$ value from this distribution.
 :::
 
-The sampling distribution of an estimator is the key thing we are concerned with estimators. The two parameters of interest from this sampling distribution are its **expectation** and **variance**.
+The sampling distribution of an estimator is the key property of estimators. The two parameters of interest from this sampling distribution are its **expectation** and **variance**.
 
 <br />
 
@@ -69,13 +69,9 @@ $$
 
 Or in other words, if we repeatedly sample and use the estimator, on average, the estimates will be equal to the true population value.
 
-We want an estimator that is unbiased. Why?
+We want an unbiased estimator, because if $E(\hat\theta_n) = \theta$, that means our "best guess" of the estimator value is the true parameter value $\theta$. That means any one estimate $\hat\theta_n$ is on average, correct.
 
--   We know that the expectation of a random variable is its "best guess" of its value.
--   We know that estimates $\hat\theta_n$ from an estimator are a random variable called the sampling distribution.
--   Thus, if $E(\hat\theta_n) = \theta$, that means our "best guess" of the estimator value is the true parameter value $\theta$. That means any one estimate $\hat\theta_n$ is on average, correct.
-
-If our estimator is biased, we can quantify bias with the following formula:
+If our estimator is **biased**, we can quantify bias with the following formula:
 
 $$
 Bias(\hat\theta_n) = E(\hat\theta_n)-\theta
@@ -85,12 +81,18 @@ $$
 
 ### Variance and Efficiency
 
-Unbiasedness is not the only desirable property of estimators. For example, let us say the true population parameter is $\theta = 0$. We will have two estimators: estimator $A$ and estimator $B$:
+Unbiasedness is not the only desirable property of estimators - we also care about the variance. After all, if we have two unbiased estimators, the one with less variance will be on average, closer to the true population value, for any one estimate $\hat\theta$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of the Importance of Variance
+
+For example, let us say the true population parameter is $\theta = 0$. We will have two estimators: estimator $A$ and estimator $B$:
 
 -   Estimator $A$, after two samples (for simplicity), produces estimates -1 and 1.
 -   Estimator $B$, after two samples, produces estimates -100 and 100.
 
 Both estimators are unbiased $E(\hat\theta_n) = 0$. However, clearly, estimator $A$ is, on average, closer to $\theta =0$ than estimator $B$. This is because while both estimators are unbiased, estimator $A$ has a smaller **variance** than estimator $B$ - that is on average, estimator $A$'s estimators are more closely "packed around" the expectation of the estimator.
+:::
 
 The variance of an estimator can be quantified as:
 
@@ -118,17 +120,15 @@ This is particularly the case when the biased estimator has a slight bias but sm
 
 ### Asymptotically Consistent Estimators
 
-Asymptotic properties are properties of estimators as the sample size becomes larger and larger. Or more mathematically, as the sample size $n$ approaches infinity.
+Asymptotic properties are properties of estimators as the sample size $n$ approaches infinity.
 
-An estimator is consistent, if as we increase sample size towards infinity, the estimate will become more and more concentrated around the true population value $\theta$.
-
-Or in other words, as sample size increases indefinitely, we will get closer and closer to the true population value $\theta$, until at infinite sample size, all our estimates will be exactly $\theta$. Mathematically:
+An estimator is consistent, if as we increase sample size towards infinity, the estimate will become more and more concentrated around the true population value $\theta$. At $n = ∞$, our sampling distribution collapses to just one value, the true population value $\theta$. Mathematically:
 
 $$
 Pr(|\hat\theta_n - \theta|> \epsilon) \rightarrow 0, \text { as } n \rightarrow ∞
 $$
 
--   Or in other words, the proabability that the distance between an estimate $\hat\theta_n$ and the true population value $\theta$ will be higher than a small close-to-zero value $\epsilon$ will be 0, since our estimates $\hat\theta_n$ will converge at the $\theta$.
+-   Or in other words, the probability that the distance between an estimate $\hat\theta_n$ and the true population value $\theta$ will be higher than a small close-to-zero value $\epsilon$ will be 0, since our estimates $\hat\theta_n$ will converge at the $\theta$.
 
 This is a useful property, since even if our estimator is biased, if it is asymptotically consistent, we know that with large enough sample sizes, that bias becomes infinitely small and negligible.
 
@@ -195,27 +195,25 @@ Thus, the variance of our estimator $\bar x_n$ shrinks to zero, so as sample siz
 
 ### Asymptotic Normality
 
-Another asymptotic property of estimators, as sample size $n$ approaches infinity, is that the sampling distribution approaches a normal distribution. This is called the **central limit theorem (CLM)**, and applies to any estimator, regardless of the underlying distribution of the variables in the population.
+Another asymptotic property of estimators, as sample size $n$ approaches infinity, is that the sampling distribution approaches a normal distribution.
 
-Mathematically, let us say we have some random variable $X_i$. We take a random sample of $n$ units, so our sample is $(X_1, \dots, X_n)$. The central limit theorem states that:
+The **central limit theorem** establishes asymptotic normality of estimators. Let us say we have $N$ number of random variables $\hat\theta_1, \dots, \hat\theta_N$ (estimates are realisations of random variables). The central limit theorem states that:
 
 $$
 Pr(w_n < w) \rightarrow \Phi(w) \quad \text{as } n \rightarrow ∞
 $$
 
--   Where $w_n$ is a transformed verision of the random variable $X$, defined as $w_n = \frac{\bar X - \mu}{\sigma / \sqrt{n}}$.
+-   Where $w_n$ is a transformed version of the random variable $\hat\theta_n$, defined as $w_n = \frac{\bar\theta_n - \mu}{\sigma / \sqrt{n}}$.
 -   Where $Pr(w_n < w)$ is the cumulative density function of the random variable $w_n$.
 -   Where $\Phi(w)$ is the cumulative density function (cdf) of the standard normal distribution $\mathcal N(0, 1)$.
 
-The importance of CLM is not the asymptotic part, since we never have a truly infinite sample size. The importance of CLM comes from the fact that as we increase sample size, our sampling distribution becomes more and more normally distributed.
-
-This property is essentially for carrying out statistical inference and significance tests, as they generally assume that our estimator is normally distributed.
+The importance of CLM comes from the fact that as we increase sample size, our sampling distribution becomes more and more normally distributed. This property is essentially for carrying out statistical inference and significance tests, as they generally assume that our estimator is normally distributed.
 
 <br />
 
 ### Nonparametric Bootstrap
 
-Most traditional statistical tests rely on asymptotic normality that we discussed above. However, asymptotic normality can only be satisfied sufficiently if we have a large enough sample size. When we are dealing with small samples, we cannot actually know the exact sampling distribution.
+Most traditional statistical tests rely on asymptotic normality. However, asymptotic normality can only be satisfied if we have a large enough sample size. When we are dealing with small samples, we cannot invoke central limit theorem.
 
 Nonparametric Bootstrap, instead of assuming some sampling distribution, is a method to simulate the sampling distribution. This is done by re-sampling from the sample with replacement. The procedure is as follows:
 
@@ -237,13 +235,7 @@ Nonparametric Bootstrap is also used in some more complex estimators where it is
 
 ### Deriving the Estimator
 
-We start with some true-population linear model, and a fitted values model (see [linear regression](https://politicalscience.github.io/regression/1.html) for refresher):
-
-$$
-\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u, \quad \hat{\mathbf y} =\mathbf X \hat{\boldsymbol\beta}
-$$
-
-Our sum of squared residuals (SSR) is $\mathbf y - \hat{\mathbf y} = \mathbf y - \mathbf X \hat{\boldsymbol\beta}$. Let us define our estimation vector $\boldsymbol{\hat{\beta}}$ as the value of $\boldsymbol{\hat{\beta}}$ that minimises the SSR:
+Our sum of squared residuals (SSR) in [linear regression](https://politicalscience.github.io/regression/1.html) is $\mathbf y - \hat{\mathbf y} = \mathbf y - \mathbf X \hat{\boldsymbol\beta}$. Let us define our estimation vector $\boldsymbol{\hat{\beta}}$ as the value of $\boldsymbol{\hat{\beta}}$ that minimises the SSR:
 
 $$
 \boldsymbol{\hat{\beta}} = \min\limits_{b} (\mathbf y - \mathbf{Xb})^T (\mathbf y - \mathbf{Xb}) = \min\limits_b S(\mathbf b)
@@ -256,12 +248,6 @@ $$
 S(\mathbf b) & = \mathbf y^T \mathbf y \color{red}{ - \mathbf b^T \mathbf X^T \mathbf y - \mathbf y^T \mathbf{Xb}} \color{black} + \mathbf b^T \mathbf X^T \mathbf{Xb} \\ 
 & = \mathbf y^T \mathbf y \color{red}{- 2\mathbf b^T \mathbf X^T \mathbf y} \color{black} + \mathbf b^T \mathbf X^T \mathbf{Xb}
 \end{split}
-$$
-
-Taking the partial derivative in respect to $b$:
-
-$$
-\frac{\partial S(\mathbf b)}{\partial \mathbf b} = \begin{pmatrix}\frac{\partial S(\mathbf b)}{\partial b_1} \\\vdots \\\frac{\partial S(\mathbf b)}{\partial b_k}\end{pmatrix}
 $$
 
 Differentiating with the vector $b$ yields:
@@ -291,11 +277,7 @@ $$
 
 ### Regression Anatomy Theorem
 
-Take our standard multiple linear regression:
-
-$$
-y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + ... + \beta_k x_{ki} + u_i
-$$
+Take our multiple linear regression: $y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + ... + \beta_k x_{ki} + u_i$.
 
 Let us say we are interested in $x_1$. Let us make $x_1$ the outcome variable of a regression with explanatory variables $x_2, ..., x_k$:
 
@@ -303,7 +285,7 @@ $$
 x_{1i} = \gamma_0 + \gamma_1 x_{2i} + ... + \gamma_{k-1}x_{ki} + \widetilde{r_{1i}}
 $$
 
--   The error term is $\widetilde{r_{1i}}$, which represents the part of $x_{1i}$ that are uncorrelated to $x_2, ..., x_k$. In other words, $\widetilde{r_{1i}}$ is the part of $x_1$ that cannot be explained by any other explanatory variable $x_2, ..., x_k$. (uncorrelated with them)
+The error term $\widetilde{r_{1i}}$ is the part of $x_1$ that cannot be explained by $x_2, ..., x_k$.
 
 Now, take the regression of with outcome variable $y$, with all explanatory variables [except]{.underline} $x_1$:
 
@@ -311,16 +293,15 @@ $$
 y_i = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \widetilde{y_i}
 $$
 
--   The error term is $\widetilde{y_i}$, which is the part of $y_i$ that cannot be explained by $x_2, ..., x_k$ (uncorrelated with them). Since $\widetilde{y_i}$ is not explained by $x_2, ..., x_k$, variable $x_1$ must be the one explaining $\widetilde{y_i}$.
--   But, $x_1$ may also correlated with $x_2, ..., x_k$, and the correlated parts of $x_1$ with $x_2, ..., x_k$ are already picked up in the regression by the coefficients of $x_2, ..., x_k$. Thus, $\widetilde{y_i}$ must be explained by the part of $x_1$ that is uncorrelated and not explained by $x_2, ..., x_k$, which we derived earlier as $\widetilde{r_{1i}}$.
+The error term $\widetilde{y_i}$ is the part of $y_i$ that cannot be explained by $x_2, ..., x_k$. That implies $x_1$ must be the one explaining $\widetilde{y_i}$. But, $x_1$ may also correlated with $x_2, ..., x_k$, and those correlated parts are already picked up in the regression coefficients of $x_2, ..., x_k$. Thus, $\widetilde{y_i}$ must be explained by the part of $x_1$ that is uncorrelated with $x_2, ..., x_k$, which we derived earlier as $\widetilde{r_{1i}}$.
 
-Thus, we can create another regression with explanatory variable $\widetilde{x_{1i}}$ and outcome variable $\widetilde{y_i}$.
+Thus, we can create another regression with explanatory variable $\widetilde{x_{1i}}$ and outcome variable $\widetilde{y_i}$:
 
 $$
 \widetilde{y_i} = \alpha_0 + \alpha_1 \widetilde{r_{1i}} + u_i
 $$
 
-We can plug $\widetilde{y_i}$ back into our regression of $y_i$ with explanatory variables $x_2 ..., x_k$, and re-arrange:
+We plug $\widetilde{y_i}$ back into our regression of $y_i$ with explanatory variables $x_2 ..., x_k$:
 
 $$
 \begin{split}
@@ -330,15 +311,15 @@ y_i  & = \underbrace{(\delta_0 + \alpha_0)}_{\beta_0} + \underbrace{\alpha_1 \wi
 \end{split}
 $$
 
-As we can see, this new regression mirrors the original standard multiple linear regression. Importantly we see [the estimate of $\alpha_1$ will be the same as $\beta_1$ in the original regression]{.underline}. This coefficient explains the expected change in $y$, given an increase in the part of $x_1$ uncorrelated with $x_2, ..., x_k$.
+This new regression mirrors the original multiple linear regression. Importantly, we see [the estimate of $\alpha_1$ will be the same as $\beta_1$ in the original regression]{.underline}. This coefficient explains the expected change in $y$, given an increase in the part of $x_1$ uncorrelated with $x_2, ..., x_k$.
 
-So essentially, [we have **partialed out** the effect of the other explanatory variables, and only focus on the effect on $y$ of the uncorrelated part of $x_1$ (which is $\widetilde{r_{1i}}$)]{.underline}. This is why OLS is able to "control" for confounders.
+So essentially, [we have **partialed out** the effect of the other explanatory variables, and only focus on the effect on $y$ of the uncorrelated part of $x_1$ (which is $\widetilde{r_{1i}}$)]{.underline}. This is what controlling for confounders is.
 
 <br />
 
 ### Conditions for Unbiasedness
 
-OLS is an unbiased estimator of the relationship between any $x_j$ and $y$ under 4 conditions:
+OLS is an [unbiased estimator](https://politicalscience.github.io/causal/0.html#unbiased-estimators) of the relationship between any $x_j$ and $y$ under 4 conditions:
 
 1.  **Linearity** in parameters: the model of the population (data generating process) can be modelled as:
 
@@ -348,15 +329,15 @@ $$
 
 2.  **Random Sampling**: the observations in our sample are randomly sampled from the same population.
 3.  **No Perfect Multicolinearity**: There is no exact linear relationships between the regressors. This ensures that $\mathbf X^T \mathbf X$ is invertible, which is required for the derivation of OLS.
-4.  **Zero Conditional Mean**: $E(u|\mathbf X) = 0$. This implies that no regressor, and no function of multiple regressors is correlated with the error term.
+4.  **Zero Conditional Mean**: $E(\mathbf u|\mathbf X) = 0$. This implies that no regressor, and no function of multiple regressors is correlated with the error term.
 
-If any of these conditions are violated, OLS is not an unbiased estimator. The key condition is zero-conditional mean - specifically, **Exogeneity**. Exogeneity refers to when each regressor is uncorrelated with the error term. If exogeneity is met, zero-conditional mean is met.
+If any of these conditions are violated, OLS is not an unbiased estimator. The key condition is zero-conditional mean - specifically, **Exogeneity**. Exogeneity refers to when each regressor is uncorrelated with the error term. If exogeneity is violated, zero-conditional mean is violated.
 
 <br />
 
 ### Proof of Unbiasedness
 
-We need condition 3 to ensure $\mathbf X^T \mathbf X$ is invertible, in order to have OLS estimates. Once we have OLS estimates (derivation above), we can manipulate it as following:
+Let us manipulate our OLS solution:
 
 $$
 \begin{split}
@@ -367,7 +348,7 @@ $$
 \end{split}
 $$
 
-Now, let us take the expectation of $\boldsymbol{\hat\beta}$ conditional on $\mathbf X$. Remember condition 4 - zero conditional mean, which allows us to simplify this.
+Now, let us take the expectation of $\boldsymbol{\hat\beta}$ conditional on $\mathbf X$. Remember condition 4, $E(\mathbf u | \mathbf X) = 0$:
 
 $$
 \begin{split}
@@ -452,8 +433,6 @@ $$
 \end{split}
 $$
 
-Thus, we know:
-
 $$
 Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \ | \ \mathbf X)
 $$
@@ -485,13 +464,9 @@ Var(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^T \mathbf X)^{-1} \mathbf
 \end{split}
 $$
 
-However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed [here](https://politicalscience.github.io/regression/1.html#residual-standard-deviation)). The standard errors are the square root of the variance. Thus, our standard errors for any coefficient estimate $\hat\beta_j$ are:
+However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed [here](https://politicalscience.github.io/regression/1.html#residual-standard-deviation)).
 
-$$
-se(\hat\beta_j) = \hat\sigma \sqrt{(\mathbf X^T \mathbf X)^{-1}_{jj}}
-$$
-
-We can use these standard errors for [hypothesis testing](https://politicalscience.github.io/regression/1.html#t-tests), if we believe homoscedasticity is met. If not, we will need to use **robust standard errors**, which we will not derive here. In modern econometrics, it has become more common to use [robust standard errors by default]{.underline}, unless we can definitively prove homoscedasticity is met.
+We can use these standard errors (square root of variance) for [hypothesis testing](https://politicalscience.github.io/regression/1.html#t-tests), if we believe homoscedasticity is met. If not, we will need to use **robust standard errors**, which we will not derive here. In modern econometrics, it has become more common to use [robust standard errors by default]{.underline}, unless we can definitively prove homoscedasticity is met.
 
 <br />
 
@@ -528,8 +503,6 @@ $$
 \end{split}
 $$
 
-We cannot apply the law of large numbers to sums. Thus, we can convert our matrices into vector notation.
-
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Vector Notation
 
@@ -543,7 +516,7 @@ $$
 $$
 :::
 
-Thus, we can simplify the above to:
+Using vector notation, we can simplify the above to:
 
 $$
 \begin{split}
@@ -573,8 +546,6 @@ Thus, OLS is asymptotically consistent under the 4 conditions above.
 
 ### OLS as a Conditional Expectation Function
 
-OLS is a best-linear approximation of the conditional expectation function.
-
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Conditional Expectation Functions
 
@@ -596,7 +567,7 @@ MSE & = E(y_i - E(y_i|x_i))^2 \\
 $$
 :::
 
-Suppose we have the conditional expectation function:
+OLS is a best-linear approximation of the conditional expectation function. Suppose we have the conditional expectation function:
 
 $$
 E(y_i|x_i) = b_0 + b_1x_i
@@ -687,15 +658,13 @@ Method of moments estimators are asymptotically consistent, because of the law o
 
 Let us say that we have some random variable $y$, with a true population mean $\mu$. We want to estimate $\mu$, but we only have a sample of the population.
 
-How can we define our true population parameter $\mu$ in an expectation equation of the form: $E(m(\mu, y)) = 0$? Well, what is $\mu$, the mean, intuitively speaking? It is the expectation of $y$, so $\mu = E(y)$.
-
-Now that we know that $\mu = E(y)$, since they are equal, $\mu - E(y) = 0$. Thus, we can define the mean as a moment of the following condition:
+How can we define $\mu$ in a moment of the form: $E(m(\mu, y)) = 0$? Well, we know $\mu$ is the expectation of $y$, so $\mu = E(y)$. Since they are equal, $\mu - E(y) = 0$. Thus, we can define the mean as a moment of the following condition:
 
 $$
 E(y - \mu) = 0
 $$
 
-The method of moments says we should use the sample equivalent of the population parameter. The sample equivalent of $\mu$ (the true mean of the population), is of course, the sample mean $\bar y$. Thus, our sample estimate of the moment would be:
+The method of moments estimator uses the sample equivalent of the population moment. The sample equivalent of $\mu$, is the sample mean $\bar y$:
 
 $$
 E(y_i - \hat\mu) = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \hat\mu) = 0
@@ -765,36 +734,3 @@ $$
 $$
 
 Which as we can see, are the exact same minimisation conditions as the method of moments estimator. Thus, the OLS estimator is a special case of the Method of Moments estimator, and they produce the same coefficients. This is an important property for the instrumental variables method that will be covered later.
-
-As a method of moments estimator, OLS is also asymptotically consistent, as long as the two moments are indeed true.
-
-<br />
-
-### Exogeneity Revisited
-
-In both discussions on OLS unbiasedness and asymptotic consistency, we have discussed the key condition of **exogeneity** - that regressors and the error term should be uncorrelated:
-
-$$
-Cov(x, u) = 0
-$$
-
-Exogeneity $Cov(x, u) = 0$ also implies that $E(xu) = 0$.
-
-Now, recall our two moments for the OLS estimator as a Method of Moments estimator:
-
-$$
-\begin{split}
-& E(y-\beta_0 -\beta_1x) = 0 \\
-& E(x(y - \beta_0 - \beta_1 x)) = 0
-\end{split}
-$$
-
-We know that $u = y - \beta_0 - \beta_1 x$, so we can rewrite the conditions as:
-
-$$
-E(u) = 0, \quad E(xu) = 0
-$$
-
-That means, for the second moment condition $E(xu) = 0$ to be a valid moment condition, $Cov(x, u)=0$ as well. If this moment is violated, then the method of moments estimator and OLS lose asymptotic consistency. This is another illustration of why exogeneity is a key condition for OLS - when violated, the estimator no longer works.
-
-When exogeneity is violated, i.e. $Cov(x,u) ≠ 0$, we have **endogeneity**. Endogeneity is the single biggest issue with causal inference, and is frequently caused by confounders that are unaccounted for.

@@ -110,7 +110,6 @@ window.Quarto = {
   <li><a href="#randomised-experiments" id="toc-randomised-experiments" class="nav-link" data-scroll-target="#randomised-experiments">Randomised Experiments</a></li>
   <li><a href="#identification-assumptions" id="toc-identification-assumptions" class="nav-link" data-scroll-target="#identification-assumptions">Identification Assumptions</a></li>
   <li><a href="#proof-of-identification" id="toc-proof-of-identification" class="nav-link" data-scroll-target="#proof-of-identification">Proof of Identification</a></li>
-  <li><a href="#equivalence-of-estimands" id="toc-equivalence-of-estimands" class="nav-link" data-scroll-target="#equivalence-of-estimands">Equivalence of Estimands</a></li>
   <li><a href="#the-balancing-property" id="toc-the-balancing-property" class="nav-link" data-scroll-target="#the-balancing-property">The Balancing Property</a></li>
   <li><a href="#complications-and-limitations" id="toc-complications-and-limitations" class="nav-link" data-scroll-target="#complications-and-limitations">Complications and Limitations</a></li>
   </ul></li>
@@ -122,7 +121,6 @@ window.Quarto = {
   <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference"><strong>Statistical Inference</strong></a>
   <ul class="collapse">
   <li><a href="#standard-inference" id="toc-standard-inference" class="nav-link" data-scroll-target="#standard-inference">Standard Inference</a></li>
-  <li><a href="#sharp-null-hypothesis" id="toc-sharp-null-hypothesis" class="nav-link" data-scroll-target="#sharp-null-hypothesis">Sharp Null Hypothesis</a></li>
   <li><a href="#randomisation-inference" id="toc-randomisation-inference" class="nav-link" data-scroll-target="#randomisation-inference">Randomisation Inference</a></li>
   </ul></li>
   <li><a href="#other-randomisation-procedures" id="toc-other-randomisation-procedures" class="nav-link" data-scroll-target="#other-randomisation-procedures"><strong>Other Randomisation Procedures</strong></a>
@@ -183,7 +181,7 @@ More on Randomisation
 </section>
 <section id="identification-assumptions" class="level3">
 <h3 class="anchored" data-anchor-id="identification-assumptions">Identification Assumptions</h3>
-<p>Randomisation implies that assignment probabilities, do not depend on the potential outcomes. The potential outcome values do not affect our chances of being selected for treatment.</p>
+<p>Randomisation implies that assignment probabilities do not depend on the potential outcomes. The potential outcome values do not affect our chances of being selected for treatment.</p>
 <p><span class="math display">
 Pr(D=1|Y_0, Y_1) = Pr(D=1)
 </span></p>
@@ -202,18 +200,7 @@ Pr(D=1|Y_0, Y_1) = Pr(D=1)
 </section>
 <section id="proof-of-identification" class="level3">
 <h3 class="anchored" data-anchor-id="proof-of-identification">Proof of Identification</h3>
-<p>Let us return to our <a href="https://politicalscience.github.io/causal/1.html#naive-estimator-and-selection-bias">naive estimator</a>, and our problem of selection bias:</p>
-<p><span class="math display">
-\hat\tau_{\text{naive}} = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}}
-</span></p>
-<p>But as discussed before, under randomisation, we know that:</p>
-<p><span class="math display">
-\begin{split}
-&amp; E(Y_{0i} | D_i = 1) = E(Y_{0i} | D_i = 0) = E(Y_{0i})\\
-&amp; E(Y_{1i} | D_i = 1) = E(Y_{1i} | D_i = 0) = E(Y_{1i})
-\end{split}
-</span></p>
-<p>Using these properties, we can simplify:</p>
+<p>Let us return to our <a href="https://politicalscience.github.io/causal/1.html#naive-estimator-and-selection-bias">naive estimator</a>, and our problem of selection bias. Using the above property of independence, we can simplify:</p>
 <p><span class="math display">
 \begin{split}
 \hat\tau_{\text{naive}} &amp; = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
@@ -221,19 +208,7 @@ Pr(D=1|Y_0, Y_1) = Pr(D=1)
 &amp; = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + 0
 \end{split}
 </span></p>
-<p>Thus, under randomisation, selection bias is equal to 0, and thus our comparison of observed outcomes is now an unbiased estimator of the Average Treatment Effect on the Treated (ATT).</p>
-<p><br></p>
-</section>
-<section id="equivalence-of-estimands" class="level3">
-<h3 class="anchored" data-anchor-id="equivalence-of-estimands">Equivalence of Estimands</h3>
-<p>Recall that randomisation (and independence from potential outcomes) says:</p>
-<p><span class="math display">
-\begin{split}
-&amp; E(Y_{0i} | D_i = 1) = E(Y_{0i} | D_i = 0) = E(Y_{0i})\\
-&amp; E(Y_{1i} | D_i = 1) = E(Y_{1i} | D_i = 0) = E(Y_{1i})
-\end{split}
-</span></p>
-<p>Now look at the formula for the <a href="https://politicalscience.github.io/causal/1.html#average-treatment-effect-on-the-treated-att">ATT</a>. We can simplify as follows:</p>
+<p>Thus, under randomisation, selection bias is equal to 0, and thus our comparison of observed outcomes is now an unbiased estimator of <span class="math inline">\tau_{ATT}</span>. Now look at the formula for the <a href="https://politicalscience.github.io/causal/1.html#average-treatment-effect-on-the-treated-att">ATT</a> estimand. We can simplify as follows:</p>
 <p><span class="math display">
 \begin{split}
 \tau_{ATT} &amp; = E(Y_{1i} -Y_{0i}|D_i = 1)\\
@@ -242,7 +217,7 @@ Pr(D=1|Y_0, Y_1) = Pr(D=1)
 &amp; = \underbrace{E(Y_{1i} - Y_{0i})}_{\tau_{ATE}}
 \end{split}
 </span></p>
-<p>And now we see that <span class="math inline">\tau_{ATT}</span> and <span class="math inline">\tau_{ATE}</span> are equivalent under randomisation.</p>
+<p>And now we see that <span class="math inline">\tau_{ATT}</span> and <span class="math inline">\tau_{ATE}</span> are equivalent under randomisation, and we can identify the <span class="math inline">\tau_{ATE}</span> with our observed data.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -452,23 +427,14 @@ Block Bootstrap
 </div>
 <p><br></p>
 </section>
-<section id="sharp-null-hypothesis" class="level3">
-<h3 class="anchored" data-anchor-id="sharp-null-hypothesis">Sharp Null Hypothesis</h3>
-<p>For our <span class="math inline">t</span>-tests, the null hypothesis was that the ATE was equal to 0. The issue is, the ATE is the expectation of treatment - a ATE of 0 could result from half of the population having <span class="math inline">\tau = -10</span> and half of the population having <span class="math inline">\tau = 10</span>.</p>
-<p>Consider a new <strong>sharp null hypothesis</strong>, that all individual causal effects are zero:</p>
+<section id="randomisation-inference" class="level3">
+<h3 class="anchored" data-anchor-id="randomisation-inference">Randomisation Inference</h3>
+<p>Consider a new <strong>sharp null hypothesis</strong>, that all individual causal effects are zero (not just the average causal effect):</p>
 <p><span class="math display">
 H_0^s : Y_1 = Y_0, \quad H_A^s : Y_1 ≠ Y_0
 </span></p>
 <p>Assuming <span class="math inline">H_0</span> is true, we can actually fully construct the potential outcomes <span class="math inline">Y_{0i}</span> and <span class="math inline">Y_{1i}</span>, since we know every unit has 0 individual treatment effect.</p>
-<p>Thus, under the sharp null, we can actually observe both potential outcomes.</p>
-<p><br></p>
-</section>
-<section id="randomisation-inference" class="level3">
-<h3 class="anchored" data-anchor-id="randomisation-inference">Randomisation Inference</h3>
-<p>Using the sharp null hypothesis, we can construct the full population <span class="math inline">Y_{0i}</span> and <span class="math inline">Y_{1i}</span> under the null hypothesis. Once constructed, we can imagine what different treatments we would observe under different randomization schemes (given <span class="math inline">H_0</span> is true).</p>
-<ul>
-<li>Thus, we can construct the sampling distribution, so we do not need to “imagine” a hypothetical sampling distribution.</li>
-</ul>
+<p>Once constructed, we can imagine what different treatments we would observe under different randomization schemes (given <span class="math inline">H_0</span> is true). Thus, we can construct the sampling distribution, so we do not need to “imagine” a hypothetical sampling distribution.</p>
 <p>Procedure for conducting randomisation inference (also called permutation test or Fisher’s exact test) is as follows:</p>
 <ol type="1">
 <li>Calculate the total number of randomisations possible. This is calculated as a permutation of <span class="math inline">_NP_{N_1}</span> (<span class="math inline">N</span> choose <span class="math inline">N_1</span>).</li>
