@@ -9,6 +9,7 @@ format:
           body-width: 700px
           margin-width: 250px
           gutter-width: 2em
+        mainfont: "Times New Roman"
         fontsize: 12pt
         theme: default
         toc: TRUE
@@ -16,10 +17,11 @@ format:
         toc-location: left
         toc-expand: true
         toc-title: "Table of Contents"
-        mainfont: "Computer Modern"
         title-block-banner: true
-        classoption: fleqn
-        html-math-method: katex
+        html-math-method: mathjax
+        include-in-header:
+          text: |
+            <script src="mathjax-config.js"></script>
 editor: visual
 ---
 
@@ -97,19 +99,20 @@ However, not every individual lies perfectly on this linear line. This is becaus
 To estimate the population parameters $\beta_0, \dots, \beta_k$, we use our sample data, and try to find the values $\widehat{\beta_0}, \dots, \widehat{\beta_k}$ that **minimise the square sum of residuals** (SSR):
 
 $$
-\begin{split}
+\begin{align}
 SSR & = \sum\limits_{i=1}^n(y_i - \hat y_i)^2 \\
-& = \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_{1i} - \dots - \widehat{\beta_k}x_{ki})
-\end{split}
+& = \sum\limits_{i=1}^n(y_i - \color{blue}{(\widehat{\beta_0} + \widehat{\beta_1}x_{1i} + \dots + \widehat{\beta_k}x_{ki})}\color{black})^2 && (\text{plug in } \color{blue}{\hat y = \widehat{\beta_0} + \widehat{\beta_1}x_{1i} + \dots }\color{black}) \\
+& = \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_{1i} - \dots - \widehat{\beta_k}x_{ki})^2 &&(\text{distribute negative sign})
+\end{align}
 $$
 
 In the linear algebra representation (where $\mathbf b$ is the vector of estimated parameters $\widehat{\beta_0}, \dots, \widehat{\beta_k}$):
 
 $$
-\begin{split}
-SSR & = (\mathbf y - \mathbf{\hat y})^T(\mathbf y - \mathbf{\hat y}) \\
-& = (\mathbf y - \mathbf{Xb})^T(\mathbf y - \mathbf{Xb})
-\end{split}
+\begin{align}
+S(\hat{\boldsymbol\beta}) & = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mathbf y - \hat{\mathbf y})\\
+& = (\mathbf y - \color{blue}{\mathbf X \hat{\boldsymbol\beta}}\color{black})^\mathsf{T} (\mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}}\color{black}) && (\text{plug in } \color{blue}{\hat{\mathbf y}  = \mathbf X \hat{\boldsymbol\beta}}\color{black}) \\
+\end{align}
 $$
 
 ::: {.callout-note collapse="true" appearance="simple"}
@@ -128,45 +131,35 @@ This estimation is called the **ordinary least squares (OLS) estimator**. The so
 
 ### Deriving OLS Estimates
 
-Let us define our estimation vector $\boldsymbol{\hat{\beta}}$ as the value of $\boldsymbol{\hat{\beta}}$ that minimises the sum of squared errors:
+OLS wants to minimise the sum of squared residuals $S(\hat{\boldsymbol\beta})$ - the differences between the actual $\mathbf y$ and our predicted $\hat{\mathbf y}$:
 
 $$
-\boldsymbol{\hat{\beta}} = \min\limits_{b} (\mathbf y - \mathbf{Xb})^T (\mathbf y - \mathbf{Xb}) = \min\limits_b S(\mathbf b)
+\begin{align}
+S(\hat{\boldsymbol\beta}) & = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mathbf y - \hat{\mathbf y})\\
+& = (\mathbf y - \color{blue}{\mathbf X \hat{\boldsymbol\beta}}\color{black})^\mathsf{T} (\mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}}\color{black}) && (\text{plug in } \color{blue}{\hat{\mathbf y}  = \mathbf X \hat{\boldsymbol\beta}}\color{black}) \\
+& = \mathbf y^\mathsf{T} \mathbf y - \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{Xb} && (\text{distribute out)} \\ 
+& = \mathbf y^\mathsf{T} \mathbf y - \color{blue}{2\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y}\color{black} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta} &&(\text{combine } \color{blue}{- \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta}}\color{black})
+\end{align}
 $$
 
-We can expand $S(\mathbf b)$ as follows:
+Now, let us find the first order condition:
 
 $$
-\begin{split}
-S(\mathbf b) & = \mathbf y^T \mathbf y \color{red}{ - \mathbf b^T \mathbf X^T \mathbf y - \mathbf y^T \mathbf{Xb}} \color{black} + \mathbf b^T \mathbf X^T \mathbf{Xb} \\ 
-& = \mathbf y^T \mathbf y \color{red}{- 2\mathbf b^T \mathbf X^T \mathbf y} \color{black} + \mathbf b^T \mathbf X^T \mathbf{Xb}
-\end{split}
+\frac{\partial S(\hat{\boldsymbol\beta})}{\partial \hat{\boldsymbol\beta}} = -2\mathbf X^\mathsf{T} \mathbf y + 2 \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta} = 0
 $$
 
-Differentiating with the vector $b$ yields:
+When assuming $\mathbf X^\mathsf{T} \mathbf X$ is invertable (which is true if $\mathbf X$ is full rank), we can isolate $\hat{\beta}$ to find the solution to OLS:
 
 $$
-\frac{\partial S(\mathbf b)}{\partial b} = -2\mathbf X^T \mathbf y + 2 \mathbf X^T \mathbf{Xb}
+\begin{align}
+-2\mathbf X^T\mathbf y + 2 \mathbf X^\mathsf{T} \mathbf X \boldsymbol{\hat{\beta}} & = 0 \\
+2 \mathbf X^\mathsf{T} \mathbf X \boldsymbol{\hat\beta} & = 2\mathbf X^\mathsf{T} \mathbf y && (+ 2\mathbf X^\mathsf{T} \mathbf y \text{ to both sides}) \\
+\boldsymbol{\hat\beta} & = (2\mathbf X^\mathsf{T} \mathbf X)^{-1} 2 \mathbf X^\mathsf{T} \mathbf y && (\times (2\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ to both sides})\\
+\boldsymbol{\hat\beta} & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y &&(\text{cancel out } 2^{-1}\times 2)
+\end{align}
 $$
 
-Evaluated at $\hat{\beta}$, the derivatives should equal zero (since first order condition of finding minimums):
-
-$$
-\frac{\partial S(\mathbf b)}{\partial b} \biggr|_{\hat{\beta}} = -2\mathbf X^T \mathbf y + 2\mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} = 0
-$$
-
-When assuming $\mathbf X^T \mathbf X$ is invertable (which is true if $\mathbf X$ is full rank), we can isolate $\boldsymbol{\hat{\beta}}$ to find the solution to OLS:
-
-$$
-\begin{split}
--2\mathbf X^T\mathbf y + 2 \mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} & = 0 \\
-2 \mathbf X^T \mathbf X \boldsymbol{\hat\beta} & = 2\mathbf X^T \mathbf y \\
-\boldsymbol{\hat\beta} & = (2\mathbf X^T \mathbf X)^{-1} 2 \mathbf X^T \mathbf y \\
-\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
-\end{split}
-$$
-
-With the estimated parameters $\widehat{\beta_0}, \dots, \widehat{\beta_k}$, we now have a best-fit line, called the **fitted values**.
+Those are our coefficient solutions to OLS. With the estimated parameters $\widehat{\beta_0}, \dots, \widehat{\beta_k}$, we now have a best-fit line, called the **fitted values**.
 
 For more detailed analysis of the OLS estimator, see the [causal inference](https://politicalscience.github.io/causal/0.html) section.
 
@@ -196,26 +189,26 @@ I define $\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}$
 
 If you have multiple explanatory variables, always add: *while holding all other explanatory variables not* $x_j$ *constant.*
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Standardised Interpretations
+<br />
+
+### Standardised Interpretations
 
 Sometimes, a $\beta_j$ increase in $y$ for every one unit increase in $x$ is not particularly useful for us to interpret. For example, if $y$ is *democracy*, what does a 5 unit increase in democracy actually mean?
 
 We can add more relevant detail by expressing the change of $y$ and $x$ in terms of their standard deviations. Or in other words, we want to find the change in $\frac{\hat y_i}{\sigma_y}$ for every one standard deviation $\sigma_x$ increase in $x$. For simplicity, let us use a simple linear regression $E(y_i|x_i) = \beta_0 + \beta_1 x_i$:
 
 $$
-\begin{split}
+\begin{align}
 & E \left(\frac{y_i}{\sigma_y} | x_i = x + \sigma_x \right ) - E \left(\frac{y_i}{\sigma_y} | x_i = x \right ) \\
-& = \frac{E(y_i|x_i = x+ \sigma_x)}{\sigma_y} - \frac{E(y_i|x_i = x)}{\sigma_y} \\
-& = \frac{E(y_i|x_i = x+ \sigma_x) - E(y_i|x_i = x)}{\sigma_y} \\
-& = \frac{\beta_0 + \beta_1(x+\sigma_x) - [\beta_0 + \beta_1(x)]}{\sigma_y} \\
-& = \frac{\beta_0 + \beta_1x + \beta_1\sigma_x - \beta_0 -\beta_1x}{\sigma_y} \\
-& = \frac{\beta_1\sigma_x}{\sigma_y}
-\end{split}
+& = \frac{E(y_i|x_i = x+ \sigma_x)}{\sigma_y} - \frac{E(y_i|x_i = x)}{\sigma_y} &&(\text{property of expectation}) \\
+& = \frac{E(y_i|x_i = x+ \sigma_x) - E(y_i|x_i = x)}{\sigma_y} && (\text{combine into 1 fraction})\\
+& = \frac{\beta_0 + \beta_1(x+\sigma_x) - [\beta_0 + \beta_1(x)]}{\sigma_y} && (\text{plug in regression models})\\
+& = \frac{\beta_0 + \beta_1x + \beta_1\sigma_x - \beta_0 -\beta_1x}{\sigma_y} && (\text{distribute out})\\
+& = \frac{\beta_1\sigma_x}{\sigma_y} && (\text{cancel and simplify})
+\end{align}
 $$
 
 Thus, for a one standard deviation $\sigma_x$ increase in $x_j$, there is an expected $\frac{\beta_j\sigma_x}{\sigma_y}$-standard deviation change in $y$.
-:::
 
 <br />
 
@@ -224,10 +217,11 @@ Thus, for a one standard deviation $\sigma_x$ increase in $x_j$, there is an exp
 Residuals are the distance of the actual value $y_i$ of observation $i$, compared to the predicted $\widehat{y_i}$ from our fitted values/best-fit line. They can be obtained after we fit our model:
 
 $$
-\begin{split}
+\begin{align}
 \mathbf{\hat u} & = \mathbf y - \mathbf{\hat y} \\
-& = \mathbf y - \mathbf X(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
-\end{split}
+& = \mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}} && \color{black}(\text{plug in } \color{blue}{\hat{\mathbf y} = \mathbf{X} \hat{\boldsymbol\beta}} \color{black}) \\
+& = \mathbf y - \mathbf X \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y} && \color{black}(\text{plug in } \color{blue}{\boldsymbol{\hat\beta}  = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y}\color{black})
+\end{align}
 $$
 
 The residual standard deviation $\hat\sigma$ measures the spread/variance of our residuals - so, how far away the actual values $y_i$ are from our predicted values $\widehat{y_i}$ in general for all observations.
@@ -235,7 +229,7 @@ The residual standard deviation $\hat\sigma$ measures the spread/variance of our
 The residual variance is estimated with the formula below (with the residual standard deviation being the square root):
 
 $$
-\hat\sigma^2 = \frac{\sum_{i=1}^n \hat u_i^2}{n-k-1} = \frac{\mathbf{\hat u}^T \mathbf{\hat u}}{n-k-1}
+\hat\sigma^2 = \frac{\sum_{i=1}^n \hat u_i^2}{n-k-1} = \frac{\mathbf{\hat u}^\mathsf{T} \mathbf{\hat u}}{n-k-1}
 $$
 
 ::: {.callout-note collapse="true" appearance="simple"}
@@ -252,59 +246,27 @@ Smaller $\hat\sigma$ mean the actual values are, on average, close to our predic
 
 ### R-Squared
 
-R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained by our explanatory variables.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Mathematical Derivation of R-Squared
-
-Let us define these three concepts: the total sum of squares (SST), explained sum of squares (SSE), and residual sum of squares (SSR):
+Our fitted values equation takes the following form:
 
 $$
-\begin{split}
-& SST = \sum\limits_{i=1}^n (y_i - \bar y)^2 \\
-& SSE = \sum\limits_{i=1}^n (\hat y_i - \bar y)^2 \\
-& SSR = \sum\limits_{i=1}^n (\hat u_i)^2
-\end{split}
+\begin{align}
+\hat{\mathbf y} & = \mathbf X \hat{\boldsymbol\beta}  \\
+\hat{\mathbf y} & = \mathbf X\color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y} && \color{black}(\text{plug in } \color{blue}{\boldsymbol{\hat\beta} = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y}\color{black}) \\
+\hat{\mathbf y} &= \color{blue}{\mathbf P}\color{black}{\mathbf y}  && (\text{plug in } \color{blue}{\mathbf P : = \mathbf X(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}} \color{black})
+\end{align}
 $$
 
--   The SST explains the total amount of variation in $y$
--   The SSE is the amount of variation in $y$ explained by our model
--   The SSR is the amount of variation in $y$ not explained by our model
+We can see that $\mathbf P$ is a matrix that turns $\mathbf y \rightarrow \hat{\mathbf y}$. Matrix $\mathbf P$ is our linear model that projects the true values $\mathbf y$ into a space of our regressors $\mathbf X$.
 
-Let us look at the total sum of squares (SST). We can manipulate it as follows:
+One thing we might be interested in is how well our model $\mathbf{Py}$ explains the actual $\mathbf y$. One way we can do this is the scalar product of two vectors. We know that the scalar/dot product calculates the project/shadow of one vector on another. Thus, the scalar product $\mathbf y^\mathsf{T}\mathbf{Py}$ describes the shadow the actual $y$ casts on our projected model.
 
-$$
-\begin{split}
-SST & = \sum\limits_{i=1}^n (y_i - \bar y)^2 \\
-& = \sum\limits_{i=1}^n(y_i - \hat y_i+ \hat y_i - \bar y)^2 \\
-& = \sum\limits_{i=1}^n((y_i - \hat y_i)+ \hat y_i - \bar y)^2 \\
-& = \sum\limits_{i=1}^n[\hat u_i + \hat y_i - \bar y]^2 \\
-& = \sum\limits_{i=1}^n[\hat u_i^2 + \hat u_i \hat y_i - \hat u_i \bar y + \hat y_i \hat u_i + \hat y_i^2 - \hat y_i \bar y-\bar y \hat u_i -\bar y \hat  y_i+\hat y^2_i] \\
-& = \sum\limits_{i=1}^n[ \hat u_i^2 + 2 \hat u_i \hat y_i+ \hat y_i^2 - 2 \hat u_i \bar y - 2 \hat y_i \bar y + \bar y ^2]
-\end{split}
-$$
-
-By a property of linear regression, $\sum \hat y_i \hat u_i = 0$. Knowing this, we can further simplify to:
+However, this value will change based on the scale of our $y$ variable. Thus, we will divide it by $\mathbf y^\mathsf{T}\mathbf y$, which is the "maximum" shadow possible (perfect shadow). This ratio is called $R^2$.
 
 $$
-\begin{split}
-SST & = \sum\limits_{i=1}^n[ \hat u_i^2 + \hat y_i^2 - 2 \hat u_i \bar y - 2 \hat y_i \bar y + \bar y ^2] \\
-& = \sum\limits_{i=1}^n[\hat u_i^2 + (\hat y_i - \bar y)^2]\\
-& = \sum\limits_{i=1}^n \hat u_i^2 + \sum\limits_{i=1}^n(\hat y_i - \bar y)^2 \\
-& = SSE + SSR
-\end{split}
+R^2 = \frac{\mathbf y^\mathsf{T}\mathbf{Py}}{\mathbf y^\mathsf{T}\mathbf y}
 $$
 
-This makes sense: After all, SSE is the squared errors explained by the model, and SSR is the residual (non-explained) parts of the model, so together, they should be equal to the total sum of squares.
-
-Thus, R-squared should naturally be defined as:
-
-$$
-R^2 = \frac{SSE}{SST} = \frac{1 - SSR}{SST}
-$$
-:::
-
-R-Squared is always between 0 and 1 (or 0-100 as a percentage). Higher values indicate our model better explains the variation in $y$.
+R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained by our explanatory variables. R-Squared is always between 0 and 1 (or 0-100 as a percentage). Higher values indicate our model better explains the variation in $y$.
 
 Interpreting R-squared: *The Model explains* $R^2 \times 100$ *percent of the variation in* $y$*.*
 
@@ -357,24 +319,23 @@ If you have heteroscedasticity, you should use robust OLS standard errors. You s
 
 We will only derive homoscedastic (normal) standard errors. The robust standard error derivation is beyond the scope of this lesson (just trust the computer that it will calculate it properly).
 
-We want to find the variance of our estimator, $Var(\boldsymbol{\hat\beta} | \mathbf X)$. Let us start off with our OLS solution. We can simplify as follows:
+Let us assume homoscedasticity. We want to find the variance of our estimator, $Var(\boldsymbol{\hat\beta} | \mathbf X)$. Let us start off with our OLS solution. We can simplify as follows:
 
 $$
-\begin{split}
-\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y \\
-& = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T\underbrace{(\mathbf X \boldsymbol\beta + \mathbf u)}_{\text{plug in } \mathbf y} \\
-& = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\text{inverses cancel out }} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-\end{split}
+\begin{align}
+\boldsymbol{\hat\beta} & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y \\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}(\mathbf X \boldsymbol\beta + \mathbf u) && (\text{plug in } \mathbf y = \mathbf X \boldsymbol\beta + \mathbf u) \\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&(\text{multiply out})\\
+& = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&( \ \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
+& = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{identity property of } \mathbf I)
+\end{align}
 $$
 
-Thus, we know:
-
 $$
-Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \ | \ \mathbf X)
+Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u \ | \ \mathbf X)
 $$
 
-$\boldsymbol\beta$ is a vector of fixed constants (the true parameter values in the population). $(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u$ can be imagined as a matrix of fixed constants, since we are conditioning the above variance on $\mathbf X$ (so for each $\mathbf X$, the statement is fixed).
+$\boldsymbol\beta$ is a vector of fixed constants. $(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u$ can be imagined as a matrix of fixed constants, since we are conditioning the above variance on $\mathbf X$ (so for each $\mathbf X$, the statement is fixed).
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Mathematical Lemma
@@ -391,17 +352,19 @@ I will not prove this lemma here, but it is provable.
 With the Lemma above, and with the definition of homoscedasticity, we can simplify:
 
 $$
-\begin{split}
-Var(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T Var(\mathbf u | \mathbf X) [(\mathbf X^T \mathbf X)^{-1} \mathbf X^T]^{-1} \\
-& = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{Var(\mathbf u | \mathbf X)}_{\text{homoscedastcity}} \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
-& = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{\color{red}{\sigma^2}}_{\text{scalar}} \mathbf I_n \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
-& =  \color{red}{\sigma^2} \color{black} (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf I_n \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
-& =  \sigma^2 (\mathbf X^T \mathbf X)^{-1} \underbrace{\mathbf X^T  \mathbf X (\mathbf X^T \mathbf X)^{-1}}_{\text{inverses cancel out}} \\
-& =  \sigma^2 (\mathbf X^T \mathbf X)^{-1}
-\end{split}
+\begin{align}
+Var(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) [(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} && (\text{lemma})\\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) \color{blue}{\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}} && \color{black}( \ \color{blue}{[(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} = (\mathbf X^\mathsf{T} \mathbf X)^{-1}}\color{black})\\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\sigma^2 \mathbf I_n}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\color{blue}{Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n}\color{black}) \\
+& =  \color{red}{\sigma^2} \color{black} (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf I_n \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{move scalar } \color{red}{\sigma^2}\color{black})\\
+& =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{identity property of } \mathbf I_n)\\
+& =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{inverses } \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ cancel})
+\end{align}
 $$
 
-However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed previously). The standard errors are the square root of the variance. Thus, our standard errors for any coefficient estimate $\hat\beta_j$ are:
+However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed [here](https://politicalscience.github.io/regression/1.html#residual-standard-deviation)).
+
+The standard errors are the square root of the variance. Thus, our standard errors for any coefficient estimate $\hat\beta_j$ are:
 
 $$
 se(\hat\beta_j) = \hat\sigma \sqrt{(\mathbf X^T \mathbf X)^{-1}_{jj}}
@@ -499,10 +462,10 @@ The p-value we get is the probability of getting a test statistic equally or mor
 We can predict using the linear regression by plugging in explanatory variable values, and finding the predicted $\widehat{y_i}$.
 
 $$
-\begin{split}
-\mathbf{\hat y} & = \mathbf X \boldsymbol{\hat\beta} \\
-& = \mathbf X(\mathbf X^T \mathbf X)^{-1}\mathbf X^t \mathbf y
-\end{split}
+\begin{align}
+\hat{\mathbf y} & = \mathbf X \hat{\boldsymbol\beta}  \\
+\hat{\mathbf y} & = \mathbf X\color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y} && \color{black}(\text{plug in } \color{blue}{\boldsymbol{\hat\beta} = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y}\color{black}) \\
+\end{align}
 $$
 
 We also have confidence intervals for every predicted $\widehat{y_i}$. These intervals are calculated with the residual standard deviation (covered previously):
@@ -594,7 +557,7 @@ Let us say we have $m$ number of clusters $i = 1, \dots, m$. Within each cluster
 $$
 \begin{split}
 y_{it} & = \alpha_i + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
-& \text{where } \alpha_i = \beta_{00} + \underbrace{\beta_{02}D_{i2} + \beta_{03}D_{i3} + \dots + \beta_{0m}D_{im}}_{\text{unique intercepts for each cluster } 2, \dots, m}
+& \text{where } \alpha_i = \beta_{00} + \underbrace{\beta_{02}D_{i2} + \beta_{03}D_{i3} + \dots + \beta_{0m}D_{im}}_{\text{unique intercepts for each cluster}}
 \end{split}
 $$
 
@@ -606,8 +569,8 @@ For panel data, we use two-way fixed effects, which is basically just two fixed 
 $$
 \begin{split}
 y_{it} & = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
-& \text{where } \alpha_i =  \alpha_{00} + \underbrace{\alpha_{02}D_{i2} + \alpha_{03}D_{i3} + \dots + \alpha_{0m}D_{im}}_{\text{unique intercepts for each unit } 2, \dots, m} \\
-& \text{where } \gamma_t =  \gamma_{00} + \underbrace{\gamma_{02}T_{i2} + \gamma_{03}D_{t3} + \dots + \gamma_{0n}T_{in}}_{\text{unique intercepts for each time }2, \dots, n} \\
+& \text{where } \alpha_i =  \alpha_{00} + \underbrace{\alpha_{02}D_{i2} + \alpha_{03}D_{i3} + \dots + \alpha_{0m}D_{im}}_{\text{unique intercepts for each unit}} \\
+& \text{where } \gamma_t =  \gamma_{00} + \underbrace{\gamma_{02}T_{i2} + \gamma_{03}D_{t3} + \dots + \gamma_{0n}T_{in}}_{\text{unique intercepts for each time}} \\
 \end{split}
 $$
 

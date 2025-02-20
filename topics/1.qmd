@@ -9,6 +9,7 @@ format:
           body-width: 700px
           margin-width: 250px
           gutter-width: 2em
+        mainfont: "Times New Roman"
         fontsize: 12pt
         theme: default
         toc: TRUE
@@ -16,10 +17,11 @@ format:
         toc-location: left
         toc-expand: true
         toc-title: "Table of Contents"
-        mainfont: "Computer Modern"
         title-block-banner: true
-        classoption: fleqn
-        html-math-method: katex
+        html-math-method: mathjax
+        include-in-header:
+          text: |
+            <script src="mathjax-config.js"></script>
 editor: visual
 ---
 
@@ -148,11 +150,11 @@ Let us say party $A$ wants a policy as close as possible to $-1$. The more they 
 The final implemented policy of the winning party $p$, is determined by who wins the election. If you lose the election, you have to deal with the winner's preferred policy. Let us define $\pi(p_A, p_B)$ as the probability of candidate $A$ winning the election given the chosen $p_A$ and $p_B$:
 
 $$
-u_A(p_A) = \underbrace{\pi(p_A, p_B)}_{\text{Pr A wins}}\underbrace{(-(p_A + 1)^2)}_{\text{A's utility for }p_A} + \underbrace{(1-\pi(p_A, p_B))}_{\text{Pr A loses}}\underbrace{(-(p_B + 1)^2)}_{\text{A's utility for }p_B}
+u_A(p_A) = \underbrace{\pi(p_A, p_B)}_{\text{Pr A wins}}\underbrace{(-(p_A + 1)^2)}_{\text{A's utility}} + \underbrace{(1-\pi(p_A, p_B))}_{\text{Pr A loses}}\underbrace{(-(p_B + 1)^2)}_{\text{A's utility}}
 $$
 
 $$
-u_B(p_B) =  \underbrace{(1-\pi(p_A, p_B))}_{\text{Pr B wins}}\underbrace{(-(p_B - 1)^2)}_{\text{B's utility for }p_B} + \underbrace{\pi(p_A, p_B)}_{\text{Pr B loses}}\underbrace{(-(p_A - 1)^2)}_{\text{B's utility for }p_A}
+u_B(p_B) =  \underbrace{(1-\pi(p_A, p_B))}_{\text{Pr B wins}}\underbrace{(-(p_B - 1)^2)}_{\text{B's utility}} + \underbrace{\pi(p_A, p_B)}_{\text{Pr B loses}}\underbrace{(-(p_A - 1)^2)}_{\text{B's utility}}
 $$
 
 <br />
@@ -164,17 +166,17 @@ What is the equilibrium of this game? [Surprisingly, it is still the median vote
 Let us say $p_A = -0.5$, and $p_B = 0.5$. In this situation, both candidates have a 50% chance of winning since they are equidistant from the median voter $q^m$. Thus, $\pi(-0.5, 0.5) = 0.5$. Using the utility functions above, we get:
 
 $$
-u_A(-0.5) = 0.5\underbrace{(-(-0.5 + 1)^2)}_{\text{A's utility for }p_A} + 0.5\underbrace{(-(0.5 + 1)^2)}_{\text{A's utility for }p_B} = -1.25
+u_A(-0.5) = 0.5\underbrace{(-(-0.5 + 1)^2)}_{\text{A's utility}} + 0.5\underbrace{(-(0.5 + 1)^2)}_{\text{A's utility}} = -1.25
 $$
 
 $$
-u_B(p_B) =  0.5\underbrace{(-(0.5 - 1)^2)}_{\text{B's utility for }p_B} + 0.5\underbrace{(-(-0.5 - 1)^2)}_{\text{B's utility for }p_A} = -1.25
+u_B(p_B) =  0.5\underbrace{(-(0.5 - 1)^2)}_{\text{B's utility}} + 0.5\underbrace{(-(-0.5 - 1)^2)}_{\text{B's utility}} = -1.25
 $$
 
 What if $p_A$ slightly deviates closer to the median voter, to $-0.4$? Now, the probability of candidate $A$ winning is $\pi(-0.4, 0.5)= 1$, since candidate $A$ is closer to the median voter $q^m$. Thus, candidate $A$ now has a utility function of:
 
 $$
-u_A(-0.4) = 1\underbrace{(-(-0.4 + 1)^2)}_{\text{A's utility for }p_A} + 0\underbrace{(-(0.5 + 1)^2)}_{\text{A's utility for }p_B} = -0.36
+u_A(-0.4) = 1\underbrace{(-(-0.4 + 1)^2)}_{\text{A's utility}} + 0\underbrace{(-(0.5 + 1)^2)}_{\text{A's utility}} = -0.36
 $$
 
 Thus, we can see candidate $A$ has a profitable deviation.
@@ -222,7 +224,7 @@ If $\delta$ is positive, then that means voter $i$ likes candidate $A$ for non-p
 Any voter $i$'s utility depends on the implemented policy of the winner $p$, and their preferred policy $q^i$:
 
 $$
-u_i(p, q^i) = \underbrace{-|p-q^i|}_{\text{utility regarding } p} + \underbrace{\begin{cases} 
+u_i(p, q^i) = \underbrace{-|p-q^i|}_{\text{p utility}} + \underbrace{\begin{cases} 
 \delta \quad \text{if } A \text{ is elected} \\
 0 \quad \text{if } B \text{ is elected}
 \end{cases}}_{\text{non-policy valence shock}}
@@ -233,11 +235,11 @@ $$
 The candidate's $j \in \{A, B\}$ utility function is determined by the distance of the winner's policy from their preferred policy $q^j$. We will restrict $q^j$ such that $q^A < 0 < q^B$ (so both parties will have preferred policies on opposite sides of median $q^m = 0$):
 
 $$
-u_A(p_A) = \underbrace{\pi(p_A, p_B)}_{\text{Pr A wins}}\underbrace{(-|p_A - q^A|)}_{\text{A's utility for }p_A} + \underbrace{(1-\pi(p_A, p_B))}_{\text{Pr A loses}}\underbrace{(-|p_B - q^A|)}_{\text{A's utility for }p_B}
+u_A(p_A) = \underbrace{\pi(p_A, p_B)}_{\text{Pr A wins}}\underbrace{(-|p_A - q^A|)}_{\text{A's utility}} + \underbrace{(1-\pi(p_A, p_B))}_{\text{Pr A loses}}\underbrace{(-|p_B - q^A|)}_{\text{A's utility}}
 $$
 
 $$
-u_B(p_B) =  \underbrace{(1-\pi(p_A, p_B))}_{\text{Pr B wins}}\underbrace{(-|p_B - q^B|)}_{\text{B's utility for }p_B} + \underbrace{\pi(p_A, p_B)}_{\text{Pr B loses}}\underbrace{(-|p_A - q^B|)}_{\text{B's utility for }p_A}
+u_B(p_B) =  \underbrace{(1-\pi(p_A, p_B))}_{\text{Pr B wins}}\underbrace{(-|p_B - q^B|)}_{\text{B's utility}} + \underbrace{\pi(p_A, p_B)}_{\text{Pr B loses}}\underbrace{(-|p_A - q^B|)}_{\text{B's utility}}
 $$
 
 Timing of the game is as follows:
@@ -300,17 +302,17 @@ $$
 Now, let us think about candidate $A$'s utility function that candidate $A$ wants to maximise.
 
 $$
-u_A(p_A) = \underbrace{\pi(p_A, p_B)}_{\text{Pr A wins}}\underbrace{(-|p_A - q^A|)}_{\text{A's utility for }p_A} + \underbrace{(1-\pi(p_A, p_B))}_{\text{Pr A loses}}\underbrace{(-|p_B - q^A|)}_{\text{A's utility for }p_B}
+u_A(p_A) = \underbrace{\pi(p_A, p_B)}_{\text{Pr A wins}}\underbrace{(-|p_A - q^A|)}_{\text{A's utility}} + \underbrace{(1-\pi(p_A, p_B))}_{\text{Pr A loses}}\underbrace{(-|p_B - q^A|)}_{\text{A's utility}}
 $$
 
 We have already calculated $\pi(p_A, p_B)$, so let us plug that in:
 
 $$
 \begin{split}
-u_A(p_A) = & \underbrace{\left(\frac{1}{2} + \psi\left( \frac{|p_B| - |p_A|}{2}\right)\right)}_{\text{Pr A wins}}\underbrace{(-|p_A - q^A|)}_{\text{A's utility for }p_A} \\
-& \qquad+ \underbrace{(1- \left(\frac{1}{2} + \psi\left( \frac{|p_B| - |p_A|}{2}\right) \right))}_{\text{Pr A loses}}\underbrace{(-|p_B - q^A|)}_{\text{A's utility for }p_B} \\
+u_A(p_A) = & \underbrace{\left(\frac{1}{2} + \psi\left( \frac{|p_B| - |p_A|}{2}\right)\right)}_{\text{Pr A wins}}\underbrace{(-|p_A - q^A|)}_{\text{A's utility}} \\
+& \qquad \qquad \qquad+ \underbrace{(1- \left(\frac{1}{2} + \psi\left( \frac{|p_B| - |p_A|}{2}\right) \right))}_{\text{Pr A loses}}\underbrace{(-|p_B - q^A|)}_{\text{A's utility}} \\
 = & \left(\frac{1}{2} + \psi\left( \frac{|p_B| - |p_A|}{2}\right)\right)(-|p_A - q^A|) \\
-& \qquad + (\frac{1}{2} - \psi\left( \frac{|p_B| - |p_A|}{2}\right))(-|p_B - q^A|)\\
+& \qquad \qquad \qquad + (\frac{1}{2} - \psi\left( \frac{|p_B| - |p_A|}{2}\right))(-|p_B - q^A|)\\
 \end{split}
 $$
 
@@ -327,11 +329,11 @@ Thus, we know $p_A \in [q^A, q^m]$. And since this game is symmetrical, we know 
 $$
 \begin{split}
 u_A(p_A) = & \ \left(\frac{1}{2} + \psi\left( \frac{p_B - p_A}{2}\right)\right)(-(p_A - q^A) \\
-& \qquad + \left(\frac{1}{2} - \psi\left( \frac{p_B - p_A}{2}\right)\right)(-(p_B - q^A)) \\
+& \qquad \qquad \qquad + \left(\frac{1}{2} - \psi\left( \frac{p_B - p_A}{2}\right)\right)(-(p_B - q^A)) \\
 = & \ \left(\frac{1}{2} + \psi\left( \frac{p_B - p_A}{2}\right)\right)(-p_A + q^A) \\
-& \qquad + \left(\frac{1}{2} - \psi\left( \frac{p_B - p_A}{2}\right)\right)(-p_B + q^A)) \\
+& \qquad \qquad \qquad+ \left(\frac{1}{2} - \psi\left( \frac{p_B - p_A}{2}\right)\right)(-p_B + q^A)) \\
 = & \ \left(\frac{1}{2} + \frac{\psi}{2}( p_B - p_A)\right)(-p_A + q^A) \\
-& \qquad + \left(\frac{1}{2} - \frac{\psi}{2}( p_B - p_A)\right)(-p_B + q^A))
+& \qquad \qquad \qquad + \left(\frac{1}{2} - \frac{\psi}{2}( p_B - p_A)\right)(-p_B + q^A))
 \end{split}
 $$
 
@@ -342,15 +344,15 @@ Now, we want to maximise $u_A(p_A)$ given $p_A$ for candidate $A$. We can use th
 $$
 \begin{split}
 \frac{\partial u_A}{\partial p_A} = & \frac{\partial}{\partial p_A} [ \underbrace{(\frac{1}{2} + \frac{\psi}{2}( p_B - p_A))}_{u_1} \underbrace{(-p_A + q^A)}_{v_1} \\
-& \qquad + \underbrace{(\frac{1}{2} - \frac{\psi}{2}( p_B - p_A))}_{u_2} \underbrace{(-p_B + q^A))}_{v_2} ] \\
+& \qquad \qquad \qquad + \underbrace{(\frac{1}{2} - \frac{\psi}{2}( p_B - p_A))}_{u_2} \underbrace{(-p_B + q^A))}_{v_2} ] \\
 = & \underbrace{\left( - \frac{\psi}{2}\right)}_{u_1'} \underbrace{(-p_A + q^A)}_{v_1}
 + \underbrace{(-1)}_{v'_1} \underbrace{\left( \frac{1}{2} + \frac{\psi}{2}( p_B - p_A)\right)}_{u_1} \\
-& \qquad + \underbrace{\left( \frac{\psi}{2}\right)}_{u_2'} \underbrace{(-p_B + q^A)}_{v_1}
+& \qquad \qquad \qquad + \underbrace{\left( \frac{\psi}{2}\right)}_{u_2'} \underbrace{(-p_B + q^A)}_{v_1}
 + \underbrace{(0)}_{v_1'} \underbrace{\left( \frac{1}{2} - \frac{\psi}{2}( p_B - p_A)\right)}_{u_1} \\
 = & \left( -\frac{\psi}{2}\right)(-p_A + q^A) - \left(\frac{1}{2} - \frac{\psi}{2}( p_B - p_A)\right) \\
-& \qquad+ \left( \frac{\psi}{2}\right)(-p_B + q^A) \\
+& \qquad \qquad \qquad+ \left( \frac{\psi}{2}\right)(-p_B + q^A) \\
 = & \left(\frac{\psi}{2}\right) (-(-p_A + q^A) + (-p_B + q^A)) \\
-& \qquad- \left(\frac{1}{2} - \frac{\psi}{2}( p_B - p_A)\right)\\
+& \qquad \qquad \qquad- \left(\frac{1}{2} - \frac{\psi}{2}( p_B - p_A)\right)\\
 = & \left(\frac{\psi}{2}\right) ((p_A - q^A) - (p_B - q^A)) - \left(\frac{1}{2} - \frac{\psi}{2}( p_B - p_A)\right)\\
 \end{split}
 $$
@@ -363,7 +365,7 @@ The equilibrium platform can be viewed as a tradeoff:
 -   If you stay closer to preferred $q^j$, you are decreasing your chances of winning the election. This can be seen in our maximisation condition:
 
 $$
-\underbrace{\left(\frac{\psi}{2}\right) ( (p_A - q^A) - (p_B - q^A))}_{\text{Marginal effect of staying close to } q^A} - \underbrace{\left(\frac{1}{2} - \frac{\psi}{2}( p_B - p_A)\right)}_{\text{Marg. eff. of moving to median}} = 0
+\underbrace{\left(\frac{\psi}{2}\right) ( (p_A - q^A) - (p_B - q^A))}_{\text{Marg. eff. of preference }} - \underbrace{\left(\frac{1}{2} - \frac{\psi}{2}( p_B - p_A)\right)}_{\text{Marg. eff. of median}} = 0
 $$
 
 Solving this, we will get the following solution:

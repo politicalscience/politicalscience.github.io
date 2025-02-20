@@ -9,6 +9,7 @@ format:
           body-width: 700px
           margin-width: 250px
           gutter-width: 2em
+        mainfont: "Times New Roman"
         fontsize: 12pt
         theme: default
         toc: TRUE
@@ -16,10 +17,11 @@ format:
         toc-location: left
         toc-expand: true
         toc-title: "Table of Contents"
-        mainfont: "Computer Modern"
         title-block-banner: true
-        classoption: fleqn
-        html-math-method: katex
+        html-math-method: mathjax
+        include-in-header:
+          text: |
+            <script src="mathjax-config.js"></script>
 editor: visual
 ---
 
@@ -142,7 +144,7 @@ Or in more intuitive terms, the inputs $x \in X$ that make the utility function 
 A strategy $s_i^D$ is a **strictly dominant** strategy for player $i$ if it gives a higher payoff than any other strategy of player $i$, no matter the choice of strategy of other players.
 
 $$
-\underbrace{u_i(s_i^D, s_{-i})}_{\text{utility of } S_i^D} > \underbrace{u_i (s_i, s_{-i})}_{\text{utility of others}}, \quad \forall \ s_{-i}, \ \forall s_i ≠ s_i^D
+\underbrace{u_i(s_i^D, s_{-i})}_{S_i^D \text{ utility} } > \underbrace{u_i (s_i, s_{-i})}_{\text{utility of others}} \quad \forall \ s_{-i}, \ \forall s_i ≠ s_i^D
 $$
 
 A strategy $s_i^1$ that always produces a lower payoff than $s_i^2$ is said to be **strictly dominated**.
@@ -153,7 +155,7 @@ A strategy $s_i^1$ that always produces a lower payoff than $s_i^2$ is said to b
 A strategy $s_i^D$ is **weakly dominant** for player $i$ if it gives an equal or higher payoff than any other strategy of player $i$, no matter the choice of strategy of other players.
 
 $$
-\underbrace{u_i(s_i^D, s_{-i})}_{\text{utility of }S_i^D} ≥ \underbrace{u_i (s_i, s_{-i})}_{\text{utility of others}}, \quad \forall \ s_{-i}, \ \forall s_i ≠ s_i^D
+\underbrace{u_i(s_i^D, s_{-i})}_{S_i^D \text{ utility}} ≥ \underbrace{u_i (s_i, s_{-i})}_{\text{utility of others}} \quad \forall \ s_{-i}, \ \forall s_i ≠ s_i^D
 $$
 
 A strategy $s_i^1$ that always produces a lower or equal payoff than $s_i^2$ is said to be **weakly dominated**.
@@ -172,7 +174,7 @@ A weakly dominated strategy **cannot** be eliminated. It can be a best response 
 A strategy profile $s^D$ is a **dominant strategy equilibrium**, if every player is playing a dominant strategy. Formally, a strategy profile $s^D = (s_1^D, \dots, s_N^D)$ is a dominant strategy equilibrium, if $s_i^D$ is a dominant strategy for all $i$:
 
 $$
-\underbrace{u_i(s_i^D, s_{-i})}_{\text{utility of } S_i^D} > \underbrace{u_i (s_i, s_{-i})}_{\text{utility of others}}, \quad \forall \ s_{-i}, \ \forall s_i ≠ s_i^D, \ \forall \ i
+\underbrace{u_i(s_i^D, s_{-i})}_{S_i^D \text{ utility} } > \underbrace{u_i (s_i, s_{-i})}_{\text{utility of others}} \quad \forall \ s_{-i}, \ \forall s_i ≠ s_i^D, \ \forall \ i
 $$
 
 Dominant Strategy Equilibrium, if it exists, is always unique. However, it often does not exist.
@@ -184,9 +186,9 @@ Take the classic game: the prisoner's dilemma. The matrix representation is as f
 
 $$
 \begin{matrix}
-& \text{cooperate} & \text{defect} \\
-\text{cooperate} & (3, 3) & (0, 4) \\
-\text{defect} & (4, 0) & (1,1)
+& C_2 & D_2 \\
+C_1 & (3, 3) & (0, 4) \\
+D_1 & (4, 0) & (1,1)
 \end{matrix}
 $$
 
@@ -196,9 +198,9 @@ Let us look at the row player's decision. First, let us hold constant their oppo
 
 $$
 \begin{matrix}
-& \text{cooperate}  \\
-\text{cooperate} & (3, 3) \\
-\text{defect} & (4, 0)
+& C_2  \\
+C_1 & (3, 3) \\
+D_1 & (4, 0)
 \end{matrix}
 $$
 
@@ -208,9 +210,9 @@ Now, let us hold constant their opponent (the column player) and assume they cho
 
 $$
 \begin{matrix}
- & \text{defect} \\
-\text{cooperate} & (0, 4) \\
-\text{defect} & (1,1)
+ & D_2 \\
+C_1 & (0, 4) \\
+D_1 & (1,1)
 \end{matrix}
 $$
 
@@ -250,9 +252,9 @@ Take the classic game: the stag-hunt game. The matrix representation is as follo
 
 $$
 \begin{matrix}
-& \text{stag} & \text{hunt} \\
-\text{stag} & (2, 2) & (0, 1) \\
-\text{hunt} & (1, 0) & (1,1)
+& S_2 & H_2 \\
+S_1 & (2, 2) & (0, 1) \\
+H_1 & (1, 0) & (1,1)
 \end{matrix}
 $$
 
@@ -262,9 +264,9 @@ Let us say the opponent plays *stag*. What is the row player's best response?
 
 $$
 \begin{matrix}
-& \text{stag} \\
-\text{stag} & (2, 2) \\
-\text{hunt} & (1, 0)
+& S_2 \\
+S_1 & (2, 2) \\
+H_1 & (1, 0)
 \end{matrix}
 $$
 
@@ -274,22 +276,20 @@ Let us say the opponent plays *hunt*. What is the row player's best response?
 
 $$
 \begin{matrix}
-& \text{hunt} \\
-\text{stag}  & (0, 1) \\
-\text{hunt}& (1,1)
+& H_2 \\
+S_1  & (0, 1) \\
+S_2 & (1,1)
 \end{matrix}
 $$
 
 We can see $1>0$, thus the row player's best response in this case is to play *hunt*.
 
-<br />
-
 We can notate the best responses of the row player (player 1) as follows:
 
 $$
 \begin{cases}
-Br_1(\text{stag}) = \text{stag} \\
-Br_1(\text{hunt}) = \text{hunt}
+Br_1(S_2) = S_1 \\
+Br_1(H_2) = H_1
 \end{cases}
 $$
 :::
@@ -301,7 +301,7 @@ $$
 A strategy profile $s^*$ is a Nash Equilibrium, when all players are playing best responses (and no player has any profitable deviations, holding the opponents strategy consistent):
 
 $$
-\underbrace{u_i(s_i^*, s_{-i}^*)}_{\text{utility of }s_i^*} ≥ \underbrace{u_i(s_i', s_{-i}^*)}_{\text{utility of others}} \quad \forall \ s_i', \ \forall \ i
+\underbrace{u_i(s_i^*, s_{-i}^*)}_{s_i^* \text{ utility}} ≥ \underbrace{u_i(s_i', s_{-i}^*)}_{\text{utility of others}} \quad \forall \ s_i', \ \forall \ i
 $$
 
 There are a few characteristics of Nash Equilibrium:
@@ -321,9 +321,9 @@ Take this famous game - the assurance game. The matrix form is as follows:
 
 $$
 \begin{matrix}
-& \text{nukes} & \text{no nukes} \\
-\text{nukes} & (1, 1) & (3, 0) \\
-\text{no nukes} & (0, 3) & (4,4)
+& B_2 & R_2 \\
+B_1 & (1, 1) & (3, 0) \\
+R_1 & (0, 3) & (4,4)
 \end{matrix}
 $$
 
@@ -331,9 +331,9 @@ To find the Nash Equilibrium, let us compute best responses for both players. St
 
 $$
 \begin{matrix}
-& \text{nukes} & \text{no nukes} \\
-\text{nukes} & (\underline{\mathbf 1}, 1) & (3, 0) \\
-\text{no nukes} & (0, 3) & (\underline{\mathbf 4},4)
+& B_2 & R_2 \\
+B_1 & (\underline{\mathbf 1}, 1) & (3, 0) \\
+R_1 & (0, 3) & (\underline{\mathbf 4},4)
 \end{matrix}
 $$
 
@@ -341,9 +341,9 @@ Now, let us find the best responses of the column player:
 
 $$
 \begin{matrix}
-& \text{nukes} & \text{no nukes} \\
-\text{nukes} & (\underline{\mathbf 1}, \underline{\mathbf 1}) & (3, 0) \\
-\text{no nukes} & (0, 3) & (\underline{\mathbf 4},\underline{\mathbf 4})
+& B_2 & R_2 \\
+B_1 & (\underline{\mathbf 1}, \underline{\mathbf 1}) & (3, 0) \\
+R_1 & (0, 3) & (\underline{\mathbf 4},\underline{\mathbf 4})
 \end{matrix}
 $$
 
@@ -365,9 +365,9 @@ Take this following game:
 
 $$
 \begin{matrix}
-& \text{Left} & \text{Right} \\
-\text{Up} & (1, 1) & (2, 0) \\
-\text{Down} & (0, 2) & (2,2)
+& L & R \\
+U & (1, 1) & (2, 0) \\
+D & (0, 2) & (2,2)
 \end{matrix}
 $$
 
@@ -381,8 +381,8 @@ We can solve this by finding the expected utility of player 2 playing *Left* and
 
 $$
 \begin{cases}
-u_2(\text{Left}, s_i^\epsilon) = Pr(\text{up}) \times 1 + Pr(\text{Down}) \times 2 = (1-\epsilon)(1) + \epsilon(2) = 1 + \epsilon \\
-u_2(\text{Right}, s_i^\epsilon) = Pr(\text{up}) \times 0 + Pr(\text{Down}) \times 2 = (1-\epsilon)(0) + \epsilon(2) = 2 \epsilon
+u_2(L, s_i^\epsilon) = Pr(U) \times 1 + Pr(D) \times 2 = (1-\epsilon)(1) + \epsilon(2) = 1 + \epsilon \\
+u_2(R, s_i^\epsilon) = Pr(U) \times 0 + Pr(D) \times 2 = (1-\epsilon)(0) + \epsilon(2) = 2 \epsilon
 \end{cases}
 $$
 
@@ -390,7 +390,7 @@ Is the utility for player 2 of playing *Left* greater or equal than playing *Rig
 
 $$
 \begin{split}
-u_2(\text{Left}, s_i^\epsilon) & ≥ u_2(\text{Right}, s_i^\epsilon) \\
+u_2(L, s_i^\epsilon) & ≥ u_2(R, s_i^\epsilon) \\
 1 + \epsilon & ≥ 2 \epsilon \\
 \epsilon & ≤ 1
 \end{split}
@@ -439,7 +439,7 @@ Pure strategies are technically mixed-strategies where one strategy has probabil
 The mixed-strategy profile $\sigma^* = (\sigma_1^*, \dots, \sigma_N^*)$ is a Nash Equilibrium if $\sigma_i^*$ is a best response to $\sigma_{-i}^*$ for all players $i$.
 
 $$
-\underbrace{u_i(\sigma_i^*, \sigma_{-i}^*)}_{\text{utility of }\sigma_i^*} ≥ \underbrace{u_i(\sigma_i', \sigma_{-i}^*)}_{\text{utility of others}} \quad \forall \ \sigma_i', \ \forall \ i
+\underbrace{u_i(\sigma_i^*, \sigma_{-i}^*)}_{\sigma_i^* \text{utility}} ≥ \underbrace{u_i(\sigma_i', \sigma_{-i}^*)}_{\text{utility of others}} \quad \forall \ \sigma_i', \ \forall \ i
 $$
 
 A few notes on Mixed Strategy Nash Equilibrium.
@@ -461,9 +461,9 @@ Take the following Matching Pennies game:
 
 $$
 \begin{matrix}
-& \text{Heads} & \text{Tails} \\
-\text{Heads} & (1, -1) & (-1, 1) \\
-\text{Tails} & (-1, 1) & (1,-1)
+& H_2 & T_2 \\
+H_1 & (1, -1) & (-1, 1) \\
+T_1 & (-1, 1) & (1,-1)
 \end{matrix}
 $$
 
@@ -471,9 +471,9 @@ First, let us find the pure-strategy Nash Equilibrium.
 
 $$
 \begin{matrix}
-& \text{Heads} & \text{Tails} \\
-\text{Heads} & (\underline{\mathbf 1}, -1) & (-1, \underline{\mathbf 1}) \\
-\text{Tails} & (-1, \underline{\mathbf 1}) & (\underline{\mathbf 1},-1)
+& H_2 & T_2 \\
+H_1 & (\underline{\mathbf 1}, -1) & (-1, \underline{\mathbf 1}) \\
+T_1 & (-1, \underline{\mathbf 1}) & (\underline{\mathbf 1},-1)
 \end{matrix}
 $$
 
@@ -485,9 +485,9 @@ Let us define $p$ as player 1's (row player) probability of playing *Heads*, whi
 
 $$
 \begin{matrix}
-& \text{Heads} & \text{Tails} \\
-\text{Heads} & (1, -1) & (-1, 1) & p \\
-\text{Tails} & (-1, 1) & (1,-1) & 1-p \\
+& H_2 & T_2 \\
+H_1 & (1, -1) & (-1, 1) & p \\
+T_1 & (-1, 1) & (1,-1) & 1-p \\
 & q & 1-q
 \end{matrix}
 $$
@@ -496,8 +496,8 @@ Let us look at player 1. What is their expected utility when playing *Heads* or 
 
 $$
 \begin{cases}
-u_1(\text{Heads}) = 1q -1(1-q) = 2q - 1 \\
-u_1(\text{Tails}) = -1q + 1(1-q) = -2q + 1
+u_1(H_1) = 1q -1(1-q) = 2q - 1 \\
+u_1(T_1) = -1q + 1(1-q) = -2q + 1
 \end{cases}
 $$
 
@@ -505,7 +505,7 @@ We know that for player 1 to mix between these two strategies, they must be indi
 
 $$
 \begin{split}
-u_1(\text{Heads}) & = u_1(\text{Tails}) \\
+u_1(H_1) & = u_1(T_1) \\
 2q - 1 & = -2q + 1 \\
 4q & = 2 \\
 q & = \frac{1}{2}
@@ -518,7 +518,7 @@ We can do the same exercise with player 2, and we will also get $p = \frac{1}{2}
 
 Thus, the Mixed Strategy Nash Equilibrium is: $\left( (\frac{1}{2}, \frac{1}{2}), (\frac{1}{2},\frac{1}{2}) \right)$.
 
--   This is in the form $((\sigma_1(\text{Heads}), \sigma_1(\text{Tails}), (\sigma_2(\text{Heads}), \sigma_2(\text{Tails}))$
+-   This is in the form $((\sigma_1(H_1), \sigma_1(T_1), (\sigma_2(H_2), \sigma_2(T_2))$
 :::
 
 <br />
@@ -732,7 +732,7 @@ Let us assume $Pr(A)$ is the probability of us being at a specific node. Let us 
 Thus, $Pr(A|B)$ is the probability of us being at the specific node, assuming we have entered the information set. Bayes' Rule says the following about $Pr(A|B)$:
 
 $$
-\underbrace{Pr(A|B)}_{\text{posterior}} = \frac{\overbrace{Pr(B|A)}^{\text{likelihood}} \overbrace{Pr(A)}^{\text{prior}}}{\underbrace{Pr(B|A)Pr(A) + Pr(B|A^C)Pr(A^C)}_{\text{evidence: }Pr(B) \text{ expanded with law of total probability}}}
+\underbrace{Pr(A|B)}_{\text{posterior}} = \frac{\overbrace{Pr(B|A)}^{\text{likelihood}} \overbrace{Pr(A)}^{\text{prior}}}{\underbrace{Pr(B|A)Pr(A) + Pr(B|A^C)Pr(A^C)}_{\text{evidence}}}
 $$
 
 ::: {.callout-tip collapse="true" appearance="simple"}
