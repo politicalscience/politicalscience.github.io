@@ -9,6 +9,7 @@ format:
           body-width: 700px
           margin-width: 250px
           gutter-width: 2em
+        mainfont: "Times New Roman"
         fontsize: 12pt
         theme: default
         toc: TRUE
@@ -16,14 +17,15 @@ format:
         toc-location: left
         toc-expand: true
         toc-title: "Table of Contents"
-        mainfont: "Computer Modern"
         title-block-banner: true
-        classoption: fleqn
-        html-math-method: katex
+        html-math-method: mathjax
+        include-in-header:
+          text: |
+            <script src="mathjax-config.js"></script>
 editor: visual
 ---
 
-This background chapter introduces some key econometric theory needed for causal inference. Topics covered includes properties of estimators, statistical inference, the OLS estimator, and the Method of Moments estimator.
+This background chapter introduces some key econometric theory needed for causal inference. Topics covered includes properties of estimators, the OLS estimator, and the Method of Moments estimator.
 
 ------------------------------------------------------------------------
 
@@ -31,13 +33,13 @@ This background chapter introduces some key econometric theory needed for causal
 
 ### Estimands and Estimators
 
-An **estimand** is the true value of some parameter $\theta$ in the population we are trying to measure.
+An **estimand** is the true value of some true parameter $\theta$ in the population we are trying to measure.
 
-However, we often cannot find the true value of $\theta$ in the population, because it is often too hard, or even impossible to ask everyone in the population. Thus, we usually use a sample from the population, and use an **estimator** (procedure) to produce a sample **estimate** $\hat\theta$.
+We often do not have data on the population. We typically have a sample from the population, and use an **estimator** (procedure) to produce a sample **estimate** $\hat\theta$.
 
-However, because of sampling variability (not all random samples will be identical), taking another sample will result in a different estimate $\hat\theta$ than the original.
+However, because of sampling variability (not all random samples will be identical), each sample $n$ different estimate $\hat\theta_n$.
 
-If we keep taking $N$ number of samples, we will have $N$ number of estimates $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$. Thus, any specific estimate $\theta_n$ from sample $i$ can be thought of as a random draw from the **sampling distribution** $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$.
+If we keep taking $N$ number of samples, we will have $N$ number of estimates $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$. Thus, any specific estimate $\theta_n$ from sample $n$ can be thought of as a random draw from the **sampling distribution** $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Example of a Sampling Distribution
@@ -128,20 +130,18 @@ $$
 Pr(|\hat\theta_n - \theta|> \epsilon) \rightarrow 0, \text { as } n \rightarrow ∞
 $$
 
--   Or in other words, the probability that the distance between an estimate $\hat\theta_n$ and the true population value $\theta$ will be higher than a small close-to-zero value $\epsilon$ will be 0, since our estimates $\hat\theta_n$ will converge at the $\theta$.
+Or in other words, the probability that the distance between an estimate $\hat\theta_n$ and the true population value $\theta$ will be higher than a small close-to-zero value $\epsilon$ will be 0, since our estimates $\hat\theta_n$ will converge at the $\theta$.
 
 This is a useful property, since even if our estimator is biased, if it is asymptotically consistent, we know that with large enough sample sizes, that bias becomes infinitely small and negligible.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Biased but Consistent
 
-An estimator can be both biased, but consistent.
-
--   i.e. in smaller sample sizes, the estimator might not be on average correct, but over a large enough sample size, it will become "unbiased".
+An estimator can be both biased, but consistent. In smaller sample sizes, the estimator might not be on average correct, but over a large enough sample size, it will become "unbiased".
 
 For example, in the figure below, we can see that this estimator is biased at small values of $n$, but as $n$ increases, it becomes more consistent, collapsing its distribution around the true $\theta$.
 
-![](images/clipboard-1215503621.png){fig-align="center" width="70%"}
+![](images/clipboard-1215503621.png){fig-align="center" width="60%"}
 :::
 
 ::: {.callout-note collapse="true" appearance="simple"}
@@ -157,10 +157,10 @@ For example, let us say we have a random variable $x$. We take a random sample o
 The law of large numbers states that:
 
 $$
-\text{plim}( \bar x_n) = \mu
+plim( \bar x_n) = \mu
 $$
 
--   Where $\text{plim}$ states that as $n$ approaches infinity, the probability distribution of $\bar x_n$ collapses around $\mu$.
+-   Where $plim$ states that as $n$ approaches infinity, the probability distribution of $\bar x_n$ collapses around $\mu$.
 
 <br />
 
@@ -235,43 +235,41 @@ Nonparametric Bootstrap is also used in some more complex estimators where it is
 
 ### Deriving the Estimator
 
-Our sum of squared residuals (SSR) in [linear regression](https://politicalscience.github.io/regression/1.html) is $\mathbf y - \hat{\mathbf y} = \mathbf y - \mathbf X \hat{\boldsymbol\beta}$. Let us define our estimation vector $\boldsymbol{\hat{\beta}}$ as the value of $\boldsymbol{\hat{\beta}}$ that minimises the SSR:
+Our [linear regression](https://politicalscience.github.io/regression/1.html) model, and the fitted values $\hat{\mathbf{y}}$, take the following form:
 
 $$
-\boldsymbol{\hat{\beta}} = \min\limits_{b} (\mathbf y - \mathbf{Xb})^T (\mathbf y - \mathbf{Xb}) = \min\limits_b S(\mathbf b)
+\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u, \qquad \hat{\mathbf y} = \mathbf X \hat{\boldsymbol\beta}
 $$
 
-We can expand $S(\mathbf b)$ as follows:
+OLS wants to minimise the sum of squared residuals $S(\hat{\boldsymbol\beta})$ - the differences between the actual $\mathbf y$ and our predicted $\hat{\mathbf y}$:
 
 $$
-\begin{split}
-S(\mathbf b) & = \mathbf y^T \mathbf y \color{red}{ - \mathbf b^T \mathbf X^T \mathbf y - \mathbf y^T \mathbf{Xb}} \color{black} + \mathbf b^T \mathbf X^T \mathbf{Xb} \\ 
-& = \mathbf y^T \mathbf y \color{red}{- 2\mathbf b^T \mathbf X^T \mathbf y} \color{black} + \mathbf b^T \mathbf X^T \mathbf{Xb}
-\end{split}
+\begin{align}
+S(\hat{\boldsymbol\beta}) & = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mathbf y - \hat{\mathbf y})\\
+& = (\mathbf y - \color{blue}{\mathbf X \hat{\boldsymbol\beta}}\color{black})^\mathsf{T} (\mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}}\color{black}) && (\text{plug in } \color{blue}{\hat{\mathbf y}  = \mathbf X \hat{\boldsymbol\beta}}\color{black}) \\
+& = \mathbf y^\mathsf{T} \mathbf y - \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{Xb} && (\text{distribute out)} \\ 
+& = \mathbf y^\mathsf{T} \mathbf y - \color{blue}{2\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y}\color{black} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta} &&(\text{combine } \color{blue}{- \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta}}\color{black})
+\end{align}
 $$
 
-Differentiating with the vector $b$ yields:
+Now, let us find the first order condition:
 
 $$
-\frac{\partial S(\mathbf b)}{\partial b} = -2\mathbf X^T \mathbf y + 2 \mathbf X^T \mathbf{Xb}
+\frac{\partial S(\hat{\boldsymbol\beta})}{\partial \hat{\boldsymbol\beta}} = -2\mathbf X^\mathsf{T} \mathbf y + 2 \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta} = 0
 $$
 
-Evaluated at $\hat{\beta}$, the derivatives should equal zero (since first order condition of finding minimums):
+When assuming $\mathbf X^\mathsf{T} \mathbf X$ is invertable (which is true if $\mathbf X$ is full rank), we can isolate $\hat{\beta}$ to find the solution to OLS:
 
 $$
-\frac{\partial S(\mathbf b)}{\partial b} \biggr|_{\hat{\beta}} = -2\mathbf X^T \mathbf y + 2\mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} = 0
+\begin{align}
+-2\mathbf X^T\mathbf y + 2 \mathbf X^\mathsf{T} \mathbf X \boldsymbol{\hat{\beta}} & = 0 \\
+2 \mathbf X^\mathsf{T} \mathbf X \boldsymbol{\hat\beta} & = 2\mathbf X^\mathsf{T} \mathbf y && (+ 2\mathbf X^\mathsf{T} \mathbf y \text{ to both sides}) \\
+\boldsymbol{\hat\beta} & = (2\mathbf X^\mathsf{T} \mathbf X)^{-1} 2 \mathbf X^\mathsf{T} \mathbf y && (\times (2\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ to both sides})\\
+\boldsymbol{\hat\beta} & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y &&(\text{cancel out } 2^{-1}\times 2)
+\end{align}
 $$
 
-When assuming $\mathbf X^T \mathbf X$ is invertable (which is true if $\mathbf X$ is full rank), we can isolate $\hat{\beta}$ to find the solution to OLS:
-
-$$
-\begin{split}
--2\mathbf X^T\mathbf y + 2 \mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} & = 0 \\
-2 \mathbf X^T \mathbf X \boldsymbol{\hat\beta} & = 2\mathbf X^T \mathbf y \\
-\boldsymbol{\hat\beta} & = (2\mathbf X^T \mathbf X)^{-1} 2 \mathbf X^T \mathbf y \\
-\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
-\end{split}
-$$
+Those are our coefficient solutions to OLS.
 
 <br />
 
@@ -304,11 +302,11 @@ $$
 We plug $\widetilde{y_i}$ back into our regression of $y_i$ with explanatory variables $x_2 ..., x_k$:
 
 $$
-\begin{split}
+\begin{align}
 y_i & = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \widetilde{y_i} \\
-y_i & = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \underbrace{\alpha_0 + \alpha_1 \widetilde{r_{1i}} + u_i}_{\because \text{ plug in } \widetilde{y_i}} \\
-y_i  & = \underbrace{(\delta_0 + \alpha_0)}_{\beta_0} + \underbrace{\alpha_1 \widetilde{r_{1i}}}_{\beta_1 x_{1i}} + \underbrace{\delta_1x_{2i}}_{\beta_2 x_{2i}} + ... + \underbrace{\delta_{k-1} x_{ki}}_{\beta_kx_{ki}} + \underbrace{u_i}_{u_i} 
-\end{split}
+y_i & = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \alpha_0 + \alpha_1 \widetilde{r_{1i}} + u_i && (\text{plug in } \widetilde{y_i} = \alpha_0 + \alpha_1 \widetilde{r_{1i}} + u_i)\\
+y_i  & = \underbrace{(\delta_0 + \alpha_0)}_{\beta_0} + \underbrace{\alpha_1 \widetilde{r_{1i}}}_{\beta_1 x_{1i}} + \underbrace{\delta_1x_{2i}}_{\beta_2 x_{2i}} + ... + \underbrace{\delta_{k-1} x_{ki}}_{\beta_kx_{ki}} + \underbrace{u_i}_{u_i} && (\text{rearrange})
+\end{align}
 $$
 
 This new regression mirrors the original multiple linear regression. Importantly, we see [the estimate of $\alpha_1$ will be the same as $\beta_1$ in the original regression]{.underline}. This coefficient explains the expected change in $y$, given an increase in the part of $x_1$ uncorrelated with $x_2, ..., x_k$.
@@ -317,65 +315,45 @@ So essentially, [we have **partialed out** the effect of the other explanatory v
 
 <br />
 
-### Conditions for Unbiasedness
+### OLS as an Unbiased Estimator
 
 OLS is an [unbiased estimator](https://politicalscience.github.io/causal/0.html#unbiased-estimators) of the relationship between any $x_j$ and $y$ under 4 conditions:
 
-1.  **Linearity** in parameters: the model of the population (data generating process) can be modelled as:
+1.  **Linearity** in parameters: the model of the population (data generating process) can be modelled as $\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u$.
+2.  **Random Sampling**: the observations in our sample are randomly sampled.
+3.  **No Perfect Multicolinearity**: There is no exact linear relationships between the regressors. This ensures that $\mathbf X^\mathsf{T} \mathbf X$ is invertible, which is required for the derivation of OLS.
+4.  **Zero Conditional Mean**: $E(\mathbf u|\mathbf X) = 0$. This implies that no $x_j$ is correlated with $\mathbf u$ (exogeneity), and no function of multiple regressors is correlated with $\mathbf u$.
+
+Let us prove OLS is unbiased - i.e. $E(\hat{\boldsymbol\beta}) = \boldsymbol\beta$. Let us manipulate our OLS solution:
 
 $$
-\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u
-$$
-
-2.  **Random Sampling**: the observations in our sample are randomly sampled from the same population.
-3.  **No Perfect Multicolinearity**: There is no exact linear relationships between the regressors. This ensures that $\mathbf X^T \mathbf X$ is invertible, which is required for the derivation of OLS.
-4.  **Zero Conditional Mean**: $E(\mathbf u|\mathbf X) = 0$. This implies that no regressor, and no function of multiple regressors is correlated with the error term.
-
-If any of these conditions are violated, OLS is not an unbiased estimator. The key condition is zero-conditional mean - specifically, **Exogeneity**. Exogeneity refers to when each regressor is uncorrelated with the error term. If exogeneity is violated, zero-conditional mean is violated.
-
-<br />
-
-### Proof of Unbiasedness
-
-Let us manipulate our OLS solution:
-
-$$
-\begin{split}
-\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y \\
-& = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T\underbrace{(\mathbf X \boldsymbol\beta + \mathbf u)}_{\text{plug in } \mathbf y} \\
-& = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\text{inverses cancel out }} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-\end{split}
+\begin{align}
+\boldsymbol{\hat\beta} & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y \\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}(\mathbf X \boldsymbol\beta + \mathbf u) && (\text{plug in } \mathbf y = \mathbf X \boldsymbol\beta + \mathbf u) \\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&(\text{multiply out})\\
+& = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&( \ \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
+& = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{identity property of } \mathbf I)
+\end{align}
 $$
 
 Now, let us take the expectation of $\boldsymbol{\hat\beta}$ conditional on $\mathbf X$. Remember condition 4, $E(\mathbf u | \mathbf X) = 0$:
 
 $$
-\begin{split}
-E(\boldsymbol{\hat\beta}|\mathbf X) & = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \underbrace{E(\mathbf u | \mathbf X)}_{= \ 0} \\
-E(\boldsymbol{\hat\beta}|\mathbf X) & = \boldsymbol\beta
-\end{split}
+\begin{align}
+E(\boldsymbol{\hat\beta}|\mathbf X) & = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} E(\mathbf u | \mathbf X) &&(\mathbf u \text{ conditional on value of } \mathbf X) \\
+E(\boldsymbol{\hat\beta}|\mathbf X) & = \boldsymbol\beta &&(E(\mathbf u | \mathbf X) = 0)
+\end{align}
 $$
 
-Now, we can use the law of iterated expectations to conclude this proof:
+Now, we can use the law of iterated expectations (LIE) to conclude this proof:
 
 $$
-\begin{split}
-E(\boldsymbol{\hat\beta}) & = E(E(\boldsymbol{\hat\beta}|\mathbf X)) \\
- & = E(\boldsymbol\beta) \\
-& = \boldsymbol\beta
-\end{split}
+\begin{align}
+E(\boldsymbol{\hat\beta}) & = E(E(\boldsymbol{\hat\beta}|\mathbf X)) && (\text{LIE: E(X) = E(E(X|Y))})\\
+ & = E(\boldsymbol\beta) && (\text{LIE: E(X) = E(E(X|Y))})\\
+& = \boldsymbol\beta && (\text{expecation of a constant})
+\end{align}
 $$
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Law of Iterated Expectations
-
-The law of iterated expectations states that:
-
-$$
-E(X) = E(E(X|Y))
-$$
-:::
 
 Thus, OLS is unbiased under the 4 conditions above.
 
@@ -425,19 +403,20 @@ The Gauss-Markov Theorem is one of the main reasons we focus so heavily on the O
 Let us assume homoscedasticity. We want to find the variance of our estimator, $Var(\boldsymbol{\hat\beta} | \mathbf X)$. Let us start off with our OLS solution. We can simplify as follows:
 
 $$
-\begin{split}
-\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y \\
-& = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T\underbrace{(\mathbf X \boldsymbol\beta + \mathbf u)}_{\text{plug in } \mathbf y} \\
-& = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\text{inverses cancel out }} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-\end{split}
+\begin{align}
+\boldsymbol{\hat\beta} & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y \\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}(\mathbf X \boldsymbol\beta + \mathbf u) && (\text{plug in } \mathbf y = \mathbf X \boldsymbol\beta + \mathbf u) \\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&(\text{multiply out})\\
+& = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&( \ \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
+& = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{identity property of } \mathbf I)
+\end{align}
 $$
 
 $$
-Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \ | \ \mathbf X)
+Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u \ | \ \mathbf X)
 $$
 
-$\boldsymbol\beta$ is a vector of fixed constants (the true parameter values in the population). $(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u$ can be imagined as a matrix of fixed constants, since we are conditioning the above variance on $\mathbf X$ (so for each $\mathbf X$, the statement is fixed).
+$\boldsymbol\beta$ is a vector of fixed constants. $(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u$ can be imagined as a matrix of fixed constants, since we are conditioning the above variance on $\mathbf X$ (so for each $\mathbf X$, the statement is fixed).
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Mathematical Lemma
@@ -445,7 +424,7 @@ $\boldsymbol\beta$ is a vector of fixed constants (the true parameter values in 
 If $\mathbf u$ is an $n$ dimensional vector of random variables, $\mathbf c$ is an $m$ dimensional vector, and $\mathbf B$ is an $n \times m$ dimensional matrix with fixed constants, then the following is true:
 
 $$
-Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^T
+Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^\mathsf{T}
 $$
 
 I will not prove this lemma here, but it is provable.
@@ -454,14 +433,14 @@ I will not prove this lemma here, but it is provable.
 With the Lemma above, and with the definition of homoscedasticity, we can simplify:
 
 $$
-\begin{split}
-Var(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T Var(\mathbf u | \mathbf X) [(\mathbf X^T \mathbf X)^{-1} \mathbf X^T]^{-1} \\
-& = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{Var(\mathbf u | \mathbf X)}_{\text{homoscedastcity}} \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
-& = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{\color{red}{\sigma^2}}_{\text{scalar}} \mathbf I_n \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
-& =  \color{red}{\sigma^2} \color{black} (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf I_n \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
-& =  \sigma^2 (\mathbf X^T \mathbf X)^{-1} \underbrace{\mathbf X^T  \mathbf X (\mathbf X^T \mathbf X)^{-1}}_{\text{inverses cancel out}} \\
-& =  \sigma^2 (\mathbf X^T \mathbf X)^{-1}
-\end{split}
+\begin{align}
+Var(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) [(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} && (\text{lemma})\\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) \color{blue}{\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}} && \color{black}( \ \color{blue}{[(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} = (\mathbf X^\mathsf{T} \mathbf X)^{-1}}\color{black})\\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\sigma^2 \mathbf I_n}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\color{blue}{Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n}\color{black}) \\
+& =  \color{red}{\sigma^2} \color{black} (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf I_n \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{move scalar } \color{red}{\sigma^2}\color{black})\\
+& =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{identity property of } \mathbf I_n)\\
+& =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{inverses } \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ cancel})
+\end{align}
 $$
 
 However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed [here](https://politicalscience.github.io/regression/1.html#residual-standard-deviation)).
@@ -474,33 +453,21 @@ We can use these standard errors (square root of variance) for [hypothesis testi
 
 OLS is an asymptotically consistent estimator of the relationship between any $x_j$ and $y$ under 4 conditions. These conditions are identical to the unbiasedness conditions EXCEPT condition 4, which is weakened from the original unbiasedness condition.
 
-1.  **Linearity** in parameters: the model of the population (data generating process) can be modelled as:
+1.  **Linearity** (see unbiasedness)
+2.  **Random Sampling** (...)
+3.  **No Perfect Multicolinearity** (...)
+4.  **Zero Mean and Exogeneity**: $E(u_i) = 0$, and $Cov(x_i, u_i) = 0$, which implies $E(\mathbf x_i u_i) = 0$. This means that no regressor should be correlated with $\mathbf u$. This is weaker than Zero-Conditional mean, since it means a function of regressors can be correlated with $\mathbf u$.
+
+We need condition 3 to ensure $\mathbf X^\mathsf{T} \mathbf X$ is invertible, in order to have OLS estimates. Once we have OLS estimates (derivation above), we can manipulate it as following:
 
 $$
-\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u
-$$
-
-2.  **Random Sampling**: the observations in our sample are randomly sampled from the same population.
-3.  **No Perfect Multicolinearity**: There is no exact linear relationships between the regressors. This ensures that $\mathbf X^T \mathbf X$ is invertible, which is required for the derivation of OLS.
-4.  **Zero Mean and Exogeneity**: $E(u_i) = 0$, and $Cov(x_i, u_i) = 0$. This means that no regressor should be correlated with the error term. This also implies $E(x_iu_i) = 0$.
-
-If any of these conditions are violated, OLS is not a consistent estimator. Even if all these conditions are met, OLS is not unbiased, just consistent. For OLS to be unbiased, it must meet the full Zero Conditional Mean assumption as discussed previously.
-
-The key condition for asymptotic consistency is exogeniety, as we will see throughout this course, causes many issues when we are trying to find unbiased causal estimates.
-
-<br />
-
-### Proof of Asymptotic Consistency
-
-We need condition 3 to ensure $\mathbf X^T \mathbf X$ is invertible, in order to have OLS estimates. Once we have OLS estimates (derivation above), we can manipulate it as following:
-
-$$
-\begin{split}
-\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y \\
-& = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T\underbrace{(\mathbf X \boldsymbol\beta + \mathbf u)}_{\text{plug in } \mathbf y} \\
-& = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\because \text{ inverses cancel}} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-\end{split}
+\begin{align}
+\boldsymbol{\hat\beta} & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y \\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}(\mathbf X \boldsymbol\beta + \mathbf u) && (\text{plug in } \mathbf y = \mathbf X \boldsymbol\beta + \mathbf u) \\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&(\text{multiply out})\\
+& = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&( \ \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
+& = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{identity property of } \mathbf I)
+\end{align}
 $$
 
 ::: {.callout-note collapse="true" appearance="simple"}
@@ -511,7 +478,7 @@ The following statements are true:
 $$
 \begin{split}
 & \mathbf X^T \mathbf X = \sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T \\
-& \mathbf X^T \mathbf  u = \sum\limits_{i=1}^n \mathbf x_i \mathbf u_i
+& \mathbf X^T \mathbf  u = \sum\limits_{i=1}^n \mathbf x_i u_i
 \end{split}
 $$
 :::
@@ -519,25 +486,20 @@ $$
 Using vector notation, we can simplify the above to:
 
 $$
-\begin{split}
-\boldsymbol{\hat\beta} & = \boldsymbol\beta + \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf u \right) \\
-& = \boldsymbol\beta + \underbrace{\left( \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf u \right)}_{\because \ \left(\frac{1}{n} \right)^{-1} \text{and } \frac{1}{n} \text{ cancel out}}
-\end{split}
+\begin{align}
+\boldsymbol{\hat\beta} & = \boldsymbol\beta + \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf u \right) && (\text{vector notation})\\
+\boldsymbol{\hat\beta} & = \boldsymbol\beta + \left( \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf u \right) && ( \ \left(\frac{1}{n} \right)^{-1} \text{and } \frac{1}{n} \text{ cancel out}) \\
+\text{plim} \boldsymbol{\hat\beta} & = \boldsymbol\beta + \left( \text{plim} \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \text{plim} \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i u_i \right) && (\text{apply plim})
+\end{align}
 $$
 
-Now, let us apply the probability limit:
+And using the [law of large numbers](https://politicalscience.github.io/causal/0.html#asymptotically-consistent-estimators), and the zero-mean and exogeneity condition, we can simplify to:
 
 $$
-\text{plim} \boldsymbol{\hat\beta} = \boldsymbol\beta + \left( \text{plim} \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \text{plim} \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf u \right)
-$$
-
-And using the law of large numbers (see above), and the zero-mean and exogeneity condition, we can simplify to:
-
-$$
-\begin{split}
-\text{plim} \boldsymbol{\hat\beta} & = \boldsymbol\beta + (E(\mathbf x_i \mathbf x_i^T))^{-1}\underbrace{E(\mathbf x_i \mathbf u_i)}_{ = \ 0} \\
-\text{plim} \boldsymbol{\hat\beta} & = \boldsymbol\beta
-\end{split}
+\begin{align}
+\text{plim} \boldsymbol{\hat\beta} & = \boldsymbol\beta + (E(\mathbf x_i \mathbf x_i^T))^{-1}E(\mathbf x_i  u_i) && (\text{law of large numbers})\\
+\text{plim} \boldsymbol{\hat\beta} & = \boldsymbol\beta && (E(\mathbf x_i u_i) = 0)
+\end{align}
 $$
 
 Thus, OLS is asymptotically consistent under the 4 conditions above.
@@ -567,19 +529,14 @@ MSE & = E(y_i - E(y_i|x_i))^2 \\
 $$
 :::
 
-OLS is a best-linear approximation of the conditional expectation function. Suppose we have the conditional expectation function:
+OLS is a best-linear approximation of the conditional expectation function. Suppose we have the conditional expectation function, and its mean squared errors:
 
 $$
-E(y_i|x_i) = b_0 + b_1x_i
-$$
-
-We know that the conditional expectation function minimises the mean of squared errors.
-
-$$
-\begin{split}
-MSE & = \min\limits_{b_0, b_1} E(y_i - E(y_i|x_i))^2 \\
-& = \min\limits_{b_0, b_1} E(y_i - \beta_0 - \beta_1x_i)^2
-\end{split}
+\begin{align}
+E(y_i|x_i) & = b_0 + b_1x_i \\
+MSE & = E(y_i - E(y_i|x_i))^2 \\
+& =  E(y_i - \beta_0 - \beta_1x_i)^2
+\end{align}
 $$
 
 The first order conditions are (using chain rule and partial derivatives):
@@ -600,7 +557,7 @@ $$
 \end{split}
 $$
 
-Since by definition, average/expectation is $E(x) = \frac{1}{n} \sum x_i$, we can rewrite the OLS minimisation conditions as:
+Since by definition, average/expectation is $E(x) = \frac{1}{n} \sum x_i$, we can rewrite as:
 
 $$
 \begin{split}
@@ -609,7 +566,7 @@ $$
 \end{split}
 $$
 
-And since anything multiplied to a zero turns into zero, we can ignore the $n$ in the first order condition, and only focus on the expected value part. Thus, our conditions are:
+And since anything multiplied to a zero turns into zero, we can ignore the $n$ in the first order condition. Thus, our conditions are:
 
 $$
 \begin{split}
@@ -673,13 +630,13 @@ $$
 With this equation, we can then solve for $\hat\mu$:
 
 $$
-\begin{split}
+\begin{align}
 0 & = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \hat\mu) \\
-0 & = \frac{1}{n}\sum\limits_{i=1}^ny_i - \frac{1}{n}\sum\limits_{i=1}^n \hat\mu \\
-0 & = \frac{1}{n}\sum\limits_{i=1}^ny_i - \frac{1}{n} n \hat\mu\\
-0 & = \bar y - \hat \mu \\
-\hat\mu & = \bar y
-\end{split}
+0 & = \frac{1}{n}\sum\limits_{i=1}^ny_i - \frac{1}{n}\sum\limits_{i=1}^n \hat\mu  && (\text{multiply out})\\
+0 & = \frac{1}{n}\sum\limits_{i=1}^ny_i - \frac{1}{n} n \hat\mu &&(\text{summation property of constant } \hat\mu)\\
+0 & = \bar y - \hat \mu && (\text{definition of mean }\frac{1}{n}\sum\limits_{i=1}^ny_i = \bar y)\\
+\hat\mu & = \bar y && (+\hat\mu\text{ to both sides})
+\end{align}
 $$
 
 So, we see the method of moments estimates our true population mean $\mu$, with the sample mean $\bar y$. As a method of moments estimator, it is also asymptotically consistent.

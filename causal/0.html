@@ -33,23 +33,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="0_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="0_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="0_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="mathjax-config.js"></script>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", function () {
- var mathElements = document.getElementsByClassName("math");
- var macros = [];
- for (var i = 0; i < mathElements.length; i++) {
-  var texText = mathElements[i].firstChild;
-  if (mathElements[i].tagName == "SPAN") {
-   katex.render(texText.data, mathElements[i], {
-    displayMode: mathElements[i].classList.contains('display'),
-    throwOnError: false,
-    macros: macros,
-    fleqn: true
-   });
-}}});
-  </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -118,12 +105,10 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#deriving-the-estimator" id="toc-deriving-the-estimator" class="nav-link" data-scroll-target="#deriving-the-estimator">Deriving the Estimator</a></li>
   <li><a href="#regression-anatomy-theorem" id="toc-regression-anatomy-theorem" class="nav-link" data-scroll-target="#regression-anatomy-theorem">Regression Anatomy Theorem</a></li>
-  <li><a href="#conditions-for-unbiasedness" id="toc-conditions-for-unbiasedness" class="nav-link" data-scroll-target="#conditions-for-unbiasedness">Conditions for Unbiasedness</a></li>
-  <li><a href="#proof-of-unbiasedness" id="toc-proof-of-unbiasedness" class="nav-link" data-scroll-target="#proof-of-unbiasedness">Proof of Unbiasedness</a></li>
+  <li><a href="#ols-as-an-unbiased-estimator" id="toc-ols-as-an-unbiased-estimator" class="nav-link" data-scroll-target="#ols-as-an-unbiased-estimator">OLS as an Unbiased Estimator</a></li>
   <li><a href="#gauss-markov-theorem" id="toc-gauss-markov-theorem" class="nav-link" data-scroll-target="#gauss-markov-theorem">Gauss-Markov Theorem</a></li>
   <li><a href="#deriving-variance" id="toc-deriving-variance" class="nav-link" data-scroll-target="#deriving-variance">Deriving Variance</a></li>
   <li><a href="#conditions-for-asymptotic-consistency" id="toc-conditions-for-asymptotic-consistency" class="nav-link" data-scroll-target="#conditions-for-asymptotic-consistency">Conditions for Asymptotic Consistency</a></li>
-  <li><a href="#proof-of-asymptotic-consistency" id="toc-proof-of-asymptotic-consistency" class="nav-link" data-scroll-target="#proof-of-asymptotic-consistency">Proof of Asymptotic Consistency</a></li>
   <li><a href="#ols-as-a-conditional-expectation-function" id="toc-ols-as-a-conditional-expectation-function" class="nav-link" data-scroll-target="#ols-as-a-conditional-expectation-function">OLS as a Conditional Expectation Function</a></li>
   </ul></li>
   <li><a href="#method-of-moments-estimator" id="toc-method-of-moments-estimator" class="nav-link" data-scroll-target="#method-of-moments-estimator"><strong>Method of Moments Estimator</strong></a>
@@ -143,16 +128,16 @@ window.Quarto = {
 
 
 
-<p>This background chapter introduces some key econometric theory needed for causal inference. Topics covered includes properties of estimators, statistical inference, the OLS estimator, and the Method of Moments estimator.</p>
+<p>This background chapter introduces some key econometric theory needed for causal inference. Topics covered includes properties of estimators, the OLS estimator, and the Method of Moments estimator.</p>
 <hr>
 <section id="estimators" class="level1">
 <h1><strong>Estimators</strong></h1>
 <section id="estimands-and-estimators" class="level3">
 <h3 class="anchored" data-anchor-id="estimands-and-estimators">Estimands and Estimators</h3>
-<p>An <strong>estimand</strong> is the true value of some parameter <span class="math inline">\theta</span> in the population we are trying to measure.</p>
-<p>However, we often cannot find the true value of <span class="math inline">\theta</span> in the population, because it is often too hard, or even impossible to ask everyone in the population. Thus, we usually use a sample from the population, and use an <strong>estimator</strong> (procedure) to produce a sample <strong>estimate</strong> <span class="math inline">\hat\theta</span>.</p>
-<p>However, because of sampling variability (not all random samples will be identical), taking another sample will result in a different estimate <span class="math inline">\hat\theta</span> than the original.</p>
-<p>If we keep taking <span class="math inline">N</span> number of samples, we will have <span class="math inline">N</span> number of estimates <span class="math inline">\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N</span>. Thus, any specific estimate <span class="math inline">\theta_n</span> from sample <span class="math inline">i</span> can be thought of as a random draw from the <strong>sampling distribution</strong> <span class="math inline">\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N</span>.</p>
+<p>An <strong>estimand</strong> is the true value of some true parameter <span class="math inline">\(\theta\)</span> in the population we are trying to measure.</p>
+<p>We often do not have data on the population. We typically have a sample from the population, and use an <strong>estimator</strong> (procedure) to produce a sample <strong>estimate</strong> <span class="math inline">\(\hat\theta\)</span>.</p>
+<p>However, because of sampling variability (not all random samples will be identical), each sample <span class="math inline">\(n\)</span> different estimate <span class="math inline">\(\hat\theta_n\)</span>.</p>
+<p>If we keep taking <span class="math inline">\(N\)</span> number of samples, we will have <span class="math inline">\(N\)</span> number of estimates <span class="math inline">\(\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N\)</span>. Thus, any specific estimate <span class="math inline">\(\theta_n\)</span> from sample <span class="math inline">\(n\)</span> can be thought of as a random draw from the <strong>sampling distribution</strong> <span class="math inline">\(\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N\)</span>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -165,16 +150,16 @@ Example of a Sampling Distribution
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Let us say we want to find the mean salary of all individuals in the UK. The true value of the mean salary for every individual is <span class="math inline">\theta</span>.</p>
+<p>Let us say we want to find the mean salary of all individuals in the UK. The true value of the mean salary for every individual is <span class="math inline">\(\theta\)</span>.</p>
 <p>However, asking all 60 million people is nearly impossible. So, we take a randomly sample of 1000 individuals, and then find the sample mean. Our estimator is thus the sample mean estimator.</p>
-<p>Our first sample of 1000 individuals yields an estimate <span class="math inline">\hat\theta_1</span>. If we take another sample, we will get slightly different people in this sample, and get another estimate <span class="math inline">\hat\theta_2</span>. We keep taking samples, and get more and more estimates <span class="math inline">\hat\theta_3, \hat\theta_4, \dots, \hat\theta_n</span>.</p>
+<p>Our first sample of 1000 individuals yields an estimate <span class="math inline">\(\hat\theta_1\)</span>. If we take another sample, we will get slightly different people in this sample, and get another estimate <span class="math inline">\(\hat\theta_2\)</span>. We keep taking samples, and get more and more estimates <span class="math inline">\(\hat\theta_3, \hat\theta_4, \dots, \hat\theta_n\)</span>.</p>
 <p>We plot all of these samples into a distribution as follows:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-2444367374.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
 </figure>
 </div>
-<p>This indicates the potential estimates we can get. If we were to conduct only one sample, we would essentially be selecting a random <span class="math inline">\hat\theta_i</span> value from this distribution.</p>
+<p>This indicates the potential estimates we can get. If we were to conduct only one sample, we would essentially be selecting a random <span class="math inline">\(\hat\theta_i\)</span> value from this distribution.</p>
 </div>
 </div>
 </div>
@@ -183,21 +168,21 @@ Example of a Sampling Distribution
 </section>
 <section id="unbiased-estimators" class="level3">
 <h3 class="anchored" data-anchor-id="unbiased-estimators">Unbiased Estimators</h3>
-<p>An estimator of a parameter is <strong>unbiased</strong>, if its estimates <span class="math inline">\hat\theta_n</span> have an expectation equal to the true population value of the parameter:</p>
-<p><span class="math display">
+<p>An estimator of a parameter is <strong>unbiased</strong>, if its estimates <span class="math inline">\(\hat\theta_n\)</span> have an expectation equal to the true population value of the parameter:</p>
+<p><span class="math display">\[
 E(\hat\theta_n) = \theta
-</span></p>
+\]</span></p>
 <p>Or in other words, if we repeatedly sample and use the estimator, on average, the estimates will be equal to the true population value.</p>
-<p>We want an unbiased estimator, because if <span class="math inline">E(\hat\theta_n) = \theta</span>, that means our “best guess” of the estimator value is the true parameter value <span class="math inline">\theta</span>. That means any one estimate <span class="math inline">\hat\theta_n</span> is on average, correct.</p>
+<p>We want an unbiased estimator, because if <span class="math inline">\(E(\hat\theta_n) = \theta\)</span>, that means our “best guess” of the estimator value is the true parameter value <span class="math inline">\(\theta\)</span>. That means any one estimate <span class="math inline">\(\hat\theta_n\)</span> is on average, correct.</p>
 <p>If our estimator is <strong>biased</strong>, we can quantify bias with the following formula:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 Bias(\hat\theta_n) = E(\hat\theta_n)-\theta
-</span></p>
+\]</span></p>
 <p><br></p>
 </section>
 <section id="variance-and-efficiency" class="level3">
 <h3 class="anchored" data-anchor-id="variance-and-efficiency">Variance and Efficiency</h3>
-<p>Unbiasedness is not the only desirable property of estimators - we also care about the variance. After all, if we have two unbiased estimators, the one with less variance will be on average, closer to the true population value, for any one estimate <span class="math inline">\hat\theta</span>.</p>
+<p>Unbiasedness is not the only desirable property of estimators - we also care about the variance. After all, if we have two unbiased estimators, the one with less variance will be on average, closer to the true population value, for any one estimate <span class="math inline">\(\hat\theta\)</span>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -210,24 +195,24 @@ Example of the Importance of Variance
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>For example, let us say the true population parameter is <span class="math inline">\theta = 0</span>. We will have two estimators: estimator <span class="math inline">A</span> and estimator <span class="math inline">B</span>:</p>
+<p>For example, let us say the true population parameter is <span class="math inline">\(\theta = 0\)</span>. We will have two estimators: estimator <span class="math inline">\(A\)</span> and estimator <span class="math inline">\(B\)</span>:</p>
 <ul>
-<li>Estimator <span class="math inline">A</span>, after two samples (for simplicity), produces estimates -1 and 1.</li>
-<li>Estimator <span class="math inline">B</span>, after two samples, produces estimates -100 and 100.</li>
+<li>Estimator <span class="math inline">\(A\)</span>, after two samples (for simplicity), produces estimates -1 and 1.</li>
+<li>Estimator <span class="math inline">\(B\)</span>, after two samples, produces estimates -100 and 100.</li>
 </ul>
-<p>Both estimators are unbiased <span class="math inline">E(\hat\theta_n) = 0</span>. However, clearly, estimator <span class="math inline">A</span> is, on average, closer to <span class="math inline">\theta =0</span> than estimator <span class="math inline">B</span>. This is because while both estimators are unbiased, estimator <span class="math inline">A</span> has a smaller <strong>variance</strong> than estimator <span class="math inline">B</span> - that is on average, estimator <span class="math inline">A</span>’s estimators are more closely “packed around” the expectation of the estimator.</p>
+<p>Both estimators are unbiased <span class="math inline">\(E(\hat\theta_n) = 0\)</span>. However, clearly, estimator <span class="math inline">\(A\)</span> is, on average, closer to <span class="math inline">\(\theta =0\)</span> than estimator <span class="math inline">\(B\)</span>. This is because while both estimators are unbiased, estimator <span class="math inline">\(A\)</span> has a smaller <strong>variance</strong> than estimator <span class="math inline">\(B\)</span> - that is on average, estimator <span class="math inline">\(A\)</span>’s estimators are more closely “packed around” the expectation of the estimator.</p>
 </div>
 </div>
 </div>
 <p>The variance of an estimator can be quantified as:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 Var(\hat\theta_n) = E[(\hat\theta_n - E(\hat\theta_n))^2]
-</span></p>
-<p>An <strong>efficient</strong> estimator is one that, on average, has the closest estimated value <span class="math inline">\hat\theta_n</span> to the true population parameter. If two estimators are both unbiased, the one with lower variance is more efficient. Efficiency can be quantified as the estimator with the lowest <strong>mean squared error</strong>:</p>
-<p><span class="math display">
+\]</span></p>
+<p>An <strong>efficient</strong> estimator is one that, on average, has the closest estimated value <span class="math inline">\(\hat\theta_n\)</span> to the true population parameter. If two estimators are both unbiased, the one with lower variance is more efficient. Efficiency can be quantified as the estimator with the lowest <strong>mean squared error</strong>:</p>
+<p><span class="math display">\[
 MSE(\hat\theta_n) = E[(\hat\theta_n - \theta)^2] =Var(\hat\theta_n) + Bias(\hat\theta_n)^2
-</span></p>
-<p>We generally want an efficient estimator, since we know it will be giving us the closest guess to the true population parameter <span class="math inline">\theta</span>.</p>
+\]</span></p>
+<p>We generally want an efficient estimator, since we know it will be giving us the closest guess to the true population parameter <span class="math inline">\(\theta\)</span>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -241,7 +226,7 @@ Efficient but Biased
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Interestingly, it is possible for a biased estimator to be more efficient than an unbiased estimator.</p>
-<p>This is particularly the case when the biased estimator has a slight bias but small variance, while the unbiased estimator has a giant variance. In this case, the biased estimator is producing estimates <span class="math inline">\hat\theta</span> that on average, are closer to the true population parameter <span class="math inline">\theta</span>.</p>
+<p>This is particularly the case when the biased estimator has a slight bias but small variance, while the unbiased estimator has a giant variance. In this case, the biased estimator is producing estimates <span class="math inline">\(\hat\theta\)</span> that on average, are closer to the true population parameter <span class="math inline">\(\theta\)</span>.</p>
 </div>
 </div>
 </div>
@@ -249,14 +234,12 @@ Efficient but Biased
 </section>
 <section id="asymptotically-consistent-estimators" class="level3">
 <h3 class="anchored" data-anchor-id="asymptotically-consistent-estimators">Asymptotically Consistent Estimators</h3>
-<p>Asymptotic properties are properties of estimators as the sample size <span class="math inline">n</span> approaches infinity.</p>
-<p>An estimator is consistent, if as we increase sample size towards infinity, the estimate will become more and more concentrated around the true population value <span class="math inline">\theta</span>. At <span class="math inline">n = ∞</span>, our sampling distribution collapses to just one value, the true population value <span class="math inline">\theta</span>. Mathematically:</p>
-<p><span class="math display">
+<p>Asymptotic properties are properties of estimators as the sample size <span class="math inline">\(n\)</span> approaches infinity.</p>
+<p>An estimator is consistent, if as we increase sample size towards infinity, the estimate will become more and more concentrated around the true population value <span class="math inline">\(\theta\)</span>. At <span class="math inline">\(n = ∞\)</span>, our sampling distribution collapses to just one value, the true population value <span class="math inline">\(\theta\)</span>. Mathematically:</p>
+<p><span class="math display">\[
 Pr(|\hat\theta_n - \theta|&gt; \epsilon) \rightarrow 0, \text { as } n \rightarrow ∞
-</span></p>
-<ul>
-<li>Or in other words, the probability that the distance between an estimate <span class="math inline">\hat\theta_n</span> and the true population value <span class="math inline">\theta</span> will be higher than a small close-to-zero value <span class="math inline">\epsilon</span> will be 0, since our estimates <span class="math inline">\hat\theta_n</span> will converge at the <span class="math inline">\theta</span>.</li>
-</ul>
+\]</span></p>
+<p>Or in other words, the probability that the distance between an estimate <span class="math inline">\(\hat\theta_n\)</span> and the true population value <span class="math inline">\(\theta\)</span> will be higher than a small close-to-zero value <span class="math inline">\(\epsilon\)</span> will be 0, since our estimates <span class="math inline">\(\hat\theta_n\)</span> will converge at the <span class="math inline">\(\theta\)</span>.</p>
 <p>This is a useful property, since even if our estimator is biased, if it is asymptotically consistent, we know that with large enough sample sizes, that bias becomes infinitely small and negligible.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
@@ -270,14 +253,11 @@ Biased but Consistent
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>An estimator can be both biased, but consistent.</p>
-<ul>
-<li>i.e.&nbsp;in smaller sample sizes, the estimator might not be on average correct, but over a large enough sample size, it will become “unbiased”.</li>
-</ul>
-<p>For example, in the figure below, we can see that this estimator is biased at small values of <span class="math inline">n</span>, but as <span class="math inline">n</span> increases, it becomes more consistent, collapsing its distribution around the true <span class="math inline">\theta</span>.</p>
+<p>An estimator can be both biased, but consistent. In smaller sample sizes, the estimator might not be on average correct, but over a large enough sample size, it will become “unbiased”.</p>
+<p>For example, in the figure below, we can see that this estimator is biased at small values of <span class="math inline">\(n\)</span>, but as <span class="math inline">\(n\)</span> increases, it becomes more consistent, collapsing its distribution around the true <span class="math inline">\(\theta\)</span>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-1215503621.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+<p><img src="images/clipboard-1215503621.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
 </figure>
 </div>
 </div>
@@ -296,25 +276,25 @@ Law of Large Numbers and Consistency
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The law of large numbers states that the sample average of a random sample, is a consistent estimator of the population mean.</p>
-<p>For example, let us say we have a random variable <span class="math inline">x</span>. We take a random sample of <span class="math inline">n</span> units, so our sample is <span class="math inline">(x_1, \dots, x_n)</span>.</p>
+<p>For example, let us say we have a random variable <span class="math inline">\(x\)</span>. We take a random sample of <span class="math inline">\(n\)</span> units, so our sample is <span class="math inline">\((x_1, \dots, x_n)\)</span>.</p>
 <ul>
-<li>Let us define <span class="math inline">\bar x_n</span> as our sample average.</li>
-<li>Let us define <span class="math inline">\mu</span> as the true population mean of variable <span class="math inline">x</span>.</li>
+<li>Let us define <span class="math inline">\(\bar x_n\)</span> as our sample average.</li>
+<li>Let us define <span class="math inline">\(\mu\)</span> as the true population mean of variable <span class="math inline">\(x\)</span>.</li>
 </ul>
 <p>The law of large numbers states that:</p>
-<p><span class="math display">
-\text{plim}( \bar x_n) = \mu
-</span></p>
+<p><span class="math display">\[
+plim( \bar x_n) = \mu
+\]</span></p>
 <ul>
-<li>Where <span class="math inline">\text{plim}</span> states that as <span class="math inline">n</span> approaches infinity, the probability distribution of <span class="math inline">\bar x_n</span> collapses around <span class="math inline">\mu</span>.</li>
+<li>Where <span class="math inline">\(plim\)</span> states that as <span class="math inline">\(n\)</span> approaches infinity, the probability distribution of <span class="math inline">\(\bar x_n\)</span> collapses around <span class="math inline">\(\mu\)</span>.</li>
 </ul>
 <p><br></p>
 <p>Why is this the case? This sample mean estimator is calculated simply through the formula for mean:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \bar x_n = \frac{1}{n}\sum\limits_{i=1}^n x_i
-</span></p>
-<p>Let us define the variance of our sample of <span class="math inline">x_1, \dots, x_n</span> as <span class="math inline">Var(x_i) = \sigma^2</span>. We can now find the variance of our sampling distribution of estimator <span class="math inline">\bar x_n</span>:</p>
-<p><span class="math display">
+\]</span></p>
+<p>Let us define the variance of our sample of <span class="math inline">\(x_1, \dots, x_n\)</span> as <span class="math inline">\(Var(x_i) = \sigma^2\)</span>. We can now find the variance of our sampling distribution of estimator <span class="math inline">\(\bar x_n\)</span>:</p>
+<p><span class="math display">\[
 \begin{split}
 Var(\bar x_n) &amp; = Var\left( \frac{1}{n}\sum\limits_{i=1}^n x_i \right) \\
 &amp; = \frac{1}{n^2} Var \left(\sum\limits_{i=1}^n x_i\right) \\
@@ -322,12 +302,12 @@ Var(\bar x_n) &amp; = Var\left( \frac{1}{n}\sum\limits_{i=1}^n x_i \right) \\
 &amp; = \frac{1}{n^2} \sigma^2 \\
 &amp; = \frac{\sigma^2}{n}
 \end{split}
-</span></p>
-<p>And as sample size <span class="math inline">n</span> increases to infinity, we get:</p>
-<p><span class="math display">
+\]</span></p>
+<p>And as sample size <span class="math inline">\(n\)</span> increases to infinity, we get:</p>
+<p><span class="math display">\[
 \lim\limits_{n \rightarrow ∞} Var(\bar x_n) = \lim\limits_{n \rightarrow ∞} \frac{\sigma^2}{n} = 0
-</span></p>
-<p>Thus, the variance of our estimator <span class="math inline">\bar x_n</span> shrinks to zero, so as sample size increases to infinity <span class="math inline">n</span>, the sampling distribution of estimator <span class="math inline">\bar x_n</span> collapses around the true population mean.</p>
+\]</span></p>
+<p>Thus, the variance of our estimator <span class="math inline">\(\bar x_n\)</span> shrinks to zero, so as sample size increases to infinity <span class="math inline">\(n\)</span>, the sampling distribution of estimator <span class="math inline">\(\bar x_n\)</span> collapses around the true population mean.</p>
 </div>
 </div>
 </div>
@@ -335,15 +315,15 @@ Var(\bar x_n) &amp; = Var\left( \frac{1}{n}\sum\limits_{i=1}^n x_i \right) \\
 </section>
 <section id="asymptotic-normality" class="level3">
 <h3 class="anchored" data-anchor-id="asymptotic-normality">Asymptotic Normality</h3>
-<p>Another asymptotic property of estimators, as sample size <span class="math inline">n</span> approaches infinity, is that the sampling distribution approaches a normal distribution.</p>
-<p>The <strong>central limit theorem</strong> establishes asymptotic normality of estimators. Let us say we have <span class="math inline">N</span> number of random variables <span class="math inline">\hat\theta_1, \dots, \hat\theta_N</span> (estimates are realisations of random variables). The central limit theorem states that:</p>
-<p><span class="math display">
+<p>Another asymptotic property of estimators, as sample size <span class="math inline">\(n\)</span> approaches infinity, is that the sampling distribution approaches a normal distribution.</p>
+<p>The <strong>central limit theorem</strong> establishes asymptotic normality of estimators. Let us say we have <span class="math inline">\(N\)</span> number of random variables <span class="math inline">\(\hat\theta_1, \dots, \hat\theta_N\)</span> (estimates are realisations of random variables). The central limit theorem states that:</p>
+<p><span class="math display">\[
 Pr(w_n &lt; w) \rightarrow \Phi(w) \quad \text{as } n \rightarrow ∞
-</span></p>
+\]</span></p>
 <ul>
-<li>Where <span class="math inline">w_n</span> is a transformed version of the random variable <span class="math inline">\hat\theta_n</span>, defined as <span class="math inline">w_n = \frac{\bar\theta_n - \mu}{\sigma / \sqrt{n}}</span>.</li>
-<li>Where <span class="math inline">Pr(w_n &lt; w)</span> is the cumulative density function of the random variable <span class="math inline">w_n</span>.</li>
-<li>Where <span class="math inline">\Phi(w)</span> is the cumulative density function (cdf) of the standard normal distribution <span class="math inline">\mathcal N(0, 1)</span>.</li>
+<li>Where <span class="math inline">\(w_n\)</span> is a transformed version of the random variable <span class="math inline">\(\hat\theta_n\)</span>, defined as <span class="math inline">\(w_n = \frac{\bar\theta_n - \mu}{\sigma / \sqrt{n}}\)</span>.</li>
+<li>Where <span class="math inline">\(Pr(w_n &lt; w)\)</span> is the cumulative density function of the random variable <span class="math inline">\(w_n\)</span>.</li>
+<li>Where <span class="math inline">\(\Phi(w)\)</span> is the cumulative density function (cdf) of the standard normal distribution <span class="math inline">\(\mathcal N(0, 1)\)</span>.</li>
 </ul>
 <p>The importance of CLM comes from the fact that as we increase sample size, our sampling distribution becomes more and more normally distributed. This property is essentially for carrying out statistical inference and significance tests, as they generally assume that our estimator is normally distributed.</p>
 <p><br></p>
@@ -353,11 +333,11 @@ Pr(w_n &lt; w) \rightarrow \Phi(w) \quad \text{as } n \rightarrow ∞
 <p>Most traditional statistical tests rely on asymptotic normality. However, asymptotic normality can only be satisfied if we have a large enough sample size. When we are dealing with small samples, we cannot invoke central limit theorem.</p>
 <p>Nonparametric Bootstrap, instead of assuming some sampling distribution, is a method to simulate the sampling distribution. This is done by re-sampling from the sample with replacement. The procedure is as follows:</p>
 <ol type="1">
-<li>You take the sample you observe (with sample size <span class="math inline">n</span>), and randomly re-sample <span class="math inline">n</span> observations from that sample with replacement (so allowing observations to repeat in our re-sample).</li>
-<li>Continue to do this over and over again to get <span class="math inline">B</span> number of re-samples.</li>
-<li>For each re-sample <span class="math inline">b</span>, you should calculate the <span class="math inline">\widehat{\theta_b}</span>. Plot all of the sample <span class="math inline">\widehat{\theta_b}</span> in a distribution.</li>
+<li>You take the sample you observe (with sample size <span class="math inline">\(n\)</span>), and randomly re-sample <span class="math inline">\(n\)</span> observations from that sample with replacement (so allowing observations to repeat in our re-sample).</li>
+<li>Continue to do this over and over again to get <span class="math inline">\(B\)</span> number of re-samples.</li>
+<li>For each re-sample <span class="math inline">\(b\)</span>, you should calculate the <span class="math inline">\(\widehat{\theta_b}\)</span>. Plot all of the sample <span class="math inline">\(\widehat{\theta_b}\)</span> in a distribution.</li>
 </ol>
-<p>You can also estimate the standard error of <span class="math inline">\hat\theta</span> using the standard deviation of the distribution. However, do not use these standard errors for confidence intervals or tests unless you are confident the sampling distribution is approximately normal.</p>
+<p>You can also estimate the standard error of <span class="math inline">\(\hat\theta\)</span> using the standard deviation of the distribution. However, do not use these standard errors for confidence intervals or tests unless you are confident the sampling distribution is approximately normal.</p>
 <p>Nonparametric Bootstrap is also used in some more complex estimators where it is very difficult to calculate or estimate the standard errors.</p>
 <p><br></p>
 <p><br></p>
@@ -368,127 +348,98 @@ Pr(w_n &lt; w) \rightarrow \Phi(w) \quad \text{as } n \rightarrow ∞
 <h1><strong>Ordinary Least Squares Estimator</strong></h1>
 <section id="deriving-the-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="deriving-the-estimator">Deriving the Estimator</h3>
-<p>Our sum of squared residuals (SSR) in <a href="https://politicalscience.github.io/regression/1.html">linear regression</a> is <span class="math inline">\mathbf y - \hat{\mathbf y} = \mathbf y - \mathbf X \hat{\boldsymbol\beta}</span>. Let us define our estimation vector <span class="math inline">\boldsymbol{\hat{\beta}}</span> as the value of <span class="math inline">\boldsymbol{\hat{\beta}}</span> that minimises the SSR:</p>
-<p><span class="math display">
-\boldsymbol{\hat{\beta}} = \min\limits_{b} (\mathbf y - \mathbf{Xb})^T (\mathbf y - \mathbf{Xb}) = \min\limits_b S(\mathbf b)
-</span></p>
-<p>We can expand <span class="math inline">S(\mathbf b)</span> as follows:</p>
-<p><span class="math display">
-\begin{split}
-S(\mathbf b) &amp; = \mathbf y^T \mathbf y \color{red}{ - \mathbf b^T \mathbf X^T \mathbf y - \mathbf y^T \mathbf{Xb}} \color{black} + \mathbf b^T \mathbf X^T \mathbf{Xb} \\
-&amp; = \mathbf y^T \mathbf y \color{red}{- 2\mathbf b^T \mathbf X^T \mathbf y} \color{black} + \mathbf b^T \mathbf X^T \mathbf{Xb}
-\end{split}
-</span></p>
-<p>Differentiating with the vector <span class="math inline">b</span> yields:</p>
-<p><span class="math display">
-\frac{\partial S(\mathbf b)}{\partial b} = -2\mathbf X^T \mathbf y + 2 \mathbf X^T \mathbf{Xb}
-</span></p>
-<p>Evaluated at <span class="math inline">\hat{\beta}</span>, the derivatives should equal zero (since first order condition of finding minimums):</p>
-<p><span class="math display">
-\frac{\partial S(\mathbf b)}{\partial b} \biggr|_{\hat{\beta}} = -2\mathbf X^T \mathbf y + 2\mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} = 0
-</span></p>
-<p>When assuming <span class="math inline">\mathbf X^T \mathbf X</span> is invertable (which is true if <span class="math inline">\mathbf X</span> is full rank), we can isolate <span class="math inline">\hat{\beta}</span> to find the solution to OLS:</p>
-<p><span class="math display">
-\begin{split}
--2\mathbf X^T\mathbf y + 2 \mathbf X^T \mathbf X \boldsymbol{\hat{\beta}} &amp; = 0 \\
-2 \mathbf X^T \mathbf X \boldsymbol{\hat\beta} &amp; = 2\mathbf X^T \mathbf y \\
-\boldsymbol{\hat\beta} &amp; = (2\mathbf X^T \mathbf X)^{-1} 2 \mathbf X^T \mathbf y \\
-\boldsymbol{\hat\beta} &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
-\end{split}
-</span></p>
+<p>Our <a href="https://politicalscience.github.io/regression/1.html">linear regression</a> model, and the fitted values <span class="math inline">\(\hat{\mathbf{y}}\)</span>, take the following form:</p>
+<p><span class="math display">\[
+\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u, \qquad \hat{\mathbf y} = \mathbf X \hat{\boldsymbol\beta}
+\]</span></p>
+<p>OLS wants to minimise the sum of squared residuals <span class="math inline">\(S(\hat{\boldsymbol\beta})\)</span> - the differences between the actual <span class="math inline">\(\mathbf y\)</span> and our predicted <span class="math inline">\(\hat{\mathbf y}\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
+S(\hat{\boldsymbol\beta}) &amp; = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mathbf y - \hat{\mathbf y})\\
+&amp; = (\mathbf y - \color{blue}{\mathbf X \hat{\boldsymbol\beta}}\color{black})^\mathsf{T} (\mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}}\color{black}) &amp;&amp; (\text{plug in } \color{blue}{\hat{\mathbf y}  = \mathbf X \hat{\boldsymbol\beta}}\color{black}) \\
+&amp; = \mathbf y^\mathsf{T} \mathbf y - \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{Xb} &amp;&amp; (\text{distribute out)} \\
+&amp; = \mathbf y^\mathsf{T} \mathbf y - \color{blue}{2\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y}\color{black} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta} &amp;&amp;(\text{combine } \color{blue}{- \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta}}\color{black})
+\end{align}
+\]</span></p>
+<p>Now, let us find the first order condition:</p>
+<p><span class="math display">\[
+\frac{\partial S(\hat{\boldsymbol\beta})}{\partial \hat{\boldsymbol\beta}} = -2\mathbf X^\mathsf{T} \mathbf y + 2 \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta} = 0
+\]</span></p>
+<p>When assuming <span class="math inline">\(\mathbf X^\mathsf{T} \mathbf X\)</span> is invertable (which is true if <span class="math inline">\(\mathbf X\)</span> is full rank), we can isolate <span class="math inline">\(\hat{\beta}\)</span> to find the solution to OLS:</p>
+<p><span class="math display">\[
+\begin{align}
+-2\mathbf X^T\mathbf y + 2 \mathbf X^\mathsf{T} \mathbf X \boldsymbol{\hat{\beta}} &amp; = 0 \\
+2 \mathbf X^\mathsf{T} \mathbf X \boldsymbol{\hat\beta} &amp; = 2\mathbf X^\mathsf{T} \mathbf y &amp;&amp; (+ 2\mathbf X^\mathsf{T} \mathbf y \text{ to both sides}) \\
+\boldsymbol{\hat\beta} &amp; = (2\mathbf X^\mathsf{T} \mathbf X)^{-1} 2 \mathbf X^\mathsf{T} \mathbf y &amp;&amp; (\times (2\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ to both sides})\\
+\boldsymbol{\hat\beta} &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y &amp;&amp;(\text{cancel out } 2^{-1}\times 2)
+\end{align}
+\]</span></p>
+<p>Those are our coefficient solutions to OLS.</p>
 <p><br></p>
 </section>
 <section id="regression-anatomy-theorem" class="level3">
 <h3 class="anchored" data-anchor-id="regression-anatomy-theorem">Regression Anatomy Theorem</h3>
-<p>Take our multiple linear regression: <span class="math inline">y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + ... + \beta_k x_{ki} + u_i</span>.</p>
-<p>Let us say we are interested in <span class="math inline">x_1</span>. Let us make <span class="math inline">x_1</span> the outcome variable of a regression with explanatory variables <span class="math inline">x_2, ..., x_k</span>:</p>
-<p><span class="math display">
+<p>Take our multiple linear regression: <span class="math inline">\(y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + ... + \beta_k x_{ki} + u_i\)</span>.</p>
+<p>Let us say we are interested in <span class="math inline">\(x_1\)</span>. Let us make <span class="math inline">\(x_1\)</span> the outcome variable of a regression with explanatory variables <span class="math inline">\(x_2, ..., x_k\)</span>:</p>
+<p><span class="math display">\[
 x_{1i} = \gamma_0 + \gamma_1 x_{2i} + ... + \gamma_{k-1}x_{ki} + \widetilde{r_{1i}}
-</span></p>
-<p>The error term <span class="math inline">\widetilde{r_{1i}}</span> is the part of <span class="math inline">x_1</span> that cannot be explained by <span class="math inline">x_2, ..., x_k</span>.</p>
-<p>Now, take the regression of with outcome variable <span class="math inline">y</span>, with all explanatory variables <u>except</u> <span class="math inline">x_1</span>:</p>
-<p><span class="math display">
+\]</span></p>
+<p>The error term <span class="math inline">\(\widetilde{r_{1i}}\)</span> is the part of <span class="math inline">\(x_1\)</span> that cannot be explained by <span class="math inline">\(x_2, ..., x_k\)</span>.</p>
+<p>Now, take the regression of with outcome variable <span class="math inline">\(y\)</span>, with all explanatory variables <u>except</u> <span class="math inline">\(x_1\)</span>:</p>
+<p><span class="math display">\[
 y_i = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \widetilde{y_i}
-</span></p>
-<p>The error term <span class="math inline">\widetilde{y_i}</span> is the part of <span class="math inline">y_i</span> that cannot be explained by <span class="math inline">x_2, ..., x_k</span>. That implies <span class="math inline">x_1</span> must be the one explaining <span class="math inline">\widetilde{y_i}</span>. But, <span class="math inline">x_1</span> may also correlated with <span class="math inline">x_2, ..., x_k</span>, and those correlated parts are already picked up in the regression coefficients of <span class="math inline">x_2, ..., x_k</span>. Thus, <span class="math inline">\widetilde{y_i}</span> must be explained by the part of <span class="math inline">x_1</span> that is uncorrelated with <span class="math inline">x_2, ..., x_k</span>, which we derived earlier as <span class="math inline">\widetilde{r_{1i}}</span>.</p>
-<p>Thus, we can create another regression with explanatory variable <span class="math inline">\widetilde{x_{1i}}</span> and outcome variable <span class="math inline">\widetilde{y_i}</span>:</p>
-<p><span class="math display">
+\]</span></p>
+<p>The error term <span class="math inline">\(\widetilde{y_i}\)</span> is the part of <span class="math inline">\(y_i\)</span> that cannot be explained by <span class="math inline">\(x_2, ..., x_k\)</span>. That implies <span class="math inline">\(x_1\)</span> must be the one explaining <span class="math inline">\(\widetilde{y_i}\)</span>. But, <span class="math inline">\(x_1\)</span> may also correlated with <span class="math inline">\(x_2, ..., x_k\)</span>, and those correlated parts are already picked up in the regression coefficients of <span class="math inline">\(x_2, ..., x_k\)</span>. Thus, <span class="math inline">\(\widetilde{y_i}\)</span> must be explained by the part of <span class="math inline">\(x_1\)</span> that is uncorrelated with <span class="math inline">\(x_2, ..., x_k\)</span>, which we derived earlier as <span class="math inline">\(\widetilde{r_{1i}}\)</span>.</p>
+<p>Thus, we can create another regression with explanatory variable <span class="math inline">\(\widetilde{x_{1i}}\)</span> and outcome variable <span class="math inline">\(\widetilde{y_i}\)</span>:</p>
+<p><span class="math display">\[
 \widetilde{y_i} = \alpha_0 + \alpha_1 \widetilde{r_{1i}} + u_i
-</span></p>
-<p>We plug <span class="math inline">\widetilde{y_i}</span> back into our regression of <span class="math inline">y_i</span> with explanatory variables <span class="math inline">x_2 ..., x_k</span>:</p>
-<p><span class="math display">
-\begin{split}
+\]</span></p>
+<p>We plug <span class="math inline">\(\widetilde{y_i}\)</span> back into our regression of <span class="math inline">\(y_i\)</span> with explanatory variables <span class="math inline">\(x_2 ..., x_k\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
 y_i &amp; = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \widetilde{y_i} \\
-y_i &amp; = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \underbrace{\alpha_0 + \alpha_1 \widetilde{r_{1i}} + u_i}_{\because \text{ plug in } \widetilde{y_i}} \\
-y_i  &amp; = \underbrace{(\delta_0 + \alpha_0)}_{\beta_0} + \underbrace{\alpha_1 \widetilde{r_{1i}}}_{\beta_1 x_{1i}} + \underbrace{\delta_1x_{2i}}_{\beta_2 x_{2i}} + ... + \underbrace{\delta_{k-1} x_{ki}}_{\beta_kx_{ki}} + \underbrace{u_i}_{u_i}
-\end{split}
-</span></p>
-<p>This new regression mirrors the original multiple linear regression. Importantly, we see <u>the estimate of <span class="math inline">\alpha_1</span> will be the same as <span class="math inline">\beta_1</span> in the original regression</u>. This coefficient explains the expected change in <span class="math inline">y</span>, given an increase in the part of <span class="math inline">x_1</span> uncorrelated with <span class="math inline">x_2, ..., x_k</span>.</p>
-<p>So essentially, <u>we have <strong>partialed out</strong> the effect of the other explanatory variables, and only focus on the effect on <span class="math inline">y</span> of the uncorrelated part of <span class="math inline">x_1</span> (which is <span class="math inline">\widetilde{r_{1i}}</span>)</u>. This is what controlling for confounders is.</p>
+y_i &amp; = \delta_0 + \delta_1 x_{2i} + ... + \delta_{k-1} x_{ki} + \alpha_0 + \alpha_1 \widetilde{r_{1i}} + u_i &amp;&amp; (\text{plug in } \widetilde{y_i} = \alpha_0 + \alpha_1 \widetilde{r_{1i}} + u_i)\\
+y_i  &amp; = \underbrace{(\delta_0 + \alpha_0)}_{\beta_0} + \underbrace{\alpha_1 \widetilde{r_{1i}}}_{\beta_1 x_{1i}} + \underbrace{\delta_1x_{2i}}_{\beta_2 x_{2i}} + ... + \underbrace{\delta_{k-1} x_{ki}}_{\beta_kx_{ki}} + \underbrace{u_i}_{u_i} &amp;&amp; (\text{rearrange})
+\end{align}
+\]</span></p>
+<p>This new regression mirrors the original multiple linear regression. Importantly, we see <u>the estimate of <span class="math inline">\(\alpha_1\)</span> will be the same as <span class="math inline">\(\beta_1\)</span> in the original regression</u>. This coefficient explains the expected change in <span class="math inline">\(y\)</span>, given an increase in the part of <span class="math inline">\(x_1\)</span> uncorrelated with <span class="math inline">\(x_2, ..., x_k\)</span>.</p>
+<p>So essentially, <u>we have <strong>partialed out</strong> the effect of the other explanatory variables, and only focus on the effect on <span class="math inline">\(y\)</span> of the uncorrelated part of <span class="math inline">\(x_1\)</span> (which is <span class="math inline">\(\widetilde{r_{1i}}\)</span>)</u>. This is what controlling for confounders is.</p>
 <p><br></p>
 </section>
-<section id="conditions-for-unbiasedness" class="level3">
-<h3 class="anchored" data-anchor-id="conditions-for-unbiasedness">Conditions for Unbiasedness</h3>
-<p>OLS is an <a href="https://politicalscience.github.io/causal/0.html#unbiased-estimators">unbiased estimator</a> of the relationship between any <span class="math inline">x_j</span> and <span class="math inline">y</span> under 4 conditions:</p>
+<section id="ols-as-an-unbiased-estimator" class="level3">
+<h3 class="anchored" data-anchor-id="ols-as-an-unbiased-estimator">OLS as an Unbiased Estimator</h3>
+<p>OLS is an <a href="https://politicalscience.github.io/causal/0.html#unbiased-estimators">unbiased estimator</a> of the relationship between any <span class="math inline">\(x_j\)</span> and <span class="math inline">\(y\)</span> under 4 conditions:</p>
 <ol type="1">
-<li><strong>Linearity</strong> in parameters: the model of the population (data generating process) can be modelled as:</li>
+<li><strong>Linearity</strong> in parameters: the model of the population (data generating process) can be modelled as <span class="math inline">\(\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u\)</span>.</li>
+<li><strong>Random Sampling</strong>: the observations in our sample are randomly sampled.</li>
+<li><strong>No Perfect Multicolinearity</strong>: There is no exact linear relationships between the regressors. This ensures that <span class="math inline">\(\mathbf X^\mathsf{T} \mathbf X\)</span> is invertible, which is required for the derivation of OLS.</li>
+<li><strong>Zero Conditional Mean</strong>: <span class="math inline">\(E(\mathbf u|\mathbf X) = 0\)</span>. This implies that no <span class="math inline">\(x_j\)</span> is correlated with <span class="math inline">\(\mathbf u\)</span> (exogeneity), and no function of multiple regressors is correlated with <span class="math inline">\(\mathbf u\)</span>.</li>
 </ol>
-<p><span class="math display">
-\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u
-</span></p>
-<ol start="2" type="1">
-<li><strong>Random Sampling</strong>: the observations in our sample are randomly sampled from the same population.</li>
-<li><strong>No Perfect Multicolinearity</strong>: There is no exact linear relationships between the regressors. This ensures that <span class="math inline">\mathbf X^T \mathbf X</span> is invertible, which is required for the derivation of OLS.</li>
-<li><strong>Zero Conditional Mean</strong>: <span class="math inline">E(\mathbf u|\mathbf X) = 0</span>. This implies that no regressor, and no function of multiple regressors is correlated with the error term.</li>
-</ol>
-<p>If any of these conditions are violated, OLS is not an unbiased estimator. The key condition is zero-conditional mean - specifically, <strong>Exogeneity</strong>. Exogeneity refers to when each regressor is uncorrelated with the error term. If exogeneity is violated, zero-conditional mean is violated.</p>
-<p><br></p>
-</section>
-<section id="proof-of-unbiasedness" class="level3">
-<h3 class="anchored" data-anchor-id="proof-of-unbiasedness">Proof of Unbiasedness</h3>
-<p>Let us manipulate our OLS solution:</p>
-<p><span class="math display">
-\begin{split}
-\boldsymbol{\hat\beta} &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y \\
-&amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T\underbrace{(\mathbf X \boldsymbol\beta + \mathbf u)}_{\text{plug in } \mathbf y} \\
-&amp; = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\text{inverses cancel out }} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-&amp; = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-\end{split}
-</span></p>
-<p>Now, let us take the expectation of <span class="math inline">\boldsymbol{\hat\beta}</span> conditional on <span class="math inline">\mathbf X</span>. Remember condition 4, <span class="math inline">E(\mathbf u | \mathbf X) = 0</span>:</p>
-<p><span class="math display">
-\begin{split}
-E(\boldsymbol{\hat\beta}|\mathbf X) &amp; = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \underbrace{E(\mathbf u | \mathbf X)}_{= \ 0} \\
-E(\boldsymbol{\hat\beta}|\mathbf X) &amp; = \boldsymbol\beta
-\end{split}
-</span></p>
-<p>Now, we can use the law of iterated expectations to conclude this proof:</p>
-<p><span class="math display">
-\begin{split}
-E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X)) \\
-&amp; = E(\boldsymbol\beta) \\
-&amp; = \boldsymbol\beta
-\end{split}
-</span></p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Law of Iterated Expectations
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The law of iterated expectations states that:</p>
-<p><span class="math display">
-E(X) = E(E(X|Y))
-</span></p>
-</div>
-</div>
-</div>
+<p>Let us prove OLS is unbiased - i.e.&nbsp;<span class="math inline">\(E(\hat{\boldsymbol\beta}) = \boldsymbol\beta\)</span>. Let us manipulate our OLS solution:</p>
+<p><span class="math display">\[
+\begin{align}
+\boldsymbol{\hat\beta} &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y \\
+&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}(\mathbf X \boldsymbol\beta + \mathbf u) &amp;&amp; (\text{plug in } \mathbf y = \mathbf X \boldsymbol\beta + \mathbf u) \\
+&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp;(\text{multiply out})\\
+&amp; = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp;( \ \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
+&amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp; (\text{identity property of } \mathbf I)
+\end{align}
+\]</span></p>
+<p>Now, let us take the expectation of <span class="math inline">\(\boldsymbol{\hat\beta}\)</span> conditional on <span class="math inline">\(\mathbf X\)</span>. Remember condition 4, <span class="math inline">\(E(\mathbf u | \mathbf X) = 0\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
+E(\boldsymbol{\hat\beta}|\mathbf X) &amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} E(\mathbf u | \mathbf X) &amp;&amp;(\mathbf u \text{ conditional on value of } \mathbf X) \\
+E(\boldsymbol{\hat\beta}|\mathbf X) &amp; = \boldsymbol\beta &amp;&amp;(E(\mathbf u | \mathbf X) = 0)
+\end{align}
+\]</span></p>
+<p>Now, we can use the law of iterated expectations (LIE) to conclude this proof:</p>
+<p><span class="math display">\[
+\begin{align}
+E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X)) &amp;&amp; (\text{LIE: E(X) = E(E(X|Y))})\\
+&amp; = E(\boldsymbol\beta) &amp;&amp; (\text{LIE: E(X) = E(E(X|Y))})\\
+&amp; = \boldsymbol\beta &amp;&amp; (\text{expecation of a constant})
+\end{align}
+\]</span></p>
 <p>Thus, OLS is unbiased under the 4 conditions above.</p>
 <p><br></p>
 </section>
@@ -502,17 +453,17 @@ E(X) = E(E(X|Y))
 <li>Zero-Conditional Mean (…)</li>
 <li><strong>Homoscedasticity</strong> (the new condition).</li>
 </ol>
-<p>Homoscedasticity is when no matter the values of any explanatory variable, the error term variance is <strong>constant</strong> at <span class="math inline">\sigma^2</span>. The error term variance does not change based on the values of the explanatory variables:</p>
-<p><span class="math display">
+<p>Homoscedasticity is when no matter the values of any explanatory variable, the error term variance is <strong>constant</strong> at <span class="math inline">\(\sigma^2\)</span>. The error term variance does not change based on the values of the explanatory variables:</p>
+<p><span class="math display">\[
 Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
 \sigma^2 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \sigma^2 &amp; \dots &amp; 0 \\
 \vdots &amp; \vdots &amp; \ddots &amp; 0 \\
 0 &amp; 0 &amp; \dots &amp; \sigma^2
 \end{pmatrix}
-</span></p>
+\]</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -521,16 +472,16 @@ Visualisation of Homoscedasticity
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all <span class="math inline">\widehat{u_i}</span>):</p>
+<p>An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all <span class="math inline">\(\widehat{u_i}\)</span>):</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-1713529842.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
-<p>Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of <span class="math inline">x</span>.</p>
-<p>The heteroscedasticity residuals have a clear pattern - the up-down variance is smaller when <span class="math inline">x</span> is smaller, and the up-down variance is larger when <span class="math inline">x</span> is larger.</p>
+<p>Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of <span class="math inline">\(x\)</span>.</p>
+<p>The heteroscedasticity residuals have a clear pattern - the up-down variance is smaller when <span class="math inline">\(x\)</span> is smaller, and the up-down variance is larger when <span class="math inline">\(x\)</span> is larger.</p>
 <p>Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.</p>
 </div>
 </div>
@@ -540,21 +491,22 @@ Visualisation of Homoscedasticity
 </section>
 <section id="deriving-variance" class="level3">
 <h3 class="anchored" data-anchor-id="deriving-variance">Deriving Variance</h3>
-<p>Let us assume homoscedasticity. We want to find the variance of our estimator, <span class="math inline">Var(\boldsymbol{\hat\beta} | \mathbf X)</span>. Let us start off with our OLS solution. We can simplify as follows:</p>
-<p><span class="math display">
-\begin{split}
-\boldsymbol{\hat\beta} &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y \\
-&amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T\underbrace{(\mathbf X \boldsymbol\beta + \mathbf u)}_{\text{plug in } \mathbf y} \\
-&amp; = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\text{inverses cancel out }} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-&amp; = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-\end{split}
-</span></p>
-<p><span class="math display">
-Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \ | \ \mathbf X)
-</span></p>
-<p><span class="math inline">\boldsymbol\beta</span> is a vector of fixed constants (the true parameter values in the population). <span class="math inline">(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u</span> can be imagined as a matrix of fixed constants, since we are conditioning the above variance on <span class="math inline">\mathbf X</span> (so for each <span class="math inline">\mathbf X</span>, the statement is fixed).</p>
+<p>Let us assume homoscedasticity. We want to find the variance of our estimator, <span class="math inline">\(Var(\boldsymbol{\hat\beta} | \mathbf X)\)</span>. Let us start off with our OLS solution. We can simplify as follows:</p>
+<p><span class="math display">\[
+\begin{align}
+\boldsymbol{\hat\beta} &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y \\
+&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}(\mathbf X \boldsymbol\beta + \mathbf u) &amp;&amp; (\text{plug in } \mathbf y = \mathbf X \boldsymbol\beta + \mathbf u) \\
+&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp;(\text{multiply out})\\
+&amp; = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp;( \ \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
+&amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp; (\text{identity property of } \mathbf I)
+\end{align}
+\]</span></p>
+<p><span class="math display">\[
+Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u \ | \ \mathbf X)
+\]</span></p>
+<p><span class="math inline">\(\boldsymbol\beta\)</span> is a vector of fixed constants. <span class="math inline">\((\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u\)</span> can be imagined as a matrix of fixed constants, since we are conditioning the above variance on <span class="math inline">\(\mathbf X\)</span> (so for each <span class="math inline">\(\mathbf X\)</span>, the statement is fixed).</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -563,62 +515,52 @@ Mathematical Lemma
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>If <span class="math inline">\mathbf u</span> is an <span class="math inline">n</span> dimensional vector of random variables, <span class="math inline">\mathbf c</span> is an <span class="math inline">m</span> dimensional vector, and <span class="math inline">\mathbf B</span> is an <span class="math inline">n \times m</span> dimensional matrix with fixed constants, then the following is true:</p>
-<p><span class="math display">
-Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^T
-</span></p>
+<p>If <span class="math inline">\(\mathbf u\)</span> is an <span class="math inline">\(n\)</span> dimensional vector of random variables, <span class="math inline">\(\mathbf c\)</span> is an <span class="math inline">\(m\)</span> dimensional vector, and <span class="math inline">\(\mathbf B\)</span> is an <span class="math inline">\(n \times m\)</span> dimensional matrix with fixed constants, then the following is true:</p>
+<p><span class="math display">\[
+Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^\mathsf{T}
+\]</span></p>
 <p>I will not prove this lemma here, but it is provable.</p>
 </div>
 </div>
 </div>
 <p>With the Lemma above, and with the definition of homoscedasticity, we can simplify:</p>
-<p><span class="math display">
-\begin{split}
-Var(\boldsymbol{\hat\beta} | \mathbf X) &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T Var(\mathbf u | \mathbf X) [(\mathbf X^T \mathbf X)^{-1} \mathbf X^T]^{-1} \\
-&amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{Var(\mathbf u | \mathbf X)}_{\text{homoscedastcity}} \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
-&amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{\color{red}{\sigma^2}}_{\text{scalar}} \mathbf I_n \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
-&amp; =  \color{red}{\sigma^2} \color{black} (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf I_n \mathbf X (\mathbf X^T \mathbf X)^{-1} \\
-&amp; =  \sigma^2 (\mathbf X^T \mathbf X)^{-1} \underbrace{\mathbf X^T  \mathbf X (\mathbf X^T \mathbf X)^{-1}}_{\text{inverses cancel out}} \\
-&amp; =  \sigma^2 (\mathbf X^T \mathbf X)^{-1}
-\end{split}
-</span></p>
-<p>However, we do not actually know what <span class="math inline">\sigma^2</span> is. We can estimate it with <span class="math inline">\hat\sigma^2</span> (discussed <a href="https://politicalscience.github.io/regression/1.html#residual-standard-deviation">here</a>).</p>
+<p><span class="math display">\[
+\begin{align}
+Var(\boldsymbol{\hat\beta} | \mathbf X) &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) [(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} &amp;&amp; (\text{lemma})\\
+&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) \color{blue}{\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}} &amp;&amp; \color{black}( \ \color{blue}{[(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} = (\mathbf X^\mathsf{T} \mathbf X)^{-1}}\color{black})\\
+&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\sigma^2 \mathbf I_n}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\color{blue}{Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n}\color{black}) \\
+&amp; =  \color{red}{\sigma^2} \color{black} (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf I_n \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{move scalar } \color{red}{\sigma^2}\color{black})\\
+&amp; =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{identity property of } \mathbf I_n)\\
+&amp; =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{inverses } \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ cancel})
+\end{align}
+\]</span></p>
+<p>However, we do not actually know what <span class="math inline">\(\sigma^2\)</span> is. We can estimate it with <span class="math inline">\(\hat\sigma^2\)</span> (discussed <a href="https://politicalscience.github.io/regression/1.html#residual-standard-deviation">here</a>).</p>
 <p>We can use these standard errors (square root of variance) for <a href="https://politicalscience.github.io/regression/1.html#t-tests">hypothesis testing</a>, if we believe homoscedasticity is met. If not, we will need to use <strong>robust standard errors</strong>, which we will not derive here. In modern econometrics, it has become more common to use <u>robust standard errors by default</u>, unless we can definitively prove homoscedasticity is met.</p>
 <p><br></p>
 </section>
 <section id="conditions-for-asymptotic-consistency" class="level3">
 <h3 class="anchored" data-anchor-id="conditions-for-asymptotic-consistency">Conditions for Asymptotic Consistency</h3>
-<p>OLS is an asymptotically consistent estimator of the relationship between any <span class="math inline">x_j</span> and <span class="math inline">y</span> under 4 conditions. These conditions are identical to the unbiasedness conditions EXCEPT condition 4, which is weakened from the original unbiasedness condition.</p>
+<p>OLS is an asymptotically consistent estimator of the relationship between any <span class="math inline">\(x_j\)</span> and <span class="math inline">\(y\)</span> under 4 conditions. These conditions are identical to the unbiasedness conditions EXCEPT condition 4, which is weakened from the original unbiasedness condition.</p>
 <ol type="1">
-<li><strong>Linearity</strong> in parameters: the model of the population (data generating process) can be modelled as:</li>
+<li><strong>Linearity</strong> (see unbiasedness)</li>
+<li><strong>Random Sampling</strong> (…)</li>
+<li><strong>No Perfect Multicolinearity</strong> (…)</li>
+<li><strong>Zero Mean and Exogeneity</strong>: <span class="math inline">\(E(u_i) = 0\)</span>, and <span class="math inline">\(Cov(x_i, u_i) = 0\)</span>, which implies <span class="math inline">\(E(\mathbf x_i u_i) = 0\)</span>. This means that no regressor should be correlated with <span class="math inline">\(\mathbf u\)</span>. This is weaker than Zero-Conditional mean, since it means a function of regressors can be correlated with <span class="math inline">\(\mathbf u\)</span>.</li>
 </ol>
-<p><span class="math display">
-\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u
-</span></p>
-<ol start="2" type="1">
-<li><strong>Random Sampling</strong>: the observations in our sample are randomly sampled from the same population.</li>
-<li><strong>No Perfect Multicolinearity</strong>: There is no exact linear relationships between the regressors. This ensures that <span class="math inline">\mathbf X^T \mathbf X</span> is invertible, which is required for the derivation of OLS.</li>
-<li><strong>Zero Mean and Exogeneity</strong>: <span class="math inline">E(u_i) = 0</span>, and <span class="math inline">Cov(x_i, u_i) = 0</span>. This means that no regressor should be correlated with the error term. This also implies <span class="math inline">E(x_iu_i) = 0</span>.</li>
-</ol>
-<p>If any of these conditions are violated, OLS is not a consistent estimator. Even if all these conditions are met, OLS is not unbiased, just consistent. For OLS to be unbiased, it must meet the full Zero Conditional Mean assumption as discussed previously.</p>
-<p>The key condition for asymptotic consistency is exogeniety, as we will see throughout this course, causes many issues when we are trying to find unbiased causal estimates.</p>
-<p><br></p>
-</section>
-<section id="proof-of-asymptotic-consistency" class="level3">
-<h3 class="anchored" data-anchor-id="proof-of-asymptotic-consistency">Proof of Asymptotic Consistency</h3>
-<p>We need condition 3 to ensure <span class="math inline">\mathbf X^T \mathbf X</span> is invertible, in order to have OLS estimates. Once we have OLS estimates (derivation above), we can manipulate it as following:</p>
-<p><span class="math display">
-\begin{split}
-\boldsymbol{\hat\beta} &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y \\
-&amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T\underbrace{(\mathbf X \boldsymbol\beta + \mathbf u)}_{\text{plug in } \mathbf y} \\
-&amp; = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\because \text{ inverses cancel}} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-&amp; = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-\end{split}
-</span></p>
+<p>We need condition 3 to ensure <span class="math inline">\(\mathbf X^\mathsf{T} \mathbf X\)</span> is invertible, in order to have OLS estimates. Once we have OLS estimates (derivation above), we can manipulate it as following:</p>
+<p><span class="math display">\[
+\begin{align}
+\boldsymbol{\hat\beta} &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y \\
+&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}(\mathbf X \boldsymbol\beta + \mathbf u) &amp;&amp; (\text{plug in } \mathbf y = \mathbf X \boldsymbol\beta + \mathbf u) \\
+&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp;(\text{multiply out})\\
+&amp; = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp;( \ \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
+&amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp; (\text{identity property of } \mathbf I)
+\end{align}
+\]</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -627,43 +569,40 @@ Vector Notation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The following statements are true:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{split}
 &amp; \mathbf X^T \mathbf X = \sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T \\
-&amp; \mathbf X^T \mathbf  u = \sum\limits_{i=1}^n \mathbf x_i \mathbf u_i
+&amp; \mathbf X^T \mathbf  u = \sum\limits_{i=1}^n \mathbf x_i u_i
 \end{split}
-</span></p>
+\]</span></p>
 </div>
 </div>
 </div>
 <p>Using vector notation, we can simplify the above to:</p>
-<p><span class="math display">
-\begin{split}
-\boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf u \right) \\
-&amp; = \boldsymbol\beta + \underbrace{\left( \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf u \right)}_{\because \ \left(\frac{1}{n} \right)^{-1} \text{and } \frac{1}{n} \text{ cancel out}}
-\end{split}
-</span></p>
-<p>Now, let us apply the probability limit:</p>
-<p><span class="math display">
-\text{plim} \boldsymbol{\hat\beta} = \boldsymbol\beta + \left( \text{plim} \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \text{plim} \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf u \right)
-</span></p>
-<p>And using the law of large numbers (see above), and the zero-mean and exogeneity condition, we can simplify to:</p>
-<p><span class="math display">
-\begin{split}
-\text{plim} \boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + (E(\mathbf x_i \mathbf x_i^T))^{-1}\underbrace{E(\mathbf x_i \mathbf u_i)}_{ = \ 0} \\
-\text{plim} \boldsymbol{\hat\beta} &amp; = \boldsymbol\beta
-\end{split}
-</span></p>
+<p><span class="math display">\[
+\begin{align}
+\boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf u \right) &amp;&amp; (\text{vector notation})\\
+\boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + \left( \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf u \right) &amp;&amp; ( \ \left(\frac{1}{n} \right)^{-1} \text{and } \frac{1}{n} \text{ cancel out}) \\
+\text{plim} \boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + \left( \text{plim} \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^T\right)^{-1} \left( \text{plim} \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i u_i \right) &amp;&amp; (\text{apply plim})
+\end{align}
+\]</span></p>
+<p>And using the <a href="https://politicalscience.github.io/causal/0.html#asymptotically-consistent-estimators">law of large numbers</a>, and the zero-mean and exogeneity condition, we can simplify to:</p>
+<p><span class="math display">\[
+\begin{align}
+\text{plim} \boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + (E(\mathbf x_i \mathbf x_i^T))^{-1}E(\mathbf x_i  u_i) &amp;&amp; (\text{law of large numbers})\\
+\text{plim} \boldsymbol{\hat\beta} &amp; = \boldsymbol\beta &amp;&amp; (E(\mathbf x_i u_i) = 0)
+\end{align}
+\]</span></p>
 <p>Thus, OLS is asymptotically consistent under the 4 conditions above.</p>
 <p><br></p>
 </section>
 <section id="ols-as-a-conditional-expectation-function" class="level3">
 <h3 class="anchored" data-anchor-id="ols-as-a-conditional-expectation-function">OLS as a Conditional Expectation Function</h3>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -672,64 +611,61 @@ Conditional Expectation Functions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>A <strong>conditional expectation function</strong> (CEF) says that the value of <span class="math inline">E(y)</span> depends on the value of <span class="math inline">x</span>. We notate a conditional expectation function as <span class="math inline">E(y|x)</span>. As we noted earlier, the linear regression model can be a conditional expectation function of <span class="math inline">E(y|x)</span>.</p>
+<p>A <strong>conditional expectation function</strong> (CEF) says that the value of <span class="math inline">\(E(y)\)</span> depends on the value of <span class="math inline">\(x\)</span>. We notate a conditional expectation function as <span class="math inline">\(E(y|x)\)</span>. As we noted earlier, the linear regression model can be a conditional expectation function of <span class="math inline">\(E(y|x)\)</span>.</p>
 <p>A <strong>best linear approximation</strong> of a conditional expectation function can take the following form:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 E(y_i|x_i) = b_0 + b_1x_i
-</span></p>
-<p>With parameters <span class="math inline">b_0, b_1</span> that minimise the mean squared errors (MSE).</p>
-<p><span class="math display">
+\]</span></p>
+<p>With parameters <span class="math inline">\(b_0, b_1\)</span> that minimise the mean squared errors (MSE).</p>
+<p><span class="math display">\[
 \begin{split}
 MSE &amp; = E(y_i - E(y_i|x_i))^2 \\
 &amp; = \frac{1}{n}\sum\limits_{i=1}^n( y_i - E(y_i|x_i))^2
 \end{split}
-</span></p>
+\]</span></p>
 </div>
 </div>
 </div>
-<p>OLS is a best-linear approximation of the conditional expectation function. Suppose we have the conditional expectation function:</p>
-<p><span class="math display">
-E(y_i|x_i) = b_0 + b_1x_i
-</span></p>
-<p>We know that the conditional expectation function minimises the mean of squared errors.</p>
-<p><span class="math display">
-\begin{split}
-MSE &amp; = \min\limits_{b_0, b_1} E(y_i - E(y_i|x_i))^2 \\
-&amp; = \min\limits_{b_0, b_1} E(y_i - \beta_0 - \beta_1x_i)^2
-\end{split}
-</span></p>
+<p>OLS is a best-linear approximation of the conditional expectation function. Suppose we have the conditional expectation function, and its mean squared errors:</p>
+<p><span class="math display">\[
+\begin{align}
+E(y_i|x_i) &amp; = b_0 + b_1x_i \\
+MSE &amp; = E(y_i - E(y_i|x_i))^2 \\
+&amp; =  E(y_i - \beta_0 - \beta_1x_i)^2
+\end{align}
+\]</span></p>
 <p>The first order conditions are (using chain rule and partial derivatives):</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{split}
 &amp; E(y_i - b_0 - b_1x_i) = 0 \\
 &amp; E(x_i(y_i - b_0 - b_1x_i) = 0
 \end{split}
-</span></p>
+\]</span></p>
 <p>Now, recall our OLS minimisation conditions (simple linear regression):</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{split}
 &amp; \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0 \\
 &amp; \sum\limits_{i=1}^n x_i (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
 \end{split}
-</span></p>
-<p>Since by definition, average/expectation is <span class="math inline">E(x) = \frac{1}{n} \sum x_i</span>, we can rewrite the OLS minimisation conditions as:</p>
-<p><span class="math display">
+\]</span></p>
+<p>Since by definition, average/expectation is <span class="math inline">\(E(x) = \frac{1}{n} \sum x_i\)</span>, we can rewrite as:</p>
+<p><span class="math display">\[
 \begin{split}
 &amp; n \times E(y_i - \hat\beta_0 - \hat\beta_1x_i) = 0 \\
 &amp; n \times E(x_i(y_i - \hat\beta_0 - \hat\beta_1x_i)) = 0
 \end{split}
-</span></p>
-<p>And since anything multiplied to a zero turns into zero, we can ignore the <span class="math inline">n</span> in the first order condition, and only focus on the expected value part. Thus, our conditions are:</p>
-<p><span class="math display">
+\]</span></p>
+<p>And since anything multiplied to a zero turns into zero, we can ignore the <span class="math inline">\(n\)</span> in the first order condition. Thus, our conditions are:</p>
+<p><span class="math display">\[
 \begin{split}
 &amp; E(y_i - \hat\beta_0 - \hat\beta_1x_i) = 0 \\
 &amp; E(x_i(y_i - \hat\beta_0 - \hat\beta_1x_i)) = 0
 \end{split}
-</span></p>
+\]</span></p>
 <p>Which as we can see, are the exact same minimisation conditions as the conditional expectation function. Thus, OLS is the best approximation of the conditional expectation function.</p>
-<p>This property is very useful for causal inference, as it means OLS calculates the expected <span class="math inline">y</span>, which allows us to find causal effects by comparing the expected <span class="math inline">y</span> of the treatment and control groups (assuming the OLS estimator is unbiased).</p>
+<p>This property is very useful for causal inference, as it means OLS calculates the expected <span class="math inline">\(y\)</span>, which allows us to find causal effects by comparing the expected <span class="math inline">\(y\)</span> of the treatment and control groups (assuming the OLS estimator is unbiased).</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -741,79 +677,79 @@ MSE &amp; = \min\limits_{b_0, b_1} E(y_i - E(y_i|x_i))^2 \\
 <h3 class="anchored" data-anchor-id="method-of-moments">Method of Moments</h3>
 <p>The Method of Moments Estimator is another estimator of the true value of populations in the parameter. The estimator defines key population <strong>moments</strong> of interest - which are the population parameters written in terms of expected value functions set equal to 0.</p>
 <p>Then, the Method of Moments uses the sample equivalents of the population moments to estimate the population parameter. For example, to estimate the population mean, the Method of Moments uses the sample mean.</p>
-<p>In order to define a method of moments for a set of parameters <span class="math inline">\theta_1, \dots, \theta_k</span>, we need to specify at least one population moment per parameter. Or in other words, we must have more than <span class="math inline">k</span> population moments.</p>
-<p>Our population moments can be defined as the expected value of some function <span class="math inline">m(\theta; y)</span> that consists of both the variable <span class="math inline">y</span> and our unknown parameter <span class="math inline">\theta</span>. The expectation of the function <span class="math inline">m(\theta; y)</span> should equal 0.</p>
-<p><span class="math display">
+<p>In order to define a method of moments for a set of parameters <span class="math inline">\(\theta_1, \dots, \theta_k\)</span>, we need to specify at least one population moment per parameter. Or in other words, we must have more than <span class="math inline">\(k\)</span> population moments.</p>
+<p>Our population moments can be defined as the expected value of some function <span class="math inline">\(m(\theta; y)\)</span> that consists of both the variable <span class="math inline">\(y\)</span> and our unknown parameter <span class="math inline">\(\theta\)</span>. The expectation of the function <span class="math inline">\(m(\theta; y)\)</span> should equal 0.</p>
+<p><span class="math display">\[
 E(m(\theta; y)) = 0
-</span></p>
-<p>Our sample moments will be the sample analogues of <span class="math inline">\theta</span> and <span class="math inline">y</span>, which are <span class="math inline">\hat\theta</span> and <span class="math inline">y_i</span>:</p>
-<p><span class="math display">
+\]</span></p>
+<p>Our sample moments will be the sample analogues of <span class="math inline">\(\theta\)</span> and <span class="math inline">\(y\)</span>, which are <span class="math inline">\(\hat\theta\)</span> and <span class="math inline">\(y_i\)</span>:</p>
+<p><span class="math display">\[
 \frac{1}{n}\sum\limits_{i=1}^n m(\hat\theta; y_i) = 0
-</span></p>
+\]</span></p>
 <p>Method of moments estimators are asymptotically consistent, because of the law of large numbers.</p>
 <p><br></p>
 </section>
 <section id="population-mean-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="population-mean-estimator">Population Mean Estimator</h3>
-<p>Let us say that we have some random variable <span class="math inline">y</span>, with a true population mean <span class="math inline">\mu</span>. We want to estimate <span class="math inline">\mu</span>, but we only have a sample of the population.</p>
-<p>How can we define <span class="math inline">\mu</span> in a moment of the form: <span class="math inline">E(m(\mu, y)) = 0</span>? Well, we know <span class="math inline">\mu</span> is the expectation of <span class="math inline">y</span>, so <span class="math inline">\mu = E(y)</span>. Since they are equal, <span class="math inline">\mu - E(y) = 0</span>. Thus, we can define the mean as a moment of the following condition:</p>
-<p><span class="math display">
+<p>Let us say that we have some random variable <span class="math inline">\(y\)</span>, with a true population mean <span class="math inline">\(\mu\)</span>. We want to estimate <span class="math inline">\(\mu\)</span>, but we only have a sample of the population.</p>
+<p>How can we define <span class="math inline">\(\mu\)</span> in a moment of the form: <span class="math inline">\(E(m(\mu, y)) = 0\)</span>? Well, we know <span class="math inline">\(\mu\)</span> is the expectation of <span class="math inline">\(y\)</span>, so <span class="math inline">\(\mu = E(y)\)</span>. Since they are equal, <span class="math inline">\(\mu - E(y) = 0\)</span>. Thus, we can define the mean as a moment of the following condition:</p>
+<p><span class="math display">\[
 E(y - \mu) = 0
-</span></p>
-<p>The method of moments estimator uses the sample equivalent of the population moment. The sample equivalent of <span class="math inline">\mu</span>, is the sample mean <span class="math inline">\bar y</span>:</p>
-<p><span class="math display">
+\]</span></p>
+<p>The method of moments estimator uses the sample equivalent of the population moment. The sample equivalent of <span class="math inline">\(\mu\)</span>, is the sample mean <span class="math inline">\(\bar y\)</span>:</p>
+<p><span class="math display">\[
 E(y_i - \hat\mu) = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \hat\mu) = 0
-</span></p>
-<p>With this equation, we can then solve for <span class="math inline">\hat\mu</span>:</p>
-<p><span class="math display">
-\begin{split}
+\]</span></p>
+<p>With this equation, we can then solve for <span class="math inline">\(\hat\mu\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
 0 &amp; = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \hat\mu) \\
-0 &amp; = \frac{1}{n}\sum\limits_{i=1}^ny_i - \frac{1}{n}\sum\limits_{i=1}^n \hat\mu \\
-0 &amp; = \frac{1}{n}\sum\limits_{i=1}^ny_i - \frac{1}{n} n \hat\mu\\
-0 &amp; = \bar y - \hat \mu \\
-\hat\mu &amp; = \bar y
-\end{split}
-</span></p>
-<p>So, we see the method of moments estimates our true population mean <span class="math inline">\mu</span>, with the sample mean <span class="math inline">\bar y</span>. As a method of moments estimator, it is also asymptotically consistent.</p>
+0 &amp; = \frac{1}{n}\sum\limits_{i=1}^ny_i - \frac{1}{n}\sum\limits_{i=1}^n \hat\mu  &amp;&amp; (\text{multiply out})\\
+0 &amp; = \frac{1}{n}\sum\limits_{i=1}^ny_i - \frac{1}{n} n \hat\mu &amp;&amp;(\text{summation property of constant } \hat\mu)\\
+0 &amp; = \bar y - \hat \mu &amp;&amp; (\text{definition of mean }\frac{1}{n}\sum\limits_{i=1}^ny_i = \bar y)\\
+\hat\mu &amp; = \bar y &amp;&amp; (+\hat\mu\text{ to both sides})
+\end{align}
+\]</span></p>
+<p>So, we see the method of moments estimates our true population mean <span class="math inline">\(\mu\)</span>, with the sample mean <span class="math inline">\(\bar y\)</span>. As a method of moments estimator, it is also asymptotically consistent.</p>
 <p><br></p>
 </section>
 <section id="ols-as-a-method-of-moments-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="ols-as-a-method-of-moments-estimator">OLS as a Method of Moments Estimator</h3>
-<p>OLS is a special case of the Method of Moments Estimator. Consider the bivariate regression model. The OLS estimator can be derived as a method of moments estimator, with 2 moments (expectation functions set equal to 0), one for each parameter (<span class="math inline">\beta_0, \beta_1</span>):</p>
-<p><span class="math display">
+<p>OLS is a special case of the Method of Moments Estimator. Consider the bivariate regression model. The OLS estimator can be derived as a method of moments estimator, with 2 moments (expectation functions set equal to 0), one for each parameter (<span class="math inline">\(\beta_0, \beta_1\)</span>):</p>
+<p><span class="math display">\[
 \begin{split}
 &amp; E(y-\beta_0 -\beta_1x) = 0 \\
 &amp; E(x(y - \beta_0 - \beta_1 x)) = 0
 \end{split}
-</span></p>
-<p>The estimates of these moments would use the sample equivalents: <span class="math inline">\hat\beta_0</span> and <span class="math inline">\hat\beta_1</span>.</p>
-<p><span class="math display">
+\]</span></p>
+<p>The estimates of these moments would use the sample equivalents: <span class="math inline">\(\hat\beta_0\)</span> and <span class="math inline">\(\hat\beta_1\)</span>.</p>
+<p><span class="math display">\[
 \begin{split}
 &amp; E(y-\hat\beta_0 -\hat\beta_1x) = 0 \\
 &amp; E(x(y - \hat\beta_0 - \hat\beta_1 x)) = 0
 \end{split}
-</span></p>
+\]</span></p>
 <p>Remember our OLS minimisation conditions:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{split}
 &amp; \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0 \\
 &amp; \sum\limits_{i=1}^n x_i (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
 \end{split}
-</span></p>
-<p>Since by definition, average/expectation is <span class="math inline">E(x) = \frac{1}{n} \sum x_i</span>, we can rewrite the OLS minimisation conditions as:</p>
-<p><span class="math display">
+\]</span></p>
+<p>Since by definition, average/expectation is <span class="math inline">\(E(x) = \frac{1}{n} \sum x_i\)</span>, we can rewrite the OLS minimisation conditions as:</p>
+<p><span class="math display">\[
 \begin{split}
 &amp; n \times E(y_i - \hat\beta_0 - \hat\beta_1x_i) = 0 \\
 &amp; n \times E(x_i(y_i - \hat\beta_0 - \hat\beta_1x_i)) = 0
 \end{split}
-</span></p>
-<p>And since anything multiplied to a zero turns into zero, we can ignore the <span class="math inline">n</span> in the first order condition, and only focus on the expected value part. Thus, our conditions are:</p>
-<p><span class="math display">
+\]</span></p>
+<p>And since anything multiplied to a zero turns into zero, we can ignore the <span class="math inline">\(n\)</span> in the first order condition, and only focus on the expected value part. Thus, our conditions are:</p>
+<p><span class="math display">\[
 \begin{split}
 &amp; E(y_i - \hat\beta_0 - \hat\beta_1x_i) = 0 \\
 &amp; E(x_i(y_i - \hat\beta_0 - \hat\beta_1x_i)) = 0
 \end{split}
-</span></p>
+\]</span></p>
 <p>Which as we can see, are the exact same minimisation conditions as the method of moments estimator. Thus, the OLS estimator is a special case of the Method of Moments estimator, and they produce the same coefficients. This is an important property for the instrumental variables method that will be covered later.</p>
 </section>
 </section>
