@@ -33,23 +33,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="2_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="2_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="2_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="mathjax-config.js"></script>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", function () {
- var mathElements = document.getElementsByClassName("math");
- var macros = [];
- for (var i = 0; i < mathElements.length; i++) {
-  var texText = mathElements[i].firstChild;
-  if (mathElements[i].tagName == "SPAN") {
-   katex.render(texText.data, mathElements[i], {
-    displayMode: mathElements[i].classList.contains('display'),
-    throwOnError: false,
-    macros: macros,
-    fleqn: true
-   });
-}}});
-  </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -108,9 +95,7 @@ window.Quarto = {
   <li><a href="#vector-spaces" id="toc-vector-spaces" class="nav-link active" data-scroll-target="#vector-spaces"><strong>Vector Spaces</strong></a>
   <ul class="collapse">
   <li><a href="#linear-mapping" id="toc-linear-mapping" class="nav-link" data-scroll-target="#linear-mapping">Linear Mapping</a></li>
-  <li><a href="#vectors-and-vector-spaces" id="toc-vectors-and-vector-spaces" class="nav-link" data-scroll-target="#vectors-and-vector-spaces">Vectors and Vector Spaces</a></li>
-  <li><a href="#linear-combination" id="toc-linear-combination" class="nav-link" data-scroll-target="#linear-combination">Linear Combination</a></li>
-  <li><a href="#linear-independence" id="toc-linear-independence" class="nav-link" data-scroll-target="#linear-independence">Linear Independence</a></li>
+  <li><a href="#linear-combinations-and-independence" id="toc-linear-combinations-and-independence" class="nav-link" data-scroll-target="#linear-combinations-and-independence">Linear Combinations and Independence</a></li>
   <li><a href="#spanning-vectors-and-dimension" id="toc-spanning-vectors-and-dimension" class="nav-link" data-scroll-target="#spanning-vectors-and-dimension">Spanning Vectors and Dimension</a></li>
   <li><a href="#matrix-rank" id="toc-matrix-rank" class="nav-link" data-scroll-target="#matrix-rank">Matrix Rank</a></li>
   <li><a href="#quadratic-forms" id="toc-quadratic-forms" class="nav-link" data-scroll-target="#quadratic-forms">Quadratic Forms</a></li>
@@ -118,9 +103,7 @@ window.Quarto = {
   <li><a href="#solving-systems-of-equations" id="toc-solving-systems-of-equations" class="nav-link" data-scroll-target="#solving-systems-of-equations"><strong>Solving Systems of Equations</strong></a>
   <ul class="collapse">
   <li><a href="#matrices-and-systems-of-equations" id="toc-matrices-and-systems-of-equations" class="nav-link" data-scroll-target="#matrices-and-systems-of-equations">Matrices and Systems of Equations</a></li>
-  <li><a href="#matrix-rank-and-systems-of-equations" id="toc-matrix-rank-and-systems-of-equations" class="nav-link" data-scroll-target="#matrix-rank-and-systems-of-equations">Matrix Rank and Systems of Equations</a></li>
-  <li><a href="#matrix-inversion" id="toc-matrix-inversion" class="nav-link" data-scroll-target="#matrix-inversion">Matrix Inversion</a></li>
-  <li><a href="#cramers-rule" id="toc-cramers-rule" class="nav-link" data-scroll-target="#cramers-rule">Cramer’s Rule</a></li>
+  <li><a href="#solving-systems-of-equations-1" id="toc-solving-systems-of-equations-1" class="nav-link" data-scroll-target="#solving-systems-of-equations-1">Solving Systems of Equations</a></li>
   </ul></li>
   <li><a href="#eigenvalues-and-eigenvectors" id="toc-eigenvalues-and-eigenvectors" class="nav-link" data-scroll-target="#eigenvalues-and-eigenvectors"><strong>Eigenvalues and Eigenvectors</strong></a>
   <ul class="collapse">
@@ -146,45 +129,31 @@ window.Quarto = {
 <h1><strong>Vector Spaces</strong></h1>
 <section id="linear-mapping" class="level3">
 <h3 class="anchored" data-anchor-id="linear-mapping">Linear Mapping</h3>
-<p>A mapping is any rule that maps elements from one set to another. A function <span class="math inline">f</span> is a mapping <span class="math inline">f: A \rightarrow B</span>.</p>
+<p>A mapping is any rule that maps elements from one set to another. A function <span class="math inline">\(f\)</span> is a mapping <span class="math inline">\(f: A \rightarrow B\)</span>.</p>
 <p>A linear mapping is a mapping that is linear, which must meet the following properties:</p>
 <ul>
-<li><span class="math inline">f(a+b) = f(a) + f(b)</span></li>
-<li><span class="math inline">f(ca) = c f(a)</span></li>
+<li><span class="math inline">\(f(a+b) = f(a) + f(b)\)</span></li>
+<li><span class="math inline">\(f(ca) = c f(a)\)</span></li>
 </ul>
-<p>We can represent linear mappings for finite sets by matrices. Let us say <span class="math inline">\mathbf X_{n \times m}</span> is a matrix, and <span class="math inline">\mathbf y_{m}</span> is a vector. Let us find their product:</p>
-<p><span class="math display">
+<p>We can represent linear mappings for finite sets by matrices. Let us say <span class="math inline">\(\mathbf X_{n \times m}\)</span> is a matrix, and <span class="math inline">\(\mathbf y_{m}\)</span> is a vector. Let us find their product:</p>
+<p><span class="math display">\[
 \mathbf {Xy} = \mathbf z_m
-</span></p>
-<p>What this is saying is take the vector <span class="math inline">\mathbf y</span>, and operate on it using the matrix <span class="math inline">\mathbf X</span>, to produce a new vector <span class="math inline">\mathbf z</span>. Here, the matrix <span class="math inline">\mathbf X</span> is an operator that maps <span class="math inline">\mathbf y \rightarrow \mathbf z</span>.</p>
+\]</span></p>
+<p>What this is saying is take the vector <span class="math inline">\(\mathbf y\)</span>, and operate on it using the matrix <span class="math inline">\(\mathbf X\)</span>, to produce a new vector <span class="math inline">\(\mathbf z\)</span>. Here, the matrix <span class="math inline">\(\mathbf X\)</span> is an operator that maps <span class="math inline">\(\mathbf y \rightarrow \mathbf z\)</span>.</p>
 <p><br></p>
 </section>
-<section id="vectors-and-vector-spaces" class="level3">
-<h3 class="anchored" data-anchor-id="vectors-and-vector-spaces">Vectors and Vector Spaces</h3>
-<p>Vectors have a norm (which is also called the inner product):</p>
-<p><span class="math display">
-||\mathbf a|| = \sqrt{\mathbf a \cdot \mathbf a} = \sqrt{a_1^2 + a_2^2+\dots+a_n^2}
-</span></p>
-<p>Vector spaces are any collection of vectors that have a norm, that have some common properties.</p>
-<p>Vectors are important because our data is represented in vectors.</p>
-<p><br></p>
-</section>
-<section id="linear-combination" class="level3">
-<h3 class="anchored" data-anchor-id="linear-combination">Linear Combination</h3>
-<p>A linear combination is a combination of vectors that is linear (i.e.&nbsp;vectors can be added, and scalar multiplied). For example, this is a linear combination:</p>
-<p><span class="math display">
+<section id="linear-combinations-and-independence" class="level3">
+<h3 class="anchored" data-anchor-id="linear-combinations-and-independence">Linear Combinations and Independence</h3>
+<p>A <strong>linear combination</strong> is a combination of vectors that is linear (i.e.&nbsp;vectors can be added, and scalar multiplied). For example, this is a linear combination:</p>
+<p><span class="math display">\[
 t \mathbf x + (1-t) \mathbf y
-</span></p>
-<p>Linear combinations either represents lines (in <span class="math inline">\mathbb R^2</span>), planes (in <span class="math inline">\mathbb R^3</span>), and hyperplanes (a plane of one less dimensions than the space) in higher dimensions.</p>
-<p><br></p>
-</section>
-<section id="linear-independence" class="level3">
-<h3 class="anchored" data-anchor-id="linear-independence">Linear Independence</h3>
-<p>Start off with a linear combination:</p>
-<p><span class="math display">
+\]</span></p>
+<p>Linear combinations either represents lines (in <span class="math inline">\(\mathbb R^2\)</span>), planes (in <span class="math inline">\(\mathbb R^3\)</span>), and hyperplanes (a plane of one less dimensions than the space) in higher dimensions.</p>
+<p>Now, let us take some linear combination:</p>
+<p><span class="math display">\[
 a_1 \mathbf x_1 + a_2 \mathbf x_2+\dots + a_n \mathbf x_n
-</span></p>
-<p>This set of vectors <span class="math inline">(\mathbf x_1, \dots, \mathbf x_n)</span> is independent if you cannot get one vector <span class="math inline">\mathbf x_j \in \{ \mathbf x_1, \dots, \mathbf x_n \}</span> equal to a combination or multiple of the other vectors.</p>
+\]</span></p>
+<p>This set of vectors <span class="math inline">\((\mathbf x_1, \dots, \mathbf x_n)\)</span> is <strong>linearlly</strong> <strong>independent</strong> if you cannot go from one vector <span class="math inline">\(\mathbf x_j \in \{ \mathbf x_1, \dots, \mathbf x_n \}\)</span>, and linearly transform it (by adding/subtracting/multiplying a constant) into another vector.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -198,15 +167,15 @@ Example of Linear Independence
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let us say we have these two vectors:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix} 1 \\ 2 \end{pmatrix}, \begin{pmatrix} 2 \\ 1 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>Are these linearly independent? That means I cannot use a linear transformation to go from one to another.</p>
 <p>No, there is no constant you can multiply to get from vector 1 to vector 2, and there are no other vectors to add/subtract to to go from one to another.</p>
 <p>Now consider these two vectors:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix} 1 \\ 2 \end{pmatrix}, \begin{pmatrix} 2 \\ 4 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>These are not independent - you can multiply the first vector by a scalar of 2 to get the second vector.</p>
 </div>
 </div>
@@ -217,15 +186,14 @@ Example of Linear Independence
 <section id="spanning-vectors-and-dimension" class="level3">
 <h3 class="anchored" data-anchor-id="spanning-vectors-and-dimension">Spanning Vectors and Dimension</h3>
 <p>A collection of spanning vectors spans some space, if you can write any vector in that space, as a linear combination of the spanning vectors.</p>
-<p>For example, take vector <span class="math inline">\mathbf e_1 = (1 \ 0)</span> and <span class="math inline">\mathbf e_2 = (0 \ 1)</span>. These vectors span some space including <span class="math inline">\mathbf z</span>, if vector <span class="math inline">\mathbf z</span> can be written as:</p>
-<p><span class="math display">
+<p>For example, take vector <span class="math inline">\(\mathbf e_1 = (1 \ 0)\)</span> and <span class="math inline">\(\mathbf e_2 = (0 \ 1)\)</span>. These vectors span some space including <span class="math inline">\(\mathbf z\)</span>, if vector <span class="math inline">\(\mathbf z\)</span> can be written as:</p>
+<p><span class="math display">\[
 \mathbf z = a \mathbf e_1 + b \mathbf e_2, \quad \text{e.x.} \quad \mathbf z = (a \ b)
-</span></p>
+\]</span></p>
 <ul>
-<li>In fact, <span class="math inline">\mathbf e_1</span> and <span class="math inline">\mathbf e_2</span> span the set of all 2-dimensional vectors.</li>
+<li>In fact, <span class="math inline">\(\mathbf e_1\)</span> and <span class="math inline">\(\mathbf e_2\)</span> span the set of all 2-dimensional vectors.</li>
 </ul>
-<p>This allows us to write vectors in terms of the core vectors, and to understand the dimension of the space.</p>
-<p>The <strong>dimension</strong> of the space is the smallest number of linearly independent vectors that span the space.</p>
+<p>This allows us to write vectors in terms of the core vectors, and to understand the dimension of the space. The <strong>dimension</strong> of the space is the smallest number of linearly independent vectors that span the space.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -239,18 +207,18 @@ Example of Dimensionality
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Take these two vectors:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 0 \\ 1 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>These are linearly independent - no factor multipled can get the other vector. Thus, this is 2 dimensional space</p>
 <p>Now, let us add a third vector.</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 0 \\ 1 \end{pmatrix}, \begin{pmatrix} 3 \\ 2 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>Is the third vector linearly independent? No.&nbsp;We can write the third vector with a combination of the other two:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix} 3 \\ 2 \end{pmatrix} = 3 \begin{pmatrix} 1 \\ 0 \end{pmatrix} + 2 \begin{pmatrix} 0 \\ 1 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>Thus, the third vector is in the space spanned by the first 2 vectors. The first two vectors spans this space, and thus, it is 2 dimensional space.</p>
 </div>
 </div>
@@ -263,32 +231,27 @@ Example of Dimensionality
 <h3 class="anchored" data-anchor-id="matrix-rank">Matrix Rank</h3>
 <p>As we discussed before, it can be difficult to find if vectors are linearly independent in higher dimensions.</p>
 <p>We can stack the row vectors into a matrix (we can also do them in columns):</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix} \mathbf x_1 \\ \mathbf x_2 \\ \mathbf x_3 \end{pmatrix} =
 \begin{pmatrix} x_{11} &amp; x_{12} &amp; x_{13} \\
 x_{21} &amp; x_{22} &amp; x_{23} \\
 x_{31} &amp; x_{32} &amp; x_{33} \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>The <strong>Rank</strong> of a matrix is the number of linearly independent rows/columns in a matrix.</p>
-<p>If the Rank is equal to the total number of rows/columns (all rows/columns are linearly independent), the matrix has <strong>full rank</strong>.</p>
-<ul>
-<li>A matrix with full rank is non-singular, and thus, can be inverted, and has a non-zero determinant.</li>
-</ul>
-<p>Thus, if we find the determinant of the matrix, if it is 0, the vectors are <u>not</u> linearly independent, and if it is not0 , they are linearly independent.</p>
+<p>If the Rank is equal to the total number of rows/columns (all rows/columns are linearly independent), the matrix has <strong>full rank</strong>. A matrix with full rank is non-singular, and thus, can be inverted, and has a non-zero determinant.</p>
+<p>Thus, if we find the determinant of the matrix, if it is 0, the vectors are <u>not</u> linearly independent, and if it is not 0 , they are linearly independent.</p>
 <p>We can also know a matrix is not full rank, if the space of the dimension is less than the number of vectors (as explained above).</p>
 <p><br></p>
 </section>
 <section id="quadratic-forms" class="level3">
 <h3 class="anchored" data-anchor-id="quadratic-forms">Quadratic Forms</h3>
 <p>A quadratic form takes the following form:</p>
-<p><span class="math display">
-\mathbf x^T \mathbf A \mathbf x
-</span></p>
-<ul>
-<li>Where matrix <span class="math inline">\mathbf A</span> is a square matrix.</li>
-</ul>
-<p>If <span class="math inline">\mathbf x^T \mathbf A \mathbf x &gt; 0</span> for all values, then the matrix is positive definite. If <span class="math inline">\mathbf x^T \mathbf A \mathbf x &lt; 0</span>, then negative definite. If <span class="math inline">\mathbf x^T \mathbf A \mathbf x ≤ 0</span> it is positive semi-definite.</p>
-<p>This will be useful for optimisation.</p>
+<p><span class="math display">\[
+\mathbf x^\mathsf{T} \mathbf A \mathbf x
+\]</span></p>
+<p>Where matrix <span class="math inline">\(\mathbf A\)</span> is a square matrix.</p>
+<p>If <span class="math inline">\(\mathbf x^\mathsf{T} \mathbf A \mathbf x &gt; 0\)</span> for all values, then the matrix is positive definite. If <span class="math inline">\(\mathbf x^\mathsf{T} \mathbf A \mathbf x &lt; 0\)</span>, then negative definite. If <span class="math inline">\(\mathbf x^\mathsf{T} \mathbf A \mathbf x ≤ 0\)</span> it is positive semi-definite.</p>
+<p>This will be useful for optimisation and multivariable calculus</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -299,63 +262,71 @@ x_{31} &amp; x_{32} &amp; x_{33} \end{pmatrix}
 <section id="matrices-and-systems-of-equations" class="level3">
 <h3 class="anchored" data-anchor-id="matrices-and-systems-of-equations">Matrices and Systems of Equations</h3>
 <p>You can write any system of linear equations as a matrix times a vector. Let us take this set of equations:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{cases}
 a_{11}x_1 + a_{12} x_2 + a_{13} x_3 = y_1 \\
 a_{21}x_1 + a_{22}x_2 + a_{23}x_3 = y_2 \\
 a_{31}x_1 + a_{32}x_2 + a_{33}x_3 = y_3
 \end{cases}
-</span></p>
+\]</span></p>
 <p>We can write this system of equations as follows:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix}
 a_{11} &amp; a_{12} &amp; a_{13} \\
 a_{21} &amp; a_{22} &amp; a_{23} \\
 a_{31} &amp; a_{32} &amp; a_{33}
 \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ x_3 \end{pmatrix}
 = \begin{pmatrix} y_1 \\ y_2 \\ y_3 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>Or even simpler, we can represent it as:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf A\mathbf x = \mathbf y
-</span></p>
+\]</span></p>
 <p>A unique solution exists when you have the same amount of equations as unknowns, and the equations are non-contradictory.</p>
-<ul>
-<li>Overdetermined systems are when there are more equations than unknowns, which might contradict each other.</li>
-<li>Underdetermined systems are when there are not enough equations compared to unknowns, so we cannot solve it.</li>
-</ul>
-<p><br></p>
-</section>
-<section id="matrix-rank-and-systems-of-equations" class="level3">
-<h3 class="anchored" data-anchor-id="matrix-rank-and-systems-of-equations">Matrix Rank and Systems of Equations</h3>
+<p>Overdetermined systems are when there are more equations than unknowns, which might contradict each other. Underdetermined systems are when there are not enough equations compared to unknowns, so we cannot solve it.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Non-Linearly Independent and Identification
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>Take this system of linear equations:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{cases}
 x+y=1 \\
 2x + 2y = 2
 \end{cases}
-</span></p>
+\]</span></p>
 <p>We can see that the two equations are a common factor of each other. Or in other words, these two vectors are non-linearly independent.</p>
 <p>We know when solving for these equations, we cannot actually solve for a unique solution.</p>
 <p>We know if a matrix is full rank, then all rows/columns are linearly independent.</p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
-<section id="matrix-inversion" class="level3">
-<h3 class="anchored" data-anchor-id="matrix-inversion">Matrix Inversion</h3>
-<p>Matrix inversion is a way to solve a system of equations. Take this system of equations:</p>
-<p><span class="math display">
+<section id="solving-systems-of-equations-1" class="level3">
+<h3 class="anchored" data-anchor-id="solving-systems-of-equations-1">Solving Systems of Equations</h3>
+<p><strong>Matrix inversion</strong> is a way to solve a system of equations. Take this system of equations:</p>
+<p><span class="math display">\[
 \mathbf{Ax} = \mathbf y
-</span></p>
-<p>You can solve for <span class="math inline">\mathbb x</span> by inverting matrix <span class="math inline">\mathbf A</span> (assuming matrix a is full rank):</p>
-<p><span class="math display">
-\begin{split}
+\]</span></p>
+<p>You can solve for <span class="math inline">\(\mathbf x\)</span> by inverting matrix <span class="math inline">\(\mathbf A\)</span> (assuming matrix a is full rank):</p>
+<p><span class="math display">\[
+\begin{align}
 \mathbf{Ax} &amp; = \mathbf y \\
-\mathbf{A}^{-1}\mathbf{Ax} &amp; = \mathbf A^{-1}\mathbf y \\
-\mathbf x &amp;= \mathbf A^{-1}\mathbf y
-\end{split}
-</span></p>
+\color{blue}{\mathbf{A}^{-1}}\color{black}{\mathbf{Ax}} &amp; = \color{blue}{\mathbf A^{-1}}\color{black}{\mathbf y} &amp;&amp; (\text{multiply both sides by } \color{blue}{\mathbf A^{-1}}\color{black}) \\
+\mathbf x &amp;= \mathbf A^{-1}\mathbf y &amp;&amp; (\mathbf A^{-1} \mathbf A\text{ inverses cancel})
+\end{align}
+\]</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -364,70 +335,65 @@ Example of Matrix Inversion
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Take this system of equations:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{cases}
 3x - 7y = -11 \\
 5x + 10y = 25
 \end{cases}
-</span></p>
+\]</span></p>
 <p>We can write this in linear algebra:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix}
 3 &amp; -7 \\
 5 &amp; 10
 \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix} =
 \begin{pmatrix} -11 \\ 25 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>Now, let us find the inverse of the first matrix:</p>
-<p><span class="math display">
-\mathbf A^{-1} = \frac{1}{|\mathbf A|}\mathbf C^T
-</span></p>
-<p>We know the determinant <span class="math inline">|\mathbf A| = 3(10) - (-7)(5) = 65</span>.</p>
+<p><span class="math display">\[
+\mathbf A^{-1} = \frac{1}{|\mathbf A|}\mathbf C^\mathsf{T}
+\]</span></p>
+<p>We know the determinant <span class="math inline">\(|\mathbf A| = 3(10) - (-7)(5) = 65\)</span>.</p>
 <p>Now, let us find the cofactor matrix:</p>
 <ul>
-<li><span class="math inline">c_{11} = (-1)^{1+1}\times 10 = 10</span></li>
-<li><span class="math inline">c_{12} = (-1)^{1+2} \times 5 = -5</span></li>
-<li><span class="math inline">c_{21} = (-1)^{2+1} \times -7 = 7</span></li>
-<li><span class="math inline">c_{22} = (-1)^{2+2} \times 3 = 3</span></li>
+<li><span class="math inline">\(c_{11} = (-1)^{1+1}\times 10 = 10\)</span></li>
+<li><span class="math inline">\(c_{12} = (-1)^{1+2} \times 5 = -5\)</span></li>
+<li><span class="math inline">\(c_{21} = (-1)^{2+1} \times -7 = 7\)</span></li>
+<li><span class="math inline">\(c_{22} = (-1)^{2+2} \times 3 = 3\)</span></li>
 </ul>
 <p>Thus, the cofactor matrix transposed should be:</p>
-<p><span class="math display">
-\mathbf C^T = \begin{pmatrix} 10 &amp; -5 \\ 7 &amp; 3 \end{pmatrix}^T = \begin{pmatrix} 10 &amp; 7 \\ -5 &amp; 3 \end{pmatrix}
-</span></p>
-<p>Thus, the inverse of matrix <span class="math inline">\mathbf{A}</span> should be:</p>
-<p><span class="math display">
+<p><span class="math display">\[
+\mathbf C^\mathsf{T} = \begin{pmatrix} 10 &amp; -5 \\ 7 &amp; 3 \end{pmatrix}^\mathsf{T} = \begin{pmatrix} 10 &amp; 7 \\ -5 &amp; 3 \end{pmatrix}
+\]</span></p>
+<p>Thus, the inverse of matrix <span class="math inline">\(\mathbf{A}\)</span> should be:</p>
+<p><span class="math display">\[
 \mathbf A^{-1} = \frac{1}{65} \begin{pmatrix} 10 &amp; 7 \\ -5 &amp; 3 \end{pmatrix} = \begin{pmatrix} \frac{2}{13} &amp; \frac{7}{65} \\ -\frac{1}{13} &amp; \frac{3}{65} \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>We know the solution should be:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} \frac{2}{13} &amp; \frac{7}{65} \\ -\frac{1}{13} &amp; \frac{3}{65} \end{pmatrix} \begin{pmatrix} -11 \\ 25 \end{pmatrix}
-</span></p>
-<p>Thus, doing matrix multiplication to obtain <span class="math inline">x</span> and <span class="math inline">y</span>:</p>
+\]</span></p>
+<p>Thus, doing matrix multiplication to obtain <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>:</p>
 <ul>
-<li><span class="math inline">x =\frac{2}{13}(-11) + \frac{7}{65}(25) = -\frac{22}{13} + \frac{35}{13} = \frac{13}{13}=1</span></li>
-<li><span class="math inline">y=-\frac{1}{13}(-11) + \frac{3}{65}(25) = \frac{11}{13}+ \frac{15}{13} = \frac{26}{13} = 2</span></li>
+<li><span class="math inline">\(x =\frac{2}{13}(-11) + \frac{7}{65}(25) = -\frac{22}{13} + \frac{35}{13} = \frac{13}{13}=1\)</span></li>
+<li><span class="math inline">\(y=-\frac{1}{13}(-11) + \frac{3}{65}(25) = \frac{11}{13}+ \frac{15}{13} = \frac{26}{13} = 2\)</span></li>
 </ul>
-<p>The solution to this system of equations is: <span class="math inline">(1, 2)</span>.</p>
+<p>The solution to this system of equations is: <span class="math inline">\((1, 2)\)</span>.</p>
 </div>
 </div>
 </div>
-<p><br></p>
-</section>
-<section id="cramers-rule" class="level3">
-<h3 class="anchored" data-anchor-id="cramers-rule">Cramer’s Rule</h3>
-<p>Cramer’s rule is another rule to solve equations, only for square matrices. It is not super commonly used.</p>
-<p>Given the system of equations:</p>
-<p><span class="math display">
+<p><strong>Cramer’s rule</strong> is another rule to solve equations, only for square matrices. It is not super commonly used. Given the system of equations:</p>
+<p><span class="math display">\[
 \mathbf{Ax} = \mathbf y
-</span></p>
-<p>The element <span class="math inline">x_i</span> is defined as:</p>
-<p><span class="math display">
+\]</span></p>
+<p>The element <span class="math inline">\(x_i\)</span> is defined as:</p>
+<p><span class="math display">\[
 x_i = \frac{|\mathbf B_i|}{\mathbf A}
-</span></p>
-<p>Where <span class="math inline">\mathbf B_i</span> is a matrix obtained by taking the matrix <span class="math inline">\mathbf A</span>, and replacing the <span class="math inline">i</span>th column with the column vector <span class="math inline">\mathbf y</span>.</p>
+\]</span></p>
+<p>Where <span class="math inline">\(\mathbf B_i\)</span> is a matrix obtained by taking the matrix <span class="math inline">\(\mathbf A\)</span>, and replacing the <span class="math inline">\(i\)</span>th column with the column vector <span class="math inline">\(\mathbf y\)</span>.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -437,35 +403,35 @@ x_i = \frac{|\mathbf B_i|}{\mathbf A}
 <h1><strong>Eigenvalues and Eigenvectors</strong></h1>
 <section id="definitions" class="level3">
 <h3 class="anchored" data-anchor-id="definitions">Definitions</h3>
-<p>A matrix, as we discussed, can act as an operator that maps some vector to another <span class="math inline">\mathbf A : \mathbf x \rightarrow \mathbf y</span>.</p>
-<p>Geometrically, vector <span class="math inline">\mathbf x</span> points in some dimensional space. Then the matrix <span class="math inline">\mathbf A</span> comes along, and transforms it into a different vector <span class="math inline">\mathbf x</span>, which might flip the direction, or rotate, or change its norm, etc. Sometimes, <span class="math inline">\mathbf y</span> will stay in the same direction or opposite direction (along the same line) as the original, even after the operator.</p>
-<p>Basically, an eigenvector of matrix <span class="math inline">\mathbf A</span> is a vector <span class="math inline">\mathbf x</span>, that does not change its direction (stays on the same line) when you apply the operator <span class="math inline">\mathbf A</span> to get vector <span class="math inline">\lambda \mathbf x</span>. Mathematically:</p>
-<p><span class="math display">
+<p>A matrix, as we discussed, can act as an operator that maps some vector to another <span class="math inline">\(\mathbf A : \mathbf x \rightarrow \mathbf y\)</span>.</p>
+<p>Geometrically, vector <span class="math inline">\(\mathbf x\)</span> points in some dimensional space. Then the matrix <span class="math inline">\(\mathbf A\)</span> comes along, and transforms it into a different vector <span class="math inline">\(\mathbf x\)</span>, which might flip the direction, or rotate, or change its norm, etc. Sometimes, <span class="math inline">\(\mathbf y\)</span> will stay in the same direction or opposite direction (along the same line) as the original, even after the operator.</p>
+<p>Basically, an eigenvector of matrix <span class="math inline">\(\mathbf A\)</span> is a vector <span class="math inline">\(\mathbf x\)</span>, that does not change its direction (stays on the same line) when you apply the operator <span class="math inline">\(\mathbf A\)</span> to get vector <span class="math inline">\(\lambda \mathbf x\)</span>. Mathematically:</p>
+<p><span class="math display">\[
 \mathbf{Ax} = \lambda \mathbf x
-</span></p>
-<p>The <span class="math inline">\lambda</span> is an eigenvalue that corresponds to the eigenvector.</p>
+\]</span></p>
+<p>The <span class="math inline">\(\lambda\)</span> is an eigenvalue that corresponds to the eigenvector.</p>
 <p><br></p>
 </section>
 <section id="computing-eigenvalues" class="level3">
 <h3 class="anchored" data-anchor-id="computing-eigenvalues">Computing Eigenvalues</h3>
 <p>Let us start with the eigenvector formula:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf{Ax} = \lambda \mathbf x
-</span></p>
+\]</span></p>
 <p>We can multiply the right side by the identity matrix (which does not change the result):</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf{Ax} = \lambda \mathbf {Ix}
-</span></p>
+\]</span></p>
 <p>Now, let us move everything to one side, and simplify:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{split}
 \mathbf{Ax} - \lambda \mathbf {Ix} &amp; = 0 \\
 (\mathbf A - \lambda \mathbf I) \mathbf x &amp; = 0
 \end{split}
-</span></p>
-<p><span class="math inline">(\mathbf A - \lambda \mathbf I)</span> is an singular matrix, meaning determinant <span class="math inline">|(\mathbf A - \lambda \mathbf I)| = 0</span>. All values of <span class="math inline">\lambda</span> that solve this determinant equation will be eigenvalues of the matrix.</p>
+\]</span></p>
+<p><span class="math inline">\((\mathbf A - \lambda \mathbf I)\)</span> is an singular matrix, meaning determinant <span class="math inline">\(|(\mathbf A - \lambda \mathbf I)| = 0\)</span>. All values of <span class="math inline">\(\lambda\)</span> that solve this determinant equation will be eigenvalues of the matrix.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -474,27 +440,27 @@ Example of Solving for Eigenvalues
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>We know <span class="math inline">|(\mathbf A - \lambda \mathbf I)| = 0</span>. Let us say:</p>
-<p><span class="math display">
+<p>We know <span class="math inline">\(|(\mathbf A - \lambda \mathbf I)| = 0\)</span>. Let us say:</p>
+<p><span class="math display">\[
 \mathbf A = \begin{pmatrix} 2 &amp; 1 \\ 3 &amp; 4 \end{pmatrix}, \quad \lambda \mathbf I \begin{pmatrix} \lambda &amp; 0 \\ 0 &amp; \lambda \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>Thus:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf A - \lambda \mathbf I = \begin{pmatrix} 2 - \lambda &amp; 1 \\ 3 &amp; 4 - \lambda \end{pmatrix}
-</span></p>
-<p>We know the determinant should equal 0. We can solve for <span class="math inline">\lambda</span>:</p>
-<p><span class="math display">
+\]</span></p>
+<p>We know the determinant should equal 0. We can solve for <span class="math inline">\(\lambda\)</span>:</p>
+<p><span class="math display">\[
 \begin{split}
 0 &amp; = |(\mathbf A - \lambda \mathbf I)| \\
 0 &amp; = (2-\lambda)(4-\lambda) - 1(3) \\
 0 &amp; = 8-2\lambda - 4 \lambda +\lambda^2 - 4 \\
 0 &amp; = \lambda^2 - 6\lambda +4 \\
 \end{split}
-</span></p>
+\]</span></p>
 <p>Let us use the quadratic formula:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{split}
 \lambda &amp; = \frac{-b ± \sqrt{b^2 - 4ac}}{2a} \\
 \lambda &amp; = \frac{6 ± \sqrt{36 - 4(1)(4)}}{2(1)} \\
@@ -503,7 +469,7 @@ Example of Solving for Eigenvalues
 \lambda &amp; = 3 ± \frac{2 \sqrt{5}}{2} \\
 \lambda &amp; = 3 ± \sqrt{5}
 \end{split}
-</span></p>
+\]</span></p>
 <p>Thus, we have found our eigenvalues.</p>
 </div>
 </div>
@@ -512,13 +478,13 @@ Example of Solving for Eigenvalues
 </section>
 <section id="calculating-eigenvectors" class="level3">
 <h3 class="anchored" data-anchor-id="calculating-eigenvectors">Calculating Eigenvectors</h3>
-<p>Let us say we have the matrix <span class="math inline">\mathbf{A}</span>:</p>
-<p><span class="math display">
+<p>Let us say we have the matrix <span class="math inline">\(\mathbf{A}\)</span>:</p>
+<p><span class="math display">\[
 \mathbf A = \begin{pmatrix} 2 &amp; 3 \\ 2 &amp; 1 \end{pmatrix}
-</span></p>
-<p>First, you need to calculate the eigenvalues <span class="math inline">\lambda</span> (as shown in the previous section).</p>
+\]</span></p>
+<p>First, you need to calculate the eigenvalues <span class="math inline">\(\lambda\)</span> (as shown in the previous section).</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -527,14 +493,14 @@ Example of Calculating Eigenvalues
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>We know <span class="math inline">|(\mathbf A - \lambda \mathbf I)| = 0</span>.</p>
-<p><span class="math display">
+<p>We know <span class="math inline">\(|(\mathbf A - \lambda \mathbf I)| = 0\)</span>.</p>
+<p><span class="math display">\[
 \mathbf A - \lambda \mathbf I = \begin{pmatrix} 2 - \lambda &amp; 3 \\ 2 &amp; 1 - \lambda \end{pmatrix}
-</span></p>
-<p>Now solve <span class="math inline">|(\mathbf A - \lambda \mathbf I)| = 0</span>.</p>
-<p><span class="math display">
+\]</span></p>
+<p>Now solve <span class="math inline">\(|(\mathbf A - \lambda \mathbf I)| = 0\)</span>.</p>
+<p><span class="math display">\[
 \begin{split}
 0 &amp; = |(\mathbf A - \lambda \mathbf I)| \\
 0 &amp; = (2 - \lambda)(1- \lambda) - 2(3) \\
@@ -543,20 +509,20 @@ Example of Calculating Eigenvalues
 0 &amp; = (\lambda - 4)(\lambda + 1) \\
 \lambda &amp; = 4, -1
 \end{split}
-</span></p>
+\]</span></p>
 </div>
 </div>
 </div>
-<p>For every eigenvalue, you will have an eigenvector that makes the eigenvector equation <span class="math inline">\mathbf{Ax} = \lambda \mathbf x</span> true. From above:</p>
-<p><span class="math display">
+<p>For every eigenvalue, you will have an eigenvector that makes the eigenvector equation <span class="math inline">\(\mathbf{Ax} = \lambda \mathbf x\)</span> true. From above:</p>
+<p><span class="math display">\[
 \begin{split}
 &amp; \mathbf{Ax} = 4 \mathbf x \\
 &amp; \mathbf{Ax} = -1 \mathbf x
 \end{split}
-</span></p>
-<p>Remember, <span class="math inline">\mathbf x</span> is a vector here of 2 elements, <span class="math inline">x_1, x_2</span> - but we only have one equation for each eigenvalue pair. This means there will be one solution without a unique solution.</p>
+\]</span></p>
+<p>Remember, <span class="math inline">\(\mathbf x\)</span> is a vector here of 2 elements, <span class="math inline">\(x_1, x_2\)</span> - but we only have one equation for each eigenvalue pair. This means there will be one solution without a unique solution.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -565,22 +531,22 @@ Eigenvalues and Non-Unique Solutions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>It might seem simple to just solve for our <span class="math inline">\mathbf x</span> with two unknowns <span class="math inline">x_1, x_2</span>.</p>
+<p>It might seem simple to just solve for our <span class="math inline">\(\mathbf x\)</span> with two unknowns <span class="math inline">\(x_1, x_2\)</span>.</p>
 <p>But the issue is - our equations are not linearly independent, so we do not have enough information to solve for a unique solution for one.</p>
 <p>This is actually okay - why? Well, take a look at these potential eigenvectors:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 2 \\ 0 \end{pmatrix}, \begin{pmatrix} 3 \\ 0 \end{pmatrix}
-</span></p>
-<p>These are different vectors - but they are all eigenvectors. This is because of the equation <span class="math inline">\mathbf{Ax} = \lambda \mathbf x</span> - if both sides have vector <span class="math inline">(1 \ 0)</span> multiplied by a constant (like the 2nd and 3rd vectors), the equation is still equal.</p>
+\]</span></p>
+<p>These are different vectors - but they are all eigenvectors. This is because of the equation <span class="math inline">\(\mathbf{Ax} = \lambda \mathbf x\)</span> - if both sides have vector <span class="math inline">\((1 \ 0)\)</span> multiplied by a constant (like the 2nd and 3rd vectors), the equation is still equal.</p>
 <p>Thus, eigenvectors are not defined uniquely - only up to a singular multiplicative constant.</p>
 </div>
 </div>
 </div>
-<p>What we typically do is define <span class="math inline">x_1 = 1</span> (there are some cases where this does not work). Using this, we can solve for the answer.</p>
+<p>What we typically do is define <span class="math inline">\(x_1 = 1\)</span> (there are some cases where this does not work). Using this, we can solve for the answer.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -589,36 +555,36 @@ Example of Calculating Eigenvectors
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let us continue the same example from before.</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf A = \begin{pmatrix} 2 &amp; 3 \\ 2 &amp; 1 \end{pmatrix}, \quad \lambda = 4, -1, \quad \mathbf x = \begin{pmatrix} 1 \\ c \end{pmatrix}
-</span></p>
-<p>Let us solve for the eigenvalue of <span class="math inline">\lambda = 4</span>.</p>
-<p><span class="math display">
+\]</span></p>
+<p>Let us solve for the eigenvalue of <span class="math inline">\(\lambda = 4\)</span>.</p>
+<p><span class="math display">\[
 \begin{split}
 \mathbf{Ax} &amp; = 4 \mathbf x \\
 \begin{pmatrix} 2 &amp; 3 \\ 2 &amp; 1 \end{pmatrix}\begin{pmatrix} 1 \\ c \end{pmatrix} &amp; = 4\begin{pmatrix} 1 \\ c \end{pmatrix} \\
 \begin{pmatrix} 2+3c \\ 2+c \end{pmatrix} &amp; = \begin{pmatrix} 4 \\ 4c \end{pmatrix}
 \end{split}
-</span></p>
+\]</span></p>
 <p>That gives us two equations:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{split}
 &amp; 2 + 3c = 4 \\
 &amp; 2 + c = 4c
 \end{split}
-</span></p>
-<p>The answer is <span class="math inline">c = \frac{2}{3}</span> (both answers give us the equation).</p>
-<p>Thus, the eigenvector with <span class="math inline">\lambda = 4</span> is:</p>
-<p><span class="math display">
+\]</span></p>
+<p>The answer is <span class="math inline">\(c = \frac{2}{3}\)</span> (both answers give us the equation).</p>
+<p>Thus, the eigenvector with <span class="math inline">\(\lambda = 4\)</span> is:</p>
+<p><span class="math display">\[
 \mathbf x = \begin{pmatrix} 1 \\ \frac{2}{3} \end{pmatrix}
-</span></p>
-<p>We can do the same for <span class="math inline">\lambda = -1</span>, and we will get eigenvector:</p>
-<p><span class="math display">
+\]</span></p>
+<p>We can do the same for <span class="math inline">\(\lambda = -1\)</span>, and we will get eigenvector:</p>
+<p><span class="math display">\[
 \mathbf x = \begin{pmatrix} 1 \\ -1 \end{pmatrix}
-</span></p>
+\]</span></p>
 </div>
 </div>
 </div>
@@ -626,19 +592,19 @@ Example of Calculating Eigenvectors
 </section>
 <section id="eigenvector-decomposition" class="level3">
 <h3 class="anchored" data-anchor-id="eigenvector-decomposition">Eigenvector Decomposition</h3>
-<p>Matrix decomposition is to take a matrix <span class="math inline">\mathbf A</span>, and decompose it into other matrices, that when multiplied together, get the original matrix.</p>
-<p>If matrix <span class="math inline">\mathbf A</span> has unique eigenvalues, you can write:</p>
-<p><span class="math display">
+<p>Matrix decomposition is to take a matrix <span class="math inline">\(\mathbf A\)</span>, and decompose it into other matrices, that when multiplied together, get the original matrix.</p>
+<p>If matrix <span class="math inline">\(\mathbf A\)</span> has unique eigenvalues, you can write:</p>
+<p><span class="math display">\[
 \mathbf A = \mathbf {QDQ}^{-1}
-</span></p>
-<p>Where <span class="math inline">\mathbf Q</span> is made up of eigenvectors of matrix <span class="math inline">\mathbf A</span>, and <span class="math inline">\mathbf D</span> is a diagonal matrix with the eigenvalues <span class="math inline">\lambda</span> on the diagonal:</p>
-<p><span class="math display">
+\]</span></p>
+<p>Where <span class="math inline">\(\mathbf Q\)</span> is made up of eigenvectors of matrix <span class="math inline">\(\mathbf A\)</span>, and <span class="math inline">\(\mathbf D\)</span> is a diagonal matrix with the eigenvalues <span class="math inline">\(\lambda\)</span> on the diagonal:</p>
+<p><span class="math display">\[
 \mathbf D = \begin{pmatrix} \lambda_1 &amp; 0 \\ 0 &amp; \lambda_2 \end{pmatrix}, \quad
 \mathbf Q = \begin{pmatrix} \mathbf x_1 &amp; \mathbf x_2\end{pmatrix}
-</span></p>
+\]</span></p>
 <p>Eigenvectors decomposition has a few uses:</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -647,50 +613,22 @@ Taking the Power of Matrices
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Let us say you want to find <span class="math inline">\mathbf A^z</span>. We can use matrix decomposition for this:</p>
-<p><span class="math display">
-\mathbf A^z = {QDQ}^{-1}{QDQ}^{-1}{QDQ}^{-1}\dots
-</span></p>
-<p>Notice how the <span class="math inline">\mathbf{Q}^{-1} \mathbf Q</span> occurs quite frequently, and we know by properties of inverses, that <span class="math inline">\mathbf{Q}^{-1} \mathbf Q = \mathbf I</span>, and multiplying by <span class="math inline">\mathbf I</span> does nothing.</p>
-<p>Thus, we can rewrite the formula above as:</p>
-<p><span class="math display">
-\mathbf A^z = \mathbf{QD}^z\mathbf Q^{-1}
-</span></p>
-<p>This is much simpler than calculating <span class="math inline">\mathbf A^z</span>, since taking diagonal matrix to a power is defined as:</p>
-<p><span class="math display">
-\mathbf D^z = \begin{pmatrix} \lambda_1^z &amp; 0 \\ 0 &amp; \lambda_2^z\end{pmatrix}
-</span></p>
-<p>Which is much easier to do.</p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Finding Determinants
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Let us say you want to find the determinant of <span class="math inline">\mathbf A</span>. The following is true:</p>
-<p><span class="math display">
-\begin{split}
-\det (\mathbf A) &amp; = \det(\mathbf{QD}^z\mathbf Q^{-1}) \\
-&amp; = \det (\mathbf Q) \det (\mathbf D) \det (\mathbf Q^{-1}) \\
-&amp; = \det (\mathbf Q) \det (\mathbf D) \frac{1}{\det (\mathbf Q)} \\
-&amp; = \det (\mathbf D)
-\end{split}
-</span></p>
-<p>Since <span class="math inline">\mathbf D</span> is diagonal, the determinant of a diagonal matrix is just the product of the diagonal elements. Thus:</p>
-<p><span class="math display">
-\det (\mathbf A) = \prod_i \lambda_i
-</span></p>
+<p>Let us say you want to find <span class="math inline">\(\mathbf A^z\)</span>. We can use matrix decomposition for this:</p>
+<p><span class="math display">\[
+\mathbf A^z = {QDQ}^{-1}{QDQ}^{-1}{QDQ}^{-1}\dots
+\]</span></p>
+<p>Notice how the <span class="math inline">\(\mathbf{Q}^{-1} \mathbf Q\)</span> occurs quite frequently, and we know by properties of inverses, that <span class="math inline">\(\mathbf{Q}^{-1} \mathbf Q = \mathbf I\)</span>, and multiplying by <span class="math inline">\(\mathbf I\)</span> does nothing.</p>
+<p>Thus, we can rewrite the formula above as:</p>
+<p><span class="math display">\[
+\mathbf A^z = \mathbf{QD}^z\mathbf Q^{-1}
+\]</span></p>
+<p>This is much simpler than calculating <span class="math inline">\(\mathbf A^z\)</span>, since taking diagonal matrix to a power is defined as:</p>
+<p><span class="math display">\[
+\mathbf D^z = \begin{pmatrix} \lambda_1^z &amp; 0 \\ 0 &amp; \lambda_2^z\end{pmatrix}
+\]</span></p>
+<p>Which is much easier to do.</p>
 </div>
 </div>
 </div>
@@ -700,19 +638,47 @@ Finding Determinants
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Principle Component Analysis
+Finding Determinants
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Principle Component Analysis (PCA) is used when matrix <span class="math inline">\mathbf A</span> is symmetric, positive semi-definite.</p>
+<p>Let us say you want to find the determinant of <span class="math inline">\(\mathbf A\)</span>. The following is true:</p>
+<p><span class="math display">\[
+\begin{split}
+\det (\mathbf A) &amp; = \det(\mathbf{QD}^z\mathbf Q^{-1}) \\
+&amp; = \det (\mathbf Q) \det (\mathbf D) \det (\mathbf Q^{-1}) \\
+&amp; = \det (\mathbf Q) \det (\mathbf D) \frac{1}{\det (\mathbf Q)} \\
+&amp; = \det (\mathbf D)
+\end{split}
+\]</span></p>
+<p>Since <span class="math inline">\(\mathbf D\)</span> is diagonal, the determinant of a diagonal matrix is just the product of the diagonal elements. Thus:</p>
+<p><span class="math display">\[
+\det (\mathbf A) = \prod_i \lambda_i
+\]</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Principle Components Analysis
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><a href="https://politicalscience.github.io/multivariate/1.html">Principle Components Analysis</a> (PCA) is used when matrix <span class="math inline">\(\mathbf A\)</span> is symmetric, positive semi-definite.</p>
 <ul>
 <li>This means the eigenvectors are orthogonal (perpendicular) to each other.</li>
 <li>This means eigenvalues will always be real and non-negative.</li>
 </ul>
 <p>PCA is done on the covariance matrix, which is symmetric and positive semi-definite.</p>
-<p>It is a data reduction technique commonly used in statistics and data science. We will discuss this in the multivariate statistics section.</p>
+<p>It is a data reduction technique commonly used in statistics and data science.</p>
 <ul>
 <li>The eigenvectors of the covariance matrix form the principle components of thee system.</li>
 <li>The eigenvalues tell us how much of the variance each component explains (more important principle components have higher eigenvalues).</li>

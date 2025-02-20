@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Vectors and Matrices</title>
+<title>Linear Algebra</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,23 +33,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="1_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="mathjax-config.js"></script>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", function () {
- var mathElements = document.getElementsByClassName("math");
- var macros = [];
- for (var i = 0; i < mathElements.length; i++) {
-  var texText = mathElements[i].firstChild;
-  if (mathElements[i].tagName == "SPAN") {
-   katex.render(texText.data, mathElements[i], {
-    displayMode: mathElements[i].classList.contains('display'),
-    throwOnError: false,
-    macros: macros,
-    fleqn: true
-   });
-}}});
-  </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -85,7 +72,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Vectors and Matrices</h1>
+      <h1 class="title">Linear Algebra</h1>
             <p class="subtitle lead">Essential Mathematics</p>
                       </div>
   </div>
@@ -109,34 +96,38 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#scalars-and-vectors" id="toc-scalars-and-vectors" class="nav-link" data-scroll-target="#scalars-and-vectors">Scalars and Vectors</a></li>
   <li><a href="#vector-additionsubtraction" id="toc-vector-additionsubtraction" class="nav-link" data-scroll-target="#vector-additionsubtraction">Vector Addition/Subtraction</a></li>
-  <li><a href="#vector-scalar-multiplication" id="toc-vector-scalar-multiplication" class="nav-link" data-scroll-target="#vector-scalar-multiplication">Vector Scalar Multiplication</a></li>
-  <li><a href="#vector-normalisation" id="toc-vector-normalisation" class="nav-link" data-scroll-target="#vector-normalisation">Vector Normalisation</a></li>
+  <li><a href="#scalar-multiplication-and-normalisation" id="toc-scalar-multiplication-and-normalisation" class="nav-link" data-scroll-target="#scalar-multiplication-and-normalisation">Scalar Multiplication and Normalisation</a></li>
   <li><a href="#scalar-product" id="toc-scalar-product" class="nav-link" data-scroll-target="#scalar-product">Scalar Product</a></li>
   </ul></li>
   <li><a href="#matrices" id="toc-matrices" class="nav-link" data-scroll-target="#matrices"><strong>Matrices</strong></a>
   <ul class="collapse">
-  <li><a href="#definition-of-matrix" id="toc-definition-of-matrix" class="nav-link" data-scroll-target="#definition-of-matrix">Definition of Matrix</a></li>
   <li><a href="#types-of-matrices" id="toc-types-of-matrices" class="nav-link" data-scroll-target="#types-of-matrices">Types of Matrices</a></li>
-  </ul></li>
-  <li><a href="#matrix-algebra" id="toc-matrix-algebra" class="nav-link" data-scroll-target="#matrix-algebra"><strong>Matrix Algebra</strong></a>
-  <ul class="collapse">
   <li><a href="#matrix-transpose" id="toc-matrix-transpose" class="nav-link" data-scroll-target="#matrix-transpose">Matrix Transpose</a></li>
-  <li><a href="#matrix-additionsubtraction" id="toc-matrix-additionsubtraction" class="nav-link" data-scroll-target="#matrix-additionsubtraction">Matrix Addition/Subtraction</a></li>
-  <li><a href="#matrix-scalar-multiplication" id="toc-matrix-scalar-multiplication" class="nav-link" data-scroll-target="#matrix-scalar-multiplication">Matrix Scalar Multiplication</a></li>
-  <li><a href="#matrix-plain-multiplication" id="toc-matrix-plain-multiplication" class="nav-link" data-scroll-target="#matrix-plain-multiplication">Matrix Plain Multiplication</a></li>
+  <li><a href="#matrix-algebra" id="toc-matrix-algebra" class="nav-link" data-scroll-target="#matrix-algebra">Matrix Algebra</a></li>
   <li><a href="#kronecker-product" id="toc-kronecker-product" class="nav-link" data-scroll-target="#kronecker-product">Kronecker Product</a></li>
-  <li><a href="#trace-of-a-matrix" id="toc-trace-of-a-matrix" class="nav-link" data-scroll-target="#trace-of-a-matrix">Trace of a Matrix</a></li>
-  <li><a href="#determinant-of-a-matrix" id="toc-determinant-of-a-matrix" class="nav-link" data-scroll-target="#determinant-of-a-matrix">Determinant of a Matrix</a></li>
+  <li><a href="#traces-and-determinants" id="toc-traces-and-determinants" class="nav-link" data-scroll-target="#traces-and-determinants">Traces and Determinants</a></li>
   <li><a href="#laplace-expansion-and-cofactors" id="toc-laplace-expansion-and-cofactors" class="nav-link" data-scroll-target="#laplace-expansion-and-cofactors">Laplace Expansion and Cofactors</a></li>
   <li><a href="#matrix-inverse" id="toc-matrix-inverse" class="nav-link" data-scroll-target="#matrix-inverse">Matrix Inverse</a></li>
   </ul></li>
-  <li><a href="#properties-of-matrices" id="toc-properties-of-matrices" class="nav-link" data-scroll-target="#properties-of-matrices"><strong>Properties of Matrices</strong></a>
+  <li><a href="#vector-spaces" id="toc-vector-spaces" class="nav-link" data-scroll-target="#vector-spaces"><strong>Vector Spaces</strong></a>
   <ul class="collapse">
-  <li><a href="#associative-distributive-commutative" id="toc-associative-distributive-commutative" class="nav-link" data-scroll-target="#associative-distributive-commutative">Associative, Distributive, Commutative</a></li>
-  <li><a href="#properties-of-traces" id="toc-properties-of-traces" class="nav-link" data-scroll-target="#properties-of-traces">Properties of Traces</a></li>
-  <li><a href="#properties-of-transposes" id="toc-properties-of-transposes" class="nav-link" data-scroll-target="#properties-of-transposes">Properties of Transposes</a></li>
-  <li><a href="#properties-of-a-determinant" id="toc-properties-of-a-determinant" class="nav-link" data-scroll-target="#properties-of-a-determinant">Properties of a Determinant</a></li>
-  <li><a href="#properties-of-inverses" id="toc-properties-of-inverses" class="nav-link" data-scroll-target="#properties-of-inverses">Properties of Inverses</a></li>
+  <li><a href="#linear-mapping" id="toc-linear-mapping" class="nav-link" data-scroll-target="#linear-mapping">Linear Mapping</a></li>
+  <li><a href="#linear-combinations-and-independence" id="toc-linear-combinations-and-independence" class="nav-link" data-scroll-target="#linear-combinations-and-independence">Linear Combinations and Independence</a></li>
+  <li><a href="#spanning-vectors-and-dimension" id="toc-spanning-vectors-and-dimension" class="nav-link" data-scroll-target="#spanning-vectors-and-dimension">Spanning Vectors and Dimension</a></li>
+  <li><a href="#matrix-rank" id="toc-matrix-rank" class="nav-link" data-scroll-target="#matrix-rank">Matrix Rank</a></li>
+  <li><a href="#quadratic-forms" id="toc-quadratic-forms" class="nav-link" data-scroll-target="#quadratic-forms">Quadratic Forms</a></li>
+  </ul></li>
+  <li><a href="#solving-systems-of-equations" id="toc-solving-systems-of-equations" class="nav-link" data-scroll-target="#solving-systems-of-equations"><strong>Solving Systems of Equations</strong></a>
+  <ul class="collapse">
+  <li><a href="#matrices-and-systems-of-equations" id="toc-matrices-and-systems-of-equations" class="nav-link" data-scroll-target="#matrices-and-systems-of-equations">Matrices and Systems of Equations</a></li>
+  <li><a href="#solving-systems-of-equations-1" id="toc-solving-systems-of-equations-1" class="nav-link" data-scroll-target="#solving-systems-of-equations-1">Solving Systems of Equations</a></li>
+  </ul></li>
+  <li><a href="#eigenvalues-and-eigenvectors" id="toc-eigenvalues-and-eigenvectors" class="nav-link" data-scroll-target="#eigenvalues-and-eigenvectors"><strong>Eigenvalues and Eigenvectors</strong></a>
+  <ul class="collapse">
+  <li><a href="#definitions" id="toc-definitions" class="nav-link" data-scroll-target="#definitions">Definitions</a></li>
+  <li><a href="#computing-eigenvalues" id="toc-computing-eigenvalues" class="nav-link" data-scroll-target="#computing-eigenvalues">Computing Eigenvalues</a></li>
+  <li><a href="#calculating-eigenvectors" id="toc-calculating-eigenvectors" class="nav-link" data-scroll-target="#calculating-eigenvectors">Calculating Eigenvectors</a></li>
+  <li><a href="#eigenvector-decomposition" id="toc-eigenvector-decomposition" class="nav-link" data-scroll-target="#eigenvector-decomposition">Eigenvector Decomposition</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -149,92 +140,54 @@ window.Quarto = {
 
 
 
+<p>This chapter introduces the essentials of linear algebra for political science (mostly statistics).</p>
 <p>Use the sidebar for easy navigation.</p>
 <hr>
 <section id="vectors" class="level1">
 <h1><strong>Vectors</strong></h1>
 <section id="scalars-and-vectors" class="level3">
 <h3 class="anchored" data-anchor-id="scalars-and-vectors">Scalars and Vectors</h3>
-<p>A scalar is any single element or component, like a real number (ex. <span class="math inline">x_1 \in \mathbb{R}</span>.</p>
-<p>A vector is a collection of scalars: <span class="math inline">(x_1 \ x_2 \ x_3 \ x_4)</span>. Each scalar is considered a element/component.</p>
-<ul>
-<li>Vectors can be both row vectors (horiztonal), and column vectors (vertical).</li>
-</ul>
-<p>The dimension of a vector is the number of components/scalars/elements in the vector.</p>
-<p>Vectors will be denoted with a bold lowercase letter: <span class="math inline">\mathbf x</span>, to distinguish them from scalars <span class="math inline">x</span>.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Graphical Visualisation of a Vector
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Vectors can be visualised graphically. Each element corresponds to a distance in a direction.</p>
-<p>For example, take the vector <span class="math inline">(3 \ 2)</span>. Graphically:</p>
+<p>A scalar is any single element or component, like a real number (ex. <span class="math inline">\(x_1 \in \mathbb{R}\)</span>).</p>
+<p>A vector is a collection of scalars: <span class="math inline">\((x_1 \ x_2 \ x_3 \ x_4)\)</span>. Each scalar is considered a element/component. Vectors can be both row vectors (horiztonal), and column vectors (vertical).</p>
+<p>The dimension of a vector is the number of components/scalars/elements in the vector. Vectors will be denoted with a bold lowercase letter: <span class="math inline">\(\mathbf x\)</span>, to distinguish them from scalars <span class="math inline">\(x\)</span>.</p>
+<p>Vectors can be visualised graphically. Each element corresponds to a distance in a direction. For example, take the vector <span class="math inline">\((3 \ 2)\)</span>. Graphically:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-3989564868.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
+<p><img src="images/clipboard-3989564868.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:30.0%"></p>
 </figure>
 </div>
 <p>If a vector has 3 dimensions, the graphical representation will be in 3 dimensions, and so on.</p>
-</div>
-</div>
-</div>
 <p><br></p>
 </section>
 <section id="vector-additionsubtraction" class="level3">
 <h3 class="anchored" data-anchor-id="vector-additionsubtraction">Vector Addition/Subtraction</h3>
 <p>Vector addition and subtraction is done just by adding the respective elements to each other:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix} 1 \\ 2 \end{pmatrix} + \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 1+3 \\ 2+4 \end{pmatrix} = \begin{pmatrix} 4 \\ 6 \end{pmatrix}
-</span></p>
+\]</span></p>
 <ul>
 <li>Vector addition only works if the two vectors are of the same dimensionality.</li>
 </ul>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Graphical Visualisation of Vector Addition
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Vector addition can be viewed graphically. Take two 2-dimensional vectors <span class="math inline">\mathbf A</span> and <span class="math inline">\mathbf B</span>:</p>
+<p>Vector addition can be viewed graphically. Take two 2-dimensional vectors <span class="math inline">\(\mathbf A\)</span> and <span class="math inline">\(\mathbf B\)</span>:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-1838693072.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+<p><img src="images/clipboard-1838693072.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
 </figure>
 </div>
-</div>
-</div>
-</div>
 <p><br></p>
 </section>
-<section id="vector-scalar-multiplication" class="level3">
-<h3 class="anchored" data-anchor-id="vector-scalar-multiplication">Vector Scalar Multiplication</h3>
+<section id="scalar-multiplication-and-normalisation" class="level3">
+<h3 class="anchored" data-anchor-id="scalar-multiplication-and-normalisation">Scalar Multiplication and Normalisation</h3>
 <p>Vector scalar multiplication is done by multiplying all elements of the vector by the scalar:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 4 \times \begin{pmatrix} 1 \\ 2 \end{pmatrix} = \begin{pmatrix} 4 \times 1 \\ 4 \times 2 \end{pmatrix} = \begin{pmatrix} 4 \\ 8 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>Graphically, this just multiplies the length of the vector by the scalar (and if the scalar is negative, the direction switches 180 degrees).</p>
-<p><br></p>
-</section>
-<section id="vector-normalisation" class="level3">
-<h3 class="anchored" data-anchor-id="vector-normalisation">Vector Normalisation</h3>
-<p>The norm of a vector is its length (when thinking graphically):</p>
-<p><span class="math display">
+<p>The <strong>norm</strong> of a vector is its length (when thinking graphically):</p>
+<p><span class="math display">\[
 || \mathbf{x}|| = \sqrt{x_1^2 + x_2^2 + \dots + x_n^2}
-</span></p>
-<p><strong>Normalizing</strong> a vector is scalar multiplying the vector by <span class="math inline">1/||\mathbf{x} ||</span>.</p>
+\]</span></p>
+<p><strong>Normalizing</strong> a vector is scalar multiplying the vector by <span class="math inline">\(1/||\mathbf{x} ||\)</span>.</p>
 <ul>
 <li>This results in the norm of the vector equaling 1. This can be useful if you want to standardise and compare vectors.</li>
 </ul>
@@ -243,14 +196,14 @@ Graphical Visualisation of Vector Addition
 <section id="scalar-product" class="level3">
 <h3 class="anchored" data-anchor-id="scalar-product">Scalar Product</h3>
 <p>Scalar product, also known as dot product, takes two vectors and creates a scalar.</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf a \cdot \mathbf b = \sum_i a_ib_i = a_1 b_1 + a_2 b_2+ \dots a_n b_n
-</span></p>
+\]</span></p>
 <ul>
 <li>Essentially, multiply each respective element with each other. Then sum all of the products.</li>
 </ul>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -259,42 +212,26 @@ Example of Scalar Product
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let us do an example of scalar product:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix} 2 \\ 3 \end{pmatrix} \cdot \begin{pmatrix} 4 \\ 5 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>We multiply each respective element with each other, then sum all of the products:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 2 \times 4 + 3 \times 5 = 8 + 15 = 23
-</span></p>
+\]</span></p>
 </div>
 </div>
 </div>
-<p>Dot product calculates the projection/shadow of vector <span class="math inline">\mathbf a</span> on vector <span class="math inline">\mathbf b</span>. This is useful for multicollinearity.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Graphical Visualisation of Dot Product
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The dot product calcualtes the length of the blue-highlighted line segment:</p>
+<p>Dot product calculates the projection/shadow of vector <span class="math inline">\(\mathbf a\)</span> on vector <span class="math inline">\(\mathbf b\)</span>. In the figure below, the dot product calcualtes the length of the blue-highlighted line segment:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-2938344011.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+<p><img src="images/clipboard-2938344011.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
 </figure>
 </div>
-<p>From here, we can tell if the two vectors are perpendicular, then the dot product would be 0.</p>
-</div>
-</div>
-</div>
+<p>From here, we can tell if the two vectors are perpendicular, then the dot product would be 0. This is useful for measures of similarity/correlation.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -302,30 +239,25 @@ Graphical Visualisation of Dot Product
 </section>
 <section id="matrices" class="level1">
 <h1><strong>Matrices</strong></h1>
-<section id="definition-of-matrix" class="level3">
-<h3 class="anchored" data-anchor-id="definition-of-matrix">Definition of Matrix</h3>
-<p>A matrix is a collection of scalars, that are put in a <span class="math inline">n \times m</span> order with <span class="math inline">n</span> number of rows, and <span class="math inline">m</span> number of columns.</p>
-<p><span class="math display">
+<section id="types-of-matrices" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-matrices">Types of Matrices</h3>
+<p>A matrix is a collection of scalars, that are put in a <span class="math inline">\(n \times m\)</span> order with <span class="math inline">\(n\)</span> number of rows, and <span class="math inline">\(m\)</span> number of columns.</p>
+<p><span class="math display">\[
 \mathbf A_{2 \times 3} = \begin{pmatrix}
 2 &amp; 3 &amp; 2 \\
 1 &amp; 4 &amp; 1
 \end{pmatrix}
-</span></p>
-<p>Matrices can be viewed as a set of row vectors combined, or a set of column vectors combined (this is how datasets are arranged).</p>
-<p>Each element by the matrix can be denoted <span class="math inline">a_{ij}</span>, which is the element in the <span class="math inline">i</span>th row and <span class="math inline">j</span>th column:</p>
-<p><span class="math display">
+\]</span></p>
+<p>Matrices can be viewed as a set of row vectors combined, or a set of column vectors combined (this is how datasets are arranged). Each element by the matrix can be denoted <span class="math inline">\(a_{ij}\)</span>, which is the element in the <span class="math inline">\(i\)</span>th row and <span class="math inline">\(j\)</span>th column:</p>
+<p><span class="math display">\[
 \mathbf A_{2 \times 3} = \begin{pmatrix}
 a_{11} &amp; a_{12} &amp; a_{13} \\
 a_{21} &amp; a_{22} &amp; a_{23}
 \end{pmatrix}
-</span></p>
-<p><br></p>
-</section>
-<section id="types-of-matrices" class="level3">
-<h3 class="anchored" data-anchor-id="types-of-matrices">Types of Matrices</h3>
+\]</span></p>
 <p>There are several very common types of matrices that you need to know.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -334,17 +266,113 @@ Square and Zero Matrix
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Square Matrix</strong> is a matrix that have an equal number of rows and columns.</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf A_{2 \times 2} = \begin{pmatrix}
 a_{11} &amp; a_{12} \\
 a_{21} &amp; a_{22}
 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>These are useful because many matrix manipulations, like inversions and determinants.</p>
 <p><strong>Zero Matrix</strong> is a square matrix with all 0’s.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Diagonal, Identity, and Lower/Upper Triangular Matrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Diagonal matrices</strong> only have elements along the top-left bottom-right diagonal.</p>
+<p><span class="math display">\[
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+a_{11} &amp; 0 &amp; 0 \\
+0 &amp; a_{22} &amp; 0 \\
+0 &amp; 0 &amp; a_{33} \\
+\end{pmatrix}
+\]</span></p>
+<p>An <strong>identity matrix</strong> (notated <span class="math inline">\(\mathbf I\)</span>)is a diagonal matrix, but all the diagonal elements equal 1:</p>
+<p><span class="math display">\[
+\mathbf I_{2 \times 2} = \begin{pmatrix}
+1 &amp; 0 \\
+0 &amp; 1
+\end{pmatrix}
+\]</span></p>
+<ul>
+<li>Any matrix times <span class="math inline">\(\mathbf I\)</span> equals itself (like a 1 in normal multiplication).</li>
+</ul>
+<p>A <strong>Lower/Upper Triangular Matrix</strong> is a matrix where only has values above/below the diagonal. For example, the following is a lower triangular matrix:</p>
+<p><span class="math display">\[
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+1 &amp; 0 &amp; 0 \\
+3 &amp; 4 &amp; 0 \\
+3 &amp; 3 &amp; 4
+\end{pmatrix}
+\]</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Submatrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A submatrix is a matrix if you were to remove a row and a column (that is specified by an element).</p>
+<p>For example, take this 3 by 3 matrix:</p>
+<p><span class="math display">\[
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+a_{11} &amp; a_{12} &amp; a_{13} \\
+a_{21} &amp; a_{22} &amp; a_{23} \\
+a_{31} &amp; a_{32} &amp; a_{33}
+\end{pmatrix}
+\]</span></p>
+<p>Let us find the submatrix of <span class="math inline">\(a_{21}\)</span>. This means we will eliminate the 2nd row, and 1st column:</p>
+<p><span class="math display">\[
+\mathbf A_{2 \times 2} = \begin{pmatrix}
+a_{12} &amp; a_{13} \\
+a_{32} &amp; a_{33}
+\end{pmatrix}
+\]</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Permutation Matrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A permutation matrix is a matrix that only has one non-zero element in each row and column.</p>
+<p><span class="math display">\[
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1 \\
+0 &amp; 1 &amp; 0
+\end{pmatrix}
+\]</span></p>
+<p>The identity matrix is a permutation matrix.</p>
 </div>
 </div>
 </div>
@@ -354,38 +382,17 @@ a_{21} &amp; a_{22}
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Diagonal, Identity, and Lower/Upper Triangular Matrix
+Singular/Non-Singular Matrix
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>Diagonal matrices</strong> only have elements along the top-left bottom-right diagonal.</p>
-<p><span class="math display">
-\mathbf A_{3 \times 3} = \begin{pmatrix}
-a_{11} &amp; 0 &amp; 0 \\
-0 &amp; a_{22} &amp; 0 \\
-0 &amp; 0 &amp; a_{33} \\
-\end{pmatrix}
-</span></p>
-<p>An <strong>identity matrix</strong> (notated <span class="math inline">\mathbf I</span>)is a diagonal matrix, but all the diagonal elements equal 1:</p>
-<p><span class="math display">
-\mathbf I_{2 \times 2} = \begin{pmatrix}
-1 &amp; 0 \\
-0 &amp; 1
-\end{pmatrix}
-</span></p>
-<ul>
-<li>Any matrix times <span class="math inline">\mathbf I</span> equals itself (like a 1 in normal multiplication).</li>
-</ul>
-<p>A <strong>Lower/Upper Triangular Matrix</strong> is a matrix where only has values above/below the diagonal. For example, the following is a lower triangular matrix:</p>
-<p><span class="math display">
-\mathbf A_{3 \times 3} = \begin{pmatrix}
-1 &amp; 0 &amp; 0 \\
-3 &amp; 4 &amp; 0 \\
-3 &amp; 3 &amp; 4
-\end{pmatrix}
-</span></p>
+<p>A <strong>singular matrix</strong> is one who’s determinant is zero. These cannot be inverted.</p>
+<p>A <strong>non-singular matrix</strong> is one who’s determinant is not zero. These can be inverted. For non-singular matrices:</p>
+<p><span class="math display">\[
+AA^{-1} = I
+\]</span></p>
 </div>
 </div>
 </div>
@@ -395,28 +402,29 @@ a_{11} &amp; 0 &amp; 0 \\
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Submatrix
+Block/Partitioned/Block Diagonal Matrix
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>A submatrix is a matrix if you were to remove a row and a column (that is specified by an element).</p>
-<p>For example, take this 3 by 3 matrix:</p>
-<p><span class="math display">
-\mathbf A_{3 \times 3} = \begin{pmatrix}
-a_{11} &amp; a_{12} &amp; a_{13} \\
-a_{21} &amp; a_{22} &amp; a_{23} \\
-a_{31} &amp; a_{32} &amp; a_{33}
+<p>A block or partitioned matrix is a matrix which contains matrices within.</p>
+<p><span class="math display">\[
+\mathbf A_{4 \times 4} = \begin{pmatrix}
+\mathbf A_{2 \times 2} &amp; \mathbf B_{2 \times 2} \\
+\mathbf C_{2 \times 2} &amp; \mathbf D_{2 \times 2}
 \end{pmatrix}
-</span></p>
-<p>Let us find the submatrix of <span class="math inline">a_{21}</span>. This means we will eliminate the 2nd row, and 1st column:</p>
-<p><span class="math display">
-\mathbf A_{2 \times 2} = \begin{pmatrix}
-a_{12} &amp; a_{13} \\
-a_{32} &amp; a_{33}
+\]</span></p>
+<ul>
+<li>Note how the block matrix is 4 by 4, since if we expand out each matrix within, we would get a 4 by 4 matrix.</li>
+</ul>
+<p>A <strong>block diagonal</strong> matrix is a block/partitioned matrix with only matrices on its diagonal:</p>
+<p><span class="math display">\[
+\mathbf A_{4 \times 4} = \begin{pmatrix}
+\mathbf A_{2 \times 2} &amp; 0 \\
+0 &amp; \mathbf D_{2 \times 2}
 \end{pmatrix}
-</span></p>
+\]</span></p>
 </div>
 </div>
 </div>
@@ -426,142 +434,100 @@ a_{32} &amp; a_{33}
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Permutation Matrix
+Orthogonal/Orthonormal Matrix
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>A permutation matrix is a matrix that only has one non-zero element in each row and column.</p>
-<p><span class="math display">
+<p>An <strong>orthogonal matrix</strong> is one with columns perpendicular to each other (when treating each column as a vector). In other words, the dot product of any two columns is zero.</p>
+<p><span class="math display">\[
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 5 \\
+0 &amp; 3 &amp; 0
+\end{pmatrix}
+\]</span></p>
+<ul>
+<li>The identity matrix is also orthogonal.</li>
+<li>Any matrix with one element in each row and column will be orthogonal.</li>
+</ul>
+<p>An <strong>orthonormal matrix</strong> is an orthogonal matrix but the lengths/norms of all the columns is 1:</p>
+<p><span class="math display">\[
 \mathbf A_{3 \times 3} = \begin{pmatrix}
 1 &amp; 0 &amp; 0 \\
 0 &amp; 0 &amp; 1 \\
 0 &amp; 1 &amp; 0
 \end{pmatrix}
-</span></p>
-<p>The identity matrix is a permutation matrix.</p>
+\]</span></p>
 </div>
 </div>
 </div>
+<p><br></p>
+</section>
+<section id="matrix-transpose" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-transpose">Matrix Transpose</h3>
+<p>The matrix transpose is a matrix flipped along its diagonal. It is denoted either <span class="math inline">\(\mathbf A^\mathsf{T}\)</span> or <span class="math inline">\(\mathbf A '\)</span>.</p>
+<p>In other words, the rows and column locations of each element are inverted (essentially elements <span class="math inline">\(a^\mathsf{T}_{ij} = a_{ji}\)</span>):</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+2 &amp; 3 &amp; 5 \\
+1 &amp; 4 &amp; 6
+\end{pmatrix}^\mathsf{T} = \begin{pmatrix}
+2 &amp; 1 \\
+3 &amp; 4 \\
+5 &amp; 6
+\end{pmatrix}
+\]</span></p>
+<ul>
+<li>Notice how the first column became the first row, the second column became the second row.</li>
+<li>You can also get the transpose of a vector.</li>
+</ul>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Singular/Non-Singular Matrix
+Properties of Transposes
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>A <strong>singular matrix</strong> is one who’s determinant is zero. These cannot be inverted.</p>
-<p>A <strong>non-singular matrix</strong> is one who’s determinant is not zero. These can be inverted. For non-singular matrices:</p>
-<p><span class="math display">
-AA^{-1} = I
-</span></p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Block/Partitioned/Block Diagonal Matrix
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>A block or partitioned matrix is a matrix which contains matrices within.</p>
-<p><span class="math display">
-\mathbf A_{4 \times 4} = \begin{pmatrix}
-\mathbf A_{2 \times 2} &amp; \mathbf B_{2 \times 2} \\
-\mathbf C_{2 \times 2} &amp; \mathbf D_{2 \times 2}
-\end{pmatrix}
-</span></p>
-<ul>
-<li>Note how the block matrix is 4 by 4, since if we expand out each matrix within, we would get a 4 by 4 matrix.</li>
-</ul>
-<p>A <strong>block diagonal</strong> matrix is a block/partitioned matrix with only matrices on its diagonal:</p>
-<p><span class="math display">
-\mathbf A_{4 \times 4} = \begin{pmatrix}
-\mathbf A_{2 \times 2} &amp; 0 \\
-0 &amp; \mathbf D_{2 \times 2}
-\end{pmatrix}
-</span></p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Orthogonal/Orthonormal Matrix
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>An <strong>orthogonal matrix</strong> is one with columns perpendicular to each other (when treating each column as a vector). In other words, the dot product of any two columns is zero.</p>
-<p><span class="math display">
-\mathbf A_{3 \times 3} = \begin{pmatrix}
-1 &amp; 0 &amp; 0 \\
-0 &amp; 0 &amp; 5 \\
-0 &amp; 3 &amp; 0
-\end{pmatrix}
-</span></p>
-<ul>
-<li>The identity matrix is also orthogonal.</li>
-<li>Any matrix with one element in each row and column will be orthogonal.</li>
-</ul>
-<p>An <strong>orthonormal matrix</strong> is an orthogonal matrix but the lengths/norms of all the columns is 1:</p>
-<p><span class="math display">
-\mathbf A_{3 \times 3} = \begin{pmatrix}
-1 &amp; 0 &amp; 0 \\
-0 &amp; 0 &amp; 1 \\
-0 &amp; 1 &amp; 0
-\end{pmatrix}
-</span></p>
+<p>The <strong>Vector Property</strong> says that the dot product of vectors can be written with transposes:</p>
+<p><span class="math display">\[
+\mathbf a \cdot \mathbf b = \mathbf a^\mathsf{T}\mathbf b
+\]</span></p>
+<p>The <strong>Inverse Property</strong> says that the transpose of a transpose is the original matrix:</p>
+<p><span class="math display">\[
+\left(\mathbf A^\mathsf{T} \right)^\mathsf{T} = \mathbf A
+\]</span></p>
+<p>The <strong>Addition Property</strong> states that the transpose of a sum of two matrices, is equal to the individual transposes of both matrices added together:</p>
+<p><span class="math display">\[
+(\mathbf A + \mathbf B)^\mathsf{T} = \mathbf A^\mathsf{T} + \mathbf B^\mathsf{T} = \mathbf B^\mathsf{T} + \mathbf A^\mathsf{T}
+\]</span></p>
+<p>The <strong>Multiplication Property</strong> says the following (note the order of multiplication):</p>
+<p><span class="math display">\[
+( \mathbf{AB})^\mathsf{T} = \mathbf B^\mathsf{T} \mathbf A^\mathsf{T}
+\]</span></p>
+<p>The Symmetrical <strong>Property</strong> says that a matrix that is symmetrical does not change when inversed:</p>
+<p><span class="math display">\[
+\mathbf A^\mathsf{T} = \mathbf A \quad \text{s.t.} \quad \mathbf A \text{ is symmetrical}
+\]</span></p>
+<p>The <strong>Inverse Transpose Property</strong> says the following about inverses and transposes:</p>
+<p><span class="math display">\[
+\left( \mathbf A^{-1} \right)^\mathsf{T} = \left( \mathbf A^\mathsf{T} \right)^{-1}
+\]</span></p>
 </div>
 </div>
 </div>
 <p><br></p>
-<p><br></p>
-<hr>
 </section>
-</section>
-<section id="matrix-algebra" class="level1">
-<h1><strong>Matrix Algebra</strong></h1>
-<section id="matrix-transpose" class="level3">
-<h3 class="anchored" data-anchor-id="matrix-transpose">Matrix Transpose</h3>
-<p>The matrix transpose is a matrix flipped along its diagonal.</p>
-<p>Or in other words, the rows and column locations of each element are inverted (essentially elements <span class="math inline">a^T_{ij} = a_{ji}</span>):</p>
-<p><span class="math display">
-\begin{pmatrix}
-2 &amp; 3 &amp; 5 \\
-1 &amp; 4 &amp; 6
-\end{pmatrix}^T = \begin{pmatrix}
-2 &amp; 1 \\
-3 &amp; 4 \\
-5 &amp; 6
-\end{pmatrix}
-</span></p>
-<ul>
-<li>Notice how the first column became the first row, the second column became the second row.</li>
-<li>You can also get the transpose of a vector.</li>
-</ul>
-<p><br></p>
-</section>
-<section id="matrix-additionsubtraction" class="level3">
-<h3 class="anchored" data-anchor-id="matrix-additionsubtraction">Matrix Addition/Subtraction</h3>
-<p>Matrix addition/subtraction is the same as vector addition - add the respective elements together:</p>
-<p><span class="math display">
+<section id="matrix-algebra" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-algebra">Matrix Algebra</h3>
+<p>Matrix <strong>addition/subtraction</strong> is the same as vector addition - add the respective elements together:</p>
+<p><span class="math display">\[
 \begin{pmatrix}
 1 &amp; 2 \\
 3 &amp; 4
@@ -575,14 +541,9 @@ Orthogonal/Orthonormal Matrix
 6 &amp; 8 \\
 10 &amp; 12
 \end{pmatrix}
-</span></p>
-<p>The dimensions of the matrix must be the same for addition to occur.</p>
-<p><br></p>
-</section>
-<section id="matrix-scalar-multiplication" class="level3">
-<h3 class="anchored" data-anchor-id="matrix-scalar-multiplication">Matrix Scalar Multiplication</h3>
-<p>Matrix scalar multiplication is the same as vector scalar multiplication - multiply each element by the scalar:</p>
-<p><span class="math display">
+\]</span></p>
+<p>Matrix <u><strong>scalar</strong></u> <strong>multiplication</strong> is the same as vector scalar multiplication - multiply each element by the scalar:</p>
+<p><span class="math display">\[
 3 \times \begin{pmatrix}
 1 &amp; 2 \\
 3 &amp; 4
@@ -593,18 +554,14 @@ Orthogonal/Orthonormal Matrix
 3 &amp; 6 \\
 9 &amp; 12
 \end{pmatrix}
-</span></p>
-<p><br></p>
-</section>
-<section id="matrix-plain-multiplication" class="level3">
-<h3 class="anchored" data-anchor-id="matrix-plain-multiplication">Matrix Plain Multiplication</h3>
-<p>Let us say you want to multiple matrix <span class="math inline">\mathbf A</span> and <span class="math inline">\mathbf B</span> to get a new matrix <span class="math inline">\mathbf C</span>. The elements of <span class="math inline">\mathbf C</span> are calculated as follows:</p>
-<p><span class="math display">
+\]</span></p>
+<p><strong>Matrix Plain Multiplication</strong> is a little more complicated. Let us say you want to multiply <span class="math inline">\(\mathbf A\)</span> and <span class="math inline">\(\mathbf B\)</span> to get a new matrix <span class="math inline">\(\mathbf C\)</span>. The elements of <span class="math inline">\(\mathbf C\)</span> are calculated as follows:</p>
+<p><span class="math display">\[
 c_{ij} = \sum_ka_{ik}b_{kj} = a_{i1}b_{1j} + a_{i2}b_{2j} + a_{i3}b_{3j}\dots
-</span></p>
-<p>In other words, <span class="math inline">c_{ij}</span> is the dot product of the <span class="math inline">i</span>th row of <span class="math inline">\mathbf A</span>, and the <span class="math inline">j</span>th column of <span class="math inline">\mathbf B</span>.</p>
+\]</span></p>
+<p>In other words, <span class="math inline">\(c_{ij}\)</span> is the dot product of the <span class="math inline">\(i\)</span>th row of <span class="math inline">\(\mathbf A\)</span>, and the <span class="math inline">\(j\)</span>th column of <span class="math inline">\(\mathbf B\)</span>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -613,25 +570,25 @@ Example of Matrix Multiplication
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let us solve the following problem:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix}
 2 &amp; 1 \\
 3 &amp; 5 \end{pmatrix} \begin{pmatrix}
 6 &amp; 1 \\
 2 &amp; 3 \end{pmatrix} = \mathbf C
-</span></p>
-<p>Let us do each dot product for each element of <span class="math inline">\mathbf C</span>:</p>
+\]</span></p>
+<p>Let us do each dot product for each element of <span class="math inline">\(\mathbf C\)</span>:</p>
 <ul>
-<li><span class="math inline">c_{11}</span> is the dot product of the 1st row of the 1st matrix, and the 1st column of the 2nd matrix: <span class="math inline">(2 \ 1) \cdot (6 \ 2)</span>. That means <span class="math inline">c_{11} = 2 \times 6 + 1 \times 2 = 12+2 = 14</span>.</li>
-<li><span class="math inline">c_{12}</span> is the dot product of the 1st row of the 1st matrix, and the 2nd column of the 2nd matrix: <span class="math inline">(2 \ 1) \cdot (1 \ 3)</span>. That means <span class="math inline">c_{12} = 2 \times 1 + 1 \times 3 = 2 + 3 = 5</span>.</li>
-<li><span class="math inline">c_{21}</span> is the dot product of the 2nd row of the 1st matrix, and the 1st column of the 2nd matrix: <span class="math inline">(3 \ 5) \cdot (6 \ 2)</span>. That means <span class="math inline">c_{21} = 3 \times 6 + 5 \times 2 = 18 + 10 = 28</span>.</li>
-<li><span class="math inline">c_{22}</span> is the dot product of the 2nd row of the 1st matrix, and the 2nd column of the 2nd matrix: <span class="math inline">(3 \ 5) \cdot (1 \ 3)</span>. That means <span class="math inline">c_{22} = 3 \times 1 + 5 \times 3 = 3 + 15 = 18</span>.</li>
+<li><span class="math inline">\(c_{11}\)</span> is the dot product of the 1st row of the 1st matrix, and the 1st column of the 2nd matrix: <span class="math inline">\((2 \ 1) \cdot (6 \ 2)\)</span>. That means <span class="math inline">\(c_{11} = 2 \times 6 + 1 \times 2 = 12+2 = 14\)</span>.</li>
+<li><span class="math inline">\(c_{12}\)</span> is the dot product of the 1st row of the 1st matrix, and the 2nd column of the 2nd matrix: <span class="math inline">\((2 \ 1) \cdot (1 \ 3)\)</span>. That means <span class="math inline">\(c_{12} = 2 \times 1 + 1 \times 3 = 2 + 3 = 5\)</span>.</li>
+<li><span class="math inline">\(c_{21}\)</span> is the dot product of the 2nd row of the 1st matrix, and the 1st column of the 2nd matrix: <span class="math inline">\((3 \ 5) \cdot (6 \ 2)\)</span>. That means <span class="math inline">\(c_{21} = 3 \times 6 + 5 \times 2 = 18 + 10 = 28\)</span>.</li>
+<li><span class="math inline">\(c_{22}\)</span> is the dot product of the 2nd row of the 1st matrix, and the 2nd column of the 2nd matrix: <span class="math inline">\((3 \ 5) \cdot (1 \ 3)\)</span>. That means <span class="math inline">\(c_{22} = 3 \times 1 + 5 \times 3 = 3 + 15 = 18\)</span>.</li>
 </ul>
 <p>Thus, we now have our answer:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{pmatrix}
 2 &amp; 1 \\
 3 &amp; 5 \end{pmatrix} \begin{pmatrix}
@@ -639,33 +596,56 @@ Example of Matrix Multiplication
 2 &amp; 3 \end{pmatrix} = \begin{pmatrix}
 14 &amp; 5 \\
 28 &amp; 18 \end{pmatrix}
-</span></p>
+\]</span></p>
 </div>
 </div>
 </div>
-<p>Matrix multiplication is only possible when the number of columns in <span class="math inline">\mathbf A</span> is equal to the number of rows in <span class="math inline">\mathbf B</span>.</p>
-<ul>
-<li>So for example, we can multiply <span class="math inline">\mathbf A_{2 \times 3}</span> and <span class="math inline">\mathbf B_{3 \times 4}</span>.</li>
-<li>We <strong>cannot</strong> multiply <span class="math inline">\mathbf A_{2 \times 3}</span> and <span class="math inline">\mathbf B_{2 \times 3}</span>.</li>
-</ul>
-<p>The dimensions of product <span class="math inline">\mathbf C</span> is the number of rows in <span class="math inline">\mathbf A</span> and the number of columns in <span class="math inline">\mathbf B</span>.</p>
-<ul>
-<li>So for example, if we multiply <span class="math inline">\mathbf A_{2 \times 3}</span> and <span class="math inline">\mathbf B_{3 \times 4}</span>, we will get <span class="math inline">\mathbf C_{2 \times 4}</span>.</li>
-</ul>
-<p>Also note: Matrix Multiplication does not have the commutative property: <span class="math inline">\mathbf A \mathbf B ≠ \mathbf B \mathbf A</span>.</p>
-<ul>
-<li>Although there are two exceptions: <span class="math inline">\mathbf A \mathbf I = \mathbf I \mathbf A</span>, and <span class="math inline">\mathbf A \mathbf A^{-1} = \mathbf A^{-1}  \mathbf A</span>.</li>
-</ul>
+<p>Matrix multiplication is only possible when the number of columns in <span class="math inline">\(\mathbf A\)</span> is equal to the number of rows in <span class="math inline">\(\mathbf B\)</span>. So for example, we can multiply <span class="math inline">\(\mathbf A_{2 \times 3}\)</span> and <span class="math inline">\(\mathbf B_{3 \times 4}\)</span>. We <strong>cannot</strong> multiply <span class="math inline">\(\mathbf A_{2 \times 3}\)</span> and <span class="math inline">\(\mathbf B_{2 \times 3}\)</span>.</p>
+<p>The dimensions of product <span class="math inline">\(\mathbf C\)</span> is the number of rows in <span class="math inline">\(\mathbf A\)</span> and the number of columns in <span class="math inline">\(\mathbf B\)</span>. So for example, if we multiply <span class="math inline">\(\mathbf A_{2 \times 3}\)</span> and <span class="math inline">\(\mathbf B_{3 \times 4}\)</span>, we will get <span class="math inline">\(\mathbf C_{2 \times 4}\)</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Properties of Matrix Algebra
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The <strong>Associative property</strong> applies to addition/subtraction and multiplication:</p>
+<p><span class="math display">\[
+\begin{split}
+&amp; (\mathbf A + \mathbf B) + \mathbf C = \mathbf A + (\mathbf B + \mathbf C) \\
+&amp; (\mathbf A \mathbf B)\mathbf C = \mathbf A(\mathbf B \mathbf C)
+\end{split}
+\]</span></p>
+<p>The <strong>Distributive Property</strong> states the following is true:</p>
+<p><span class="math display">\[
+(\mathbf A + \mathbf B) \mathbf C = \mathbf A \mathbf C + \mathbf B \mathbf C
+\]</span></p>
+<p>The <strong>Commutative Property</strong> applies <u>only to addition/subtraction, not multiplication</u>. Commutative property also applies to dot products.</p>
+<p><span class="math display">\[
+\begin{split}
+&amp; \mathbf A + \mathbf B = \mathbf B + \mathbf A \\
+&amp; \mathbf a \cdot \mathbf b = \mathbf b \cdot \mathbf a
+\end{split}
+\]</span></p>
+<p>Matrix Multiplication does not have the commutative property: <span class="math inline">\(\mathbf A \mathbf B ≠ \mathbf B \mathbf A\)</span>. Although there are two exceptions: <span class="math inline">\(\mathbf A \mathbf I = \mathbf I \mathbf A\)</span>, and <span class="math inline">\(\mathbf A \mathbf A^{-1} = \mathbf A^{-1}  \mathbf A\)</span>.</p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="kronecker-product" class="level3">
 <h3 class="anchored" data-anchor-id="kronecker-product">Kronecker Product</h3>
-<p>Take the Kronecker Product of <span class="math inline">\mathbf A</span> and <span class="math inline">\mathbf B</span>:</p>
-<p><span class="math display">
+<p>Take the Kronecker Product of <span class="math inline">\(\mathbf A\)</span> and <span class="math inline">\(\mathbf B\)</span>:</p>
+<p><span class="math display">\[
 \mathbf A \otimes \mathbf B = \mathbf C
-</span></p>
-<p>Let us define <span class="math inline">\mathbf A</span> and <span class="math inline">\mathbf B</span> as the following:</p>
-<p><span class="math display">
+\]</span></p>
+<p>Let us define <span class="math inline">\(\mathbf A\)</span> and <span class="math inline">\(\mathbf B\)</span> as the following:</p>
+<p><span class="math display">\[
 \mathbf A_{2 \times 2} = \begin{pmatrix}
 a_{11} &amp; a_{12} \\
 a_{21} &amp; a_{22}
@@ -673,37 +653,58 @@ a_{21} &amp; a_{22}
 b_{11} &amp; b_{12} \\
 b_{21} &amp; b_{22}
 \end{pmatrix}
-</span></p>
-<p>The resulting Kronecker Product <span class="math inline">\mathbf C</span> would be defined as a block matrix:</p>
-<p><span class="math display">
+\]</span></p>
+<p>The resulting Kronecker Product <span class="math inline">\(\mathbf C\)</span> would be defined as a block matrix:</p>
+<p><span class="math display">\[
 \mathbf C_{4 \times 4} = \begin{pmatrix}
 a_{11}\mathbf B &amp; a_{12} \mathbf B \\
 a_{21} \mathbf B &amp; a_{22} \mathbf B
 \end{pmatrix}
-</span></p>
-<p>Essentially, we treat <span class="math inline">\mathbf A</span> as a collection of scalars. We scalar multiply each scalar element of <span class="math inline">\mathbf A</span> by the matrix of <span class="math inline">\mathbf B</span>.</p>
-<p>If <span class="math inline">\mathbf A</span> has dimensions <span class="math inline">n \times m</span>, and <span class="math inline">\mathbf B</span> has dimensions <span class="math inline">p \times q</span>, then <span class="math inline">\mathbf C</span> will have dimensions <span class="math inline">np \times mq</span>.</p>
+\]</span></p>
+<p>Essentially, we treat <span class="math inline">\(\mathbf A\)</span> as a collection of scalars. We scalar multiply each scalar element of <span class="math inline">\(\mathbf A\)</span> by the matrix of <span class="math inline">\(\mathbf B\)</span>.</p>
+<p>If <span class="math inline">\(\mathbf A\)</span> has dimensions <span class="math inline">\(n \times m\)</span>, and <span class="math inline">\(\mathbf B\)</span> has dimensions <span class="math inline">\(p \times q\)</span>, then <span class="math inline">\(\mathbf C\)</span> will have dimensions <span class="math inline">\(np \times mq\)</span>.</p>
 <p><br></p>
 </section>
-<section id="trace-of-a-matrix" class="level3">
-<h3 class="anchored" data-anchor-id="trace-of-a-matrix">Trace of a Matrix</h3>
-<p>The trace of <span class="math inline">\mathbf A</span> is a sum of all diagonal elements.</p>
-<p><span class="math display">
+<section id="traces-and-determinants" class="level3">
+<h3 class="anchored" data-anchor-id="traces-and-determinants">Traces and Determinants</h3>
+<p>The trace of <span class="math inline">\(\mathbf A\)</span> is a sum of all diagonal elements. Traces are used in Eigenvalues.</p>
+<p><span class="math display">\[
 Tr(\mathbf A) = \sum_i a_{ii} = a_{11} + a_{22} + \dots
-</span></p>
-<p>Traces are used in Eigenvalues.</p>
-<p><br></p>
-</section>
-<section id="determinant-of-a-matrix" class="level3">
-<h3 class="anchored" data-anchor-id="determinant-of-a-matrix">Determinant of a Matrix</h3>
-<p>Determinants tell us if a matrix is singular (and thus has no inverse). If the determinant is 0, then the matrix is singular.</p>
-<p>The determinant is only computable for square matrices. For a 2 by 2 matrix:</p>
-<p><span class="math display">
+\]</span></p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Property of Traces
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The <strong>Addition Property</strong> of traces states that the trace of the sum of two matrices is equivalent to the sum of the traces of each individual matrix:</p>
+<p><span class="math display">\[
+Tr(\mathbf A + \mathbf B) =Tr(\mathbf A) + Tr(\mathbf B) = Tr(\mathbf B) + Tr(\mathbf A)
+\]</span></p>
+<p>The <strong>Transpose Property</strong> says the trace of the transpose is equal to the trace of the original (since the diagonal remains the same):</p>
+<p><span class="math display">\[
+Tr(\mathbf A^\mathsf{T}) = Tr(\mathbf A)
+\]</span></p>
+<p>The <strong>Multiplication Property</strong> says that the trace of multiplication has the commutative property (only for two matrices):</p>
+<p><span class="math display">\[
+Tr(\mathbf{AB}) = Tr(\mathbf{BA})
+\]</span></p>
+</div>
+</div>
+</div>
+<p><strong>Determinants</strong> tell us if a matrix is singular (and thus has no inverse). If the determinant is 0, then the matrix is singular. The determinant is only computable for square matrices. For a 2 by 2 matrix:</p>
+<p><span class="math display">\[
 |\mathbf A_{2 \times 2}| = \left| \begin{pmatrix}
 a_{11} &amp; a_{12} \\
 a_{21} &amp; a_{22}
 \end{pmatrix} \right | = a_{11} a_{22} - a_{12}a_{21}
-</span></p>
+\]</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -717,50 +718,85 @@ Example of a Determinant
 <div id="callout-13" class="callout-13-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let us find the determinant of the following matrix:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf B_{2 \times 2} = \begin{pmatrix}
 2 &amp; 3 \\
 1 &amp; 4
 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>Using the formula above:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 |\mathbf B| = 2 \times 4 - 3 \times 1 = 8 - 3 = 5
-</span></p>
+\]</span></p>
 <p>Thus, this matrix is non-singular.</p>
 </div>
 </div>
 </div>
 <p>For 3 by 3, there is a method called the butterfly method to find the determinant. Take this matrix.</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf A_{3 \times 3} = \begin{pmatrix}
 a_{11} &amp; a_{12} &amp; a_{13} \\
 a_{21} &amp; a_{22} &amp; a_{23} \\
 a_{31} &amp; a_{32} &amp; a_{33}
 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>The determinant is defined as following:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{split}
 | \mathbf A| = &amp; a_{11}a_{22}a_{33} + a_{12} a_{23} a_{31} + a_{13}a_{21}a_{32} \\
 &amp; -a_{31}a_{22}a_{13} - a_{11}a_{23}a_{32} - a{12}a_{21}a_{33}
 \end{split}
-</span></p>
+\]</span></p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Properties of Determinants
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The <strong>Transpose Property</strong> states that the determinant of a transpose is equal to the determinant of the original:</p>
+<p><span class="math display">\[
+\det(\mathbf A^\mathsf{T}) = \det(\mathbf A)
+\]</span></p>
+<p>The <strong>Identity Property</strong> states that the determinant of an identity matrix is 1:</p>
+<p><span class="math display">\[
+\det (\mathbf I)=1
+\]</span></p>
+<p>The <strong>Multiplication Property</strong> states that the determinant of a product is equal to the individual determinants multiplied:</p>
+<p><span class="math display">\[
+\det (\mathbf {AB}) = \det (\mathbf A) \det (\mathbf B)
+\]</span></p>
+<p>The <strong>Inverse Property</strong> says that the determinant of an inverse is the inverse of the determinant of the original matrix:</p>
+<p><span class="math display">\[
+\det(\mathbf A^{-1}) = \frac{1}{\det(\mathbf A)}
+\]</span></p>
+<p>The <strong>Triangular/Diagonal Property</strong> is the product of all diagonal elements:</p>
+<p><span class="math display">\[
+\det (\mathbf A) = \prod_i a_{ii}
+\]</span></p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="laplace-expansion-and-cofactors" class="level3">
 <h3 class="anchored" data-anchor-id="laplace-expansion-and-cofactors">Laplace Expansion and Cofactors</h3>
 <p>For anything larger than a 3 by 3 matrix, we should us a Laplace expansion to find the determinant.</p>
-<p>You choose a row or column of the matrix.</p>
+<p>First, you choose a row or column of the matrix.</p>
 <ul>
-<li>For every element in that row or column, find the submatrix of that element.</li>
+<li>For every element in that row or column, find the <a href="https://politicalscience.github.io/maths/1.html#types-of-matrices">submatrix</a> of that element.</li>
 <li>Calculate the determinant of each of the submatrices. This is called the <em>minor</em>.</li>
-<li>Now, convert the minors to <strong>cofactors</strong>. The cofactor is the minor times <span class="math inline">(-1)^{i+j}</span>.</li>
+<li>Now, convert the minors to <strong>cofactors</strong>. The cofactor is the minor times <span class="math inline">\((-1)^{i+j}\)</span>.</li>
 <li>Then, take each element, multiply by its cofactor. Sum all of these products together.</li>
 </ul>
 <p>The final sum is the determinant of the matrix.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -769,33 +805,33 @@ Example of Laplace Expansion
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For example, take this matrix:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf A = \begin{pmatrix}
 1 &amp; 2 &amp; 1 \\
 0 &amp; 1 &amp; 1 \\
 5 &amp; 3 &amp; 0
 \end{pmatrix}
-</span></p>
-<p>Let us expand over the 1st row <span class="math inline">(1 \ 2 \ 1 )</span>. We expand over the submatrices of each element in that row.</p>
+\]</span></p>
+<p>Let us expand over the 1st row <span class="math inline">\((1 \ 2 \ 1 )\)</span>. We expand over the submatrices of each element in that row.</p>
 <ul>
-<li>For <span class="math inline">a_{11} = 1</span>, the submatrix is <span class="math inline">\begin{pmatrix} 1 &amp; 1 \\ 3 &amp; 0 \end{pmatrix}</span>, and the determinant/minor of that is <span class="math inline">1 \times 0 - 1 \times 3 = -3</span>.</li>
-<li>For <span class="math inline">a_{12} = 2</span>, the submatrix is <span class="math inline">\begin{pmatrix} 0 &amp; 1 \\ 5 &amp; 0 \end{pmatrix}</span>. The determinant/minor of that is <span class="math inline">0 - 5 = -5</span>.</li>
-<li>For <span class="math inline">a_{13} = 1</span>, the submatrix is <span class="math inline">\begin{pmatrix} 0 &amp; 1 \\ 5 &amp; 3 \end{pmatrix}</span>. The determinant/minor of that is <span class="math inline">0 - 5 = -5</span>.</li>
+<li>For <span class="math inline">\(a_{11} = 1\)</span>, the submatrix is <span class="math inline">\(\begin{pmatrix} 1 &amp; 1 \\ 3 &amp; 0 \end{pmatrix}\)</span>, and the determinant/minor of that is <span class="math inline">\(1 \times 0 - 1 \times 3 = -3\)</span>.</li>
+<li>For <span class="math inline">\(a_{12} = 2\)</span>, the submatrix is <span class="math inline">\(\begin{pmatrix} 0 &amp; 1 \\ 5 &amp; 0 \end{pmatrix}\)</span>. The determinant/minor of that is <span class="math inline">\(0 - 5 = -5\)</span>.</li>
+<li>For <span class="math inline">\(a_{13} = 1\)</span>, the submatrix is <span class="math inline">\(\begin{pmatrix} 0 &amp; 1 \\ 5 &amp; 3 \end{pmatrix}\)</span>. The determinant/minor of that is <span class="math inline">\(0 - 5 = -5\)</span>.</li>
 </ul>
-<p>Now, let us find the cofactors <span class="math inline">(-1)^{i + j} \times \text{minor}</span>:</p>
+<p>Now, let us find the cofactors <span class="math inline">\((-1)^{i + j} \times \text{minor}\)</span>:</p>
 <ul>
-<li>For <span class="math inline">a_{11}</span>, the cofactor is <span class="math inline">(-1)^2 \times -3 = 1 \times -3 = -3</span>.</li>
-<li>For <span class="math inline">a_{12}</span>, the cofactor is <span class="math inline">(-1)^3 \times -5 = -1 \times -5 = 5</span>.</li>
-<li>For <span class="math inline">a_{13}</span>, the cofactor is <span class="math inline">(-1)^4 \times -5 = 1 \times -5 = -5</span>.</li>
+<li>For <span class="math inline">\(a_{11}\)</span>, the cofactor is <span class="math inline">\((-1)^2 \times -3 = 1 \times -3 = -3\)</span>.</li>
+<li>For <span class="math inline">\(a_{12}\)</span>, the cofactor is <span class="math inline">\((-1)^3 \times -5 = -1 \times -5 = 5\)</span>.</li>
+<li>For <span class="math inline">\(a_{13}\)</span>, the cofactor is <span class="math inline">\((-1)^4 \times -5 = 1 \times -5 = -5\)</span>.</li>
 </ul>
 <p>Now, take each element, multiply by its cofactor. Sum all of these products together.</p>
-<p><span class="math display">
+<p><span class="math display">\[
 1(-3) + 2(5) + 1(-5) = -3 + 10 - 5 = 2
-</span></p>
-<p>Thus, the determinant of the matrix is <span class="math inline">2</span>.</p>
+\]</span></p>
+<p>Thus, the determinant of the matrix is <span class="math inline">\(2\)</span>.</p>
 </div>
 </div>
 </div>
@@ -807,16 +843,16 @@ Example of Laplace Expansion
 </section>
 <section id="matrix-inverse" class="level3">
 <h3 class="anchored" data-anchor-id="matrix-inverse">Matrix Inverse</h3>
-<p>If you take a matrix <span class="math inline">\mathbf A</span>, and multiply by the inverse <span class="math inline">\mathbf A^{-1}</span>, the result will be the identity matrix <span class="math inline">\mathbf{I}</span>.</p>
+<p>If you take a matrix <span class="math inline">\(\mathbf A\)</span>, and multiply by the inverse <span class="math inline">\(\mathbf A^{-1}\)</span>, the result will be the identity matrix <span class="math inline">\(\mathbf{I}\)</span>.</p>
 <p>You can invert any square matrix that does not have a determinant of a 0. This is because the inverse is defined as the following:</p>
-<p><span class="math display">
-\mathbf A^{-1} = \frac{1}{|\mathbf A|} \mathbf C^T
-</span></p>
+<p><span class="math display">\[
+\mathbf A^{-1} = \frac{1}{|\mathbf A|} \mathbf C^\mathsf{T}
+\]</span></p>
 <ul>
-<li>Where <span class="math inline">| \mathbf A|</span> is the determinant of the matrix <span class="math inline">\mathbf A</span>, and <span class="math inline">\mathbf C^T</span> is the transpose of the cofactor matrix (consisting of the cofactor of every element of <span class="math inline">\mathbf A</span>.</li>
+<li>Where <span class="math inline">\(| \mathbf A|\)</span> is the determinant of the matrix <span class="math inline">\(\mathbf A\)</span>, and <span class="math inline">\(\mathbf C^\mathsf{T}\)</span> is the transpose of the cofactor matrix (consisting of the cofactor of every element of <span class="math inline">\(\mathbf A\)</span>.</li>
 </ul>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -825,57 +861,84 @@ Example of a 2 by 2 Matrix Inverse
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let us solve for the matrix inverse of a 2 by 2 matrix.</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf A_{2 \times 2} = \begin{pmatrix}
 a_{11} &amp; a_{12} \\
 a_{21} &amp; a_{22}
 \end{pmatrix}
-</span></p>
-<p>We know the determinant of <span class="math inline">\mathbf A</span> with the formula for 2 by 2 matrix determinants:</p>
-<p><span class="math display">
+\]</span></p>
+<p>We know the determinant of <span class="math inline">\(\mathbf A\)</span> with the formula for 2 by 2 matrix determinants:</p>
+<p><span class="math display">\[
 | \mathbf A | = a_{11}a_{22} - a_{12} a_{21}
-</span></p>
+\]</span></p>
 <p>Now, let us find the cofactors (note, the determinant of a scalar is just the scalar):</p>
 <ul>
-<li><span class="math inline">c_{11} = (-1)^{1+1}a_{22} = a_{22}</span></li>
-<li><span class="math inline">c_{12} = (-1)^{1+2}a_{21} = -a_{21}</span></li>
-<li><span class="math inline">c_{21} = (-1)^{2+1} a_{12} = -a_{12}</span></li>
-<li><span class="math inline">c_{22} = (-1)^{2+2} a_{11} = a_{11}</span></li>
+<li><span class="math inline">\(c_{11} = (-1)^{1+1}a_{22} = a_{22}\)</span></li>
+<li><span class="math inline">\(c_{12} = (-1)^{1+2}a_{21} = -a_{21}\)</span></li>
+<li><span class="math inline">\(c_{21} = (-1)^{2+1} a_{12} = -a_{12}\)</span></li>
+<li><span class="math inline">\(c_{22} = (-1)^{2+2} a_{11} = a_{11}\)</span></li>
 </ul>
 <p>Thus, our cofactor matrix is:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf C_{2 \times 2} = \begin{pmatrix}
 a_{22} &amp; -a_{21} \\
 -a_{12} &amp; a_{11}
 \end{pmatrix}
-</span></p>
-<p>The transpoe of the cofactor matrix is thus (flipping rows to columns):</p>
-<p><span class="math display">
-\mathbf C^T = \begin{pmatrix}
+\]</span></p>
+<p>The transpose of the cofactor matrix is thus (flipping rows to columns):</p>
+<p><span class="math display">\[
+\mathbf C^\mathsf{T} = \begin{pmatrix}
 a_{22} &amp; -a_{12} \\
 -a_{21} &amp; a_{11}
 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>Thus, the inverse is:</p>
-<p><span class="math display">
-\mathbf A^{-1} = \frac{1}{|\mathbf A|} \mathbf C^T = \frac{1}{a_{11}a_{22} - a_{12} a_{21}} \begin{pmatrix}
+<p><span class="math display">\[
+\mathbf A^{-1} = \frac{1}{|\mathbf A|} \mathbf C^\mathsf{T} = \frac{1}{a_{11}a_{22} - a_{12} a_{21}} \begin{pmatrix}
 a_{22} &amp; -a_{12} \\
 -a_{21} &amp; a_{11}
 \end{pmatrix}
-</span></p>
+\]</span></p>
 <p>Thus, for example, the following is true:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \mathbf A = \begin{pmatrix}
 3 &amp; 1 \\
 5 &amp; 2
-\end{pmatrix}, \ \mathbf A^T = \mathbf A_{2 \times 2} = \begin{pmatrix}
+\end{pmatrix}, \ \mathbf A^{-1}  = \begin{pmatrix}
 2 &amp; -1 \\
 -5 &amp; 3
 \end{pmatrix}
-</span></p>
+\]</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Properties of Inverses
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The <strong>Inverse Property</strong> states that the inverse of an inverse is the original matrix:</p>
+<p><span class="math display">\[
+\left( \mathbf A^{-1} \right)^{-1} = \mathbf A
+\]</span></p>
+<p>The <strong>Multiplication Property</strong> states the inverse of a product is the following (note the order of the multiplication):</p>
+<p><span class="math display">\[
+(\mathbf{AB})^{-1}=\mathbf B^{-1} \mathbf A^{-1}
+\]</span></p>
+<p>The <strong>Scalar Multiplication Property</strong> states that the scalar product is the following:</p>
+<p><span class="math display">\[
+(c \mathbf A)^{-1} = \frac{1}{c} \mathbf A^{-1}, \quad \text{s.t.} \quad  c ≠ 0
+\]</span></p>
 </div>
 </div>
 </div>
@@ -884,112 +947,567 @@ a_{22} &amp; -a_{12} \\
 <hr>
 </section>
 </section>
-<section id="properties-of-matrices" class="level1">
-<h1><strong>Properties of Matrices</strong></h1>
-<section id="associative-distributive-commutative" class="level3">
-<h3 class="anchored" data-anchor-id="associative-distributive-commutative">Associative, Distributive, Commutative</h3>
-<p>The <strong>Associative property</strong> applies to addition/subtraction and multiplication:</p>
-<p><span class="math display">
+<section id="vector-spaces" class="level1">
+<h1><strong>Vector Spaces</strong></h1>
+<section id="linear-mapping" class="level3">
+<h3 class="anchored" data-anchor-id="linear-mapping">Linear Mapping</h3>
+<p>A mapping is any rule that maps elements from one set to another. A function <span class="math inline">\(f\)</span> is a mapping <span class="math inline">\(f: A \rightarrow B\)</span>.</p>
+<p>A linear mapping is a mapping that is linear, which must meet the following properties:</p>
+<ul>
+<li><span class="math inline">\(f(a+b) = f(a) + f(b)\)</span></li>
+<li><span class="math inline">\(f(ca) = c f(a)\)</span></li>
+</ul>
+<p>We can represent linear mappings for finite sets by matrices. Let us say <span class="math inline">\(\mathbf X_{n \times m}\)</span> is a matrix, and <span class="math inline">\(\mathbf y_{m}\)</span> is a vector. Let us find their product:</p>
+<p><span class="math display">\[
+\mathbf {Xy} = \mathbf z_m
+\]</span></p>
+<p>What this is saying is take the vector <span class="math inline">\(\mathbf y\)</span>, and operate on it using the matrix <span class="math inline">\(\mathbf X\)</span>, to produce a new vector <span class="math inline">\(\mathbf z\)</span>. Here, the matrix <span class="math inline">\(\mathbf X\)</span> is an operator that maps <span class="math inline">\(\mathbf y \rightarrow \mathbf z\)</span>.</p>
+<p><br></p>
+</section>
+<section id="linear-combinations-and-independence" class="level3">
+<h3 class="anchored" data-anchor-id="linear-combinations-and-independence">Linear Combinations and Independence</h3>
+<p>A <strong>linear combination</strong> is a combination of vectors that is linear (i.e.&nbsp;vectors can be added, and scalar multiplied). For example, this is a linear combination:</p>
+<p><span class="math display">\[
+t \mathbf x + (1-t) \mathbf y
+\]</span></p>
+<p>Linear combinations either represents lines (in <span class="math inline">\(\mathbb R^2\)</span>), planes (in <span class="math inline">\(\mathbb R^3\)</span>), and hyperplanes (a plane of one less dimensions than the space) in higher dimensions.</p>
+<p>Now, let us take some linear combination:</p>
+<p><span class="math display">\[
+a_1 \mathbf x_1 + a_2 \mathbf x_2+\dots + a_n \mathbf x_n
+\]</span></p>
+<p>This set of vectors <span class="math inline">\((\mathbf x_1, \dots, \mathbf x_n)\)</span> is <strong>linearlly</strong> <strong>independent</strong> if you cannot go from one vector <span class="math inline">\(\mathbf x_j \in \{ \mathbf x_1, \dots, \mathbf x_n \}\)</span>, and linearly transform it (by adding/subtracting/multiplying a constant) into another vector.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Linear Independence
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us say we have these two vectors:</p>
+<p><span class="math display">\[
+\begin{pmatrix} 1 \\ 2 \end{pmatrix}, \begin{pmatrix} 2 \\ 1 \end{pmatrix}
+\]</span></p>
+<p>Are these linearly independent? That means I cannot use a linear transformation to go from one to another.</p>
+<p>No, there is no constant you can multiply to get from vector 1 to vector 2, and there are no other vectors to add/subtract to to go from one to another.</p>
+<p>Now consider these two vectors:</p>
+<p><span class="math display">\[
+\begin{pmatrix} 1 \\ 2 \end{pmatrix}, \begin{pmatrix} 2 \\ 4 \end{pmatrix}
+\]</span></p>
+<p>These are not independent - you can multiply the first vector by a scalar of 2 to get the second vector.</p>
+</div>
+</div>
+</div>
+<p>This can be complicated to see in higher dimensions (since it is hard to consider how multiple vectors can be combined to match another). There, we use the matrix rank (see below).</p>
+<p><br></p>
+</section>
+<section id="spanning-vectors-and-dimension" class="level3">
+<h3 class="anchored" data-anchor-id="spanning-vectors-and-dimension">Spanning Vectors and Dimension</h3>
+<p>A collection of spanning vectors spans some space, if you can write any vector in that space, as a linear combination of the spanning vectors.</p>
+<p>For example, take vector <span class="math inline">\(\mathbf e_1 = (1 \ 0)\)</span> and <span class="math inline">\(\mathbf e_2 = (0 \ 1)\)</span>. These vectors span some space including <span class="math inline">\(\mathbf z\)</span>, if vector <span class="math inline">\(\mathbf z\)</span> can be written as:</p>
+<p><span class="math display">\[
+\mathbf z = a \mathbf e_1 + b \mathbf e_2, \quad \text{e.x.} \quad \mathbf z = (a \ b)
+\]</span></p>
+<ul>
+<li>In fact, <span class="math inline">\(\mathbf e_1\)</span> and <span class="math inline">\(\mathbf e_2\)</span> span the set of all 2-dimensional vectors.</li>
+</ul>
+<p>This allows us to write vectors in terms of the core vectors, and to understand the dimension of the space. The <strong>dimension</strong> of the space is the smallest number of linearly independent vectors that span the space.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Dimensionality
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take these two vectors:</p>
+<p><span class="math display">\[
+\begin{pmatrix} 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+\]</span></p>
+<p>These are linearly independent - no factor multipled can get the other vector. Thus, this is 2 dimensional space</p>
+<p>Now, let us add a third vector.</p>
+<p><span class="math display">\[
+\begin{pmatrix} 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 0 \\ 1 \end{pmatrix}, \begin{pmatrix} 3 \\ 2 \end{pmatrix}
+\]</span></p>
+<p>Is the third vector linearly independent? No.&nbsp;We can write the third vector with a combination of the other two:</p>
+<p><span class="math display">\[
+\begin{pmatrix} 3 \\ 2 \end{pmatrix} = 3 \begin{pmatrix} 1 \\ 0 \end{pmatrix} + 2 \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+\]</span></p>
+<p>Thus, the third vector is in the space spanned by the first 2 vectors. The first two vectors spans this space, and thus, it is 2 dimensional space.</p>
+</div>
+</div>
+</div>
+<p>Generally, the dimensionality of the space matches the number of vectors that span the space (so a 2 dimensional space is often spanned by 2 vectors, 3 spanned by 3, etc.).</p>
+<p>Note: Dimensionality of a vector space is not always the same as the dimensionality of the vectors.</p>
+<p><br></p>
+</section>
+<section id="matrix-rank" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-rank">Matrix Rank</h3>
+<p>As we discussed before, it can be difficult to find if vectors are linearly independent in higher dimensions.</p>
+<p>We can stack the row vectors into a matrix (we can also do them in columns):</p>
+<p><span class="math display">\[
+\begin{pmatrix} \mathbf x_1 \\ \mathbf x_2 \\ \mathbf x_3 \end{pmatrix} =
+\begin{pmatrix} x_{11} &amp; x_{12} &amp; x_{13} \\
+x_{21} &amp; x_{22} &amp; x_{23} \\
+x_{31} &amp; x_{32} &amp; x_{33} \end{pmatrix}
+\]</span></p>
+<p>The <strong>Rank</strong> of a matrix is the number of linearly independent rows/columns in a matrix.</p>
+<p>If the Rank is equal to the total number of rows/columns (all rows/columns are linearly independent), the matrix has <strong>full rank</strong>. A matrix with full rank is non-singular, and thus, can be inverted, and has a non-zero determinant.</p>
+<p>Thus, if we find the determinant of the matrix, if it is 0, the vectors are <u>not</u> linearly independent, and if it is not 0 , they are linearly independent.</p>
+<p>We can also know a matrix is not full rank, if the space of the dimension is less than the number of vectors (as explained above).</p>
+<p><br></p>
+</section>
+<section id="quadratic-forms" class="level3">
+<h3 class="anchored" data-anchor-id="quadratic-forms">Quadratic Forms</h3>
+<p>A quadratic form takes the following form:</p>
+<p><span class="math display">\[
+\mathbf x^\mathsf{T} \mathbf A \mathbf x
+\]</span></p>
+<p>Where matrix <span class="math inline">\(\mathbf A\)</span> is a square matrix.</p>
+<p>If <span class="math inline">\(\mathbf x^\mathsf{T} \mathbf A \mathbf x &gt; 0\)</span> for all values, then the matrix is positive definite. If <span class="math inline">\(\mathbf x^\mathsf{T} \mathbf A \mathbf x &lt; 0\)</span>, then negative definite. If <span class="math inline">\(\mathbf x^\mathsf{T} \mathbf A \mathbf x ≤ 0\)</span> it is positive semi-definite.</p>
+<p>This will be useful for optimisation and multivariable calculus</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="solving-systems-of-equations" class="level1">
+<h1><strong>Solving Systems of Equations</strong></h1>
+<section id="matrices-and-systems-of-equations" class="level3">
+<h3 class="anchored" data-anchor-id="matrices-and-systems-of-equations">Matrices and Systems of Equations</h3>
+<p>You can write any system of linear equations as a matrix times a vector. Let us take this set of equations:</p>
+<p><span class="math display">\[
+\begin{cases}
+a_{11}x_1 + a_{12} x_2 + a_{13} x_3 = y_1 \\
+a_{21}x_1 + a_{22}x_2 + a_{23}x_3 = y_2 \\
+a_{31}x_1 + a_{32}x_2 + a_{33}x_3 = y_3
+\end{cases}
+\]</span></p>
+<p>We can write this system of equations as follows:</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+a_{11} &amp; a_{12} &amp; a_{13} \\
+a_{21} &amp; a_{22} &amp; a_{23} \\
+a_{31} &amp; a_{32} &amp; a_{33}
+\end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ x_3 \end{pmatrix}
+= \begin{pmatrix} y_1 \\ y_2 \\ y_3 \end{pmatrix}
+\]</span></p>
+<p>Or even simpler, we can represent it as:</p>
+<p><span class="math display">\[
+\mathbf A\mathbf x = \mathbf y
+\]</span></p>
+<p>A unique solution exists when you have the same amount of equations as unknowns, and the equations are non-contradictory.</p>
+<p>Overdetermined systems are when there are more equations than unknowns, which might contradict each other. Underdetermined systems are when there are not enough equations compared to unknowns, so we cannot solve it.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Non-Linearly Independent and Identification
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take this system of linear equations:</p>
+<p><span class="math display">\[
+\begin{cases}
+x+y=1 \\
+2x + 2y = 2
+\end{cases}
+\]</span></p>
+<p>We can see that the two equations are a common factor of each other. Or in other words, these two vectors are non-linearly independent.</p>
+<p>We know when solving for these equations, we cannot actually solve for a unique solution.</p>
+<p>We know if a matrix is full rank, then all rows/columns are linearly independent.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="solving-systems-of-equations-1" class="level3">
+<h3 class="anchored" data-anchor-id="solving-systems-of-equations-1">Solving Systems of Equations</h3>
+<p><strong>Matrix inversion</strong> is a way to solve a system of equations. Take this system of equations:</p>
+<p><span class="math display">\[
+\mathbf{Ax} = \mathbf y
+\]</span></p>
+<p>You can solve for <span class="math inline">\(\mathbf x\)</span> by inverting matrix <span class="math inline">\(\mathbf A\)</span> (assuming matrix a is full rank):</p>
+<p><span class="math display">\[
+\begin{align}
+\mathbf{Ax} &amp; = \mathbf y \\
+\color{blue}{\mathbf{A}^{-1}}\color{black}{\mathbf{Ax}} &amp; = \color{blue}{\mathbf A^{-1}}\color{black}{\mathbf y} &amp;&amp; (\text{multiply both sides by } \color{blue}{\mathbf A^{-1}}\color{black}) \\
+\mathbf x &amp;= \mathbf A^{-1}\mathbf y &amp;&amp; (\mathbf A^{-1} \mathbf A\text{ inverses cancel})
+\end{align}
+\]</span></p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Matrix Inversion
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Take this system of equations:</p>
+<p><span class="math display">\[
+\begin{cases}
+3x - 7y = -11 \\
+5x + 10y = 25
+\end{cases}
+\]</span></p>
+<p>We can write this in linear algebra:</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+3 &amp; -7 \\
+5 &amp; 10
+\end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix} =
+\begin{pmatrix} -11 \\ 25 \end{pmatrix}
+\]</span></p>
+<p>Now, let us find the inverse of the first matrix:</p>
+<p><span class="math display">\[
+\mathbf A^{-1} = \frac{1}{|\mathbf A|}\mathbf C^\mathsf{T}
+\]</span></p>
+<p>We know the determinant <span class="math inline">\(|\mathbf A| = 3(10) - (-7)(5) = 65\)</span>.</p>
+<p>Now, let us find the cofactor matrix:</p>
+<ul>
+<li><span class="math inline">\(c_{11} = (-1)^{1+1}\times 10 = 10\)</span></li>
+<li><span class="math inline">\(c_{12} = (-1)^{1+2} \times 5 = -5\)</span></li>
+<li><span class="math inline">\(c_{21} = (-1)^{2+1} \times -7 = 7\)</span></li>
+<li><span class="math inline">\(c_{22} = (-1)^{2+2} \times 3 = 3\)</span></li>
+</ul>
+<p>Thus, the cofactor matrix transposed should be:</p>
+<p><span class="math display">\[
+\mathbf C^\mathsf{T} = \begin{pmatrix} 10 &amp; -5 \\ 7 &amp; 3 \end{pmatrix}^\mathsf{T} = \begin{pmatrix} 10 &amp; 7 \\ -5 &amp; 3 \end{pmatrix}
+\]</span></p>
+<p>Thus, the inverse of matrix <span class="math inline">\(\mathbf{A}\)</span> should be:</p>
+<p><span class="math display">\[
+\mathbf A^{-1} = \frac{1}{65} \begin{pmatrix} 10 &amp; 7 \\ -5 &amp; 3 \end{pmatrix} = \begin{pmatrix} \frac{2}{13} &amp; \frac{7}{65} \\ -\frac{1}{13} &amp; \frac{3}{65} \end{pmatrix}
+\]</span></p>
+<p>We know the solution should be:</p>
+<p><span class="math display">\[
+\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} \frac{2}{13} &amp; \frac{7}{65} \\ -\frac{1}{13} &amp; \frac{3}{65} \end{pmatrix} \begin{pmatrix} -11 \\ 25 \end{pmatrix}
+\]</span></p>
+<p>Thus, doing matrix multiplication to obtain <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>:</p>
+<ul>
+<li><span class="math inline">\(x =\frac{2}{13}(-11) + \frac{7}{65}(25) = -\frac{22}{13} + \frac{35}{13} = \frac{13}{13}=1\)</span></li>
+<li><span class="math inline">\(y=-\frac{1}{13}(-11) + \frac{3}{65}(25) = \frac{11}{13}+ \frac{15}{13} = \frac{26}{13} = 2\)</span></li>
+</ul>
+<p>The solution to this system of equations is: <span class="math inline">\((1, 2)\)</span>.</p>
+</div>
+</div>
+</div>
+<p><strong>Cramer’s rule</strong> is another rule to solve equations, only for square matrices. It is not super commonly used. Given the system of equations:</p>
+<p><span class="math display">\[
+\mathbf{Ax} = \mathbf y
+\]</span></p>
+<p>The element <span class="math inline">\(x_i\)</span> is defined as:</p>
+<p><span class="math display">\[
+x_i = \frac{|\mathbf B_i|}{\mathbf A}
+\]</span></p>
+<p>Where <span class="math inline">\(\mathbf B_i\)</span> is a matrix obtained by taking the matrix <span class="math inline">\(\mathbf A\)</span>, and replacing the <span class="math inline">\(i\)</span>th column with the column vector <span class="math inline">\(\mathbf y\)</span>.</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="eigenvalues-and-eigenvectors" class="level1">
+<h1><strong>Eigenvalues and Eigenvectors</strong></h1>
+<section id="definitions" class="level3">
+<h3 class="anchored" data-anchor-id="definitions">Definitions</h3>
+<p>A matrix, as we discussed, can act as an operator that maps some vector to another <span class="math inline">\(\mathbf A : \mathbf x \rightarrow \mathbf y\)</span>.</p>
+<p>Geometrically, vector <span class="math inline">\(\mathbf x\)</span> points in some dimensional space. Then the matrix <span class="math inline">\(\mathbf A\)</span> comes along, and transforms it into a different vector <span class="math inline">\(\mathbf x\)</span>, which might flip the direction, or rotate, or change its norm, etc. Sometimes, <span class="math inline">\(\mathbf y\)</span> will stay in the same direction or opposite direction (along the same line) as the original, even after the operator.</p>
+<p>Basically, an eigenvector of matrix <span class="math inline">\(\mathbf A\)</span> is a vector <span class="math inline">\(\mathbf x\)</span>, that does not change its direction (stays on the same line) when you apply the operator <span class="math inline">\(\mathbf A\)</span> to get vector <span class="math inline">\(\lambda \mathbf x\)</span>. Mathematically:</p>
+<p><span class="math display">\[
+\mathbf{Ax} = \lambda \mathbf x
+\]</span></p>
+<p>The <span class="math inline">\(\lambda\)</span> is an eigenvalue that corresponds to the eigenvector.</p>
+<p><br></p>
+</section>
+<section id="computing-eigenvalues" class="level3">
+<h3 class="anchored" data-anchor-id="computing-eigenvalues">Computing Eigenvalues</h3>
+<p>Let us start with the eigenvector formula:</p>
+<p><span class="math display">\[
+\mathbf{Ax} = \lambda \mathbf x
+\]</span></p>
+<p>We can multiply the right side by the identity matrix (which does not change the result):</p>
+<p><span class="math display">\[
+\mathbf{Ax} = \lambda \mathbf {Ix}
+\]</span></p>
+<p>Now, let us move everything to one side, and simplify:</p>
+<p><span class="math display">\[
 \begin{split}
-&amp; (\mathbf A + \mathbf B) + \mathbf C = \mathbf A + (\mathbf B + \mathbf C) \\
-&amp; (\mathbf A \mathbf B)\mathbf C = \mathbf A(\mathbf B \mathbf C)
+\mathbf{Ax} - \lambda \mathbf {Ix} &amp; = 0 \\
+(\mathbf A - \lambda \mathbf I) \mathbf x &amp; = 0
 \end{split}
-</span></p>
-<p>The <strong>Distributive Property</strong> states the following is true:</p>
-<p><span class="math display">
-(\mathbf A + \mathbf B) \mathbf C = \mathbf A \mathbf C + \mathbf B \mathbf C
-</span></p>
-<p>The <strong>Commutative Property</strong> applies <u>only to addition/subtraction, not multiplication</u>. Commutative property also applies to dot products.</p>
-<p><span class="math display">
+\]</span></p>
+<p><span class="math inline">\((\mathbf A - \lambda \mathbf I)\)</span> is an singular matrix, meaning determinant <span class="math inline">\(|(\mathbf A - \lambda \mathbf I)| = 0\)</span>. All values of <span class="math inline">\(\lambda\)</span> that solve this determinant equation will be eigenvalues of the matrix.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Solving for Eigenvalues
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We know <span class="math inline">\(|(\mathbf A - \lambda \mathbf I)| = 0\)</span>. Let us say:</p>
+<p><span class="math display">\[
+\mathbf A = \begin{pmatrix} 2 &amp; 1 \\ 3 &amp; 4 \end{pmatrix}, \quad \lambda \mathbf I \begin{pmatrix} \lambda &amp; 0 \\ 0 &amp; \lambda \end{pmatrix}
+\]</span></p>
+<p>Thus:</p>
+<p><span class="math display">\[
+\mathbf A - \lambda \mathbf I = \begin{pmatrix} 2 - \lambda &amp; 1 \\ 3 &amp; 4 - \lambda \end{pmatrix}
+\]</span></p>
+<p>We know the determinant should equal 0. We can solve for <span class="math inline">\(\lambda\)</span>:</p>
+<p><span class="math display">\[
 \begin{split}
-&amp; \mathbf A + \mathbf B = \mathbf B + \mathbf A \\
-&amp; \mathbf a \cdot \mathbf b = \mathbf b \cdot \mathbf a
+0 &amp; = |(\mathbf A - \lambda \mathbf I)| \\
+0 &amp; = (2-\lambda)(4-\lambda) - 1(3) \\
+0 &amp; = 8-2\lambda - 4 \lambda +\lambda^2 - 4 \\
+0 &amp; = \lambda^2 - 6\lambda +4 \\
 \end{split}
-</span></p>
+\]</span></p>
+<p>Let us use the quadratic formula:</p>
+<p><span class="math display">\[
+\begin{split}
+\lambda &amp; = \frac{-b ± \sqrt{b^2 - 4ac}}{2a} \\
+\lambda &amp; = \frac{6 ± \sqrt{36 - 4(1)(4)}}{2(1)} \\
+\lambda &amp; = \frac{6 ± \sqrt{20}}{2} \\
+\lambda &amp; = 3 ± \frac{\sqrt{20}}{2} \\
+\lambda &amp; = 3 ± \frac{2 \sqrt{5}}{2} \\
+\lambda &amp; = 3 ± \sqrt{5}
+\end{split}
+\]</span></p>
+<p>Thus, we have found our eigenvalues.</p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
-<section id="properties-of-traces" class="level3">
-<h3 class="anchored" data-anchor-id="properties-of-traces">Properties of Traces</h3>
-<p>The <strong>Addition Property</strong> of traces states that the trace of the sum of two matrices is equivalent to the sum of the traces of each individual matrix:</p>
-<p><span class="math display">
-Tr(\mathbf A + \mathbf B) =Tr(\mathbf A) + Tr(\mathbf B) = Tr(\mathbf B) + Tr(\mathbf A)
-</span></p>
-<p>The <strong>Transpose Property</strong> says the trace of the transpose is equal to the trace of the original (since the diagonal remains the same):</p>
-<p><span class="math display">
-Tr(\mathbf A^T) = Tr(\mathbf A)
-</span></p>
-<p>The <strong>Multiplication Property</strong> says that the trace of multiplication has the commutative property (only for two matrices):</p>
-<p><span class="math display">
-Tr(\mathbf{AB}) = Tr(\mathbf{BA})
-</span></p>
+<section id="calculating-eigenvectors" class="level3">
+<h3 class="anchored" data-anchor-id="calculating-eigenvectors">Calculating Eigenvectors</h3>
+<p>Let us say we have the matrix <span class="math inline">\(\mathbf{A}\)</span>:</p>
+<p><span class="math display">\[
+\mathbf A = \begin{pmatrix} 2 &amp; 3 \\ 2 &amp; 1 \end{pmatrix}
+\]</span></p>
+<p>First, you need to calculate the eigenvalues <span class="math inline">\(\lambda\)</span> (as shown in the previous section).</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Calculating Eigenvalues
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We know <span class="math inline">\(|(\mathbf A - \lambda \mathbf I)| = 0\)</span>.</p>
+<p><span class="math display">\[
+\mathbf A - \lambda \mathbf I = \begin{pmatrix} 2 - \lambda &amp; 3 \\ 2 &amp; 1 - \lambda \end{pmatrix}
+\]</span></p>
+<p>Now solve <span class="math inline">\(|(\mathbf A - \lambda \mathbf I)| = 0\)</span>.</p>
+<p><span class="math display">\[
+\begin{split}
+0 &amp; = |(\mathbf A - \lambda \mathbf I)| \\
+0 &amp; = (2 - \lambda)(1- \lambda) - 2(3) \\
+0 &amp; = 2 -2 \lambda - \lambda + \lambda^2 - 6 \\
+0 &amp; = \lambda ^2 - 3\lambda - 4 \\
+0 &amp; = (\lambda - 4)(\lambda + 1) \\
+\lambda &amp; = 4, -1
+\end{split}
+\]</span></p>
+</div>
+</div>
+</div>
+<p>For every eigenvalue, you will have an eigenvector that makes the eigenvector equation <span class="math inline">\(\mathbf{Ax} = \lambda \mathbf x\)</span> true. From above:</p>
+<p><span class="math display">\[
+\begin{split}
+&amp; \mathbf{Ax} = 4 \mathbf x \\
+&amp; \mathbf{Ax} = -1 \mathbf x
+\end{split}
+\]</span></p>
+<p>Remember, <span class="math inline">\(\mathbf x\)</span> is a vector here of 2 elements, <span class="math inline">\(x_1, x_2\)</span> - but we only have one equation for each eigenvalue pair. This means there will be one solution without a unique solution.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Eigenvalues and Non-Unique Solutions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>It might seem simple to just solve for our <span class="math inline">\(\mathbf x\)</span> with two unknowns <span class="math inline">\(x_1, x_2\)</span>.</p>
+<p>But the issue is - our equations are not linearly independent, so we do not have enough information to solve for a unique solution for one.</p>
+<p>This is actually okay - why? Well, take a look at these potential eigenvectors:</p>
+<p><span class="math display">\[
+\begin{pmatrix} 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 2 \\ 0 \end{pmatrix}, \begin{pmatrix} 3 \\ 0 \end{pmatrix}
+\]</span></p>
+<p>These are different vectors - but they are all eigenvectors. This is because of the equation <span class="math inline">\(\mathbf{Ax} = \lambda \mathbf x\)</span> - if both sides have vector <span class="math inline">\((1 \ 0)\)</span> multiplied by a constant (like the 2nd and 3rd vectors), the equation is still equal.</p>
+<p>Thus, eigenvectors are not defined uniquely - only up to a singular multiplicative constant.</p>
+</div>
+</div>
+</div>
+<p>What we typically do is define <span class="math inline">\(x_1 = 1\)</span> (there are some cases where this does not work). Using this, we can solve for the answer.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-25-contents" aria-controls="callout-25" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Calculating Eigenvectors
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-25" class="callout-25-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us continue the same example from before.</p>
+<p><span class="math display">\[
+\mathbf A = \begin{pmatrix} 2 &amp; 3 \\ 2 &amp; 1 \end{pmatrix}, \quad \lambda = 4, -1, \quad \mathbf x = \begin{pmatrix} 1 \\ c \end{pmatrix}
+\]</span></p>
+<p>Let us solve for the eigenvalue of <span class="math inline">\(\lambda = 4\)</span>.</p>
+<p><span class="math display">\[
+\begin{split}
+\mathbf{Ax} &amp; = 4 \mathbf x \\
+\begin{pmatrix} 2 &amp; 3 \\ 2 &amp; 1 \end{pmatrix}\begin{pmatrix} 1 \\ c \end{pmatrix} &amp; = 4\begin{pmatrix} 1 \\ c \end{pmatrix} \\
+\begin{pmatrix} 2+3c \\ 2+c \end{pmatrix} &amp; = \begin{pmatrix} 4 \\ 4c \end{pmatrix}
+\end{split}
+\]</span></p>
+<p>That gives us two equations:</p>
+<p><span class="math display">\[
+\begin{split}
+&amp; 2 + 3c = 4 \\
+&amp; 2 + c = 4c
+\end{split}
+\]</span></p>
+<p>The answer is <span class="math inline">\(c = \frac{2}{3}\)</span> (both answers give us the equation).</p>
+<p>Thus, the eigenvector with <span class="math inline">\(\lambda = 4\)</span> is:</p>
+<p><span class="math display">\[
+\mathbf x = \begin{pmatrix} 1 \\ \frac{2}{3} \end{pmatrix}
+\]</span></p>
+<p>We can do the same for <span class="math inline">\(\lambda = -1\)</span>, and we will get eigenvector:</p>
+<p><span class="math display">\[
+\mathbf x = \begin{pmatrix} 1 \\ -1 \end{pmatrix}
+\]</span></p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
-<section id="properties-of-transposes" class="level3">
-<h3 class="anchored" data-anchor-id="properties-of-transposes">Properties of Transposes</h3>
-<p>The <strong>Vector Property</strong> says that the dot product of vectors can be written with transposes:</p>
-<p><span class="math display">
-\mathbf a \cdot \mathbf b = \mathbf a^T\mathbf b
-</span></p>
-<p>The <strong>Inverse Property</strong> says that the transpose of a transpose is the original matrix:</p>
-<p><span class="math display">
-\left(\mathbf A^T \right)^T = \mathbf A
-</span></p>
-<p>The <strong>Addition Property</strong> states that the transpose of a sum of two matrices, is equal to the individual transposes of both matrices added together:</p>
-<p><span class="math display">
-(\mathbf A + \mathbf B)^T = \mathbf A^T + \mathbf B^T = \mathbf B^T + \mathbf A^T
-</span></p>
-<p>The <strong>Multiplication Property</strong> says the following (note the order of multiplication):</p>
-<p><span class="math display">
-( \mathbf{AB})^T = \mathbf B^T \mathbf A^T
-</span></p>
-<p>The Symmetrical <strong>Property</strong> says that a matrix that is symmetrical does not change when inversed:</p>
-<p><span class="math display">
-\mathbf A^T = \mathbf A \quad \text{s.t.} \quad \mathbf A \text{ is symmetrical}
-</span></p>
-<p>The <strong>Inverse Transpose Property</strong> says the following about inverses and transposes:</p>
-<p><span class="math display">
-\left( \mathbf A^{-1} \right)^T = \left( \mathbf A^T \right)^{-1}
-</span></p>
-<p><br></p>
-</section>
-<section id="properties-of-a-determinant" class="level3">
-<h3 class="anchored" data-anchor-id="properties-of-a-determinant">Properties of a Determinant</h3>
-<p>The <strong>Transpose Property</strong> states that the determinant of a transpose is equal to the determinant of the original:</p>
-<p><span class="math display">
-\det(\mathbf A^T) = \det(\mathbf A)
-</span></p>
-<p>The <strong>Identity Property</strong> states that the determinant of an identity matrix is 1:</p>
-<p><span class="math display">
-\det (\mathbf I)=1
-</span></p>
-<p>The <strong>Multiplication Property</strong> states that the determinant of a product is equal to the individual determinants multiplied:</p>
-<p><span class="math display">
-\det (\mathbf {AB}) = \det (\mathbf A) \det (\mathbf B)
-</span></p>
-<p>The <strong>Inverse Property</strong> says that the determinant of an inverse is the inverse of the determinant of the original matrix:</p>
-<p><span class="math display">
-\det(\mathbf A^{-1}) = \frac{1}{\det(\mathbf A)}
-</span></p>
-<p>The <strong>Triangular/Diagonal Property</strong> is the product of all diagonal elements:</p>
-<p><span class="math display">
-\det (\mathbf A) = \prod_i a_{ii}
-</span></p>
-<p><br></p>
-</section>
-<section id="properties-of-inverses" class="level3">
-<h3 class="anchored" data-anchor-id="properties-of-inverses">Properties of Inverses</h3>
-<p>The <strong>Inverse Property</strong> states that the inverse of an inverse is the original matrix:</p>
-<p><span class="math display">
-\left( \mathbf A^{-1} \right)^{-1} = \mathbf A
-</span></p>
-<p>The <strong>Multiplication Property</strong> states the inverse of a product is the following (note the order of the multiplication):</p>
-<p><span class="math display">
-(\mathbf{AB})^{-1}=\mathbf B^{-1} \mathbf A^{-1}
-</span></p>
-<p>The <strong>Scalar Multiplication Property</strong> states that the scalar product is the following:</p>
-<p><span class="math display">
-(c \mathbf A)^{-1} = \frac{1}{c} \mathbf A^{-1}, \quad \text{s.t.} \quad  c ≠ 0
-</span></p>
+<section id="eigenvector-decomposition" class="level3">
+<h3 class="anchored" data-anchor-id="eigenvector-decomposition">Eigenvector Decomposition</h3>
+<p>Matrix decomposition is to take a matrix <span class="math inline">\(\mathbf A\)</span>, and decompose it into other matrices, that when multiplied together, get the original matrix.</p>
+<p>If matrix <span class="math inline">\(\mathbf A\)</span> has unique eigenvalues, you can write:</p>
+<p><span class="math display">\[
+\mathbf A = \mathbf {QDQ}^{-1}
+\]</span></p>
+<p>Where <span class="math inline">\(\mathbf Q\)</span> is made up of eigenvectors of matrix <span class="math inline">\(\mathbf A\)</span>, and <span class="math inline">\(\mathbf D\)</span> is a diagonal matrix with the eigenvalues <span class="math inline">\(\lambda\)</span> on the diagonal:</p>
+<p><span class="math display">\[
+\mathbf D = \begin{pmatrix} \lambda_1 &amp; 0 \\ 0 &amp; \lambda_2 \end{pmatrix}, \quad
+\mathbf Q = \begin{pmatrix} \mathbf x_1 &amp; \mathbf x_2\end{pmatrix}
+\]</span></p>
+<p>Eigenvectors decomposition has a few uses:</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-26-contents" aria-controls="callout-26" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Taking the Power of Matrices
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-26" class="callout-26-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us say you want to find <span class="math inline">\(\mathbf A^z\)</span>. We can use matrix decomposition for this:</p>
+<p><span class="math display">\[
+\mathbf A^z = {QDQ}^{-1}{QDQ}^{-1}{QDQ}^{-1}\dots
+\]</span></p>
+<p>Notice how the <span class="math inline">\(\mathbf{Q}^{-1} \mathbf Q\)</span> occurs quite frequently, and we know by properties of inverses, that <span class="math inline">\(\mathbf{Q}^{-1} \mathbf Q = \mathbf I\)</span>, and multiplying by <span class="math inline">\(\mathbf I\)</span> does nothing.</p>
+<p>Thus, we can rewrite the formula above as:</p>
+<p><span class="math display">\[
+\mathbf A^z = \mathbf{QD}^z\mathbf Q^{-1}
+\]</span></p>
+<p>This is much simpler than calculating <span class="math inline">\(\mathbf A^z\)</span>, since taking diagonal matrix to a power is defined as:</p>
+<p><span class="math display">\[
+\mathbf D^z = \begin{pmatrix} \lambda_1^z &amp; 0 \\ 0 &amp; \lambda_2^z\end{pmatrix}
+\]</span></p>
+<p>Which is much easier to do.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-27-contents" aria-controls="callout-27" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Finding Determinants
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-27" class="callout-27-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us say you want to find the determinant of <span class="math inline">\(\mathbf A\)</span>. The following is true:</p>
+<p><span class="math display">\[
+\begin{split}
+\det (\mathbf A) &amp; = \det(\mathbf{QD}^z\mathbf Q^{-1}) \\
+&amp; = \det (\mathbf Q) \det (\mathbf D) \det (\mathbf Q^{-1}) \\
+&amp; = \det (\mathbf Q) \det (\mathbf D) \frac{1}{\det (\mathbf Q)} \\
+&amp; = \det (\mathbf D)
+\end{split}
+\]</span></p>
+<p>Since <span class="math inline">\(\mathbf D\)</span> is diagonal, the determinant of a diagonal matrix is just the product of the diagonal elements. Thus:</p>
+<p><span class="math display">\[
+\det (\mathbf A) = \prod_i \lambda_i
+\]</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-28-contents" aria-controls="callout-28" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Principle Components Analysis
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-28" class="callout-28-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><a href="https://politicalscience.github.io/multivariate/1.html">Principle Components Analysis</a> (PCA) is used when matrix <span class="math inline">\(\mathbf A\)</span> is symmetric, positive semi-definite.</p>
+<ul>
+<li>This means the eigenvectors are orthogonal (perpendicular) to each other.</li>
+<li>This means eigenvalues will always be real and non-negative.</li>
+</ul>
+<p>PCA is done on the covariance matrix, which is symmetric and positive semi-definite.</p>
+<p>It is a data reduction technique commonly used in statistics and data science.</p>
+<ul>
+<li>The eigenvectors of the covariance matrix form the principle components of thee system.</li>
+<li>The eigenvalues tell us how much of the variance each component explains (more important principle components have higher eigenvalues).</li>
+</ul>
+</div>
+</div>
+</div>
 </section>
 </section>
 

@@ -67,23 +67,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="4_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="4_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="4_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="mathjax-config.js"></script>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", function () {
- var mathElements = document.getElementsByClassName("math");
- var macros = [];
- for (var i = 0; i < mathElements.length; i++) {
-  var texText = mathElements[i].firstChild;
-  if (mathElements[i].tagName == "SPAN") {
-   katex.render(texText.data, mathElements[i], {
-    displayMode: mathElements[i].classList.contains('display'),
-    throwOnError: false,
-    macros: macros,
-    fleqn: true
-   });
-}}});
-  </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -180,39 +167,39 @@ window.Quarto = {
 <h1><strong>Regression Trees</strong></h1>
 <section id="trees-and-stratification" class="level3">
 <h3 class="anchored" data-anchor-id="trees-and-stratification">Trees and Stratification</h3>
-<p>Regression Trees are an alternative way to obtain predictions of an outcome <span class="math inline">y</span> from explanatory variables <span class="math inline">x</span>.</p>
-<p>Instead of modelling how <span class="math inline">y</span> changes with every unit increase in <span class="math inline">x</span>, regression trees instead model stratification.</p>
-<p>Tree-based methods will divide the independent variable <span class="math inline">x_j</span> into 2 regions, splitting <span class="math inline">x</span> at some value <span class="math inline">x = s</span>. For example, if we had an <span class="math inline">x</span> variable such that <span class="math inline">x \in [0, 100]</span>, we could split the variable at <span class="math inline">x = s</span> to create two regions: <span class="math inline">x^{(1)} \in [0, s]</span> and <span class="math inline">x^{(2)} \in [s, 100]</span>.</p>
-<p>Then, tree-based methods will calculate the mean <span class="math inline">y</span> value in each region created: <span class="math inline">\bar y^{(1)}</span> and <span class="math inline">\bar y^{(2)}</span>. These means will be the predictions of <span class="math inline">\hat y</span>.</p>
+<p>Regression Trees are an alternative way to obtain predictions of an outcome <span class="math inline">\(y\)</span> from explanatory variables <span class="math inline">\(x\)</span>.</p>
+<p>Instead of modelling how <span class="math inline">\(y\)</span> changes with every unit increase in <span class="math inline">\(x\)</span>, regression trees instead model stratification.</p>
+<p>Tree-based methods will divide the independent variable <span class="math inline">\(x_j\)</span> into 2 regions, splitting <span class="math inline">\(x\)</span> at some value <span class="math inline">\(x = s\)</span>. For example, if we had an <span class="math inline">\(x\)</span> variable such that <span class="math inline">\(x \in [0, 100]\)</span>, we could split the variable at <span class="math inline">\(x = s\)</span> to create two regions: <span class="math inline">\(x^{(1)} \in [0, s]\)</span> and <span class="math inline">\(x^{(2)} \in [s, 100]\)</span>.</p>
+<p>Then, tree-based methods will calculate the mean <span class="math inline">\(y\)</span> value in each region created: <span class="math inline">\(\bar y^{(1)}\)</span> and <span class="math inline">\(\bar y^{(2)}\)</span>. These means will be the predictions of <span class="math inline">\(\hat y\)</span>.</p>
 <ul>
-<li>If a unit <span class="math inline">i</span> has an <span class="math inline">x</span> value that falls into region <span class="math inline">x^{(1)} \in [0, s]</span>, their predicted <span class="math inline">\hat y = \bar y^{(1)}</span>.</li>
-<li>If a unit <span class="math inline">i</span> has an <span class="math inline">x</span> value that falls into region <span class="math inline">x^{(2)} \in [s,100]</span>, their prediction <span class="math inline">\hat y = \bar y^{(2)}</span>.</li>
+<li>If a unit <span class="math inline">\(i\)</span> has an <span class="math inline">\(x\)</span> value that falls into region <span class="math inline">\(x^{(1)} \in [0, s]\)</span>, their predicted <span class="math inline">\(\hat y = \bar y^{(1)}\)</span>.</li>
+<li>If a unit <span class="math inline">\(i\)</span> has an <span class="math inline">\(x\)</span> value that falls into region <span class="math inline">\(x^{(2)} \in [s,100]\)</span>, their prediction <span class="math inline">\(\hat y = \bar y^{(2)}\)</span>.</li>
 </ul>
 <p><br></p>
 </section>
 <section id="determining-the-thresholds" class="level3">
 <h3 class="anchored" data-anchor-id="determining-the-thresholds">Determining the Thresholds</h3>
-<p>So we know that trees will stratify/divide our observations into groups by some threshold <span class="math inline">x = s</span>. But how do we decide which threshold <span class="math inline">s</span>,?</p>
-<p>For continuous <span class="math inline">y</span> variables, to determine the threshold <span class="math inline">s</span> in which to split <span class="math inline">x</span>, the algorithm of tree regressions will find the optimal threshold <span class="math inline">x = s</span> that reduces the <strong>residual sum of squares</strong> (RSS) of the predictions the most:</p>
-<p><span class="math display">
+<p>So we know that trees will stratify/divide our observations into groups by some threshold <span class="math inline">\(x = s\)</span>. But how do we decide which threshold <span class="math inline">\(s\)</span>,?</p>
+<p>For continuous <span class="math inline">\(y\)</span> variables, to determine the threshold <span class="math inline">\(s\)</span> in which to split <span class="math inline">\(x\)</span>, the algorithm of tree regressions will find the optimal threshold <span class="math inline">\(x = s\)</span> that reduces the <strong>residual sum of squares</strong> (RSS) of the predictions the most:</p>
+<p><span class="math display">\[
 RSS = \sum\limits_{i=1}^n(y_i - \hat y_i)^2
-</span></p>
-<p>Essentially, the computer tests every possible threshold value of <span class="math inline">x_j = s</span>, and finds the threshold that reduces the sum of squares the most.</p>
-<p>For binary <span class="math inline">y</span> variables, trees will determine the threshold <span class="math inline">s</span> in which to split <span class="math inline">x</span>, based on the threshold <span class="math inline">x=s</span> that reduces the <strong>classification error rate</strong>.</p>
-<p>The classification error is essentially how many predictions <span class="math inline">\hat y</span> do not match to the actual <span class="math inline">y</span>.</p>
+\]</span></p>
+<p>Essentially, the computer tests every possible threshold value of <span class="math inline">\(x_j = s\)</span>, and finds the threshold that reduces the sum of squares the most.</p>
+<p>For binary <span class="math inline">\(y\)</span> variables, trees will determine the threshold <span class="math inline">\(s\)</span> in which to split <span class="math inline">\(x\)</span>, based on the threshold <span class="math inline">\(x=s\)</span> that reduces the <strong>classification error rate</strong>.</p>
+<p>The classification error is essentially how many predictions <span class="math inline">\(\hat y\)</span> do not match to the actual <span class="math inline">\(y\)</span>.</p>
 <p><br></p>
 </section>
 <section id="growing-a-tree" class="level3">
 <h3 class="anchored" data-anchor-id="growing-a-tree">Growing a Tree</h3>
 <p>The process of growing a tree is as follows. Assume now we have more than one explanatory variable.</p>
 <ol type="1">
-<li>Test all possible thresholds <span class="math inline">x_j = s</span> for each <span class="math inline">x_j \in \{x_1, \dots, x_k\}</span>.</li>
-<li>Identify the specific variable <span class="math inline">x_p \in \{x_2, \dots, x_k\}</span> which has a specific threshold <span class="math inline">x_p = s^*</span> that has the greatest reduction in residual sum of squares (or classification error rate), for all combinations of <span class="math inline">x_j</span> and threshold <span class="math inline">s</span>.</li>
-<li>Now, divide that specific <span class="math inline">x_p</span> at that specific threshold <span class="math inline">s^*</span>, creating two regions <span class="math inline">x_p^{(1)}, x_p^{(2)}</span>.</li>
-<li>Now, we repeat the process of testing all possible thresholds <span class="math inline">x_j = s</span> for each <span class="math inline">x_j \in \{x_1, \dots, x_k \}</span> and finding the specific variable-threshold <span class="math inline">x_m = s^{**}</span> that results the in the greatest reduction in RSS (or classification error rate) within <span class="math inline">x_p^{(1)}</span>. Create 2 more groups from within <span class="math inline">x_p^{(1)}</span>.</li>
-<li>Then, do the same for <span class="math inline">x_p^{(2)}</span>. Create 2 more groups from with <span class="math inline">x_p^{(2)}</span>.</li>
+<li>Test all possible thresholds <span class="math inline">\(x_j = s\)</span> for each <span class="math inline">\(x_j \in \{x_1, \dots, x_k\}\)</span>.</li>
+<li>Identify the specific variable <span class="math inline">\(x_p \in \{x_2, \dots, x_k\}\)</span> which has a specific threshold <span class="math inline">\(x_p = s^*\)</span> that has the greatest reduction in residual sum of squares (or classification error rate), for all combinations of <span class="math inline">\(x_j\)</span> and threshold <span class="math inline">\(s\)</span>.</li>
+<li>Now, divide that specific <span class="math inline">\(x_p\)</span> at that specific threshold <span class="math inline">\(s^*\)</span>, creating two regions <span class="math inline">\(x_p^{(1)}, x_p^{(2)}\)</span>.</li>
+<li>Now, we repeat the process of testing all possible thresholds <span class="math inline">\(x_j = s\)</span> for each <span class="math inline">\(x_j \in \{x_1, \dots, x_k \}\)</span> and finding the specific variable-threshold <span class="math inline">\(x_m = s^{**}\)</span> that results the in the greatest reduction in RSS (or classification error rate) within <span class="math inline">\(x_p^{(1)}\)</span>. Create 2 more groups from within <span class="math inline">\(x_p^{(1)}\)</span>.</li>
+<li>Then, do the same for <span class="math inline">\(x_p^{(2)}\)</span>. Create 2 more groups from with <span class="math inline">\(x_p^{(2)}\)</span>.</li>
 <li>Keep on going, finding the variable-thresholds which reduce the RSS the most from each previous subregion we have created.</li>
-<li>Continue doing this until some stopping criteria. Find the average <span class="math inline">y</span> in each of the groups you have, and those are the predicted <span class="math inline">\hat y</span>.</li>
+<li>Continue doing this until some stopping criteria. Find the average <span class="math inline">\(y\)</span> in each of the groups you have, and those are the predicted <span class="math inline">\(\hat y\)</span>.</li>
 </ol>
 <p>It is possible for a variable to occur multiple times with different thresholds.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
@@ -236,7 +223,7 @@ Example of Growing a Tree
 <p>We can see that the first (top) split is in the variable <em>taxpercent</em>, at threshold 34.2935. That means that specific variable-threshold split reduced the RSS the most of any variable-threshold combination.</p>
 <p>Notice how after the first split, we only divide each subregion. We do not go back to the top/whole data set.</p>
 <p>Notice how <em>taxpercent</em> re-appears again on the right side of the tree. It is possible for a variable to occur multiple times.</p>
-<p>At the end, you can see the numbers at the bottom. These are called leaves, and are the final categories/groups of the tree with their mean <span class="math inline">y</span> labelled. Those mean <span class="math inline">y</span> will be the predictions for each observation that falls into that group.</p>
+<p>At the end, you can see the numbers at the bottom. These are called leaves, and are the final categories/groups of the tree with their mean <span class="math inline">\(y\)</span> labelled. Those mean <span class="math inline">\(y\)</span> will be the predictions for each observation that falls into that group.</p>
 </div>
 </div>
 </div>
@@ -277,9 +264,9 @@ The Problem of Overfitting
 <section id="bootstrap-sampling" class="level3">
 <h3 class="anchored" data-anchor-id="bootstrap-sampling">Bootstrap Sampling</h3>
 <p>While regression trees have some benefits, they suffer from overfitting and high variance. <strong>Bootstrap Aggregation</strong> is a procedure for reducing the variance of a statistical learning method.</p>
-<p>This procedure builds on a simple statistical idea: in a set of <span class="math inline">n</span> samples <span class="math inline">Z_1, \dots, Z_n</span> each with variance <span class="math inline">\sigma^2</span>, the variance of the means <span class="math inline">\bar Z</span> of all the samples is <span class="math inline">\frac{\sigma^2}{n}</span>. Since <span class="math inline">n</span> is in the denominator, that implies increasing the number of samples <span class="math inline">n</span> will reduce the variance of our predictions.</p>
-<p>However, we typically only have one sample of data. How can we increase <span class="math inline">n</span> if we only have one sample? The answer is <strong>Bootstrap Sampling</strong>. Essentially, we sample with replacement from our original sample.</p>
-<p>To create a bootstrap sample, we choose 1 observation at random from our original sample. We add that observation to our bootstrap sample, and replace it back into our original sample. Then, we draw another observation, add it to our bootstrap sample, and replace it back. We do this <span class="math inline">n</span> times (<span class="math inline">n</span> being the sample size of our sample).</p>
+<p>This procedure builds on a simple statistical idea: in a set of <span class="math inline">\(n\)</span> samples <span class="math inline">\(Z_1, \dots, Z_n\)</span> each with variance <span class="math inline">\(\sigma^2\)</span>, the variance of the means <span class="math inline">\(\bar Z\)</span> of all the samples is <span class="math inline">\(\frac{\sigma^2}{n}\)</span>. Since <span class="math inline">\(n\)</span> is in the denominator, that implies increasing the number of samples <span class="math inline">\(n\)</span> will reduce the variance of our predictions.</p>
+<p>However, we typically only have one sample of data. How can we increase <span class="math inline">\(n\)</span> if we only have one sample? The answer is <strong>Bootstrap Sampling</strong>. Essentially, we sample with replacement from our original sample.</p>
+<p>To create a bootstrap sample, we choose 1 observation at random from our original sample. We add that observation to our bootstrap sample, and replace it back into our original sample. Then, we draw another observation, add it to our bootstrap sample, and replace it back. We do this <span class="math inline">\(n\)</span> times (<span class="math inline">\(n\)</span> being the sample size of our sample).</p>
 <p>If we do this procedure multiple times, we will end up with a few similar, but slightly different data sets. We are essentially replicating the process of obtaining new data sets, without gathering more data. Now, with our multiple data sets, we can use bootstrap aggregation to reduce our variance.</p>
 <p><br></p>
 </section>
@@ -287,25 +274,25 @@ The Problem of Overfitting
 <h3 class="anchored" data-anchor-id="bagging-models">Bagging Models</h3>
 <p><strong>Bagging</strong> models apply bootstrap sampling to tree regressions.</p>
 <ol type="1">
-<li>We first generate <span class="math inline">B</span> number of bootstrap samples.</li>
-<li>Then, we train a tree on each different sample <span class="math inline">b</span>, creating a prediction function <span class="math inline">f_b(x) = \hat y_b</span> for each sample, which specifies what values of <span class="math inline">x</span> result in what predicted <span class="math inline">\hat y</span> according to the tree.</li>
-<li>Then we average all of the sample predictions together to obtain our final prediction function <span class="math inline">f_{bag}(x)</span>.</li>
+<li>We first generate <span class="math inline">\(B\)</span> number of bootstrap samples.</li>
+<li>Then, we train a tree on each different sample <span class="math inline">\(b\)</span>, creating a prediction function <span class="math inline">\(f_b(x) = \hat y_b\)</span> for each sample, which specifies what values of <span class="math inline">\(x\)</span> result in what predicted <span class="math inline">\(\hat y\)</span> according to the tree.</li>
+<li>Then we average all of the sample predictions together to obtain our final prediction function <span class="math inline">\(f_{bag}(x)\)</span>.</li>
 </ol>
-<p><span class="math display">
+<p><span class="math display">\[
 f_{bag}(x) = \frac{1}{B}\sum\limits_{b=1}^Bf_b(x)
-</span></p>
+\]</span></p>
 <p>Bagging reduces the variance of trees, and is one of the most accurate prediction methods, frequently outperforming both linear and non-linear methods.</p>
-<p>However, bagging is still not perfect. This is because bagging trees are heavily correlated: in general, the trees will have the same top-level <span class="math inline">x_p</span> variable, especially if there is one very strong predictor in our explanatory variables.</p>
+<p>However, bagging is still not perfect. This is because bagging trees are heavily correlated: in general, the trees will have the same top-level <span class="math inline">\(x_p\)</span> variable, especially if there is one very strong predictor in our explanatory variables.</p>
 <p>This is an issue - highly correlated trees, even if averaged, do not reduce the variance as much as we might need. This is where the next class of models, Random Forests, come in.</p>
 <p><br></p>
 </section>
 <section id="random-forest-models" class="level3">
 <h3 class="anchored" data-anchor-id="random-forest-models">Random Forest Models</h3>
 <p>Bagging has an issue of having highly correlated trees, which may not reduce variance as much as we desire. <strong>Random Forests</strong> solve this issue by not only bootstrapping observations like Bagging does, but also sampling a subset of explanatory variables for each tree.</p>
-<p>For example, let us say you a set of explanatory variables <span class="math inline">\mathcal X = \{x_1, \dots  x_k\}</span>. For every bootstrap sample of observations <span class="math inline">b</span> that we did in bagging, Random forest will also sample a subset of explanatory variables <span class="math inline">\mathcal X_b</span>, which contains only <span class="math inline">g&lt;k</span> number of explanatory variables.</p>
-<p>This means that each tree Random Forest produces only has a subset of <span class="math inline">g</span> explanatory variables, not the total number of <span class="math inline">k</span> explanatory variables. This means that sometimes, influential variables <span class="math inline">x_p</span> will not be included in the subset <span class="math inline">\mathcal X_b</span>, which will allow for other predictors to get a chance to shine.</p>
+<p>For example, let us say you a set of explanatory variables <span class="math inline">\(\mathcal X = \{x_1, \dots  x_k\}\)</span>. For every bootstrap sample of observations <span class="math inline">\(b\)</span> that we did in bagging, Random forest will also sample a subset of explanatory variables <span class="math inline">\(\mathcal X_b\)</span>, which contains only <span class="math inline">\(g&lt;k\)</span> number of explanatory variables.</p>
+<p>This means that each tree Random Forest produces only has a subset of <span class="math inline">\(g\)</span> explanatory variables, not the total number of <span class="math inline">\(k\)</span> explanatory variables. This means that sometimes, influential variables <span class="math inline">\(x_p\)</span> will not be included in the subset <span class="math inline">\(\mathcal X_b\)</span>, which will allow for other predictors to get a chance to shine.</p>
 <p>Thus, Random Forest will have less correlated trees, and thus, will typically have more accurate predictions.</p>
-<p>Generally, the size of the subset of explanatory variables <span class="math inline">\mathcal X_b</span> will typically be <span class="math inline">g=\sqrt{k}</span>, the square root of the total number of explanatory variables. However, you can play around with this (discussed in the next section).</p>
+<p>Generally, the size of the subset of explanatory variables <span class="math inline">\(\mathcal X_b\)</span> will typically be <span class="math inline">\(g=\sqrt{k}\)</span>, the square root of the total number of explanatory variables. However, you can play around with this (discussed in the next section).</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -318,26 +305,26 @@ f_{bag}(x) = \frac{1}{B}\sum\limits_{b=1}^Bf_b(x)
 <p>There are a few choices you must make when specifying the model you are using.</p>
 <ol type="1">
 <li>Should you use Random Forest or Bagging? Typically, Random Forest is better, but this is not always the case.</li>
-<li>If you do choose Random Forest, what size of the subset of explanatory variables <span class="math inline">\mathcal X_b</span> should you use? Typically, the standard is to use the square root of the number of explanatory variables, but this is not a fixed rule.</li>
+<li>If you do choose Random Forest, what size of the subset of explanatory variables <span class="math inline">\(\mathcal X_b\)</span> should you use? Typically, the standard is to use the square root of the number of explanatory variables, but this is not a fixed rule.</li>
 </ol>
-<p><strong>Mean of squared residuals</strong> is a general measure of how well the model performed. It is the mean of the squared errors, where the errors are the differences between the actual dataset <span class="math inline">y_i</span> value and the predicted <span class="math inline">\hat y_i</span> value.</p>
+<p><strong>Mean of squared residuals</strong> is a general measure of how well the model performed. It is the mean of the squared errors, where the errors are the differences between the actual dataset <span class="math inline">\(y_i\)</span> value and the predicted <span class="math inline">\(\hat y_i\)</span> value.</p>
 <p>In R, the mean of squared residuals metric is calculated on testing data - testing the model on units that were not included in a specific bootstrap sample. Thus, this is a good measure of how predictive your model is, without worrying about overfitting.</p>
 <p>You should test all different possibilities of model selection choices, and see which one reduces the mean of squared residuals the most.</p>
 <p><br></p>
 </section>
 <section id="model-selection-for-classification" class="level3">
 <h3 class="anchored" data-anchor-id="model-selection-for-classification">Model Selection for Classification</h3>
-<p>For classification tasks, you have the same decisions (bagging vs.&nbsp;random forest, what size <span class="math inline">\mathcal X_b</span>) as prediction tasks.</p>
+<p>For classification tasks, you have the same decisions (bagging vs.&nbsp;random forest, what size <span class="math inline">\(\mathcal X_b\)</span>) as prediction tasks.</p>
 <p>The simplest metric to help you make the decision is the <strong>error rate</strong>. This is simply the percentage of observations the model got wrong (predicted one category when it should have been the other).</p>
 <p>We can also dig into more detail.</p>
 <ul>
-<li>The <strong>False Positive Rate</strong> is the observations that are <span class="math inline">y=0</span>, but our model predicted incorrectly as <span class="math inline">\hat y = 1</span>.</li>
-<li>The <strong>False Negative Rate</strong> is the observations that are <span class="math inline">y=1</span>, but our model predicted incorrectly as <span class="math inline">\hat y = 0</span>.</li>
+<li>The <strong>False Positive Rate</strong> is the observations that are <span class="math inline">\(y=0\)</span>, but our model predicted incorrectly as <span class="math inline">\(\hat y = 1\)</span>.</li>
+<li>The <strong>False Negative Rate</strong> is the observations that are <span class="math inline">\(y=1\)</span>, but our model predicted incorrectly as <span class="math inline">\(\hat y = 0\)</span>.</li>
 </ul>
 <p>The inverses of false positives/negatives are specificity and sensitivity:</p>
 <ul>
-<li><strong>Specificity</strong> is the percentage of observations that are <span class="math inline">y=0</span>, that our model correctly predicted as <span class="math inline">\hat y =0</span>.</li>
-<li><strong>Sensitivity</strong> is the percentage of observations that are <span class="math inline">y=1</span>, that our model correctly predicted as <span class="math inline">\hat y = 1</span>.</li>
+<li><strong>Specificity</strong> is the percentage of observations that are <span class="math inline">\(y=0\)</span>, that our model correctly predicted as <span class="math inline">\(\hat y =0\)</span>.</li>
+<li><strong>Sensitivity</strong> is the percentage of observations that are <span class="math inline">\(y=1\)</span>, that our model correctly predicted as <span class="math inline">\(\hat y = 1\)</span>.</li>
 </ul>
 <p>The metric on which to focus on depends on our goals of classification. Choosing the right model requires some subjectivity. For example, if we are trying to predict if a patient has a serious disease, we probably want more false positives rather than under-detecting people who are actually sick. But for judicial systems, since we do not want to put an innocent person in jail, we might prefer lower false positives, and more false negatives.</p>
 <p><br></p>
@@ -352,12 +339,12 @@ f_{bag}(x) = \frac{1}{B}\sum\limits_{b=1}^Bf_b(x)
 <p>There are several model summary statistics for prediction tasks:</p>
 <ol type="1">
 <li><strong>Mean of squared residuals</strong> is a general measure of how well the model performed. This can tell us how confident we are in our model.</li>
-<li><strong>% Var Explained</strong> is how well our explanatory variables explain the variation in <span class="math inline">y</span>. This is almost identical to the interpretation of the <span class="math inline">R^2</span> metric in linear regression.</li>
+<li><strong>% Var Explained</strong> is how well our explanatory variables explain the variation in <span class="math inline">\(y\)</span>. This is almost identical to the interpretation of the <span class="math inline">\(R^2\)</span> metric in linear regression.</li>
 </ol>
 <p>For classification tasks, summary statistics include:</p>
 <ol type="1">
 <li>The <strong>Error Rate</strong> is simply the percentage of observations the model got wrong (predicted one category when it should have been the other).</li>
-<li>A <strong>Confusion Matrix</strong> is a table that has rows for actual <span class="math inline">y = 0, 1</span>, and volumes for predicted <span class="math inline">\hat y = 0 ,1</span>. This allows you to calculate false positive/negative rates and sensitivity/specificity.</li>
+<li>A <strong>Confusion Matrix</strong> is a table that has rows for actual <span class="math inline">\(y = 0, 1\)</span>, and volumes for predicted <span class="math inline">\(\hat y = 0 ,1\)</span>. This allows you to calculate false positive/negative rates and sensitivity/specificity.</li>
 </ol>
 <p>These summary statistics are all provided in the R output.</p>
 <p><br></p>
@@ -366,7 +353,7 @@ f_{bag}(x) = \frac{1}{B}\sum\limits_{b=1}^Bf_b(x)
 <h3 class="anchored" data-anchor-id="importance-statistics">Importance Statistics</h3>
 <p>One of the downsides of Bagging and Random Forest is that they are harder to interpret than Regression Trees.</p>
 <p>Regression Trees produce a nice diagram, with the most important variables near the top. However, Bagging and Random Forest average hundreds or thousands of different trees, so we cannot really draw a diagram out.</p>
-<p>This is where importance statistics comes in. To calculate importance, we “remember” the reduction in RSS (or error rate) every time we split a tree, for every bagging sample <span class="math inline">b</span>. Then, we figure out which variables on average reduce the RSS (or error rate) the most.</p>
+<p>This is where importance statistics comes in. To calculate importance, we “remember” the reduction in RSS (or error rate) every time we split a tree, for every bagging sample <span class="math inline">\(b\)</span>. Then, we figure out which variables on average reduce the RSS (or error rate) the most.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-364907520.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
@@ -413,7 +400,7 @@ Bagging Model
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The output will contain summary statistics.</p>
-<p>Note: you can also do <span class="math inline">Y \sim .</span> in the formula. The <span class="math inline">.</span> symbolises that you want to include all other variables not <span class="math inline">Y</span> within your dataframe into your model. This speeds up the process of writing every single explanatory variable out.</p>
+<p>Note: you can also do <span class="math inline">\(Y \sim .\)</span> in the formula. The <span class="math inline">\(.\)</span> symbolises that you want to include all other variables not <span class="math inline">\(Y\)</span> within your dataframe into your model. This speeds up the process of writing every single explanatory variable out.</p>
 </div>
 </div>
 </div>
@@ -441,7 +428,7 @@ Random Forest Model
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The output will contain summary statistics.</p>
-<p>Note: you can also do <span class="math inline">Y \sim .</span> in the formula. The <span class="math inline">.</span> symbolises that you want to include all other variables not <span class="math inline">Y</span> within your dataframe into your model. This speeds up the process of writing every single explanatory variable out.</p>
+<p>Note: you can also do <span class="math inline">\(Y \sim .\)</span> in the formula. The <span class="math inline">\(.\)</span> symbolises that you want to include all other variables not <span class="math inline">\(Y\)</span> within your dataframe into your model. This speeds up the process of writing every single explanatory variable out.</p>
 </div>
 </div>
 </div>
@@ -462,7 +449,7 @@ Predictions
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mypredictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, <span class="at">newdata =</span> my_new_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><em>my_new_data</em> is a dataframe with a bunch of explanatory variable values (for every explanatory variable) for a collection of observations, that you wish to predict <span class="math inline">\hat y</span> for.</p>
+<p><em>my_new_data</em> is a dataframe with a bunch of explanatory variable values (for every explanatory variable) for a collection of observations, that you wish to predict <span class="math inline">\(\hat y\)</span> for.</p>
 <p><em>model</em> is the name of the object in which you stored your trained model to.</p>
 </div>
 </div>
