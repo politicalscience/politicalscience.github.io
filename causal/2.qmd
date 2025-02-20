@@ -9,6 +9,7 @@ format:
           body-width: 700px
           margin-width: 250px
           gutter-width: 2em
+        mainfont: "Times New Roman"
         fontsize: 12pt
         theme: default
         toc: TRUE
@@ -16,10 +17,11 @@ format:
         toc-location: left
         toc-expand: true
         toc-title: "Table of Contents"
-        mainfont: "Computer Modern"
         title-block-banner: true
-        classoption: fleqn
-        html-math-method: katex
+        html-math-method: mathjax
+        include-in-header:
+          text: |
+            <script src="mathjax-config.js"></script>
 editor: visual
 ---
 
@@ -64,7 +66,7 @@ $$
 Or in other words, treatment is **independent** of potential outcomes (also unconfounded or ignorability):
 
 $$
-(Y_1, Y_0)  \perp D
+(Y_1, Y_0)  \perp\!\!\!\!\perp D
 $$
 
 This implies that $E(Y_{0i})$ is the same between treatment and control groups, and $E(Y_{1i})$ is also the same between treatment and control:
@@ -74,31 +76,31 @@ $$
 & E(Y_{0i} | D_i = 1) = E(Y_{0i} | D_i = 0) = E(Y_{0i})\\
 & E(Y_{1i} | D_i = 1) = E(Y_{1i} | D_i = 0) = E(Y_{1i})
 \end{split}
-$$
+$$ {#eq-independence}
 
 <br />
 
 ### Proof of Identification
 
-Let us return to our [naive estimator](https://politicalscience.github.io/causal/1.html#naive-estimator-and-selection-bias), and our problem of selection bias. Using the above property of independence, we can simplify:
+Let us return to our [naive estimator](https://politicalscience.github.io/causal/1.html#naive-estimator-and-selection-bias), and our problem of selection bias. Using the above property in @eq-independence, we can simplify:
 
 $$
-\begin{split}
-\hat\tau_{\text{naive}} & = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
-& = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}) - E(Y_{0i})}_{\text{Selection Bias}} \\
+\begin{align}
+\hat\tau_{naive} & = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
+& = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + \underbrace{E(Y_{0i}) - E(Y_{0i})}_{\text{Selection Bias}} && (\because \text{eq. (1)} \ )\\
 & = \underbrace{E(Y_{1i}|D_i = 1)- E(Y_{0i}|D_i = 1)}_{\tau_{ATT}} + 0
-\end{split}
+\end{align}
 $$
 
-Thus, under randomisation, selection bias is equal to 0, and thus our comparison of observed outcomes is now an unbiased estimator of $\tau_{ATT}$. Now look at the formula for the [ATT](https://politicalscience.github.io/causal/1.html#average-treatment-effect-on-the-treated-att) estimand. We can simplify as follows:
+Thus, under randomisation, selection bias is equal to 0, and thus our comparison of observed outcomes is now an unbiased estimator of $\tau_{ATT}$. Now look at the formula for the [ATT](https://politicalscience.github.io/causal/1.html#average-treatment-effect-on-the-treated-att) estimand. We can simplify as follows using @eq-independence:
 
 $$
-\begin{split}
+\begin{align}
 \tau_{ATT} & = E(Y_{1i} -Y_{0i}|D_i = 1)\\
 & = E(Y_{1i} |D_i = 1) - E(Y_{0i} | D_i = 1) \\
-& = \underbrace{E(Y_{1i} )}_{\because \text{ independence}} - \underbrace{E(Y_{0i})}_{\because \text{ independence}} \\
+& = E(Y_{1i} ) - E(Y_{0i}) && (\because \text{equation (1)} \ )\\
 & = \underbrace{E(Y_{1i} - Y_{0i})}_{\tau_{ATE}}
-\end{split}
+\end{align}
 $$
 
 And now we see that $\tau_{ATT}$ and $\tau_{ATE}$ are equivalent under randomisation, and we can identify the $\tau_{ATE}$ with our observed data.
@@ -121,7 +123,7 @@ Thus, we can eliminate the arrow between $U \rightarrow D$. This allows us to es
 
 Randomisation balances all observed and unobserved pre-treatment characteristics between units between the treatment and control.
 
-This is because not only is $(Y_1, Y_0) \perp D$, but also any covariate $X$ is also independent of treatment: $X \perp D$.
+This is because not only is $(Y_1, Y_0) \perp\!\!\!\!\perp D$, but also any covariate $X$ is also independent of treatment: $X \perp\!\!\!\!\perp D$.
 
 This means that if randomisation is successful, we should expect minimal differences between control and treatment groups for all pre-treatment characteristics values.
 

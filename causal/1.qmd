@@ -9,6 +9,7 @@ format:
           body-width: 700px
           margin-width: 250px
           gutter-width: 2em
+        mainfont: "Times New Roman"
         fontsize: 12pt
         theme: default
         toc: TRUE
@@ -16,10 +17,11 @@ format:
         toc-location: left
         toc-expand: true
         toc-title: "Table of Contents"
-        mainfont: "Times New Roman"
         title-block-banner: true
-        classoption: fleqn
-        html-math-method: katex
+        html-math-method: mathjax
+        include-in-header:
+          text: |
+            <script src="mathjax-config.js"></script>
 editor: visual
 ---
 
@@ -58,7 +60,7 @@ Imagine there are two hypothetical parallel worlds - one where unit $i$ receives
 **Potential Outcomes** for unit $i$ are denoted:
 
 $$
-Y_{di} =\begin{cases}
+Y_{di}, Y_i(d) =\begin{cases}
 & Y_{1i} \quad \text{Outcome for unit } i \text{ when } D_i = 1 \\
 & Y_{0i} \quad \text{Outcome for unit } i \text{ when } D_i = 0 \\
 \end{cases}
@@ -118,10 +120,13 @@ This missing data problem is called the **fundamental problem of causal inferenc
 The above given observed and potential outcome frameworks depends on the Stable Unit Treatment Value Assumption (SUTVA).
 
 $$
-\underbrace{Y_{(D_1, D_2, \dots, D_N)i}}_{\text{Observed } D_i} = \underbrace{Y_{(D_1', D_2', \dots, D_N')i}}_{\text{All alternative } D_i}
+\begin{align}
+Y_{(D_1, D_2, \dots, D_N)i} & = Y_{(D_1', D_2', \dots, D_N')i} \\
+Y_{di} \text{ under current randomisation} & = Y_{di} \text{ under all other randomisations}
+\end{align}
 $$
 
-Or more intuitively, the potential outcomes of unit $i$ only depends on their own treatment status, and no other unit's treatment status. The treatment is also the same for everyone (treatment is stable and consistent)
+Or more intuitively, the potential outcomes of unit $i$ only depends on their own treatment status, and no other unit's treatment status. Thus, changing everyone else's treatment status has no effects on unit $i$'s potential outcomes $Y_{di}$. The treatment is also the same for everyone (treatment is stable and consistent)
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Examples of SUTVA Violations
@@ -204,7 +209,7 @@ An alternative estimand to the ATE is the **Average Treatment Effect on the Trea
 $$
 \begin{split}
 \tau_{ATT} & = E(Y_{1i} - Y_{0i} \ | \ D_i = 1) \\
-& = \underbrace{\frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i}) \quad  \text{where } N_1 = \sum\limits_{i=1}^ND_i}_{\text{a formula for the average only for units }D_i = 1}
+& = \underbrace{\frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i}) \quad  \text{where } N_1 = \sum\limits_{i=1}^ND_i}_{\text{a formula for the average only for treated units}}
 \end{split}
 $$
 
@@ -231,7 +236,7 @@ This is not used very often, since it is kind of uninituive to think about treat
 The conditional average treatment effect is any treatment effect where there is a condition on a characteristic/covariate:
 
 $$
-\tau_{CATE}(x) = E(Y_{1i} - Y_{0i} \ | \ \underbrace{X_i = x}_{\text{condition}})
+\tau_{CATE}(x) = E(Y_{1i} - Y_{0i} \ | \ \underbrace{X_i = x)}_{\text{condition}}
 $$
 
 This is the causal effect of only variables who meet the condition of the covariate specified. For example, you could find the conditional average treatment effect of only women (so the covariate which we are conditioning on is *gender*). You can also condition on multiple covariates.
@@ -250,23 +255,21 @@ This estimand will go by other names, including the Local Average Treatment Effe
 
 ### Naive Estimator and Selection Bias
 
-A natural way to estimate the ATE is to use a naive estimator: find the average difference of [observed]{.underline} outcomes. This is called the naive estimator:
+A natural way to estimate the ATE is to use a naive estimator: find the average difference of [**observed**]{.underline} outcomes. This is called the naive estimator:
 
 $$
-\begin{split}
-\hat\tau_{naive} = \underbrace{E(Y_i|D_i = 1)}_{\text{Observed }Y \text{ for treatment}} - \underbrace{E(Y_i|D_i = 0)}_{\text{Observed }Y \text{ for control}}
-\end{split}
+\hat\tau_{naive} = \underbrace{E(Y_i|D_i = 1)}_{\text{for treated}} - \underbrace{E(Y_i|D_i = 0)}_{\text{for control}}
 $$
 
 However, there is an issue - we can show this with algebra:
 
 $$
-\begin{split}
+\begin{align}
 \hat\tau_{naive} & = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
 & = \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
 & = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) \color{red}{- E(Y_{0i}|D_i = 1)}}_{\because \text{ this equals 0, so we can add it}} \\
 & = \underbrace{E(Y_{1i}|D_i = 1) \color{red}{- E(Y_{0i}|D_i = 1)}}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
-\end{split}
+\end{align}
 $$
 
 We can see that our naive estimator produces the $\tau_{ATT}$ **plus** an extra bit (called the selection bias). Thus, our naive estimator is [biased](https://politicalscience.github.io/causal/0.html#unbiased-estimators), so we should be careful about using this naive estimator (correlation does not equal causation).
@@ -294,11 +297,11 @@ The proofs above shows how the naive estimator is a biased estimator for the $\t
 Let us first start with the ATE. Let us call $Y_{1i} - Y_{0i} := \tau_i$ for notation simplicity:
 
 $$
-\begin{split}
+\begin{align}
 \tau_{ATE} & = E(Y_{1i} - Y_{0i})  = E(\tau_i)\\
-& = \underbrace{E(\tau_i|D_i = 1)Pr(D_i = 1) + E(\tau_i|D_i = 0)Pr(D_i = 0)}_{\because \text{ weighted average of ATE and ATU by proportion in }D_i = 1, 0} \\
-& = E(\tau_i|D_i = 1)\underbrace{(1 -Pr(D_i = 0))}_{\because \text{ complement prob.}} + E(\tau_i|D_i = 0)Pr(D_i = 0) \\
-\end{split}
+& = \underbrace{E(\tau_i|D_i = 1)Pr(D_i = 1) + E(\tau_i|D_i = 0)Pr(D_i = 0)}_{\because \text{ weighted average of ATE and ATU by proportion}} \\
+& = E(\tau_i|D_i = 1) \underbrace{(1 -Pr(D_i = 0))}_{\because \text{ complement prob.}} + E(\tau_i|D_i = 0)Pr(D_i = 0) \\
+\end{align}
 $$
 
 Let us call $Pr(D_i = 0) := \pi$ for notation simplicity. Now, continue:
@@ -306,7 +309,7 @@ Let us call $Pr(D_i = 0) := \pi$ for notation simplicity. Now, continue:
 $$
 \begin{split}
 & = \underbrace{E(\Delta|D_i = 1) - \pi E(\Delta|D_i = 1)}_{\because \text{ distribute out}} + E(\tau_i|D_i = 0)\pi \\
-& = E(\tau_i|D_i = 1) + \underbrace{\pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)]}_{\because \text{ factor out } \pi = Pr(D_i = 0)} \\
+& = E(\tau_i|D_i = 1) + \underbrace{\pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)]}_{\because \ \pi \text{ factored out }} \\
 & = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 1) + \pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)] \\
 \end{split}
 $$
@@ -342,16 +345,14 @@ $$
 Take the selection bias formula from above:
 
 $$
-\underbrace{E(Y_{0i}|D_i = 1)}_{Y_{0i}\text{ for treatment}} - \underbrace{E(Y_{0i} | D_i = 0)}_{Y_{0i}\text{ for control}}
+\underbrace{E(Y_{0i}|D_i = 1)}_{Y_{0i}\text{ (treated)}} - \underbrace{E(Y_{0i} | D_i = 0)}_{Y_{0i}\text{ (control)}}
 $$
 
 If selection bias is non-zero, this essentially states that the expected potential outcome before treatment $Y_{0i}$ between the treatment and control groups is not equal.
 
 Or in other words, the treatment and control groups have some other variable causing differences even before treatment has begun. This implies that the differences between the treatment and control group may not be due to treatment $D$, but due to the underlying differences before treatment even occurred.
 
-**Confounders** are variables that cause the differences between treatment and control groups before the treatment has started. [**Confounders correlate with both the treatment variable and the outcome**]{.underline}.
-
--   If a variable only correlates with $D$ or $Y$, then it is not a confounder. If must correlate with both $D$ **and** $Y$.
+**Confounders** are variables that cause the differences between treatment and control groups before the treatment has started. [**Confounders correlate with both the treatment variable and the outcome**]{.underline}. If a variable only correlates with $D$ or $Y$, then it is not a confounder. If must correlate with both $D$ **and** $Y$.
 
 This is why correlation does not equal causation - if the treatment and control group are different before we start the experiment, we cannot say the difference between the two is purely a result of treatment $D$.
 
@@ -375,20 +376,21 @@ $$
 Let us now plug in the "true" model into where $\mathbf y$ is:
 
 $$
-\begin{split}
-\boldsymbol{\hat\beta} & = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{(\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u)}_{\because \text{ true model } \mathbf y} \\
-& = \underbrace{(\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf X}_{\because \text{ inverses cancel}} \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf u \\
-\end{split}
+\begin{align}
+\boldsymbol{\hat\beta} & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} (\color{blue}{\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}\color{black}) && (\text{plug in } \color{blue}{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}\color{black} )\\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{multiply out})\\
+& = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{inverses } (\color{blue}{\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
+& = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{identity property of } \mathbf I)
+\end{align}
 $$
 
 Now, let us find the expected value of $\boldsymbol{\hat\beta}$, which is conditional on $\mathbf X, \mathbf z$, and simplify (using [zero conditional mean](https://politicalscience.github.io/causal/0.html#conditions-for-unbiasedness)):
 
 $$
-\begin{split}
-E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z) & = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \underbrace{E(\mathbf u | \mathbf X, \mathbf z)}_{= \ 0} \\
-& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta
-\end{split}
+\begin{align}
+E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z) & = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} E(\mathbf u | \mathbf X, \mathbf z) \\
+& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta &&(\because E(\mathbf u | \mathbf X, \mathbf z) = 0)
+\end{align}
 $$
 
 Now, what if we had a regression of outcome variable being the confounder $z$, on the explanatory variables $\mathbf X$, such that $\mathbf z = \mathbf X \boldsymbol\pi + \mathbf v$. Our OLS estimate would have the solution:
@@ -406,12 +408,12 @@ $$
 Now, using the law of iterated expectations, we get (assuming we are using an unbiased estimator for $\boldsymbol{\hat\pi}$ such that $E(\boldsymbol{\hat\pi}) = \boldsymbol\pi$):
 
 $$
-\begin{split}
-E(\boldsymbol{\hat\beta}) & = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)) \\
-& = E(\boldsymbol\beta + \boldsymbol{\hat\pi \delta}) \\
-& = \boldsymbol\beta + E(\boldsymbol{\hat\pi}) \boldsymbol \delta \\
-& = \boldsymbol\beta + \boldsymbol{\pi \delta}
-\end{split}
+\begin{align}
+E(\boldsymbol{\hat\beta}) & = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)) && (\text{LIE: } E(X) = E(E(X|Y))\\
+& = E(\boldsymbol\beta + \boldsymbol{\hat\pi \delta})  && (\text{LIE: } E(X) = E(E(X|Y)) \\
+& = \boldsymbol\beta + E(\boldsymbol{\hat\pi}) \boldsymbol \delta && (\boldsymbol\beta, \boldsymbol\delta\text{ are constants})\\
+& = \boldsymbol\beta + \boldsymbol{\pi \delta} && (\text{unbiased estimator } E(\boldsymbol{\hat\pi}) = \boldsymbol\pi)
+\end{align}
 $$
 
 Thus, we can see by not including confounder $z$ in our "short regression", the estimator is now biased by $\boldsymbol{\hat\pi \delta}$.

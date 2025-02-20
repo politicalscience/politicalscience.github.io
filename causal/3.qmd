@@ -9,6 +9,7 @@ format:
           body-width: 700px
           margin-width: 250px
           gutter-width: 2em
+        mainfont: "Times New Roman"
         fontsize: 12pt
         theme: default
         toc: TRUE
@@ -16,10 +17,11 @@ format:
         toc-location: left
         toc-expand: true
         toc-title: "Table of Contents"
-        mainfont: "Computer Modern"
         title-block-banner: true
-        classoption: fleqn
-        html-math-method: katex
+        html-math-method: mathjax
+        include-in-header:
+          text: |
+            <script src="mathjax-config.js"></script>
 editor: visual
 ---
 
@@ -70,7 +72,7 @@ Once we have determined the set of confounders $X$ that we need to control to bl
 1.  **Conditional Ignorability** (also known as exogeneity or independence): Among units with identical confounder values $X_i$, treatment $D_i$ is as-if randomly assigned. Or in other words, potential outcomes are independent from treatment within each specific confounder value $X_i = x$.
 
 $$
-(Y_{0i}, Y_{1i}) \perp D_i  \ | \ X_i = x, \quad \forall \ x \in \mathcal X
+(Y_{0i}, Y_{1i}) \perp\!\!\!\!\perp D_i  \ | \ X_i = x, \quad \forall \ x \in \mathcal X
 $$
 
 This implies that for any given value of all confounders $X_i = x$, we know that potential outcomes $Y_{di}$ are equivalent between treatment and control:
@@ -80,7 +82,7 @@ $$
 E(Y_{1i}|X_i = x) = E(Y_{1i}|D_i = 1, X_i = x) = E(Y_{1i}|D_i = 0, X_i = x) \\
 E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 1, X_i = x) = E(Y_{0i}|D_i = 0, X_i = x)
 \end{split}
-$$
+$$ {#eq-independence}
 
 2.  **Common Support**: for any unit $i$ with value of $X_i$, there is a non-zero probability that they could be assigned to both control $D_i = 0$ or treatment $D_i = 1$.
 
@@ -100,81 +102,198 @@ That means our theory is that age $X$ affects selection into treatment $D$. Youn
 
 <br />
 
-### Proof of Identification
+### Identification of the ATE
 
-With our assumptions above, we can identify the ATE. We start with the [conditional average treatment effect](https://politicalscience.github.io/causal/1.html#conditional-average-treatment-effect-cate), conditional on some value of confounders $X_i = x$:
+With our assumptions above, we can identify the ATE. We start with the [conditional average treatment effect](https://politicalscience.github.io/causal/1.html#conditional-average-treatment-effect-cate), conditional on some value of confounders $X_i = x$. Note the properties shown in @eq-independence .
 
 $$
-\begin{split}
+\begin{align}
 \tau_{CATE}(x) & = E(Y_{1i} - Y_{0i} \ | \ X_i = x) \\
-& = E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x) \\
-& = \underbrace{E(Y_{1i}|D_i = 1, X_i = x)}_{\because \text{ conditional ignorability} \\ } - \underbrace{E(Y_{0i}|D_i = 0X_i = x)}_{\because \text{ conditional ignorability}} \\
-& = \underbrace{E(Y_i|D_i = 1, X_i = x)}_{\because \text{ observable outcome}} - \underbrace{E(Y_i|D_i = 0, X_i = x)}_{\because \text{ observable outcome}}
-\end{split}
-$$
+& = E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x) && (\text{property of expectation}) \\
+& = E(Y_{1i}|D_i = 1, X_i = x) - E(Y_{0i}|D_i = 0X_i = x) &&( \because \text{equation (1)} \ ) \\
+& = \underbrace{E(Y_i|D_i = 1, X_i = x)}_{\because \text{ observable}} - \underbrace{E(Y_i|D_i = 0, X_i = x)}_{\because \text{ observable}}
+\end{align}
+$$ {#eq-cate}
 
-Now, let us discuss the ATE, and plug in the CATE to identify it:
+Now, let us discuss the ATE, and plug in the CATE from @eq-cate to identify it:
 
 $$
-\begin{split}
+\begin{align}
 \tau_{ATE} & = E(Y_{1i} - Y_{0i}) \\
-& = \underbrace{\int \overbrace{E(Y_{1i} - Y_{0i} \ | \ X_i = x)}^{\text{CATE at }X_i = x} d \ \overbrace{Pr(X_i = x)}^{\text{prob of }X_i = x}}_{\text{weighted average, with weight being } Pr(X_i = x)} \\
-& = \int(\underbrace{E(Y_i|D_i = 1, X_i) - E(Y_i|D_i = 0, X_i)}_{\because \text{ CATE proof above}})d \ Pr(X_i = x)
-\end{split}
-$$
+& = \int \underbrace{E(Y_{1i} - Y_{0i} \ | \ X_i = x)}_{\tau_{CATE}(x)} d \ \underbrace{Pr(X_i = x)}_{\text{weight}} && (\text{weighted average})\\
+& = \int(\underbrace{E(Y_i|D_i = 1, X_i) - E(Y_i|D_i = 0, X_i)}_{\because \text{ equation (2)}})d \ Pr(X_i = x)
+\end{align}
+$$ {#eq-ate}
 
 Thus $\tau_{ATE}$ is identified as the weighted average of all the CATEs, who themselves are difference-in-means of the observed $Y_i$ at every possible value of $X_i = x$.
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Identification of the ATT
+We assumed that the pre-treatment covariate $X$ is continuous. This is why we need an integral. However, we can simplify this if $X$ is discrete:
 
-We can weaken our initial assumptions, and still calculate the ATT.
+$$
+\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x) 
+$$ {#eq-discreteate}
 
-1.  Weakened conditional ignorability: Only $Y_{0i}$ needs to be independent of $D_i$ for units with the same covariates $X_i$. Or in other words, $(Y_{0i}) \perp D_i | X_i = x$. This implies:
+<br />
+
+### Identification of the ATT
+
+We can weaken conditional ignorability, and still identify the ATT. Only $Y_{0i}$ needs to be independent of $D_i$ for units with the same covariates $X_i$. Or in other words, $(Y_{0i}) \perp\!\!\!\perp D_i | X_i = x$. This implies:
 
 $$
 E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 0, X_i = x) = E(Y_{0i}|D_i = 1, X_i = x)
-$$
+$$ {#eq-weak}
 
-2.  Weakened common support: $Pr(D_i = 1 |X_i = x) < 1$.
-
-Let us start with the conditional ATT:
+Start with the conditional ATT, using weakened conditional ignorability from @eq-weak :
 
 $$
 \begin{split}
 \tau_{CATT}(x) & = E(Y_{1i}-Y_{0i}|D_i = 1, X_i = x) \\
 & = E(Y_{1i}|D_i = 1, X_i = x) - E(Y_{0i}|D_i = 1, X_i = x) \\
-& = E(Y_{1i}|D_i = 1, X_i = x) - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ weakened cond. ignorability}} \\
-& = \underbrace{E(Y_i|D_i=1, X_i = x)}_{\because \text{ observable outcome}} - \underbrace{E(Y_1|D_i = 0, X_i x)}_{\because \text{ observable outcome}}
+& = E(Y_{1i}|D_i = 1, X_i = x) - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ equation (5)}} \\
+& = \underbrace{E(Y_i|D_i=1, X_i = x)}_{\because \text{ observable}} - \underbrace{E(Y_1|D_i = 0, X_i x)}_{\because \text{ observable}}
 \end{split}
-$$
+$$ {#eq-catt}
 
-Now, look at the ATT, and plug in CATT to identify it.
+Now, look at the ATT, and plug in CATT from @eq-catt to identify it.
 
 $$
-\begin{split}
+\begin{align}
 \tau_{ATT} & = E(Y_{1i} - Y_{0i}|D_i = 1) \\
-& = \underbrace{\int \overbrace{E(Y_{1i} - Y_{0i}|D_i = 1, X_i = x)}^{\text{CATT at }X_i = x}d \ \overbrace{Pr(X_i = x|D_i = 1)}^{Pr(X_i = x) \text{ within treatment}}}_{\text{weighted average, with weight being } Pr(X_i = x)} \\
-& = \int (E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x))d \ Pr(X_i = x|D_i = 1)
-\end{split}
+& = \int \underbrace{E(Y_{1i} - Y_{0i}|D_i = 1, X_i = x)}_{\tau_{CATT}(x)}d \ \underbrace{Pr(X_i = x|D_i = 1)}_{Pr(X_i = x) \text{ within treated}} \\
+& = \int (\underbrace{E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)}_{\because \text{ equation (6)}})d \ Pr(X_i = x|D_i = 1)
+\end{align}
+$$
+
+We can simplify this if $X$ is discrete:
+
+$$
+\tau_{ATT} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x | D_i = 1)
 $$
 
 Even when all assumptions are met for identification of the ATE, the $\tau_{ATE}$ can be different than the $\tau_{ATT}$. This is because the weights $Pr(X_i = x|D_i = 1)$ for the ATT are different than the ATE $Pr(X_i = x)$.
-:::
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Parametric Estimators**
+
+### Ordinary Least Squares Estimator
+
+OLS is a natural approach for controlling for confounders $X$, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](https://politicalscience.github.io/causal/0.html#regression-anatomy-theorem). OLS is a good estimator of $\tau_{ATE}$ under 2 conditions:
+
+1.  **Constant treatment effect**: $\tau_i = Y_{1i} - Y_{0i}$ for all units $i$.
+2.  **Linearity**: Potential outcomes are linear, and can be written as:
+
+$$
+Y_i(d) = \beta_0 + d\beta_1 + \mathbf X_i \gamma + \epsilon_i \quad \text{for} \quad d = 0, 1
+$$
+
+Why these conditions? Suppose we have the above linear potential outcomes. We can show:
+
+$$
+\begin{align}
+\tau_i & = Y_{1i} - Y_{0i} && (\text{definition of } \tau_i) \\
+& = (\beta_0 + (1)\beta_1 + \mathbf X_i \gamma + \epsilon_i) - (\beta_0 + (0)\beta_1 + \mathbf X_i \gamma + \epsilon_i) && (\text{plug in } Y_i(1), Y_i(0) \ )\\
+& = (\beta_0 + \beta_1 + \mathbf X_i \gamma + \epsilon_i) - (\beta_0 + \mathbf X_i \gamma + \epsilon_i) && (\text{multiply}) \\
+& = \beta_0 + \beta_1 + \mathbf X_i \gamma + \epsilon_i - \beta_0 - \mathbf X_i\gamma - \epsilon_i && (\text{distribute negative sign})\\
+& = \beta_1 && (\text{cancel out terms})
+\end{align}
+$$
+
+We also know that conditional ignorability implies [zero-conditional mean](https://politicalscience.github.io/causal/0.html#conditions-for-unbiasedness). Thus $\beta_1$ is an unbiased and asymptotically consistent estimator of the ATE.
+
+You should be cautious using OLS when assumption 2, **linearity**, is violated. OLS is the best linear estimator, but how far your data is from linearity will determine if the estimator is useful.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Discrete X Identification
+## Non-Linearity
 
-Above, we assumed that the pre-treatment covariate $X$ is continuous. This is why we need an integral.
+What if potential outcomes $Y_i(d)$ is an unknown and non-linear function of $d$ and $X_i$.
 
-However, we can simplify this if $X$ is discrete:
+We know the OLS is the [best linear predictor of the conditional expectation function](https://politicalscience.github.io/causal/0.html#ols-as-a-conditional-expectation-function) in terms of mean squared error. Thus, $\beta_1$ will provide the best linear approximation to the population regression function.
+
+This does not mean it is good - just the best linear approximation.
+:::
+
+You **should not use** OLS if you believe assumption 1, heterogeneity, is violated. The reasoning is explained below.
+
+<br />
+
+### OLS Bias under Heterogeneity
+
+What if there are **heterogenous** treatment effects (where $\tau_i$ is different between units)? Standard OLS in this case is [**no longer** an unbiased estimator]{.underline} of the ATE.
+
+Recall the discrete identification of the ATE (in equation @eq-discreteate ) is a weighted average of CATEs:
+
+$$
+\hat\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{Pr(X_i = x)}_{\text{weight}} \\
+$$
+
+OLS, when there are non constant treatment effects, can also be rewritten as a weighted average of CATEs:
+
+$$
+\hat\beta_{OLS} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{ \frac{Var(D_i|X_i = X)Pr(X_i = x)}{\sum Var(D_i | X_i = x')Pr(X_i = x')} }_{\text{weight}} \\
+$$
+
+Notice how the weights are different. The weights in the OLS are the conditional variances of $D_i$. This means that OLS is **not** an unbiased estimator of the ATE or ATT, but rather, a weighted average of the ATT and ATU.
+
+OLS, under heterogeneity, actually provides an unbiased estimator of the **conditional variance weighted average treatment effect**. This is not the same as the ATE or the ATT.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Conditional Variance Weighted Average Treatment Effect (CVW-ATE)
+
+This estimand can also be described as a weighted average of the ATT (average treatment effect on the treated) and the ATU (average treatment effect on the untreated):
+
+$$
+\tau_{OLS} = w_1 \cdot \tau_{ATT} + w_0 \cdot \tau_{ATU}
+$$
+
+Where:
 
 $$
 \begin{split}
-& \tau_{ATE} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x) \\
-& \tau_{ATT} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x | D_i = 1)
+w_1 & = \frac{(1 - Pr(D=1)) Var(\pi(X)|D = 0)}{Pr(D=1)Var(\pi(X)|D=1) + (1-Pr(D=1)Var(\pi(X)|D=0)} \\
+w_0 & = 1 - w_1
 \end{split}
 $$
+
+The reason for this is because regression is prone to extrapolation beyond common support - i.e. it can "estimate" potential outcomes for units that are not observed. This can lead to bias.
+
+This is in contrast to the subclassification estimator, which cannot be computed if there are missing observable outcomes for a substratum/category of $X$.
+
+The weights of $D_i(X_i = x)$ can also be seen as propensity scores of $\pi(x)(1 - \pi(x)$. Therefore:
+
+1.  Weights are higher for groups with propensity scores close to 0.5.
+2.  Weights are low for groups with propensity scores close to 0 or 1.
+3.  OLS minimises estimation uncertainty by downweighting groups of $X_i$ where group-specific ATEs are less precisely estimated.
+:::
+
+<br />
+
+### Fully Interacted Estimator
+
+The **Fully-Interacted Estimator**, a newly developed large-sample regression estimator (Lin 2013), solves the heterogeneity bias in the OLS estimator. The fully-interacted estimator takes the form:
+
+$$
+\widehat{Y_i} = \hat\alpha + D_i \widehat{\tau}_{int} + (\mathbf X_i - \mathbf {\bar X}) \hat\beta +D_i (\mathbf X_i - \mathbf{\bar X}) \hat\gamma
+$$
+
+-   Where $X_i$ are covariate values sufficient to satisfy conditional independence.
+-   Where $\bar X$ contains the sample means of all $X_i$ covariates.
+
+This estimator $\hat\tau_{int}$ is technically biased when estimating $\tau_{ATE}$. However, the bias is arbitrarily small in large samples under conditional ignorability.
+
+This estimator thus allows us to accurately estimate the ATE even under heterogenous treatment effects, assuming our sample size is sufficiently large.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Other Solutions to the OLS Bias under Heterogeneity
+
+There are a few other solutions to this issue of OLS bias under heterogeneity:
+
+1.  **Doubly-robust estimation** uses a weighted average of regression and IPW estimators, which will be asymptotically consistent as long as the regression model is correctly specified.
+2.  **Matching as pre-processing** uses matching to make treatment and control groups similar, then runs regression models to estimate causal effects.
 :::
 
 <br />
@@ -183,23 +302,17 @@ $$
 
 ------------------------------------------------------------------------
 
-# **Estimators**
+# **Nonparametric Estimators**
 
 ### Subclassification Estimator
 
-When pre-treatment covariate $X$ is discrete, we know the identification result of the ATE is:
+Using the discrete identification of the ATE shown in @eq-discreteate , we can instead use the sample equivalents to get the **subclassification estimator**:
 
 $$
-\sum\limits_{x \in \mathcal X} \underbrace{( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x))}_{\text{CATE at }X_i = x} \underbrace{Pr(X_i = x)}_{\text{weight}}
+\hat\tau_{ATE} = \sum\limits_{j=1}^M \underbrace{(\bar Y_{1j} - \bar Y_{0j})}_{\tau_{CATE}(j)} \underbrace{\frac{n_j}{n}}_{\text{weight}}
 $$
 
-We can calculate this within our give sample to get the **subclassificaiton** estimator:
-
-$$
-\hat\tau_{ATE} = \sum\limits_{j=1}^M \underbrace{(\bar Y_{1j} - \bar Y_{0j})}_{\text{CATE at} X_i = x} \underbrace{\frac{n_j}{n}}_{\text{weight}}
-$$
-
--   Where $M$ is the number of strata (levels/categories of $X$), and $j$ is one specific level/category of $X$.
+-   Where $M$ is the number of levels/categories of $X$, and $j$ is one specific level/category of $X$.
 -   Where $n_j$ is the number of units in a level/category $j$ of $X$.
 -   Where $\bar Y_{dj}$ is the mean outcome for units with $D_i = d$ in level/category $j$ of $X$.
 
@@ -371,7 +484,7 @@ $$
 When supposing the [conditional ignorability and common support assumptions](https://politicalscience.github.io/causal/3.html#identification-assumptions), the propensity score $\pi(X_i)$ has the balancing property: $D_i \perp X_i \ | \ \pi(X_i)$. This implies that conditional ignorability holds on the propensity scores alone:
 
 $$
-(Y_{1i}, Y_{0i}) \perp D_i \ | \ \pi(X_i)
+(Y_{1i}, Y_{0i}) \perp\!\!\!\!\perp D_i \ | \ \pi(X_i)
 $$
 
 Thus, instead of conditioning on $X_i$ as we did in selection on observables, we can instead condition on $\pi (X_i)$, and still identify the causal estimand.
@@ -388,44 +501,34 @@ The accurate estimation of $\tau_{ATT}$ implies an accurate prediction of the pr
 
 <br />
 
-### Inverse Probability Weighting Estimator
+### Genetic Matching
 
-An alternative use of propensity scores is weighting. Under conditional ignorability and common support, we can identify the ATE as:
+<br />
 
-$$
-\tau_{ATE} = E\left[ Y_i \times \underbrace{\frac{D_i - \pi(X_i)}{\pi(X_i) (1 - \pi(X_i))}}_{\text{weight}}\right]
-$$
+<br />
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Proof of Weighting Identification
+------------------------------------------------------------------------
 
-We know that the ATE can be written as a weighted average (when $X$ is discrete, we will assume this for simplicity):
+# **Weighting Estimator**
 
-$$
-\tau_{ATE} = \sum\limits_{x \in \mathcal X} \underbrace{( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x))}_{\text{CATE at }X_i = x} \underbrace{Pr(X_i = x)}_{\text{weight}}
-$$
+### Identification with Weighting
 
-We can rewrite the $\tau_{ATE}$ as follows using observed potential outcomes outcomes and conditional ignorability:
+We know that the ATE can be written as a weighted average, as shown in @eq-discreteate . We can rewrite the $\tau_{ATE}$ as follows using observed potential outcomes outcomes and conditional ignorability ( @eq-independence ).
 
 $$
 \begin{split}
-& = \sum\limits_{x \in \mathcal X} \underbrace{(E(Y_{1i}|D_i = 1, X_i = x)}_{\because \text{ observed potential outcome}} - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ observed potential outcome}})Pr(X_i = x) \\
-& = \sum\limits_{x \in \mathcal X}  (\underbrace{E(Y_{1i}|X_i = x)}_{\because \text{ condit. ignorabil.}} - \underbrace{E(Y_{0i}|X_i = x)}_{\because \text{ condit. ignorabil.}})Pr(X_i = x)
+& = \sum\limits_{x \in \mathcal X} \underbrace{(E(Y_{1i}|D_i = 1, X_i = x)}_{\because \text{ observed}} - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ observed}})Pr(X_i = x) \\
+& = \sum\limits_{x \in \mathcal X}  (\underbrace{E(Y_{1i}|X_i = x)}_{\because \text{ eq. (1)}} - \underbrace{E(Y_{0i}|X_i = x)}_{\because \text{ eq. (1)}})Pr(X_i = x) \\
+& = \underbrace{E[E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x)]}_{\text{definition of weighted average}}
 \end{split}
 $$
 
-Like mentioned above, the summation and $Pr(X_i = x)$ indicate a weighted average. We can also express weighted average simply with an expectation:
-
-$$
-= E[E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x)]
-$$
-
-Let us do an algebra trick - multiply both terms within the CATE by 1, albeit written a little strangely:
+Let us do an algebra trick - multiply both terms within the CATE by 1 (in blue):
 
 $$
 \begin{split}
-& = E \left [E(Y_{1i}|X_i=x) \underbrace{\frac{\pi(X_i)}{\pi(X_i)}}_{=1} - (E(Y_{0i}|X_i=x) \underbrace{\frac{1-\pi(X_i)}{1-\pi(X_i)}}_{=1}\right] \\
-& = E \left[ \frac{E(Y_{1i}|X_i = x) \pi(X_i)}{\pi(X_i)} -  \frac{E(Y_{0i}|X_i = x) (1-\pi(X_i))}{1-\pi(X_i)} \right]
+& = E \left [E(Y_{1i}|X_i=x) \color{blue}{\frac{\pi(X_i)}{\pi(X_i)}}\color{black} - (E(Y_{0i}|X_i=x) \color{blue}{\frac{1-\pi(X_i)}{1-\pi(X_i)}} \right] \\
+& \color{black} = E \left[ \frac{E(Y_{1i}|X_i = x) \pi(X_i)}{\pi(X_i)} -  \frac{E(Y_{0i}|X_i = x) (1-\pi(X_i))}{1-\pi(X_i)} \right]
 \end{split}
 $$
 
@@ -434,49 +537,41 @@ We know that propensity score $\pi(X_i) := E(D_i|X_i = x)$. Thus, we can convert
 $$
 \begin{split}
 & = E \left[ \frac{E(Y_{1i}|X_i = x)E(D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}|X_i = x)(1-E(D_i|X_i = x))}{1-\pi(X_i)}\right] \\
-& = E \left[ \frac{E(Y_{1i}|X_i = x)E(D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}|X_i = x)\overbrace{E(1-D_i|X_i = x)}^{\because \text{ property of expectation}}}{1-\pi(X_i)}\right]
+& = E \left[ \frac{E(Y_{1i}|X_i = x)E(D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}|X_i = x)E(1-D_i|X_i = x)}{1-\pi(X_i)}\right]
 \end{split}
 $$
 
-We know that conditional ignorability says $(Y_{0i}, Y_{1i}) \perp D_i  \ | \ X_i = x$. That allows us to combine $E(Y_{1i}|X_i =x)$ and $E(D_i|X_i = x)$ into a single expectation:
-
 $$
-\begin{split}
-& = E \left[ \frac{E(Y_{1i}D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}(1-D_i)|X_i = x)}{1 - \pi(X_i)}\right] \\
-& = E \left[ \underbrace{E \left( \frac{Y_{1i}D_i}{\pi(X_i)} |X_i = x\right)}_{\because \text{ exp. of constant}} - \underbrace{E \left( \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} | X_i = x \right)}_{\because \text{ expect. of constant}} \right] \\
-& = E\left[ E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} |X_i = x \right) \right]
-\end{split}
+\begin{align}
+& = E \left[ \frac{E(Y_{1i}D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}(1-D_i)|X_i = x)}{1 - \pi(X_i)}\right] && (\text{property of expectation})\\
+& = E \left[ E \left( \frac{Y_{1i}D_i}{\pi(X_i)} |X_i = x\right) - E \left( \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} | X_i = x \right) \right] && (\text{property of expectation})\\
+& = E\left[ E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} |X_i = x \right) \right]  && (\text{property of expectation})
+\end{align}
 $$
 
-We can use the law of iterated expectations $E(X) = E[E(X|Y)]$ to simplify to:
-
 $$
-\tau_{ATE} = E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)}\right)
-$$
-
-We can see two terms in here: $Y_{1i}D_i$ and $Y_{0i}(1-D_i)$. We know if $D_i = 1$, then we will observe $Y_{1i}$ only, and if $D_i = 0$, we will observe $Y_{0i}$. Thus, we do not need the treatment indicator in $Y_{di}$:
-
-$$
-\tau_{ATE} = E\left( \frac{Y_{i}D_i}{\pi(X_i)} - \frac{Y_{i}(1-D_i)}{1-\pi(X_i)}\right)
-$$
-
-Now, we can combine into one fraction to obtain the original identification result.
-
-$$
-\begin{split}
-\tau_{ATE} & = E\left( \frac{Y_{i}D_i}{\pi(X_i)} - \frac{Y_{i}(1-D_i)}{1-\pi(X_i)}\right) \\
-& = E\left( \frac{Y_{i}D_i}{\pi(X_i)} \times \underbrace{\frac{1-\pi(X_i)}{1-\pi(X_i)}}_{=1} - \frac{Y_{i}(1-D_i)}{1-\pi(X_i)} \times \underbrace{\frac{\pi(X_i)}{\pi(X_i)}}_{=1}\right) \\
-& = E \left( \frac{Y_iD_i(1-\pi(X_i))}{\pi(X_i)(1-\pi(X_i))} - \frac{Y_i(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) \\
-& = E \left( \frac{\color{red}{Y_i} \color{black}D_i(1-\pi(X_i))-\color{red}{Y_i}\color{black}(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) \\
-& = E\left( Y_i \frac{D_i(1-\pi(X_i))-(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) \\
-& = E\left( Y_i \frac{D_i - D_i\pi(X_i)-(\pi(X_i) -D_i\pi(X_i))}{\pi(X_i)(1-\pi(X_i))}\right) \\
-&  = E\left( Y_i \frac{D_i \color{red}{- D_i\pi(X_i)} \color{black}-\pi(X_i) \color{red}{+ D_i\pi(X_i)}}{\pi(X_i)(1-\pi(X_i))}\right) \\
-& = E\left( Y_i \frac{D_i -\pi(X_i) }{\pi(X_i)(1-\pi(X_i))}\right) \\
-\end{split}
-$$
+\begin{align}
+ & = E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)}\right) && (\text{LIE: } E(X) = E[E(X|Y)] \ ) \\
+& = E\left( \frac{Y_{i}D_i}{\pi(X_i)} - \frac{Y_{i}(1-D_i)}{1-\pi(X_i)}\right) && (\text{observered outcome}) \\
+& = E \left( \frac{\color{blue}{Y_i} \color{black}D_i(1-\pi(X_i))-\color{blue}{Y_i}\color{black}(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{getting common denom.}) \\
+& = E\left( Y_i \frac{D_i(1-\pi(X_i))-(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{factor out }Y_i) \\
+& = E\left( Y_i \frac{D_i - D_i\pi(X_i)-(\pi(X_i) -D_i\pi(X_i))}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{distribute out}) \\
+&  = E\left( Y_i \frac{D_i \color{blue}{- D_i\pi(X_i)} \color{black}-\pi(X_i) \color{blue}{+ D_i\pi(X_i)}}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{distribute out negative})\\
+& = E\left( Y_i \frac{D_i -\pi(X_i) }{\pi(X_i)(1-\pi(X_i))}\right) && (\text{cancel out})\\
+\end{align}
+$$ {#eq-ateweight}
 
 And thus, we have identified the ATE.
-:::
+
+<br />
+
+### Inverse Probability Weighting Estimator
+
+An alternative use of propensity scores is weighting. As shown above, under conditional ignorability and common support, we can identify the ATE as:
+
+$$
+\tau_{ATE} = E\left[ Y_i \times \underbrace{\frac{D_i - \pi(X_i)}{\pi(X_i) (1 - \pi(X_i))}}_{\text{weight}}\right]
+$$
 
 The **inverse probability weighting (IPW) estimator** is the sample estimator:
 
@@ -486,6 +581,8 @@ $$
 & = \frac{1}{N} \sum\limits_{i=1}^N \left(\frac{D_i Y_i}{\hat\pi(X_i)} - \frac{(1-D_i) Y_i}{1 - \hat\pi(X_i)} \right)
 \end{split}
 $$
+
+-   The second equation is equivalent to the first, shown by @eq-ateweight .
 
 Essentially, those who are unlikely to be treated but do get treated get weighted more, and individuals who are likely to be treated but do not get treated get weighted more.
 
@@ -509,123 +606,6 @@ $$
 :::
 
 The IPW estimator is [asymptotically consistent](https://politicalscience.github.io/causal/0.html#asymptotically-consistent-estimators), but has very poor small sample properties. They are highly sensitive to extreme values of $\hat\pi(X_i)$. This generates high variance (inefficiency), and can produce significant bias under model mispecification.
-
-<br />
-
-### Ordinary Least Squares Estimator
-
-OLS is a natural approach for controlling for confounders $X$, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](https://politicalscience.github.io/causal/0.html#regression-anatomy-theorem). OLS is a good estimator of $\tau_{ATE}$ under 2 conditions:
-
-1.  **Constant treatment effect**: $\tau_i = Y_{1i} - Y_{0i}$ for all units $i$.
-2.  **Linearity**: Potential outcomes are linear, and can be written as:
-
-$$
-Y_i(d) = \beta_0 + d\beta_1 + \mathbf X_i \gamma + \epsilon_i \quad \text{for} \quad d = 0, 1
-$$
-
-Why these conditions? Suppose we have the above linear potential outcomes. We can show:
-
-$$
-\begin{split}
-\tau_i & = Y_{1i} - Y_{0i} \\
-& = (\beta_0 + (1)\beta_1 + \mathbf X_i \gamma + \epsilon_i) - (\beta_0 + (0)\beta_1 + \mathbf X_i \gamma + \epsilon_i) \\
-& = (\beta_0 + \beta_1 + \mathbf X_i \gamma + \epsilon_i) - (\beta_0 + \mathbf X_i \gamma + \epsilon_i) \\
-& = \beta_1
-\end{split}
-$$
-
-We also know that conditional ignorability implies [zero-conditional mean](https://politicalscience.github.io/causal/0.html#conditions-for-unbiasedness). Thus $\beta_1$ is an unbiased and asymptotically consistent estimator of the ATE.
-
-You should be cautious using OLS when assumption 2, **linearity**, is violated. OLS is the best linear estimator, but how far your data is from linearity will determine if the estimator is useful.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Non-Linearity
-
-What if potential outcomes $Y_i(d)$ is an unknown and non-linear function of $d$ and $X_i$.
-
-We know the OLS is the [best linear predictor of the conditional expectation function](https://politicalscience.github.io/causal/0.html#ols-as-a-conditional-expectation-function) in terms of mean squared error. Thus, $\beta_1$ will provide the best linear approximation to the population regression function.
-
-This does not mean it is good - just the best linear approximation.
-:::
-
-You **should not use** OLS if you believe assumption 1, heterogeneity, is violated. The reasoning is explained below.
-
-<br />
-
-### Fully Interacted Estimator
-
-What if there are **heterogenous** treatment effects (where $\tau_i$ is different between units)? Standard OLS in this case is [**no longer** an unbiased estimator]{.underline} of the ATE.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Proof of OLS Biasedness under Heterogeneity
-
-Recall the subclassification estimator of the ATE is a weighted average of CATEs:
-
-$$
-\hat\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{Pr(X_i = x)}_{\text{weight}} \\
-$$
-
-OLS, when there are non constant treatment effects, can also be rewritten as a weighted average of CATEs:
-
-$$
-\hat\beta_{OLS} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{ \frac{Var(D_i|X_i = X)Pr(X_i = x)}{\sum Var(D_i | X_i = x')Pr(X_i = x')} }_{\text{weight}} \\
-$$
-
-Notice how the weights are different. The weights in the OLS are the conditional variances of $D_i$. This means that OLS is **not** an unbiased estimator of the ATE or ATT, but rather, a weighted average of the ATT and ATU.
-:::
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Conditional Variance Weighted Average Treatment Effect (CVW-ATE)
-
-OLS actually provides an unbiased estimator of the **conditional variance weighted average treatment effect**. This is not the same as the ATE or the ATT.
-
-This estimand can also be described as a weighted average of the ATT (average treatment effect on the treated) and the ATU (average treatment effect on the untreated):
-
-$$
-\tau_{OLS} = w_1 \cdot \tau_{ATT} + w_0 \cdot \tau_{ATU}
-$$
-
-Where:
-
-$$
-\begin{split}
-w_1 & = \frac{(1 - Pr(D=1)) Var(\pi(X)|D = 0)}{Pr(D=1)Var(\pi(X)|D=1) + (1-Pr(D=1)Var(\pi(X)|D=0)} \\
-w_0 & = 1 - w_1
-\end{split}
-$$
-
-The reason for this is because regression is prone to extrapolation beyond common support - i.e. it can "estimate" potential outcomes for units that are not observed. This can lead to bias.
-
-This is in contrast to the subclassification estimator, which cannot be computed if there are missing observable outcomes for a substratum/category of $X$.
-
-The weights of $D_i(X_i = x)$ can also be seen as propensity scores of $\pi(x)(1 - \pi(x)$. Therefore:
-
-1.  Weights are higher for groups with propensity scores close to 0.5.
-2.  Weights are low for groups with propensity scores close to 0 or 1.
-3.  OLS minimises estimation uncertainty by downweighting groups of $X_i$ where group-specific ATEs are less precisely estimated.
-:::
-
-The **Fully-Interacted Estimator**, a newly developed large-sample regression estimator (Lin 2013), solves the heterogeneity bias in the OLS estimator. The fully-interacted estimator takes the form:
-
-$$
-\widehat{Y_i} = \hat\alpha + D_i \widehat{\tau}_{int} + (\mathbf X_i - \mathbf {\bar X}) \hat\beta +D_i (\mathbf X_i - \mathbf{\bar X}) \hat\gamma
-$$
-
--   Where $X_i$ are covariate values sufficient to satisfy conditional independence.
--   Where $\bar X$ contains the sample means of all $X_i$ covariates.
-
-This estimator $\hat\tau_{int}$ is technically biased when estimating $\tau_{ATE}$. However, the bias is arbitrarily small in large samples under conditional ignorability.
-
-This estimator thus allows us to accurately estimate the ATE even under heterogenous treatment effects, assuming our sample size is sufficiently large.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Other Solutions to the OLS Bias under Heterogeneity
-
-There are a few other solutions to this issue of OLS bias under heterogeneity:
-
-1.  **Doubly-robust estimation** uses a weighted average of regression and IPW estimators, which will be asymptotically consistent as long as the regression model is correctly specified.
-2.  **Matching as pre-processing** uses matching to make treatment and control groups similar, then runs regression models to estimate causal effects.
-:::
 
 <br />
 
@@ -712,15 +692,15 @@ With falsification, we were concerned with what assumptions we needed to be not-
 Let us decompose the ATE into parts:
 
 $$
-\begin{split}
+\begin{align}
 \tau_{ATE}  = & E(Y_{1i} - Y_{0i}) \\
 & \\
  = & E(Y_{1i} - Y_{0i} | D_i = 1) Pr(D_i = 1) \\
-& \quad - E(Y_{1i} - Y_{0i}|D_i = 0)Pr(D_i = 0) \\
+& \quad - E(Y_{1i} - Y_{0i}|D_i = 0)Pr(D_i = 0)  && (\text{def. of weighted avg.})\\
 & \\
 = & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}- \color{red}{E(Y_{0i}|D_i = 1)} \color{black}] Pr(D_i = 1) \\
-& \quad + [ \color{red}{E(Y_{1i}|D_i = 0)} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0)
-\end{split}
+& \quad + [ \color{red}{E(Y_{1i}|D_i = 0)} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0) && (\text{observed + unobserved})
+\end{align}
 $$
 
 Some of the quantities are observed (in blue), and some of the quantities are unobserved (in red). Previously, we made assumptions (conditional ignorability, common support) to fill the unobserved quantities. But, we can make actually any assumption as possible.
@@ -781,11 +761,11 @@ This is basically saying that selection bias is one-direction.
 This implies a tighter sharp upper bound on $\tau$.
 
 $$
-\begin{split}
+\begin{align}
 \tau_H = & [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{E(Y_{0i}|D_i = 0)} \color{black}] Pr(D_i = 1) \\
 & \quad + [ \color{red}{E(Y_{1i}|D_i =1)} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0) \\
-= & E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
-\end{split}
+= & E(Y_i|D_i = 1) - E(Y_i|D_i = 0) && (\text{def. of weighted avg.})\\
+\end{align}
 $$
 
 This indicates that the upper bound of plausible $\tau_{ATE}$ values is the naive estimator of differences in observed outcomes.

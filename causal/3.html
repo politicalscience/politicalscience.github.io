@@ -67,23 +67,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="3_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="3_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="3_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="mathjax-config.js"></script>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", function () {
- var mathElements = document.getElementsByClassName("math");
- var macros = [];
- for (var i = 0; i < mathElements.length; i++) {
-  var texText = mathElements[i].firstChild;
-  if (mathElements[i].tagName == "SPAN") {
-   katex.render(texText.data, mathElements[i], {
-    displayMode: mathElements[i].classList.contains('display'),
-    throwOnError: false,
-    macros: macros,
-    fleqn: true
-   });
-}}});
-  </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -143,17 +130,27 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#blocking-backdoor-paths" id="toc-blocking-backdoor-paths" class="nav-link" data-scroll-target="#blocking-backdoor-paths">Blocking Backdoor Paths</a></li>
   <li><a href="#identification-assumptions" id="toc-identification-assumptions" class="nav-link" data-scroll-target="#identification-assumptions">Identification Assumptions</a></li>
-  <li><a href="#proof-of-identification" id="toc-proof-of-identification" class="nav-link" data-scroll-target="#proof-of-identification">Proof of Identification</a></li>
+  <li><a href="#identification-of-the-ate" id="toc-identification-of-the-ate" class="nav-link" data-scroll-target="#identification-of-the-ate">Identification of the ATE</a></li>
+  <li><a href="#identification-of-the-att" id="toc-identification-of-the-att" class="nav-link" data-scroll-target="#identification-of-the-att">Identification of the ATT</a></li>
   </ul></li>
-  <li><a href="#estimators" id="toc-estimators" class="nav-link" data-scroll-target="#estimators"><strong>Estimators</strong></a>
+  <li><a href="#parametric-estimators" id="toc-parametric-estimators" class="nav-link" data-scroll-target="#parametric-estimators"><strong>Parametric Estimators</strong></a>
+  <ul class="collapse">
+  <li><a href="#ordinary-least-squares-estimator" id="toc-ordinary-least-squares-estimator" class="nav-link" data-scroll-target="#ordinary-least-squares-estimator">Ordinary Least Squares Estimator</a></li>
+  <li><a href="#ols-bias-under-heterogeneity" id="toc-ols-bias-under-heterogeneity" class="nav-link" data-scroll-target="#ols-bias-under-heterogeneity">OLS Bias under Heterogeneity</a></li>
+  <li><a href="#fully-interacted-estimator" id="toc-fully-interacted-estimator" class="nav-link" data-scroll-target="#fully-interacted-estimator">Fully Interacted Estimator</a></li>
+  </ul></li>
+  <li><a href="#nonparametric-estimators" id="toc-nonparametric-estimators" class="nav-link" data-scroll-target="#nonparametric-estimators"><strong>Nonparametric Estimators</strong></a>
   <ul class="collapse">
   <li><a href="#subclassification-estimator" id="toc-subclassification-estimator" class="nav-link" data-scroll-target="#subclassification-estimator">Subclassification Estimator</a></li>
   <li><a href="#matching-estimator" id="toc-matching-estimator" class="nav-link" data-scroll-target="#matching-estimator">Matching Estimator</a></li>
   <li><a href="#matching-with-multiple-covariates" id="toc-matching-with-multiple-covariates" class="nav-link" data-scroll-target="#matching-with-multiple-covariates">Matching with Multiple Covariates</a></li>
   <li><a href="#propensity-scores-matching" id="toc-propensity-scores-matching" class="nav-link" data-scroll-target="#propensity-scores-matching">Propensity Scores Matching</a></li>
+  <li><a href="#genetic-matching" id="toc-genetic-matching" class="nav-link" data-scroll-target="#genetic-matching">Genetic Matching</a></li>
+  </ul></li>
+  <li><a href="#weighting-estimator" id="toc-weighting-estimator" class="nav-link" data-scroll-target="#weighting-estimator"><strong>Weighting Estimator</strong></a>
+  <ul class="collapse">
+  <li><a href="#identification-with-weighting" id="toc-identification-with-weighting" class="nav-link" data-scroll-target="#identification-with-weighting">Identification with Weighting</a></li>
   <li><a href="#inverse-probability-weighting-estimator" id="toc-inverse-probability-weighting-estimator" class="nav-link" data-scroll-target="#inverse-probability-weighting-estimator">Inverse Probability Weighting Estimator</a></li>
-  <li><a href="#ordinary-least-squares-estimator" id="toc-ordinary-least-squares-estimator" class="nav-link" data-scroll-target="#ordinary-least-squares-estimator">Ordinary Least Squares Estimator</a></li>
-  <li><a href="#fully-interacted-estimator" id="toc-fully-interacted-estimator" class="nav-link" data-scroll-target="#fully-interacted-estimator">Fully Interacted Estimator</a></li>
   </ul></li>
   <li><a href="#falsification-tests" id="toc-falsification-tests" class="nav-link" data-scroll-target="#falsification-tests"><strong>Falsification Tests</strong></a>
   <ul class="collapse">
@@ -185,22 +182,22 @@ window.Quarto = {
 <h1><strong>Identification</strong></h1>
 <section id="blocking-backdoor-paths" class="level3">
 <h3 class="anchored" data-anchor-id="blocking-backdoor-paths">Blocking Backdoor Paths</h3>
-<p>Without randomisation, we need some other way to account for pre-treatment covariates that may be confounding and causing selection bias. Controlling for a set of nodes/confounders <span class="math inline">X</span> can identify the causal effect of <span class="math inline">D \rightarrow Y</span>, if:</p>
+<p>Without randomisation, we need some other way to account for pre-treatment covariates that may be confounding and causing selection bias. Controlling for a set of nodes/confounders <span class="math inline">\(X\)</span> can identify the causal effect of <span class="math inline">\(D \rightarrow Y\)</span>, if:</p>
 <ol type="1">
-<li>No node within set <span class="math inline">X</span> is a descendant of <span class="math inline">D</span> (no element within <span class="math inline">X</span> results from <span class="math inline">D</span>).</li>
-<li>The nodes within set <span class="math inline">X</span> <a href="https://politicalscience.github.io/causal/1.html#blocked-paths">block all back-door paths</a> from <span class="math inline">D \rightarrow Y</span>.</li>
+<li>No node within set <span class="math inline">\(X\)</span> is a descendant of <span class="math inline">\(D\)</span> (no element within <span class="math inline">\(X\)</span> results from <span class="math inline">\(D\)</span>).</li>
+<li>The nodes within set <span class="math inline">\(X\)</span> <a href="https://politicalscience.github.io/causal/1.html#blocked-paths">block all back-door paths</a> from <span class="math inline">\(D \rightarrow Y\)</span>.</li>
 </ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-378311705.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
 </figure>
 </div>
-<p>In the figure above, let us block the backdoor paths between <span class="math inline">D \rightarrow Y</span>:</p>
+<p>In the figure above, let us block the backdoor paths between <span class="math inline">\(D \rightarrow Y\)</span>:</p>
 <ol type="1">
-<li>Backdoor path <span class="math inline">D \rightarrow X \rightarrow Y</span>. To block this path, we must control for <span class="math inline">X</span>.</li>
-<li>Backdoor path <span class="math inline">D \rightarrow V \rightarrow Y</span>. We do not need to control for <span class="math inline">V</span>, since it is post-treatment (a descendant of <span class="math inline">D</span>). In fact, <span class="math inline">V</span> is a <strong>bad control</strong> (see below).</li>
+<li>Backdoor path <span class="math inline">\(D \rightarrow X \rightarrow Y\)</span>. To block this path, we must control for <span class="math inline">\(X\)</span>.</li>
+<li>Backdoor path <span class="math inline">\(D \rightarrow V \rightarrow Y\)</span>. We do not need to control for <span class="math inline">\(V\)</span>, since it is post-treatment (a descendant of <span class="math inline">\(D\)</span>). In fact, <span class="math inline">\(V\)</span> is a <strong>bad control</strong> (see below).</li>
 </ol>
-<p>Thus, to identify <span class="math inline">D \rightarrow Y</span> here, we only need to control for <span class="math inline">X</span>, and no other variable.</p>
+<p>Thus, to identify <span class="math inline">\(D \rightarrow Y\)</span> here, we only need to control for <span class="math inline">\(X\)</span>, and no other variable.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -214,14 +211,14 @@ Good and Bad Controls
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Good controls block backdoor paths, which facilitate identification of the causal effect.</p>
-<p>Bad controls are when we control for post-treatment variables. For example, <span class="math inline">P</span> below is a bad control, since it is caused by <span class="math inline">D</span>, so it is post-treatment.</p>
+<p>Bad controls are when we control for post-treatment variables. For example, <span class="math inline">\(P\)</span> below is a bad control, since it is caused by <span class="math inline">\(D\)</span>, so it is post-treatment.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-1369053188.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
 </figure>
 </div>
-<p>You also never want to control variables that only predict <span class="math inline">D</span>. These are bad because controlling for these removes variation in <span class="math inline">D</span> that could be useful.</p>
-<p>Neutral controls are ones that don’t identify the causal effect, but improve efficiency. For example, <span class="math inline">Q</span> below affects <span class="math inline">Y</span>, but there is no backdoor path. Controlling <span class="math inline">Q</span> will not help identification, but can control noise in <span class="math inline">Y</span> which may increase efficiency.</p>
+<p>You also never want to control variables that only predict <span class="math inline">\(D\)</span>. These are bad because controlling for these removes variation in <span class="math inline">\(D\)</span> that could be useful.</p>
+<p>Neutral controls are ones that don’t identify the causal effect, but improve efficiency. For example, <span class="math inline">\(Q\)</span> below affects <span class="math inline">\(Y\)</span>, but there is no backdoor path. Controlling <span class="math inline">\(Q\)</span> will not help identification, but can control noise in <span class="math inline">\(Y\)</span> which may increase efficiency.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-1555756596.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
@@ -234,26 +231,26 @@ Good and Bad Controls
 </section>
 <section id="identification-assumptions" class="level3">
 <h3 class="anchored" data-anchor-id="identification-assumptions">Identification Assumptions</h3>
-<p>Once we have determined the set of confounders <span class="math inline">X</span> that we need to control to block all backdoor paths, the assumptions needed for identification of causal effects are:</p>
+<p>Once we have determined the set of confounders <span class="math inline">\(X\)</span> that we need to control to block all backdoor paths, the assumptions needed for identification of causal effects are:</p>
 <ol type="1">
-<li><strong>Conditional Ignorability</strong> (also known as exogeneity or independence): Among units with identical confounder values <span class="math inline">X_i</span>, treatment <span class="math inline">D_i</span> is as-if randomly assigned. Or in other words, potential outcomes are independent from treatment within each specific confounder value <span class="math inline">X_i = x</span>.</li>
+<li><strong>Conditional Ignorability</strong> (also known as exogeneity or independence): Among units with identical confounder values <span class="math inline">\(X_i\)</span>, treatment <span class="math inline">\(D_i\)</span> is as-if randomly assigned. Or in other words, potential outcomes are independent from treatment within each specific confounder value <span class="math inline">\(X_i = x\)</span>.</li>
 </ol>
-<p><span class="math display">
-(Y_{0i}, Y_{1i}) \perp D_i  \ | \ X_i = x, \quad \forall \ x \in \mathcal X
-</span></p>
-<p>This implies that for any given value of all confounders <span class="math inline">X_i = x</span>, we know that potential outcomes <span class="math inline">Y_{di}</span> are equivalent between treatment and control:</p>
-<p><span class="math display">
+<p><span class="math display">\[
+(Y_{0i}, Y_{1i}) \perp\!\!\!\!\perp D_i  \ | \ X_i = x, \quad \forall \ x \in \mathcal X
+\]</span></p>
+<p>This implies that for any given value of all confounders <span class="math inline">\(X_i = x\)</span>, we know that potential outcomes <span class="math inline">\(Y_{di}\)</span> are equivalent between treatment and control:</p>
+<p><span id="eq-independence"><span class="math display">\[
 \begin{split}
 E(Y_{1i}|X_i = x) = E(Y_{1i}|D_i = 1, X_i = x) = E(Y_{1i}|D_i = 0, X_i = x) \\
 E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 1, X_i = x) = E(Y_{0i}|D_i = 0, X_i = x)
 \end{split}
-</span></p>
+\tag{1}\]</span></span></p>
 <ol start="2" type="1">
-<li><strong>Common Support</strong>: for any unit <span class="math inline">i</span> with value of <span class="math inline">X_i</span>, there is a non-zero probability that they could be assigned to both control <span class="math inline">D_i = 0</span> or treatment <span class="math inline">D_i = 1</span>.</li>
+<li><strong>Common Support</strong>: for any unit <span class="math inline">\(i\)</span> with value of <span class="math inline">\(X_i\)</span>, there is a non-zero probability that they could be assigned to both control <span class="math inline">\(D_i = 0\)</span> or treatment <span class="math inline">\(D_i = 1\)</span>.</li>
 </ol>
-<p><span class="math display">
+<p><span class="math display">\[
 0 &lt; Pr(D_i = 1 \ | X_i = x) &lt; 1 \quad \forall \ x \in \mathcal X
-</span></p>
+\]</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -266,514 +263,99 @@ Example of Identification Assumptions
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Imagine we have a theory that being abducted <span class="math inline">D</span> causes turning out to vote.</p>
+<p>Imagine we have a theory that being abducted <span class="math inline">\(D\)</span> causes turning out to vote.</p>
 <p>Blattman (2009) finds that age is the primary way violent groups chose to abduct individuals: abduction parties released young children and older adults, but kept all adolescent and young males.</p>
-<p>That means our theory is that age <span class="math inline">X</span> affects selection into treatment <span class="math inline">D</span>. Young children and older adults are less likely to get abducted <span class="math inline">D</span>, while adolescent and young males are more likely <span class="math inline">D</span>.</p>
+<p>That means our theory is that age <span class="math inline">\(X\)</span> affects selection into treatment <span class="math inline">\(D\)</span>. Young children and older adults are less likely to get abducted <span class="math inline">\(D\)</span>, while adolescent and young males are more likely <span class="math inline">\(D\)</span>.</p>
 </div>
 </div>
 </div>
 <p><br></p>
 </section>
-<section id="proof-of-identification" class="level3">
-<h3 class="anchored" data-anchor-id="proof-of-identification">Proof of Identification</h3>
-<p>With our assumptions above, we can identify the ATE. We start with the <a href="https://politicalscience.github.io/causal/1.html#conditional-average-treatment-effect-cate">conditional average treatment effect</a>, conditional on some value of confounders <span class="math inline">X_i = x</span>:</p>
-<p><span class="math display">
-\begin{split}
+<section id="identification-of-the-ate" class="level3">
+<h3 class="anchored" data-anchor-id="identification-of-the-ate">Identification of the ATE</h3>
+<p>With our assumptions above, we can identify the ATE. We start with the <a href="https://politicalscience.github.io/causal/1.html#conditional-average-treatment-effect-cate">conditional average treatment effect</a>, conditional on some value of confounders <span class="math inline">\(X_i = x\)</span>. Note the properties shown in <a href="#eq-independence" class="quarto-xref">Equation&nbsp;1</a> .</p>
+<p><span id="eq-cate"><span class="math display">\[
+\begin{align}
 \tau_{CATE}(x) &amp; = E(Y_{1i} - Y_{0i} \ | \ X_i = x) \\
-&amp; = E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x) \\
-&amp; = \underbrace{E(Y_{1i}|D_i = 1, X_i = x)}_{\because \text{ conditional ignorability} \\ } - \underbrace{E(Y_{0i}|D_i = 0X_i = x)}_{\because \text{ conditional ignorability}} \\
-&amp; = \underbrace{E(Y_i|D_i = 1, X_i = x)}_{\because \text{ observable outcome}} - \underbrace{E(Y_i|D_i = 0, X_i = x)}_{\because \text{ observable outcome}}
-\end{split}
-</span></p>
-<p>Now, let us discuss the ATE, and plug in the CATE to identify it:</p>
-<p><span class="math display">
-\begin{split}
+&amp; = E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x) &amp;&amp; (\text{property of expectation}) \\
+&amp; = E(Y_{1i}|D_i = 1, X_i = x) - E(Y_{0i}|D_i = 0X_i = x) &amp;&amp;( \because \text{equation (1)} \ ) \\
+&amp; = \underbrace{E(Y_i|D_i = 1, X_i = x)}_{\because \text{ observable}} - \underbrace{E(Y_i|D_i = 0, X_i = x)}_{\because \text{ observable}}
+\end{align}
+\tag{2}\]</span></span></p>
+<p>Now, let us discuss the ATE, and plug in the CATE from <a href="#eq-cate" class="quarto-xref">Equation&nbsp;2</a> to identify it:</p>
+<p><span id="eq-ate"><span class="math display">\[
+\begin{align}
 \tau_{ATE} &amp; = E(Y_{1i} - Y_{0i}) \\
-&amp; = \underbrace{\int \overbrace{E(Y_{1i} - Y_{0i} \ | \ X_i = x)}^{\text{CATE at }X_i = x} d \ \overbrace{Pr(X_i = x)}^{\text{prob of }X_i = x}}_{\text{weighted average, with weight being } Pr(X_i = x)} \\
-&amp; = \int(\underbrace{E(Y_i|D_i = 1, X_i) - E(Y_i|D_i = 0, X_i)}_{\because \text{ CATE proof above}})d \ Pr(X_i = x)
-\end{split}
-</span></p>
-<p>Thus <span class="math inline">\tau_{ATE}</span> is identified as the weighted average of all the CATEs, who themselves are difference-in-means of the observed <span class="math inline">Y_i</span> at every possible value of <span class="math inline">X_i = x</span>.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Identification of the ATT
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>We can weaken our initial assumptions, and still calculate the ATT.</p>
-<ol type="1">
-<li>Weakened conditional ignorability: Only <span class="math inline">Y_{0i}</span> needs to be independent of <span class="math inline">D_i</span> for units with the same covariates <span class="math inline">X_i</span>. Or in other words, <span class="math inline">(Y_{0i}) \perp D_i | X_i = x</span>. This implies:</li>
-</ol>
-<p><span class="math display">
+&amp; = \int \underbrace{E(Y_{1i} - Y_{0i} \ | \ X_i = x)}_{\tau_{CATE}(x)} d \ \underbrace{Pr(X_i = x)}_{\text{weight}} &amp;&amp; (\text{weighted average})\\
+&amp; = \int(\underbrace{E(Y_i|D_i = 1, X_i) - E(Y_i|D_i = 0, X_i)}_{\because \text{ equation (2)}})d \ Pr(X_i = x)
+\end{align}
+\tag{3}\]</span></span></p>
+<p>Thus <span class="math inline">\(\tau_{ATE}\)</span> is identified as the weighted average of all the CATEs, who themselves are difference-in-means of the observed <span class="math inline">\(Y_i\)</span> at every possible value of <span class="math inline">\(X_i = x\)</span>.</p>
+<p>We assumed that the pre-treatment covariate <span class="math inline">\(X\)</span> is continuous. This is why we need an integral. However, we can simplify this if <span class="math inline">\(X\)</span> is discrete:</p>
+<p><span id="eq-discreteate"><span class="math display">\[
+\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x)
+\tag{4}\]</span></span></p>
+<p><br></p>
+</section>
+<section id="identification-of-the-att" class="level3">
+<h3 class="anchored" data-anchor-id="identification-of-the-att">Identification of the ATT</h3>
+<p>We can weaken conditional ignorability, and still identify the ATT. Only <span class="math inline">\(Y_{0i}\)</span> needs to be independent of <span class="math inline">\(D_i\)</span> for units with the same covariates <span class="math inline">\(X_i\)</span>. Or in other words, <span class="math inline">\((Y_{0i}) \perp\!\!\!\perp D_i | X_i = x\)</span>. This implies:</p>
+<p><span id="eq-weak"><span class="math display">\[
 E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 0, X_i = x) = E(Y_{0i}|D_i = 1, X_i = x)
-</span></p>
-<ol start="2" type="1">
-<li>Weakened common support: <span class="math inline">Pr(D_i = 1 |X_i = x) &lt; 1</span>.</li>
-</ol>
-<p>Let us start with the conditional ATT:</p>
-<p><span class="math display">
+\tag{5}\]</span></span></p>
+<p>Start with the conditional ATT, using weakened conditional ignorability from <a href="#eq-weak" class="quarto-xref">Equation&nbsp;5</a> :</p>
+<p><span id="eq-catt"><span class="math display">\[
 \begin{split}
 \tau_{CATT}(x) &amp; = E(Y_{1i}-Y_{0i}|D_i = 1, X_i = x) \\
 &amp; = E(Y_{1i}|D_i = 1, X_i = x) - E(Y_{0i}|D_i = 1, X_i = x) \\
-&amp; = E(Y_{1i}|D_i = 1, X_i = x) - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ weakened cond. ignorability}} \\
-&amp; = \underbrace{E(Y_i|D_i=1, X_i = x)}_{\because \text{ observable outcome}} - \underbrace{E(Y_1|D_i = 0, X_i x)}_{\because \text{ observable outcome}}
+&amp; = E(Y_{1i}|D_i = 1, X_i = x) - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ equation (5)}} \\
+&amp; = \underbrace{E(Y_i|D_i=1, X_i = x)}_{\because \text{ observable}} - \underbrace{E(Y_1|D_i = 0, X_i x)}_{\because \text{ observable}}
 \end{split}
-</span></p>
-<p>Now, look at the ATT, and plug in CATT to identify it.</p>
-<p><span class="math display">
-\begin{split}
+\tag{6}\]</span></span></p>
+<p>Now, look at the ATT, and plug in CATT from <a href="#eq-catt" class="quarto-xref">Equation&nbsp;6</a> to identify it.</p>
+<p><span class="math display">\[
+\begin{align}
 \tau_{ATT} &amp; = E(Y_{1i} - Y_{0i}|D_i = 1) \\
-&amp; = \underbrace{\int \overbrace{E(Y_{1i} - Y_{0i}|D_i = 1, X_i = x)}^{\text{CATT at }X_i = x}d \ \overbrace{Pr(X_i = x|D_i = 1)}^{Pr(X_i = x) \text{ within treatment}}}_{\text{weighted average, with weight being } Pr(X_i = x)} \\
-&amp; = \int (E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x))d \ Pr(X_i = x|D_i = 1)
-\end{split}
-</span></p>
-<p>Even when all assumptions are met for identification of the ATE, the <span class="math inline">\tau_{ATE}</span> can be different than the <span class="math inline">\tau_{ATT}</span>. This is because the weights <span class="math inline">Pr(X_i = x|D_i = 1)</span> for the ATT are different than the ATE <span class="math inline">Pr(X_i = x)</span>.</p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Discrete X Identification
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Above, we assumed that the pre-treatment covariate <span class="math inline">X</span> is continuous. This is why we need an integral.</p>
-<p>However, we can simplify this if <span class="math inline">X</span> is discrete:</p>
-<p><span class="math display">
-\begin{split}
-&amp; \tau_{ATE} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x) \\
-&amp; \tau_{ATT} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x | D_i = 1)
-\end{split}
-</span></p>
-</div>
-</div>
-</div>
+&amp; = \int \underbrace{E(Y_{1i} - Y_{0i}|D_i = 1, X_i = x)}_{\tau_{CATT}(x)}d \ \underbrace{Pr(X_i = x|D_i = 1)}_{Pr(X_i = x) \text{ within treated}} \\
+&amp; = \int (\underbrace{E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)}_{\because \text{ equation (6)}})d \ Pr(X_i = x|D_i = 1)
+\end{align}
+\]</span></p>
+<p>We can simplify this if <span class="math inline">\(X\)</span> is discrete:</p>
+<p><span class="math display">\[
+\tau_{ATT} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x | D_i = 1)
+\]</span></p>
+<p>Even when all assumptions are met for identification of the ATE, the <span class="math inline">\(\tau_{ATE}\)</span> can be different than the <span class="math inline">\(\tau_{ATT}\)</span>. This is because the weights <span class="math inline">\(Pr(X_i = x|D_i = 1)\)</span> for the ATT are different than the ATE <span class="math inline">\(Pr(X_i = x)\)</span>.</p>
 <p><br></p>
 <p><br></p>
 <hr>
 </section>
 </section>
-<section id="estimators" class="level1">
-<h1><strong>Estimators</strong></h1>
-<section id="subclassification-estimator" class="level3">
-<h3 class="anchored" data-anchor-id="subclassification-estimator">Subclassification Estimator</h3>
-<p>When pre-treatment covariate <span class="math inline">X</span> is discrete, we know the identification result of the ATE is:</p>
-<p><span class="math display">
-\sum\limits_{x \in \mathcal X} \underbrace{( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x))}_{\text{CATE at }X_i = x} \underbrace{Pr(X_i = x)}_{\text{weight}}
-</span></p>
-<p>We can calculate this within our give sample to get the <strong>subclassificaiton</strong> estimator:</p>
-<p><span class="math display">
-\hat\tau_{ATE} = \sum\limits_{j=1}^M \underbrace{(\bar Y_{1j} - \bar Y_{0j})}_{\text{CATE at} X_i = x} \underbrace{\frac{n_j}{n}}_{\text{weight}}
-</span></p>
-<ul>
-<li>Where <span class="math inline">M</span> is the number of strata (levels/categories of <span class="math inline">X</span>), and <span class="math inline">j</span> is one specific level/category of <span class="math inline">X</span>.</li>
-<li>Where <span class="math inline">n_j</span> is the number of units in a level/category <span class="math inline">j</span> of <span class="math inline">X</span>.</li>
-<li>Where <span class="math inline">\bar Y_{dj}</span> is the mean outcome for units with <span class="math inline">D_i = d</span> in level/category <span class="math inline">j</span> of <span class="math inline">X</span>.</li>
-</ul>
-<p>For subclassificaion to be possible, within each level <span class="math inline">j</span> of covariate <span class="math inline">X</span>, there must be at least one unit in control <span class="math inline">D=0</span> and treatment <span class="math inline">D=1</span>.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Intuitive Procedure of Subclassification
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>More intuitively, the procedure is as follows:</p>
-<ol type="1">
-<li>Choose one specific value for all covaraites <span class="math inline">X</span>. Find the average treatment effect within this specific value of <span class="math inline">X</span>.</li>
-<li>Multiply that average treatment effect by the number of observations that meet this specific value of <span class="math inline">X</span> divided by the total number of units.</li>
-<li>Do this for every possible values of all covaraites <span class="math inline">X</span>, then sum up all the weighted average treatment effects to get the overall ATE.</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Subclassification with Multiple Confounders
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Let us say we have 2 confounders, <span class="math inline">X_1</span> and <span class="math inline">X_2</span>. Both confounders are categorical with 3 categories.</p>
-<p>We would need to create <span class="math inline">M=9</span> levels of strata, for every possible combination of values of <span class="math inline">X_1</span> and <span class="math inline">X_2</span>. Then, we would estimate the within-strata average treatment effect, and weight them.</p>
-<p>This illustrates how with large amounts of confounders, you will need a huge number of stratum. This makes subclassification infeasible in many cases.</p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Subclassification for the ATT
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>When pre-treatment covariate <span class="math inline">X</span> is discrete, the identification result of the ATT is:</p>
-<p><span class="math display">
-\tau_{ATT} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x | D_i = 1)
-</span></p>
-<p>We can calculate this within our give sample to get the subclassificaiton estimator:</p>
-<p><span class="math display">
-\hat\tau_{ATT} = \sum\limits_{j=1}^M(\bar Y_{1j} - \bar Y_{0j}) \frac{n_{1j}}{n_1}
-</span></p>
-<ul>
-<li>Where <span class="math inline">M</span> is the number of strata (levels/categories of <span class="math inline">X</span>).</li>
-<li>Where <span class="math inline">n_j</span> is the number of units in a level/category <span class="math inline">j</span> of <span class="math inline">X</span>.</li>
-<li>Where <span class="math inline">n_{1j}</span> is the number of treated cells <span class="math inline">D = 1</span> in a level/category <span class="math inline">j</span> of <span class="math inline">X</span>.</li>
-<li>Where <span class="math inline">\bar Y_{dj}</span> is the mean outcome for units with <span class="math inline">D_i = d</span> in level/category <span class="math inline">j</span> of <span class="math inline">X</span>.</li>
-</ul>
-</div>
-</div>
-</div>
-<p><br></p>
-</section>
-<section id="matching-estimator" class="level3">
-<h3 class="anchored" data-anchor-id="matching-estimator">Matching Estimator</h3>
-<p>We have a <a href="https://politicalscience.github.io/causal/1.html#observed-outcomes-and-missing-data">missing data problem</a> in causal inference: we do not know all the potential outcomes. Matching “estimates” missing potential outcomes of a unit.</p>
-<p>For each observation in the treated group, matching finds an observation in the untreated group that have the most similar values of a set of pre-treatment covariates <span class="math inline">X</span>. Thus, we have pairs of treatment-control observations that act as counterfactuals. We can estimate the ATT as the average difference in observed outcomes within the pairs:</p>
-<p><span class="math display">
-\hat\tau_{ATT} = \frac{1}{n_1} \sum\limits_{i:D_i = 1}(Y_i - \widetilde{Y_i})
-</span></p>
-<ul>
-<li>Where <span class="math inline">n_1</span> is the number of units in the treatment group.</li>
-<li>Where <span class="math inline">Y_i</span> is the unit’s observed <span class="math inline">Y</span> in the treatment group.</li>
-<li>Where <span class="math inline">\tilde Y_i</span> is unit <span class="math inline">i</span>’s closest neighbour in the untreated group.</li>
-</ul>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Choices during Matching
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>We have to make several choices when conducting matching.</p>
-<ol type="1">
-<li><strong>What covariates</strong> to match on. We generally want to select a set of pre-treatment covariates <span class="math inline">X</span> such that these covariates ensure the conditional ignorability assumption is met.</li>
-<li>Match <strong>with or without replacement</strong>. Matching with replacement means that once you have used one control unit to match to a treatment unit, you can still use that same control unit to match to another treatment unit. This has advantages since you can ensure better and closer matches. However, matching without replacement is also possible.</li>
-<li><strong>How many to match</strong>. You can decide to match multiple control units to one treatment unit, and use the average of the treatment units to approximate a true control unit. This may result in more accurate matches for treatment units that may not have a good single control unit to match to.</li>
-</ol>
-<p>We can also choose to use more advanced matching methods, such as Mahalanobis Distance matching or Propensity Score matching, which are shown below. These are good for matching on more <span class="math inline">X</span>.</p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Matching on Multiple Neighbours
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Sometimes, a treatment unit may not have one close control unit to match to. Instead, we could use a combination of control units to match to the treatment unit, and use the average <span class="math inline">Y</span> of those combination of control units to approximate a more accurate match.</p>
-<p>Suppose we use <span class="math inline">M_i</span> number of close control units to match to a treatment unit <span class="math inline">i</span>. Then, the matching estimator would be defined as follows:</p>
-<p><span class="math display">
-\hat\tau_{ATT} = \frac{1}{n_1} \sum\limits_{i:D_i = 1}(Y_i - \left(\frac{1}{M_i} \sum\limits_{m=1}^{M_i} \widetilde{Y_{i_m}}\right))
-</span></p>
-<p>Where <span class="math inline">\widetilde{Y_{i_m}}</span> is the obsered outcome for the <span class="math inline">m</span>th match of unit <span class="math inline">i</span>.</p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Weaknesses of Matching
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Matching does not always create “perfect” matches. This means that the pairs matched together may not be identical to each other in terms of covariates <span class="math inline">X</span> or potential outcomes.</p>
-<p>The inability to find exact matches can cause bias, especially for the more covariates we match on (see below).</p>
-</div>
-</div>
-</div>
-<p><br></p>
-</section>
-<section id="matching-with-multiple-covariates" class="level3">
-<h3 class="anchored" data-anchor-id="matching-with-multiple-covariates">Matching with Multiple Covariates</h3>
-<p>Consider that we <span class="math inline">k&gt;1</span> number of confounders <span class="math inline">X</span>. Now, we have to match observations in <span class="math inline">k</span> variables, which implies we are in a multidimensional <span class="math inline">\mathbb R^k</span> space.</p>
-<p>The most commonly used distance metric is <strong>Mahalanobis</strong> Distance - which measures the distance in <span class="math inline">X_i</span> between units <span class="math inline">i</span> and <span class="math inline">j</span>:</p>
-<p><span class="math display">
-D_M (\mathbf X_i, \mathbf X_j) = \sqrt{(\mathbf X_i - \mathbf X_j)^T \boldsymbol\Sigma_X^{-1} (\mathbf X_i - \mathbf X_j)}
-</span></p>
-<ul>
-<li>Where <span class="math inline">\boldsymbol \Sigma_X</span> is the sample variance-covariance matrix of <span class="math inline">\mathbf X_i</span>.</li>
-</ul>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Euclidean Distance
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Euclidean distance is another common distance metric:</p>
-<p><span class="math display">
-D_E ( \mathbf X_i, \mathbf X_j) = \sqrt{(x_{1i} - x_{1j})^2 + (x_{2i}-x_{2j})^2 + \dots + (x_{ki}-x_{kj})^2}
-</span></p>
-<p>Euclidean distance, while very simple, is not recommended. This is because Euclidean distance with non-normalised variables can get you very bizarre results that depend on the scale of the variables.</p>
-<p>There are other distance metrics, but these are exceedingly rare in selection on observables.</p>
-</div>
-</div>
-</div>
-<p>There is one issue with matching in multi-dimensional spaces. It becomes very difficult to match every unit <span class="math inline">i</span> on every covariate <span class="math inline">X</span>, even if we have a large number of observations.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Curse of Dimensionality
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>When we try to match on more than one <span class="math inline">X</span> variable, we go from matching on a number line <span class="math inline">\mathbb R^1</span> to a <span class="math inline">n</span>-dimensional space, <span class="math inline">\mathbb R^n</span>.</p>
-<p>The search space increases exponentially as you increase the number of dimensions.</p>
-<p><img src="images/clipboard-2668193698.png" class="img-fluid" style="width:100.0%"></p>
-<p>Take a look at the figure on the left. If we only match on a one dimensional plane (lets say the horizontal line between 0 and 1), we can see our red line covers approximately 30% of the horizontal line. But in 3 dimensions, our red box covers a significantly less proportion of the entire cube.</p>
-<p>The figure on the right illustrates this. <span class="math inline">d</span> represents the dimensions. We can see as the dimensions increase, the fraction of volume increases significantly slower relative to distance.</p>
-<p>Thus, with a bigger space, the distance between two units increases, so you get worse matches.</p>
-</div>
-</div>
-</div>
-<p>This curse of dimensionality creates a <a href="https://politicalscience.github.io/causal/0.html#unbiased-estimators">bias</a> problem - since we get non-exact matches. The more dimensions you add, the worse it becomes.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-More on Bias
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The poor matches caused by increased dimensionality inject error into our estimates of missing potential outcomes.</p>
-<p>The bias term as you increase the number of dimensions <span class="math inline">k</span>, changes by <span class="math inline">N^{(-1/k)}</span>. This implies no <span class="math inline">\sqrt{n}</span> consistency for <span class="math inline">k&gt;2</span>.</p>
-<p>If <span class="math inline">N_0</span> (number of untreated units) is much larger than <span class="math inline">N_1</span> (number of treated units), bias will typically be smaller.</p>
-<p>There are ways to correct this bias, including Abadie and Imbens (2011) Bias Correction method.</p>
-<p>There is a new method: <strong>Bias-corrected matching</strong>, which estimates bias ineherent to mathching estimators via regression, then subtracts it from the matching estimate to correct for it.</p>
-</div>
-</div>
-</div>
-<p><br></p>
-</section>
-<section id="propensity-scores-matching" class="level3">
-<h3 class="anchored" data-anchor-id="propensity-scores-matching">Propensity Scores Matching</h3>
-<p>Propensity Score matching is an alternative way to match over many dimensions. The <strong>propensity score</strong> is an unobserved property, defined as the probability of a unit <span class="math inline">i</span> of receiving treatment:</p>
-<p><span class="math display">
-\pi(X_i) \equiv Pr(D_i = 1|X_i)
-</span></p>
-<p>When supposing the <a href="https://politicalscience.github.io/causal/3.html#identification-assumptions">conditional ignorability and common support assumptions</a>, the propensity score <span class="math inline">\pi(X_i)</span> has the balancing property: <span class="math inline">D_i \perp X_i \ | \ \pi(X_i)</span>. This implies that conditional ignorability holds on the propensity scores alone:</p>
-<p><span class="math display">
-(Y_{1i}, Y_{0i}) \perp D_i \ | \ \pi(X_i)
-</span></p>
-<p>Thus, instead of conditioning on <span class="math inline">X_i</span> as we did in selection on observables, we can instead condition on <span class="math inline">\pi (X_i)</span>, and still identify the causal estimand.</p>
-<p>However, we do not actually observe <span class="math inline">\pi (X_i)</span>. We estimate <span class="math inline">\pi (X_i)</span> with a binary response model, with outcome variable <span class="math inline">D_i</span>, and explanatory variables <span class="math inline">X_i</span>. This will get us a fitted probability <span class="math inline">Pr(D_i = 1) = \hat\pi(X_i)</span>.</p>
-<p>Then, once we have the propensity score estimates <span class="math inline">\hat\pi(X_i)</span>, we can do nearest neighbour matching with the propensity scores (in <span class="math inline">\mathbb R^1</span>). This will allow us to identify the <span class="math inline">\tau_{ATT}</span>.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Balance Checks
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The accurate estimation of <span class="math inline">\tau_{ATT}</span> implies an accurate prediction of the propensity scores <span class="math inline">\pi(X_i)</span>. We can test our matched treatment and control groups to see if the balancing property holds for covariates <span class="math inline">X_i</span>.</p>
-</div>
-</div>
-</div>
-<p><br></p>
-</section>
-<section id="inverse-probability-weighting-estimator" class="level3">
-<h3 class="anchored" data-anchor-id="inverse-probability-weighting-estimator">Inverse Probability Weighting Estimator</h3>
-<p>An alternative use of propensity scores is weighting. Under conditional ignorability and common support, we can identify the ATE as:</p>
-<p><span class="math display">
-\tau_{ATE} = E\left[ Y_i \times \underbrace{\frac{D_i - \pi(X_i)}{\pi(X_i) (1 - \pi(X_i))}}_{\text{weight}}\right]
-</span></p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Proof of Weighting Identification
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>We know that the ATE can be written as a weighted average (when <span class="math inline">X</span> is discrete, we will assume this for simplicity):</p>
-<p><span class="math display">
-\tau_{ATE} = \sum\limits_{x \in \mathcal X} \underbrace{( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x))}_{\text{CATE at }X_i = x} \underbrace{Pr(X_i = x)}_{\text{weight}}
-</span></p>
-<p>We can rewrite the <span class="math inline">\tau_{ATE}</span> as follows using observed potential outcomes outcomes and conditional ignorability:</p>
-<p><span class="math display">
-\begin{split}
-&amp; = \sum\limits_{x \in \mathcal X} \underbrace{(E(Y_{1i}|D_i = 1, X_i = x)}_{\because \text{ observed potential outcome}} - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ observed potential outcome}})Pr(X_i = x) \\
-&amp; = \sum\limits_{x \in \mathcal X}  (\underbrace{E(Y_{1i}|X_i = x)}_{\because \text{ condit. ignorabil.}} - \underbrace{E(Y_{0i}|X_i = x)}_{\because \text{ condit. ignorabil.}})Pr(X_i = x)
-\end{split}
-</span></p>
-<p>Like mentioned above, the summation and <span class="math inline">Pr(X_i = x)</span> indicate a weighted average. We can also express weighted average simply with an expectation:</p>
-<p><span class="math display">
-= E[E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x)]
-</span></p>
-<p>Let us do an algebra trick - multiply both terms within the CATE by 1, albeit written a little strangely:</p>
-<p><span class="math display">
-\begin{split}
-&amp; = E \left [E(Y_{1i}|X_i=x) \underbrace{\frac{\pi(X_i)}{\pi(X_i)}}_{=1} - (E(Y_{0i}|X_i=x) \underbrace{\frac{1-\pi(X_i)}{1-\pi(X_i)}}_{=1}\right] \\
-&amp; = E \left[ \frac{E(Y_{1i}|X_i = x) \pi(X_i)}{\pi(X_i)} -  \frac{E(Y_{0i}|X_i = x) (1-\pi(X_i))}{1-\pi(X_i)} \right]
-\end{split}
-</span></p>
-<p>We know that propensity score <span class="math inline">\pi(X_i) := E(D_i|X_i = x)</span>. Thus, we can convert the above to:</p>
-<p><span class="math display">
-\begin{split}
-&amp; = E \left[ \frac{E(Y_{1i}|X_i = x)E(D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}|X_i = x)(1-E(D_i|X_i = x))}{1-\pi(X_i)}\right] \\
-&amp; = E \left[ \frac{E(Y_{1i}|X_i = x)E(D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}|X_i = x)\overbrace{E(1-D_i|X_i = x)}^{\because \text{ property of expectation}}}{1-\pi(X_i)}\right]
-\end{split}
-</span></p>
-<p>We know that conditional ignorability says <span class="math inline">(Y_{0i}, Y_{1i}) \perp D_i  \ | \ X_i = x</span>. That allows us to combine <span class="math inline">E(Y_{1i}|X_i =x)</span> and <span class="math inline">E(D_i|X_i = x)</span> into a single expectation:</p>
-<p><span class="math display">
-\begin{split}
-&amp; = E \left[ \frac{E(Y_{1i}D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}(1-D_i)|X_i = x)}{1 - \pi(X_i)}\right] \\
-&amp; = E \left[ \underbrace{E \left( \frac{Y_{1i}D_i}{\pi(X_i)} |X_i = x\right)}_{\because \text{ exp. of constant}} - \underbrace{E \left( \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} | X_i = x \right)}_{\because \text{ expect. of constant}} \right] \\
-&amp; = E\left[ E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} |X_i = x \right) \right]
-\end{split}
-</span></p>
-<p>We can use the law of iterated expectations <span class="math inline">E(X) = E[E(X|Y)]</span> to simplify to:</p>
-<p><span class="math display">
-\tau_{ATE} = E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)}\right)
-</span></p>
-<p>We can see two terms in here: <span class="math inline">Y_{1i}D_i</span> and <span class="math inline">Y_{0i}(1-D_i)</span>. We know if <span class="math inline">D_i = 1</span>, then we will observe <span class="math inline">Y_{1i}</span> only, and if <span class="math inline">D_i = 0</span>, we will observe <span class="math inline">Y_{0i}</span>. Thus, we do not need the treatment indicator in <span class="math inline">Y_{di}</span>:</p>
-<p><span class="math display">
-\tau_{ATE} = E\left( \frac{Y_{i}D_i}{\pi(X_i)} - \frac{Y_{i}(1-D_i)}{1-\pi(X_i)}\right)
-</span></p>
-<p>Now, we can combine into one fraction to obtain the original identification result.</p>
-<p><span class="math display">
-\begin{split}
-\tau_{ATE} &amp; = E\left( \frac{Y_{i}D_i}{\pi(X_i)} - \frac{Y_{i}(1-D_i)}{1-\pi(X_i)}\right) \\
-&amp; = E\left( \frac{Y_{i}D_i}{\pi(X_i)} \times \underbrace{\frac{1-\pi(X_i)}{1-\pi(X_i)}}_{=1} - \frac{Y_{i}(1-D_i)}{1-\pi(X_i)} \times \underbrace{\frac{\pi(X_i)}{\pi(X_i)}}_{=1}\right) \\
-&amp; = E \left( \frac{Y_iD_i(1-\pi(X_i))}{\pi(X_i)(1-\pi(X_i))} - \frac{Y_i(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) \\
-&amp; = E \left( \frac{\color{red}{Y_i} \color{black}D_i(1-\pi(X_i))-\color{red}{Y_i}\color{black}(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) \\
-&amp; = E\left( Y_i \frac{D_i(1-\pi(X_i))-(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) \\
-&amp; = E\left( Y_i \frac{D_i - D_i\pi(X_i)-(\pi(X_i) -D_i\pi(X_i))}{\pi(X_i)(1-\pi(X_i))}\right) \\
-&amp;  = E\left( Y_i \frac{D_i \color{red}{- D_i\pi(X_i)} \color{black}-\pi(X_i) \color{red}{+ D_i\pi(X_i)}}{\pi(X_i)(1-\pi(X_i))}\right) \\
-&amp; = E\left( Y_i \frac{D_i -\pi(X_i) }{\pi(X_i)(1-\pi(X_i))}\right) \\
-\end{split}
-</span></p>
-<p>And thus, we have identified the ATE.</p>
-</div>
-</div>
-</div>
-<p>The <strong>inverse probability weighting (IPW) estimator</strong> is the sample estimator:</p>
-<p><span class="math display">
-\begin{split}
-\hat\tau_{ATE} &amp; = \frac{1}{N} \sum\limits_{i=1}^N \left(Y_i \frac{D_i - \hat\pi(X_i)}{\hat\pi(X_i) (1 - \hat\pi(X_i))} \right) \\
-&amp; = \frac{1}{N} \sum\limits_{i=1}^N \left(\frac{D_i Y_i}{\hat\pi(X_i)} - \frac{(1-D_i) Y_i}{1 - \hat\pi(X_i)} \right)
-\end{split}
-</span></p>
-<p>Essentially, those who are unlikely to be treated but do get treated get weighted more, and individuals who are likely to be treated but do not get treated get weighted more.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Weighting Estimator for ATT
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The identification of the ATT under both conditional ignorability and common support are:</p>
-<p><span class="math display">
-\tau_{ATT} = \frac{1}{Pr(D = 1)} \times E\left[ Y_i \times \underbrace{\frac{D_i - \pi(X_i)}{(1 - \pi(X_i))}}_{\text{weight}}\right]
-</span></p>
-<p>The sample IPW estimator would be:</p>
-<p><span class="math display">
-\begin{split}
-\hat\tau_{ATT} &amp; = \frac{1}{N_1}\sum\limits_{i=1}^N \left( Y_i \frac{D_i - \hat\pi(X_i)}{1 - \hat\pi(X_i)} \right) \\
-&amp; = \frac{1}{N_1} \sum\limits_{i=1}^N \left( D_iY_i - (1-D_i)Y_i \frac{\hat\pi(X_i)}{1 - \hat\pi(X_i)} \right)
-\end{split}
-</span></p>
-</div>
-</div>
-</div>
-<p>The IPW estimator is <a href="https://politicalscience.github.io/causal/0.html#asymptotically-consistent-estimators">asymptotically consistent</a>, but has very poor small sample properties. They are highly sensitive to extreme values of <span class="math inline">\hat\pi(X_i)</span>. This generates high variance (inefficiency), and can produce significant bias under model mispecification.</p>
-<p><br></p>
-</section>
+<section id="parametric-estimators" class="level1">
+<h1><strong>Parametric Estimators</strong></h1>
 <section id="ordinary-least-squares-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="ordinary-least-squares-estimator">Ordinary Least Squares Estimator</h3>
-<p>OLS is a natural approach for controlling for confounders <span class="math inline">X</span>, since <span class="math inline">\hat\beta_{OLS}</span> estimates <a href="https://politicalscience.github.io/causal/0.html#regression-anatomy-theorem">partial out the effects of covariates</a>. OLS is a good estimator of <span class="math inline">\tau_{ATE}</span> under 2 conditions:</p>
+<p>OLS is a natural approach for controlling for confounders <span class="math inline">\(X\)</span>, since <span class="math inline">\(\hat\beta_{OLS}\)</span> estimates <a href="https://politicalscience.github.io/causal/0.html#regression-anatomy-theorem">partial out the effects of covariates</a>. OLS is a good estimator of <span class="math inline">\(\tau_{ATE}\)</span> under 2 conditions:</p>
 <ol type="1">
-<li><strong>Constant treatment effect</strong>: <span class="math inline">\tau_i = Y_{1i} - Y_{0i}</span> for all units <span class="math inline">i</span>.</li>
+<li><strong>Constant treatment effect</strong>: <span class="math inline">\(\tau_i = Y_{1i} - Y_{0i}\)</span> for all units <span class="math inline">\(i\)</span>.</li>
 <li><strong>Linearity</strong>: Potential outcomes are linear, and can be written as:</li>
 </ol>
-<p><span class="math display">
+<p><span class="math display">\[
 Y_i(d) = \beta_0 + d\beta_1 + \mathbf X_i \gamma + \epsilon_i \quad \text{for} \quad d = 0, 1
-</span></p>
+\]</span></p>
 <p>Why these conditions? Suppose we have the above linear potential outcomes. We can show:</p>
-<p><span class="math display">
-\begin{split}
-\tau_i &amp; = Y_{1i} - Y_{0i} \\
-&amp; = (\beta_0 + (1)\beta_1 + \mathbf X_i \gamma + \epsilon_i) - (\beta_0 + (0)\beta_1 + \mathbf X_i \gamma + \epsilon_i) \\
-&amp; = (\beta_0 + \beta_1 + \mathbf X_i \gamma + \epsilon_i) - (\beta_0 + \mathbf X_i \gamma + \epsilon_i) \\
-&amp; = \beta_1
-\end{split}
-</span></p>
-<p>We also know that conditional ignorability implies <a href="https://politicalscience.github.io/causal/0.html#conditions-for-unbiasedness">zero-conditional mean</a>. Thus <span class="math inline">\beta_1</span> is an unbiased and asymptotically consistent estimator of the ATE.</p>
+<p><span class="math display">\[
+\begin{align}
+\tau_i &amp; = Y_{1i} - Y_{0i} &amp;&amp; (\text{definition of } \tau_i) \\
+&amp; = (\beta_0 + (1)\beta_1 + \mathbf X_i \gamma + \epsilon_i) - (\beta_0 + (0)\beta_1 + \mathbf X_i \gamma + \epsilon_i) &amp;&amp; (\text{plug in } Y_i(1), Y_i(0) \ )\\
+&amp; = (\beta_0 + \beta_1 + \mathbf X_i \gamma + \epsilon_i) - (\beta_0 + \mathbf X_i \gamma + \epsilon_i) &amp;&amp; (\text{multiply}) \\
+&amp; = \beta_0 + \beta_1 + \mathbf X_i \gamma + \epsilon_i - \beta_0 - \mathbf X_i\gamma - \epsilon_i &amp;&amp; (\text{distribute negative sign})\\
+&amp; = \beta_1 &amp;&amp; (\text{cancel out terms})
+\end{align}
+\]</span></p>
+<p>We also know that conditional ignorability implies <a href="https://politicalscience.github.io/causal/0.html#conditions-for-unbiasedness">zero-conditional mean</a>. Thus <span class="math inline">\(\beta_1\)</span> is an unbiased and asymptotically consistent estimator of the ATE.</p>
 <p>You should be cautious using OLS when assumption 2, <strong>linearity</strong>, is violated. OLS is the best linear estimator, but how far your data is from linearity will determine if the estimator is useful.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -782,10 +364,10 @@ Non-Linearity
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>What if potential outcomes <span class="math inline">Y_i(d)</span> is an unknown and non-linear function of <span class="math inline">d</span> and <span class="math inline">X_i</span>.</p>
-<p>We know the OLS is the <a href="https://politicalscience.github.io/causal/0.html#ols-as-a-conditional-expectation-function">best linear predictor of the conditional expectation function</a> in terms of mean squared error. Thus, <span class="math inline">\beta_1</span> will provide the best linear approximation to the population regression function.</p>
+<p>What if potential outcomes <span class="math inline">\(Y_i(d)\)</span> is an unknown and non-linear function of <span class="math inline">\(d\)</span> and <span class="math inline">\(X_i\)</span>.</p>
+<p>We know the OLS is the <a href="https://politicalscience.github.io/causal/0.html#ols-as-a-conditional-expectation-function">best linear predictor of the conditional expectation function</a> in terms of mean squared error. Thus, <span class="math inline">\(\beta_1\)</span> will provide the best linear approximation to the population regression function.</p>
 <p>This does not mean it is good - just the best linear approximation.</p>
 </div>
 </div>
@@ -793,35 +375,21 @@ Non-Linearity
 <p>You <strong>should not use</strong> OLS if you believe assumption 1, heterogeneity, is violated. The reasoning is explained below.</p>
 <p><br></p>
 </section>
-<section id="fully-interacted-estimator" class="level3">
-<h3 class="anchored" data-anchor-id="fully-interacted-estimator">Fully Interacted Estimator</h3>
-<p>What if there are <strong>heterogenous</strong> treatment effects (where <span class="math inline">\tau_i</span> is different between units)? Standard OLS in this case is <u><strong>no longer</strong> an unbiased estimator</u> of the ATE.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Proof of OLS Biasedness under Heterogeneity
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Recall the subclassification estimator of the ATE is a weighted average of CATEs:</p>
-<p><span class="math display">
+<section id="ols-bias-under-heterogeneity" class="level3">
+<h3 class="anchored" data-anchor-id="ols-bias-under-heterogeneity">OLS Bias under Heterogeneity</h3>
+<p>What if there are <strong>heterogenous</strong> treatment effects (where <span class="math inline">\(\tau_i\)</span> is different between units)? Standard OLS in this case is <u><strong>no longer</strong> an unbiased estimator</u> of the ATE.</p>
+<p>Recall the discrete identification of the ATE (in equation <a href="#eq-discreteate" class="quarto-xref">Equation&nbsp;4</a> ) is a weighted average of CATEs:</p>
+<p><span class="math display">\[
 \hat\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{Pr(X_i = x)}_{\text{weight}} \\
-</span></p>
+\]</span></p>
 <p>OLS, when there are non constant treatment effects, can also be rewritten as a weighted average of CATEs:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \hat\beta_{OLS} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{ \frac{Var(D_i|X_i = X)Pr(X_i = x)}{\sum Var(D_i | X_i = x')Pr(X_i = x')} }_{\text{weight}} \\
-</span></p>
-<p>Notice how the weights are different. The weights in the OLS are the conditional variances of <span class="math inline">D_i</span>. This means that OLS is <strong>not</strong> an unbiased estimator of the ATE or ATT, but rather, a weighted average of the ATT and ATU.</p>
-</div>
-</div>
-</div>
+\]</span></p>
+<p>Notice how the weights are different. The weights in the OLS are the conditional variances of <span class="math inline">\(D_i\)</span>. This means that OLS is <strong>not</strong> an unbiased estimator of the ATE or ATT, but rather, a weighted average of the ATT and ATU.</p>
+<p>OLS, under heterogeneity, actually provides an unbiased estimator of the <strong>conditional variance weighted average treatment effect</strong>. This is not the same as the ATE or the ATT.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -830,43 +398,46 @@ Conditional Variance Weighted Average Treatment Effect (CVW-ATE)
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>OLS actually provides an unbiased estimator of the <strong>conditional variance weighted average treatment effect</strong>. This is not the same as the ATE or the ATT.</p>
 <p>This estimand can also be described as a weighted average of the ATT (average treatment effect on the treated) and the ATU (average treatment effect on the untreated):</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \tau_{OLS} = w_1 \cdot \tau_{ATT} + w_0 \cdot \tau_{ATU}
-</span></p>
+\]</span></p>
 <p>Where:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{split}
 w_1 &amp; = \frac{(1 - Pr(D=1)) Var(\pi(X)|D = 0)}{Pr(D=1)Var(\pi(X)|D=1) + (1-Pr(D=1)Var(\pi(X)|D=0)} \\
 w_0 &amp; = 1 - w_1
 \end{split}
-</span></p>
+\]</span></p>
 <p>The reason for this is because regression is prone to extrapolation beyond common support - i.e.&nbsp;it can “estimate” potential outcomes for units that are not observed. This can lead to bias.</p>
-<p>This is in contrast to the subclassification estimator, which cannot be computed if there are missing observable outcomes for a substratum/category of <span class="math inline">X</span>.</p>
-<p>The weights of <span class="math inline">D_i(X_i = x)</span> can also be seen as propensity scores of <span class="math inline">\pi(x)(1 - \pi(x)</span>. Therefore:</p>
+<p>This is in contrast to the subclassification estimator, which cannot be computed if there are missing observable outcomes for a substratum/category of <span class="math inline">\(X\)</span>.</p>
+<p>The weights of <span class="math inline">\(D_i(X_i = x)\)</span> can also be seen as propensity scores of <span class="math inline">\(\pi(x)(1 - \pi(x)\)</span>. Therefore:</p>
 <ol type="1">
 <li>Weights are higher for groups with propensity scores close to 0.5.</li>
 <li>Weights are low for groups with propensity scores close to 0 or 1.</li>
-<li>OLS minimises estimation uncertainty by downweighting groups of <span class="math inline">X_i</span> where group-specific ATEs are less precisely estimated.</li>
+<li>OLS minimises estimation uncertainty by downweighting groups of <span class="math inline">\(X_i\)</span> where group-specific ATEs are less precisely estimated.</li>
 </ol>
 </div>
 </div>
 </div>
+<p><br></p>
+</section>
+<section id="fully-interacted-estimator" class="level3">
+<h3 class="anchored" data-anchor-id="fully-interacted-estimator">Fully Interacted Estimator</h3>
 <p>The <strong>Fully-Interacted Estimator</strong>, a newly developed large-sample regression estimator (Lin 2013), solves the heterogeneity bias in the OLS estimator. The fully-interacted estimator takes the form:</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \widehat{Y_i} = \hat\alpha + D_i \widehat{\tau}_{int} + (\mathbf X_i - \mathbf {\bar X}) \hat\beta +D_i (\mathbf X_i - \mathbf{\bar X}) \hat\gamma
-</span></p>
+\]</span></p>
 <ul>
-<li>Where <span class="math inline">X_i</span> are covariate values sufficient to satisfy conditional independence.</li>
-<li>Where <span class="math inline">\bar X</span> contains the sample means of all <span class="math inline">X_i</span> covariates.</li>
+<li>Where <span class="math inline">\(X_i\)</span> are covariate values sufficient to satisfy conditional independence.</li>
+<li>Where <span class="math inline">\(\bar X\)</span> contains the sample means of all <span class="math inline">\(X_i\)</span> covariates.</li>
 </ul>
-<p>This estimator <span class="math inline">\hat\tau_{int}</span> is technically biased when estimating <span class="math inline">\tau_{ATE}</span>. However, the bias is arbitrarily small in large samples under conditional ignorability.</p>
+<p>This estimator <span class="math inline">\(\hat\tau_{int}\)</span> is technically biased when estimating <span class="math inline">\(\tau_{ATE}\)</span>. However, the bias is arbitrarily small in large samples under conditional ignorability.</p>
 <p>This estimator thus allows us to accurately estimate the ATE even under heterogenous treatment effects, assuming our sample size is sufficiently large.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -875,7 +446,7 @@ Other Solutions to the OLS Bias under Heterogeneity
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>There are a few other solutions to this issue of OLS bias under heterogeneity:</p>
 <ol type="1">
@@ -890,20 +461,388 @@ Other Solutions to the OLS Bias under Heterogeneity
 <hr>
 </section>
 </section>
+<section id="nonparametric-estimators" class="level1">
+<h1><strong>Nonparametric Estimators</strong></h1>
+<section id="subclassification-estimator" class="level3">
+<h3 class="anchored" data-anchor-id="subclassification-estimator">Subclassification Estimator</h3>
+<p>Using the discrete identification of the ATE shown in <a href="#eq-discreteate" class="quarto-xref">Equation&nbsp;4</a> , we can instead use the sample equivalents to get the <strong>subclassification estimator</strong>:</p>
+<p><span class="math display">\[
+\hat\tau_{ATE} = \sum\limits_{j=1}^M \underbrace{(\bar Y_{1j} - \bar Y_{0j})}_{\tau_{CATE}(j)} \underbrace{\frac{n_j}{n}}_{\text{weight}}
+\]</span></p>
+<ul>
+<li>Where <span class="math inline">\(M\)</span> is the number of levels/categories of <span class="math inline">\(X\)</span>, and <span class="math inline">\(j\)</span> is one specific level/category of <span class="math inline">\(X\)</span>.</li>
+<li>Where <span class="math inline">\(n_j\)</span> is the number of units in a level/category <span class="math inline">\(j\)</span> of <span class="math inline">\(X\)</span>.</li>
+<li>Where <span class="math inline">\(\bar Y_{dj}\)</span> is the mean outcome for units with <span class="math inline">\(D_i = d\)</span> in level/category <span class="math inline">\(j\)</span> of <span class="math inline">\(X\)</span>.</li>
+</ul>
+<p>For subclassificaion to be possible, within each level <span class="math inline">\(j\)</span> of covariate <span class="math inline">\(X\)</span>, there must be at least one unit in control <span class="math inline">\(D=0\)</span> and treatment <span class="math inline">\(D=1\)</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Intuitive Procedure of Subclassification
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>More intuitively, the procedure is as follows:</p>
+<ol type="1">
+<li>Choose one specific value for all covaraites <span class="math inline">\(X\)</span>. Find the average treatment effect within this specific value of <span class="math inline">\(X\)</span>.</li>
+<li>Multiply that average treatment effect by the number of observations that meet this specific value of <span class="math inline">\(X\)</span> divided by the total number of units.</li>
+<li>Do this for every possible values of all covaraites <span class="math inline">\(X\)</span>, then sum up all the weighted average treatment effects to get the overall ATE.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Subclassification with Multiple Confounders
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us say we have 2 confounders, <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>. Both confounders are categorical with 3 categories.</p>
+<p>We would need to create <span class="math inline">\(M=9\)</span> levels of strata, for every possible combination of values of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>. Then, we would estimate the within-strata average treatment effect, and weight them.</p>
+<p>This illustrates how with large amounts of confounders, you will need a huge number of stratum. This makes subclassification infeasible in many cases.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Subclassification for the ATT
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When pre-treatment covariate <span class="math inline">\(X\)</span> is discrete, the identification result of the ATT is:</p>
+<p><span class="math display">\[
+\tau_{ATT} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x | D_i = 1)
+\]</span></p>
+<p>We can calculate this within our give sample to get the subclassificaiton estimator:</p>
+<p><span class="math display">\[
+\hat\tau_{ATT} = \sum\limits_{j=1}^M(\bar Y_{1j} - \bar Y_{0j}) \frac{n_{1j}}{n_1}
+\]</span></p>
+<ul>
+<li>Where <span class="math inline">\(M\)</span> is the number of strata (levels/categories of <span class="math inline">\(X\)</span>).</li>
+<li>Where <span class="math inline">\(n_j\)</span> is the number of units in a level/category <span class="math inline">\(j\)</span> of <span class="math inline">\(X\)</span>.</li>
+<li>Where <span class="math inline">\(n_{1j}\)</span> is the number of treated cells <span class="math inline">\(D = 1\)</span> in a level/category <span class="math inline">\(j\)</span> of <span class="math inline">\(X\)</span>.</li>
+<li>Where <span class="math inline">\(\bar Y_{dj}\)</span> is the mean outcome for units with <span class="math inline">\(D_i = d\)</span> in level/category <span class="math inline">\(j\)</span> of <span class="math inline">\(X\)</span>.</li>
+</ul>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="matching-estimator" class="level3">
+<h3 class="anchored" data-anchor-id="matching-estimator">Matching Estimator</h3>
+<p>We have a <a href="https://politicalscience.github.io/causal/1.html#observed-outcomes-and-missing-data">missing data problem</a> in causal inference: we do not know all the potential outcomes. Matching “estimates” missing potential outcomes of a unit.</p>
+<p>For each observation in the treated group, matching finds an observation in the untreated group that have the most similar values of a set of pre-treatment covariates <span class="math inline">\(X\)</span>. Thus, we have pairs of treatment-control observations that act as counterfactuals. We can estimate the ATT as the average difference in observed outcomes within the pairs:</p>
+<p><span class="math display">\[
+\hat\tau_{ATT} = \frac{1}{n_1} \sum\limits_{i:D_i = 1}(Y_i - \widetilde{Y_i})
+\]</span></p>
+<ul>
+<li>Where <span class="math inline">\(n_1\)</span> is the number of units in the treatment group.</li>
+<li>Where <span class="math inline">\(Y_i\)</span> is the unit’s observed <span class="math inline">\(Y\)</span> in the treatment group.</li>
+<li>Where <span class="math inline">\(\tilde Y_i\)</span> is unit <span class="math inline">\(i\)</span>’s closest neighbour in the untreated group.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Choices during Matching
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We have to make several choices when conducting matching.</p>
+<ol type="1">
+<li><strong>What covariates</strong> to match on. We generally want to select a set of pre-treatment covariates <span class="math inline">\(X\)</span> such that these covariates ensure the conditional ignorability assumption is met.</li>
+<li>Match <strong>with or without replacement</strong>. Matching with replacement means that once you have used one control unit to match to a treatment unit, you can still use that same control unit to match to another treatment unit. This has advantages since you can ensure better and closer matches. However, matching without replacement is also possible.</li>
+<li><strong>How many to match</strong>. You can decide to match multiple control units to one treatment unit, and use the average of the treatment units to approximate a true control unit. This may result in more accurate matches for treatment units that may not have a good single control unit to match to.</li>
+</ol>
+<p>We can also choose to use more advanced matching methods, such as Mahalanobis Distance matching or Propensity Score matching, which are shown below. These are good for matching on more <span class="math inline">\(X\)</span>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Matching on Multiple Neighbours
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Sometimes, a treatment unit may not have one close control unit to match to. Instead, we could use a combination of control units to match to the treatment unit, and use the average <span class="math inline">\(Y\)</span> of those combination of control units to approximate a more accurate match.</p>
+<p>Suppose we use <span class="math inline">\(M_i\)</span> number of close control units to match to a treatment unit <span class="math inline">\(i\)</span>. Then, the matching estimator would be defined as follows:</p>
+<p><span class="math display">\[
+\hat\tau_{ATT} = \frac{1}{n_1} \sum\limits_{i:D_i = 1}(Y_i - \left(\frac{1}{M_i} \sum\limits_{m=1}^{M_i} \widetilde{Y_{i_m}}\right))
+\]</span></p>
+<p>Where <span class="math inline">\(\widetilde{Y_{i_m}}\)</span> is the obsered outcome for the <span class="math inline">\(m\)</span>th match of unit <span class="math inline">\(i\)</span>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Weaknesses of Matching
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Matching does not always create “perfect” matches. This means that the pairs matched together may not be identical to each other in terms of covariates <span class="math inline">\(X\)</span> or potential outcomes.</p>
+<p>The inability to find exact matches can cause bias, especially for the more covariates we match on (see below).</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="matching-with-multiple-covariates" class="level3">
+<h3 class="anchored" data-anchor-id="matching-with-multiple-covariates">Matching with Multiple Covariates</h3>
+<p>Consider that we <span class="math inline">\(k&gt;1\)</span> number of confounders <span class="math inline">\(X\)</span>. Now, we have to match observations in <span class="math inline">\(k\)</span> variables, which implies we are in a multidimensional <span class="math inline">\(\mathbb R^k\)</span> space.</p>
+<p>The most commonly used distance metric is <strong>Mahalanobis</strong> Distance - which measures the distance in <span class="math inline">\(X_i\)</span> between units <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>:</p>
+<p><span class="math display">\[
+D_M (\mathbf X_i, \mathbf X_j) = \sqrt{(\mathbf X_i - \mathbf X_j)^T \boldsymbol\Sigma_X^{-1} (\mathbf X_i - \mathbf X_j)}
+\]</span></p>
+<ul>
+<li>Where <span class="math inline">\(\boldsymbol \Sigma_X\)</span> is the sample variance-covariance matrix of <span class="math inline">\(\mathbf X_i\)</span>.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Euclidean Distance
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Euclidean distance is another common distance metric:</p>
+<p><span class="math display">\[
+D_E ( \mathbf X_i, \mathbf X_j) = \sqrt{(x_{1i} - x_{1j})^2 + (x_{2i}-x_{2j})^2 + \dots + (x_{ki}-x_{kj})^2}
+\]</span></p>
+<p>Euclidean distance, while very simple, is not recommended. This is because Euclidean distance with non-normalised variables can get you very bizarre results that depend on the scale of the variables.</p>
+<p>There are other distance metrics, but these are exceedingly rare in selection on observables.</p>
+</div>
+</div>
+</div>
+<p>There is one issue with matching in multi-dimensional spaces. It becomes very difficult to match every unit <span class="math inline">\(i\)</span> on every covariate <span class="math inline">\(X\)</span>, even if we have a large number of observations.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Curse of Dimensionality
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When we try to match on more than one <span class="math inline">\(X\)</span> variable, we go from matching on a number line <span class="math inline">\(\mathbb R^1\)</span> to a <span class="math inline">\(n\)</span>-dimensional space, <span class="math inline">\(\mathbb R^n\)</span>.</p>
+<p>The search space increases exponentially as you increase the number of dimensions.</p>
+<p><img src="images/clipboard-2668193698.png" class="img-fluid" style="width:100.0%"></p>
+<p>Take a look at the figure on the left. If we only match on a one dimensional plane (lets say the horizontal line between 0 and 1), we can see our red line covers approximately 30% of the horizontal line. But in 3 dimensions, our red box covers a significantly less proportion of the entire cube.</p>
+<p>The figure on the right illustrates this. <span class="math inline">\(d\)</span> represents the dimensions. We can see as the dimensions increase, the fraction of volume increases significantly slower relative to distance.</p>
+<p>Thus, with a bigger space, the distance between two units increases, so you get worse matches.</p>
+</div>
+</div>
+</div>
+<p>This curse of dimensionality creates a <a href="https://politicalscience.github.io/causal/0.html#unbiased-estimators">bias</a> problem - since we get non-exact matches. The more dimensions you add, the worse it becomes.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+More on Bias
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The poor matches caused by increased dimensionality inject error into our estimates of missing potential outcomes.</p>
+<p>The bias term as you increase the number of dimensions <span class="math inline">\(k\)</span>, changes by <span class="math inline">\(N^{(-1/k)}\)</span>. This implies no <span class="math inline">\(\sqrt{n}\)</span> consistency for <span class="math inline">\(k&gt;2\)</span>.</p>
+<p>If <span class="math inline">\(N_0\)</span> (number of untreated units) is much larger than <span class="math inline">\(N_1\)</span> (number of treated units), bias will typically be smaller.</p>
+<p>There are ways to correct this bias, including Abadie and Imbens (2011) Bias Correction method.</p>
+<p>There is a new method: <strong>Bias-corrected matching</strong>, which estimates bias ineherent to mathching estimators via regression, then subtracts it from the matching estimate to correct for it.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="propensity-scores-matching" class="level3">
+<h3 class="anchored" data-anchor-id="propensity-scores-matching">Propensity Scores Matching</h3>
+<p>Propensity Score matching is an alternative way to match over many dimensions. The <strong>propensity score</strong> is an unobserved property, defined as the probability of a unit <span class="math inline">\(i\)</span> of receiving treatment:</p>
+<p><span class="math display">\[
+\pi(X_i) \equiv Pr(D_i = 1|X_i)
+\]</span></p>
+<p>When supposing the <a href="https://politicalscience.github.io/causal/3.html#identification-assumptions">conditional ignorability and common support assumptions</a>, the propensity score <span class="math inline">\(\pi(X_i)\)</span> has the balancing property: <span class="math inline">\(D_i \perp X_i \ | \ \pi(X_i)\)</span>. This implies that conditional ignorability holds on the propensity scores alone:</p>
+<p><span class="math display">\[
+(Y_{1i}, Y_{0i}) \perp\!\!\!\!\perp D_i \ | \ \pi(X_i)
+\]</span></p>
+<p>Thus, instead of conditioning on <span class="math inline">\(X_i\)</span> as we did in selection on observables, we can instead condition on <span class="math inline">\(\pi (X_i)\)</span>, and still identify the causal estimand.</p>
+<p>However, we do not actually observe <span class="math inline">\(\pi (X_i)\)</span>. We estimate <span class="math inline">\(\pi (X_i)\)</span> with a binary response model, with outcome variable <span class="math inline">\(D_i\)</span>, and explanatory variables <span class="math inline">\(X_i\)</span>. This will get us a fitted probability <span class="math inline">\(Pr(D_i = 1) = \hat\pi(X_i)\)</span>.</p>
+<p>Then, once we have the propensity score estimates <span class="math inline">\(\hat\pi(X_i)\)</span>, we can do nearest neighbour matching with the propensity scores (in <span class="math inline">\(\mathbb R^1\)</span>). This will allow us to identify the <span class="math inline">\(\tau_{ATT}\)</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Balance Checks
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The accurate estimation of <span class="math inline">\(\tau_{ATT}\)</span> implies an accurate prediction of the propensity scores <span class="math inline">\(\pi(X_i)\)</span>. We can test our matched treatment and control groups to see if the balancing property holds for covariates <span class="math inline">\(X_i\)</span>.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="genetic-matching" class="level3">
+<h3 class="anchored" data-anchor-id="genetic-matching">Genetic Matching</h3>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="weighting-estimator" class="level1">
+<h1><strong>Weighting Estimator</strong></h1>
+<section id="identification-with-weighting" class="level3">
+<h3 class="anchored" data-anchor-id="identification-with-weighting">Identification with Weighting</h3>
+<p>We know that the ATE can be written as a weighted average, as shown in <a href="#eq-discreteate" class="quarto-xref">Equation&nbsp;4</a> . We can rewrite the <span class="math inline">\(\tau_{ATE}\)</span> as follows using observed potential outcomes outcomes and conditional ignorability ( <a href="#eq-independence" class="quarto-xref">Equation&nbsp;1</a> ).</p>
+<p><span class="math display">\[
+\begin{split}
+&amp; = \sum\limits_{x \in \mathcal X} \underbrace{(E(Y_{1i}|D_i = 1, X_i = x)}_{\because \text{ observed}} - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ observed}})Pr(X_i = x) \\
+&amp; = \sum\limits_{x \in \mathcal X}  (\underbrace{E(Y_{1i}|X_i = x)}_{\because \text{ eq. (1)}} - \underbrace{E(Y_{0i}|X_i = x)}_{\because \text{ eq. (1)}})Pr(X_i = x) \\
+&amp; = \underbrace{E[E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x)]}_{\text{definition of weighted average}}
+\end{split}
+\]</span></p>
+<p>Let us do an algebra trick - multiply both terms within the CATE by 1 (in blue):</p>
+<p><span class="math display">\[
+\begin{split}
+&amp; = E \left [E(Y_{1i}|X_i=x) \color{blue}{\frac{\pi(X_i)}{\pi(X_i)}}\color{black} - (E(Y_{0i}|X_i=x) \color{blue}{\frac{1-\pi(X_i)}{1-\pi(X_i)}} \right] \\
+&amp; \color{black} = E \left[ \frac{E(Y_{1i}|X_i = x) \pi(X_i)}{\pi(X_i)} -  \frac{E(Y_{0i}|X_i = x) (1-\pi(X_i))}{1-\pi(X_i)} \right]
+\end{split}
+\]</span></p>
+<p>We know that propensity score <span class="math inline">\(\pi(X_i) := E(D_i|X_i = x)\)</span>. Thus, we can convert the above to:</p>
+<p><span class="math display">\[
+\begin{split}
+&amp; = E \left[ \frac{E(Y_{1i}|X_i = x)E(D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}|X_i = x)(1-E(D_i|X_i = x))}{1-\pi(X_i)}\right] \\
+&amp; = E \left[ \frac{E(Y_{1i}|X_i = x)E(D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}|X_i = x)E(1-D_i|X_i = x)}{1-\pi(X_i)}\right]
+\end{split}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align}
+&amp; = E \left[ \frac{E(Y_{1i}D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}(1-D_i)|X_i = x)}{1 - \pi(X_i)}\right] &amp;&amp; (\text{property of expectation})\\
+&amp; = E \left[ E \left( \frac{Y_{1i}D_i}{\pi(X_i)} |X_i = x\right) - E \left( \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} | X_i = x \right) \right] &amp;&amp; (\text{property of expectation})\\
+&amp; = E\left[ E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} |X_i = x \right) \right]  &amp;&amp; (\text{property of expectation})
+\end{align}
+\]</span></p>
+<p><span id="eq-ateweight"><span class="math display">\[
+\begin{align}
+&amp; = E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)}\right) &amp;&amp; (\text{LIE: } E(X) = E[E(X|Y)] \ ) \\
+&amp; = E\left( \frac{Y_{i}D_i}{\pi(X_i)} - \frac{Y_{i}(1-D_i)}{1-\pi(X_i)}\right) &amp;&amp; (\text{observered outcome}) \\
+&amp; = E \left( \frac{\color{blue}{Y_i} \color{black}D_i(1-\pi(X_i))-\color{blue}{Y_i}\color{black}(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) &amp;&amp;(\text{getting common denom.}) \\
+&amp; = E\left( Y_i \frac{D_i(1-\pi(X_i))-(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) &amp;&amp;(\text{factor out }Y_i) \\
+&amp; = E\left( Y_i \frac{D_i - D_i\pi(X_i)-(\pi(X_i) -D_i\pi(X_i))}{\pi(X_i)(1-\pi(X_i))}\right) &amp;&amp;(\text{distribute out}) \\
+&amp;  = E\left( Y_i \frac{D_i \color{blue}{- D_i\pi(X_i)} \color{black}-\pi(X_i) \color{blue}{+ D_i\pi(X_i)}}{\pi(X_i)(1-\pi(X_i))}\right) &amp;&amp;(\text{distribute out negative})\\
+&amp; = E\left( Y_i \frac{D_i -\pi(X_i) }{\pi(X_i)(1-\pi(X_i))}\right) &amp;&amp; (\text{cancel out})\\
+\end{align}
+\tag{7}\]</span></span></p>
+<p>And thus, we have identified the ATE.</p>
+<p><br></p>
+</section>
+<section id="inverse-probability-weighting-estimator" class="level3">
+<h3 class="anchored" data-anchor-id="inverse-probability-weighting-estimator">Inverse Probability Weighting Estimator</h3>
+<p>An alternative use of propensity scores is weighting. As shown above, under conditional ignorability and common support, we can identify the ATE as:</p>
+<p><span class="math display">\[
+\tau_{ATE} = E\left[ Y_i \times \underbrace{\frac{D_i - \pi(X_i)}{\pi(X_i) (1 - \pi(X_i))}}_{\text{weight}}\right]
+\]</span></p>
+<p>The <strong>inverse probability weighting (IPW) estimator</strong> is the sample estimator:</p>
+<p><span class="math display">\[
+\begin{split}
+\hat\tau_{ATE} &amp; = \frac{1}{N} \sum\limits_{i=1}^N \left(Y_i \frac{D_i - \hat\pi(X_i)}{\hat\pi(X_i) (1 - \hat\pi(X_i))} \right) \\
+&amp; = \frac{1}{N} \sum\limits_{i=1}^N \left(\frac{D_i Y_i}{\hat\pi(X_i)} - \frac{(1-D_i) Y_i}{1 - \hat\pi(X_i)} \right)
+\end{split}
+\]</span></p>
+<ul>
+<li>The second equation is equivalent to the first, shown by <a href="#eq-ateweight" class="quarto-xref">Equation&nbsp;7</a> .</li>
+</ul>
+<p>Essentially, those who are unlikely to be treated but do get treated get weighted more, and individuals who are likely to be treated but do not get treated get weighted more.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Weighting Estimator for ATT
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The identification of the ATT under both conditional ignorability and common support are:</p>
+<p><span class="math display">\[
+\tau_{ATT} = \frac{1}{Pr(D = 1)} \times E\left[ Y_i \times \underbrace{\frac{D_i - \pi(X_i)}{(1 - \pi(X_i))}}_{\text{weight}}\right]
+\]</span></p>
+<p>The sample IPW estimator would be:</p>
+<p><span class="math display">\[
+\begin{split}
+\hat\tau_{ATT} &amp; = \frac{1}{N_1}\sum\limits_{i=1}^N \left( Y_i \frac{D_i - \hat\pi(X_i)}{1 - \hat\pi(X_i)} \right) \\
+&amp; = \frac{1}{N_1} \sum\limits_{i=1}^N \left( D_iY_i - (1-D_i)Y_i \frac{\hat\pi(X_i)}{1 - \hat\pi(X_i)} \right)
+\end{split}
+\]</span></p>
+</div>
+</div>
+</div>
+<p>The IPW estimator is <a href="https://politicalscience.github.io/causal/0.html#asymptotically-consistent-estimators">asymptotically consistent</a>, but has very poor small sample properties. They are highly sensitive to extreme values of <span class="math inline">\(\hat\pi(X_i)\)</span>. This generates high variance (inefficiency), and can produce significant bias under model mispecification.</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
 <section id="falsification-tests" class="level1">
 <h1><strong>Falsification Tests</strong></h1>
 <section id="testing-assumptions-with-falsification" class="level3">
 <h3 class="anchored" data-anchor-id="testing-assumptions-with-falsification">Testing Assumptions with Falsification</h3>
-<p>The stronger (bolder) our assumptions for identification, the less credible our results are. Selection on Observables involves a very strong and hard to verify assumption: <a href="https://politicalscience.github.io/causal/3.html#identification-assumptions">conditional ignorability</a>. Can we really be sure that we have controlled for all confounders <span class="math inline">X_i</span> needed to satisfy conditional ignorability?</p>
-<p><strong>Placebo tests</strong> are a type of falsification test to show evidence against our assumptions. Suppose that we make the assumption of conditional ignorability <span class="math inline">(Y_{0i}, Y_{1i}) \perp D_i | X_i</span>. Suppose we are concerned about the presence of another confounder <span class="math inline">U</span> that is not included in <span class="math inline">X_i</span>.</p>
+<p>The stronger (bolder) our assumptions for identification, the less credible our results are. Selection on Observables involves a very strong and hard to verify assumption: <a href="https://politicalscience.github.io/causal/3.html#identification-assumptions">conditional ignorability</a>. Can we really be sure that we have controlled for all confounders <span class="math inline">\(X_i\)</span> needed to satisfy conditional ignorability?</p>
+<p><strong>Placebo tests</strong> are a type of falsification test to show evidence against our assumptions. Suppose that we make the assumption of conditional ignorability <span class="math inline">\((Y_{0i}, Y_{1i}) \perp D_i | X_i\)</span>. Suppose we are concerned about the presence of another confounder <span class="math inline">\(U\)</span> that is not included in <span class="math inline">\(X_i\)</span>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-1922523996.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
 </figure>
 </div>
-<p>The presence of <span class="math inline">U</span> will <strong>falsify</strong> our conditional ignorability assumption, and means we cannot identify the causal effect of <span class="math inline">D \rightarrow Y</span>.</p>
+<p>The presence of <span class="math inline">\(U\)</span> will <strong>falsify</strong> our conditional ignorability assumption, and means we cannot identify the causal effect of <span class="math inline">\(D \rightarrow Y\)</span>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -912,7 +851,7 @@ Falsification vs.&nbsp;Validation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Falsification is a principle of trying to criticise our own research, rather than defend it. Falsification is about testing if our assumptions are not met. Failing a test provides evidence that our assumption is not met.</p>
 <ul>
@@ -930,40 +869,40 @@ Falsification vs.&nbsp;Validation
 </section>
 <section id="placebo-outcome-test" class="level3">
 <h3 class="anchored" data-anchor-id="placebo-outcome-test">Placebo Outcome Test</h3>
-<p>A <strong>placebo outcome test</strong> utilities another alternative outcome variable <span class="math inline">Y'</span> that is caused by our hypothesised unobserved confounder <span class="math inline">U</span>:</p>
+<p>A <strong>placebo outcome test</strong> utilities another alternative outcome variable <span class="math inline">\(Y'\)</span> that is caused by our hypothesised unobserved confounder <span class="math inline">\(U\)</span>:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-1507754175.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
 </figure>
 </div>
-<p>We can see that if <span class="math inline">U</span> does not exist, <span class="math inline">D</span> should have zero effect on the new outcome <span class="math inline">Y'</span>. Thus, if <span class="math inline">U</span> is present, we should find a relationship between <span class="math inline">D</span> and <span class="math inline">Y'</span>.</p>
-<p><span class="math display">
+<p>We can see that if <span class="math inline">\(U\)</span> does not exist, <span class="math inline">\(D\)</span> should have zero effect on the new outcome <span class="math inline">\(Y'\)</span>. Thus, if <span class="math inline">\(U\)</span> is present, we should find a relationship between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y'\)</span>.</p>
+<p><span class="math display">\[
 Y'_i = \gamma + \delta D_i + u_i
-</span></p>
+\]</span></p>
 <ul>
-<li>If we find that there is an effect of <span class="math inline">D</span> on the new outcome <span class="math inline">Y'</span> (non-zero <span class="math inline">\delta</span>), that is <strong>evidence</strong> that <span class="math inline">U</span> exists, and is <strong>evidence to reject</strong> our conditional ignorability assumption (falsifies our design - red flag!).</li>
-<li>If you do not find an effect of <span class="math inline">D</span> on new outcome <span class="math inline">Y'</span> (<span class="math inline">\delta = 0</span>) you find <strong>no evidence</strong> of <span class="math inline">U</span>, and <strong>no evidence to reject</strong> our conditional ignorability assumption (fails to falsify our design).</li>
+<li>If we find that there is an effect of <span class="math inline">\(D\)</span> on the new outcome <span class="math inline">\(Y'\)</span> (non-zero <span class="math inline">\(\delta\)</span>), that is <strong>evidence</strong> that <span class="math inline">\(U\)</span> exists, and is <strong>evidence to reject</strong> our conditional ignorability assumption (falsifies our design - red flag!).</li>
+<li>If you do not find an effect of <span class="math inline">\(D\)</span> on new outcome <span class="math inline">\(Y'\)</span> (<span class="math inline">\(\delta = 0\)</span>) you find <strong>no evidence</strong> of <span class="math inline">\(U\)</span>, and <strong>no evidence to reject</strong> our conditional ignorability assumption (fails to falsify our design).</li>
 </ul>
-<p>We must be sure that <span class="math inline">Y</span> is not related to <span class="math inline">Y'</span> except through <span class="math inline">D</span> and <span class="math inline">U</span>. If this is true, we just run our original research design but replace <span class="math inline">Y</span> with <span class="math inline">Y'</span>.</p>
+<p>We must be sure that <span class="math inline">\(Y\)</span> is not related to <span class="math inline">\(Y'\)</span> except through <span class="math inline">\(D\)</span> and <span class="math inline">\(U\)</span>. If this is true, we just run our original research design but replace <span class="math inline">\(Y\)</span> with <span class="math inline">\(Y'\)</span>.</p>
 <p><br></p>
 </section>
 <section id="placebo-treatment-test" class="level3">
 <h3 class="anchored" data-anchor-id="placebo-treatment-test">Placebo Treatment Test</h3>
-<p>A <strong>placebo treatment test</strong> involves some other treatment <span class="math inline">D'</span>, that was assigned at the same time</p>
+<p>A <strong>placebo treatment test</strong> involves some other treatment <span class="math inline">\(D'\)</span>, that was assigned at the same time</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-2903631229.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
 </figure>
 </div>
-<p>We can see that if <span class="math inline">U</span> does not exist, the effect of <span class="math inline">D'</span> should have no effect on <span class="math inline">Y</span>. If <span class="math inline">U</span> does exist, there should be some effect of <span class="math inline">D'</span> on <span class="math inline">Y</span>.</p>
-<p><span class="math display">
+<p>We can see that if <span class="math inline">\(U\)</span> does not exist, the effect of <span class="math inline">\(D'\)</span> should have no effect on <span class="math inline">\(Y\)</span>. If <span class="math inline">\(U\)</span> does exist, there should be some effect of <span class="math inline">\(D'\)</span> on <span class="math inline">\(Y\)</span>.</p>
+<p><span class="math display">\[
 Y_i = \gamma + \delta D'_i + u_i
-</span></p>
+\]</span></p>
 <ul>
-<li>If we find that there is an effect of <span class="math inline">D'</span> on <span class="math inline">Y</span> (non-zero <span class="math inline">\delta</span>), that is <strong>evidence</strong> that <span class="math inline">U</span> exists, and is <strong>evidence to reject</strong> our conditional ignorability assumption (falsifies our design - red flag!).</li>
-<li>If you do not find an effect of <span class="math inline">D'</span> on <span class="math inline">Y</span> (<span class="math inline">\delta = 0</span>) you find <strong>no evidence</strong> of <span class="math inline">U</span>, and <strong>no evidence to reject</strong> our conditional ignorability assumption (fails to falsify our design).</li>
+<li>If we find that there is an effect of <span class="math inline">\(D'\)</span> on <span class="math inline">\(Y\)</span> (non-zero <span class="math inline">\(\delta\)</span>), that is <strong>evidence</strong> that <span class="math inline">\(U\)</span> exists, and is <strong>evidence to reject</strong> our conditional ignorability assumption (falsifies our design - red flag!).</li>
+<li>If you do not find an effect of <span class="math inline">\(D'\)</span> on <span class="math inline">\(Y\)</span> (<span class="math inline">\(\delta = 0\)</span>) you find <strong>no evidence</strong> of <span class="math inline">\(U\)</span>, and <strong>no evidence to reject</strong> our conditional ignorability assumption (fails to falsify our design).</li>
 </ul>
-<p>We must be sure that <span class="math inline">Y</span> is not related to <span class="math inline">D'</span> except through <span class="math inline">D</span> and <span class="math inline">U</span>. If this is true, we just run our original research design but replace <span class="math inline">D</span> with <span class="math inline">D'</span>.</p>
+<p>We must be sure that <span class="math inline">\(Y\)</span> is not related to <span class="math inline">\(D'\)</span> except through <span class="math inline">\(D\)</span> and <span class="math inline">\(U\)</span>. If this is true, we just run our original research design but replace <span class="math inline">\(D\)</span> with <span class="math inline">\(D'\)</span>.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -975,71 +914,71 @@ Y_i = \gamma + \delta D'_i + u_i
 <h3 class="anchored" data-anchor-id="decomposing-the-ate">Decomposing the ATE</h3>
 <p>With falsification, we were concerned with what assumptions we needed to be not-false in order to identify the ATE. However, we can take a different approach - what can we learn about the ATE without any assumptions?</p>
 <p>Let us decompose the ATE into parts:</p>
-<p><span class="math display">
-\begin{split}
+<p><span class="math display">\[
+\begin{align}
 \tau_{ATE}  = &amp; E(Y_{1i} - Y_{0i}) \\
 &amp; \\
 = &amp; E(Y_{1i} - Y_{0i} | D_i = 1) Pr(D_i = 1) \\
-&amp; \quad - E(Y_{1i} - Y_{0i}|D_i = 0)Pr(D_i = 0) \\
+&amp; \quad - E(Y_{1i} - Y_{0i}|D_i = 0)Pr(D_i = 0)  &amp;&amp; (\text{def. of weighted avg.})\\
 &amp; \\
 = &amp; [ \color{blue}{E(Y_i |D_i = 1)} \color{black}- \color{red}{E(Y_{0i}|D_i = 1)} \color{black}] Pr(D_i = 1) \\
-&amp; \quad + [ \color{red}{E(Y_{1i}|D_i = 0)} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0)
-\end{split}
-</span></p>
+&amp; \quad + [ \color{red}{E(Y_{1i}|D_i = 0)} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0) &amp;&amp; (\text{observed + unobserved})
+\end{align}
+\]</span></p>
 <p>Some of the quantities are observed (in blue), and some of the quantities are unobserved (in red). Previously, we made assumptions (conditional ignorability, common support) to fill the unobserved quantities. But, we can make actually any assumption as possible.</p>
 <p><br></p>
 </section>
 <section id="nonparametric-bounds" class="level3">
 <h3 class="anchored" data-anchor-id="nonparametric-bounds">Nonparametric Bounds</h3>
 <p>One way to fill in our unobserved outcomes through the “best” and “worst” possible outcomes. This allows us to construct a plausible range of the ATE.</p>
-<p>First, let us construct the worst-case scenario - the lowest possible <span class="math inline">\tau</span>.</p>
+<p>First, let us construct the worst-case scenario - the lowest possible <span class="math inline">\(\tau\)</span>.</p>
 <ol type="1">
-<li><span class="math inline">E(Y_{0i}|D_i = 1) = Y_H</span>. Units in the treated <span class="math inline">D_i=1</span>, their potential outcome <span class="math inline">Y_{0i}</span> will be the highest <span class="math inline">Y</span> possible, <span class="math inline">Y_H</span>.</li>
-<li><span class="math inline">E(Y_{1i}|D_i = 0) = Y_L</span>. Units in the control <span class="math inline">D_i=0</span>, their unobserved potential outcome <span class="math inline">Y_{1i}</span> will be the lowest <span class="math inline">Y</span> possible, <span class="math inline">Y_L</span>.</li>
+<li><span class="math inline">\(E(Y_{0i}|D_i = 1) = Y_H\)</span>. Units in the treated <span class="math inline">\(D_i=1\)</span>, their potential outcome <span class="math inline">\(Y_{0i}\)</span> will be the highest <span class="math inline">\(Y\)</span> possible, <span class="math inline">\(Y_H\)</span>.</li>
+<li><span class="math inline">\(E(Y_{1i}|D_i = 0) = Y_L\)</span>. Units in the control <span class="math inline">\(D_i=0\)</span>, their unobserved potential outcome <span class="math inline">\(Y_{1i}\)</span> will be the lowest <span class="math inline">\(Y\)</span> possible, <span class="math inline">\(Y_L\)</span>.</li>
 </ol>
-<p>Thus, the lowest possible <span class="math inline">\tau</span> (sharp lower bound) is:</p>
-<p><span class="math display">
+<p>Thus, the lowest possible <span class="math inline">\(\tau\)</span> (sharp lower bound) is:</p>
+<p><span class="math display">\[
 \begin{split}
 \tau_L = &amp; [ \color{blue}{E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_H} \color{black}] Pr(D_i = 1) \\
 &amp; \quad + [ \color{red}{Y_L} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0)
 \end{split}
-</span></p>
-<p>Now, let us construct the best-case scenario - the highest possible <span class="math inline">\tau</span>.</p>
+\]</span></p>
+<p>Now, let us construct the best-case scenario - the highest possible <span class="math inline">\(\tau\)</span>.</p>
 <ol type="1">
-<li><span class="math inline">E(Y_{0i}|D_i = 1) = Y_L</span>. Units in the treated <span class="math inline">D_i=1</span>, their potential outcome <span class="math inline">Y_{0i}</span> will be the lowest <span class="math inline">Y</span> possible, <span class="math inline">Y_L</span>.</li>
-<li><span class="math inline">E(Y_{1i}|D_i = 0) = Y_H</span>. Units in the control <span class="math inline">D_i=0</span>, their unobserved potential outcome <span class="math inline">Y_{1i}</span> will be the highest <span class="math inline">Y</span> possible, <span class="math inline">Y_H</span>.</li>
+<li><span class="math inline">\(E(Y_{0i}|D_i = 1) = Y_L\)</span>. Units in the treated <span class="math inline">\(D_i=1\)</span>, their potential outcome <span class="math inline">\(Y_{0i}\)</span> will be the lowest <span class="math inline">\(Y\)</span> possible, <span class="math inline">\(Y_L\)</span>.</li>
+<li><span class="math inline">\(E(Y_{1i}|D_i = 0) = Y_H\)</span>. Units in the control <span class="math inline">\(D_i=0\)</span>, their unobserved potential outcome <span class="math inline">\(Y_{1i}\)</span> will be the highest <span class="math inline">\(Y\)</span> possible, <span class="math inline">\(Y_H\)</span>.</li>
 </ol>
-<p>Thus, the highest possible <span class="math inline">\tau</span> (sharp upper bound) is:</p>
-<p><span class="math display">
+<p>Thus, the highest possible <span class="math inline">\(\tau\)</span> (sharp upper bound) is:</p>
+<p><span class="math display">\[
 \begin{split}
 \tau_H = &amp; [ \color{blue}{E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_L} \color{black}] Pr(D_i = 1) \\
 &amp; \quad + [ \color{red}{Y_H} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0)
 \end{split}
-</span></p>
-<p>We know that the true <span class="math inline">\tau_{ATE} \in [\tau_L, \tau_H]</span>.</p>
+\]</span></p>
+<p>We know that the true <span class="math inline">\(\tau_{ATE} \in [\tau_L, \tau_H]\)</span>.</p>
 <p><br></p>
 </section>
 <section id="monotone-treatment-selection-assumption" class="level3">
 <h3 class="anchored" data-anchor-id="monotone-treatment-selection-assumption">Monotone Treatment Selection Assumption</h3>
-<p>Our extreme case from above is not very useful. However, we can layer on assumptions to lower the possible <span class="math inline">\tau</span> values.</p>
+<p>Our extreme case from above is not very useful. However, we can layer on assumptions to lower the possible <span class="math inline">\(\tau\)</span> values.</p>
 <p>One assumption is the <strong>Monotone Treatment Selection (MTS)</strong> assumption. This assumption basically says that potential outcomes for units in treatment, are always higher than for those in the control.</p>
-<p><span class="math display">
+<p><span class="math display">\[
 \begin{split}
 &amp; E(Y_{0i}|D_i = 0) ≤ \overbrace{E(Y_{0i}|D_i = 1)}^{\text{unobserved}} \\
 &amp; \underbrace{E(Y_{1i} |D_i = 0)}_{\text{unobserved}} ≤ E(Y_{1i} |D_i = 1)
 \end{split}
-</span></p>
+\]</span></p>
 <p>This is basically saying that selection bias is one-direction.</p>
-<p>This implies a tighter sharp upper bound on <span class="math inline">\tau</span>.</p>
-<p><span class="math display">
-\begin{split}
+<p>This implies a tighter sharp upper bound on <span class="math inline">\(\tau\)</span>.</p>
+<p><span class="math display">\[
+\begin{align}
 \tau_H = &amp; [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{E(Y_{0i}|D_i = 0)} \color{black}] Pr(D_i = 1) \\
 &amp; \quad + [ \color{red}{E(Y_{1i}|D_i =1)} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0) \\
-= &amp; E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
-\end{split}
-</span></p>
-<p>This indicates that the upper bound of plausible <span class="math inline">\tau_{ATE}</span> values is the naive estimator of differences in observed outcomes.</p>
-<p>We can also make the reverse assumption, where selection bias is in the opposite direction. This means a tighter sharp lower bound <span class="math inline">\underline\tau</span>. These assumptions help narrow our possible <span class="math inline">\tau_{ATE}</span> values, and can allow us to test if our estimated <span class="math inline">\hat\tau</span> is reasonable (within the plausible bounds).</p>
+= &amp; E(Y_i|D_i = 1) - E(Y_i|D_i = 0) &amp;&amp; (\text{def. of weighted avg.})\\
+\end{align}
+\]</span></p>
+<p>This indicates that the upper bound of plausible <span class="math inline">\(\tau_{ATE}\)</span> values is the naive estimator of differences in observed outcomes.</p>
+<p>We can also make the reverse assumption, where selection bias is in the opposite direction. This means a tighter sharp lower bound <span class="math inline">\(\underline\tau\)</span>. These assumptions help narrow our possible <span class="math inline">\(\tau_{ATE}\)</span> values, and can allow us to test if our estimated <span class="math inline">\(\hat\tau\)</span> is reasonable (within the plausible bounds).</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -1055,7 +994,7 @@ Y_i = \gamma + \delta D'_i + u_i
 </div>
 <p>See how to perform each estimator in R:</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1064,7 +1003,7 @@ Distance Matching
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>First, let us conduct nearest neighbour matching with Mahalanobis distance by using the <em>matchit()</em> function.</p>
 <div class="cell">
@@ -1116,7 +1055,7 @@ Distance Matching
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1125,7 +1064,7 @@ Propensity Score Matching
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-23" class="callout-23-contents callout-collapse collapse">
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>First, we want to estimate propensity scores with a logistic regression (or a random forest):</p>
 <div class="cell">
@@ -1176,7 +1115,7 @@ Propensity Score Matching
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1185,7 +1124,7 @@ Inverse Probability Weighting
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>First, we want to estimate propoensity scores with a logistic regression (or a random forest):</p>
 <div class="cell">
@@ -1222,7 +1161,7 @@ Inverse Probability Weighting
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-25-contents" aria-controls="callout-25" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1231,7 +1170,7 @@ OLS Estimator
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-25" class="callout-25-contents callout-collapse collapse">
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For the OLS estimator, we can use the <em>lm_robust()</em> function:</p>
 <div class="cell">
@@ -1252,7 +1191,7 @@ OLS Estimator
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-26-contents" aria-controls="callout-26" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1261,7 +1200,7 @@ Fully Interacted Estimator
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-26" class="callout-26-contents callout-collapse collapse">
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For the fully interacted estimator, we can use the <em>lm_lin()</em> function.</p>
 <div class="cell">
