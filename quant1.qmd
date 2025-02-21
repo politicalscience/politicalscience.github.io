@@ -45,7 +45,7 @@ While we do not know the outcomes of these random events, we do know at what pro
 
 We can represent the potential outcomes of random variables, and the associated probabilities with each outcome, in a **distribution**. On the horizontal axis, we plot all possible values of the outcome, and on the vertical axis, we plot the probability of each outcome. For example, below is the distribution of a dice - there are 6 potential outcomes, each with a 1/6 probability.
 
-![](images/clipboard-713724518.png){fig-align="center" width="55%"}
+![](images/clipboard-713724518.png){fig-align="center" width="45%"}
 
 There are two types of random variables:
 
@@ -76,7 +76,7 @@ $$
 
 This integral is important - it tells us that the area under a distribution gives us the probability of an event occuring. This will become very valuable later on.
 
-![](images/clipboard-1038590923.png){fig-align="center" width="60%"}
+![](images/clipboard-1038590923.png){fig-align="center" width="55%"}
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Cumulative Density Functions
@@ -126,7 +126,7 @@ The **standard deviation** is simply the square root of variance.
 
 <br />
 
-### Conditional Distributions
+### Conditional Distributions {#conditional-distributions}
 
 Let us say we have two random variables $X$ and $Y$, each with their own respective distributions.
 
@@ -162,7 +162,7 @@ $$
 
 Where $\mathcal N$ represents the normal distribution, $\mu$ represents the expected value of the distribution, and $\sigma^2$ represents the variance. The figure below shows how normal distributions change when you alter $\mu$ and $\sigma^2$.
 
-![](images/clipboard-2268260367.png){fig-align="center" width="60%"}
+![](images/clipboard-2268260367.png){fig-align="center" width="55%"}
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## PDF of the Normal Distribution
@@ -176,7 +176,7 @@ $$
 
 <br />
 
-### Properties of the Normal Distribution
+### Properties of the Normal Distribution {#properties-of-the-normal-distribution}
 
 The most important thing about Normal Distributions is a unique property they have - within each standard deviation $\sigma$, every single normal distribution contains the same amount of area under the curve (which is also the probability).
 
@@ -184,9 +184,11 @@ The most important thing about Normal Distributions is a unique property they ha
 -   Within $(\mu - 2\sigma, \ \mu + 2\sigma)$, 95% of the area under the curve is included.
 -   Within $(\mu - 3 \sigma, \ \mu + 3 \sigma)$, 99.7% of the area under the curve is included.
 
-![](images/clipboard-2691725554.png){width="100%"}
+![](images/clipboard-2691725554.png){fig-align="center" width="80%"}
 
-These properties apply to every single normal distribution. These properties will become critical when we start talking about statistical inference.
+These properties don't just apply to 1, 2, or 3 standard deviations away. They apply to any amount of standard deviations (such as 1.23478 standard deviations), and there are online tables/calculators that can derive this. This means that we can find the probability between any two points of a normal distribution, just by knowing the mean $\mu$ and standard deviation $\sigma$.
+
+These properties [apply to every single normal distribution]{.underline}. These properties will become critical when we start talking about statistical inference.
 
 Another property of the normal distribution is that we can manipulate them as follows.
 
@@ -195,7 +197,7 @@ Another property of the normal distribution is that we can manipulate them as fo
 
 <br />
 
-### The Standard Normal Distribution
+### The Standard Normal Distribution {#the-standard-normal-distribution}
 
 The standard normal distribution (often called the $Z$-distribution) is a special version of the normal distribution, with a mean of 0 and a variance of 1:
 
@@ -205,7 +207,7 @@ $$
 
 Below is a figure of the standard normal distribution:
 
-![](images/img_standard_normal.svg){fig-align="center" width="90%"}
+![](images/img_standard_normal.svg){fig-align="center" width="70%"}
 
 Since the standard deviation is also equal to 1 in a standard normal, we can talk about units of standard deviation away from the mean.
 
@@ -223,7 +225,7 @@ Or in other words, for every value of $x \in X$, subtract the mean, then divide 
 
 The T-distribution (also called the Student's T-Distribution) is another distribution that is commonly used. The T-distribution looks very similar to that of the normal distribution, with the same bell curve shape. However, the t-distribution are slightly fatter than the normal distribution.
 
-![](images/clipboard-1130923565.png){fig-align="center" width="50%"}
+![](images/clipboard-1130923565.png){fig-align="center" width="45%"}
 
 The key difference between the t-distribution and the normal distribution is the parameters. Unlike the normal distribution, which has 2 parameters, the t-distribution has only one parameter: degrees of freedom.
 
@@ -239,7 +241,7 @@ A **bernoulli trial** is an experiment that has two possible outcomes: a success
 
 For example, below is a bernoulli distribution with $p = 0.15$:
 
-![](images/clipboard-2068255268.png){fig-align="center" width="60%"}
+![](images/clipboard-2068255268.png){fig-align="center" width="50%"}
 
 The bernoulli distribution is a special case of the **Binomial distribution**, which is basically the question of how many success you will get with $n$ number of trials. When $n=1$ (just one coin flip), we get the bernoulli distribution.
 
@@ -260,33 +262,300 @@ A bernoulli distribution is often employed in randomisation of treatment during 
 
 ------------------------------------------------------------------------
 
-# **Statistical Inference**
+# **Estimators and Statistical Inference**
 
-### Estimands and Estimates
+### Estimators and Sampling Distributions
+
+An **estimand** is the true value of some true parameter $\theta$ in the population we are trying to measure.
+
+We often do not have data on the population. We typically have a sample from the population, and use an **estimator** (procedure) to produce a sample **estimate** $\hat\theta$.
+
+-   For example, if we wanted to find the average trust in institutions in the UK, we cannot possibly ask 70 million people. So, instead, we take a sample from the population, and produce a sample estimate.
+
+However, because of [sampling variability]{.underline} (not all random samples will be identical), each sample $n$ will have a different estimate $\hat\theta_n$.
+
+Imagine if we keep taking $N$ number of samples, we will have $N$ number of estimates $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$. Thus, any specific estimate $\theta_n$ from sample $n$ can be thought of as a random draw from the **sampling distribution** $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of a Sampling Distribution
+
+Let us say we want to find the mean salary of all individuals in the UK. The true value of the mean salary for every individual is $\theta$.
+
+However, asking all 60 million people is nearly impossible. So, we take a randomly sample of 1000 individuals, and then find the sample mean. Our estimator is thus the sample mean estimator.
+
+Our first sample of 1000 individuals yields an estimate $\hat\theta_1$. If we take another sample, we will get slightly different people in this sample, and get another estimate $\hat\theta_2$. We keep taking samples, and get more and more estimates $\hat\theta_3, \hat\theta_4, \dots, \hat\theta_n$.
+
+We plot all of these samples into a distribution as follows:
+
+![](images/clipboard-2444367374.png){fig-align="center" width="45%"}
+
+This indicates the potential estimates we can get. If we were to conduct only one sample, we would essentially be selecting a random $\hat\theta_i$ value from this distribution.
+
+The sampling distribution of an estimator is the key property of estimators. The two parameters of interest from this sampling distribution are its **expectation** and **variance**.
+:::
+
+We can describe sampling distributions with their expectation and variance.
+
+<br />
+
+### Unbiased Estimators {#unbiased-estimators}
+
+An estimator of a parameter is **unbiased**, if its estimates $\hat\theta_n$ have an expectation equal to the true population value of the parameter:
+
+$$
+E(\hat\theta_n) = \theta
+$$
+
+Or in other words, if we repeatedly sample and use the estimator, on average, the estimates will be equal to the true population value (the sampling distribution will have an expectation of the true population value).
+
+We want an unbiased estimator, because if $E(\hat\theta_n) = \theta$, that means our "best guess" of the estimator value is the true parameter value $\theta$. That means any one estimate $\hat\theta_n$ is on average, correct.
+
+If our estimator is **biased**, we can quantify bias with the following formula:
+
+$$
+Bias(\hat\theta_n) = E(\hat\theta_n)-\theta
+$$
+
+<br />
+
+### Variance and Efficiency
+
+Unbiasedness is not the only desirable property of estimators - we also care about the variance. After all, if we have two unbiased estimators, the one with less variance will be on average, closer to the true population value, for any one estimate $\hat\theta$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of the Importance of Variance
+
+For example, let us say the true population parameter is $\theta = 0$. We will have two estimators: estimator $A$ and estimator $B$:
+
+-   Estimator $A$, after two samples (for simplicity), produces estimates -1 and 1.
+-   Estimator $B$, after two samples, produces estimates -100 and 100.
+
+Both estimators are unbiased $E(\hat\theta_n) = 0$. However, clearly, estimator $A$ is, on average, closer to $\theta =0$ than estimator $B$. This is because while both estimators are unbiased, estimator $A$ has a smaller **variance** than estimator $B$ - that is on average, estimator $A$'s estimators are more closely "packed around" the expectation of the estimator.
+:::
+
+The variance of an estimator (and variance of the sampling distribution) can be quantified as:
+
+$$
+Var(\hat\theta_n) = E[(\hat\theta_n - E(\hat\theta_n))^2]
+$$
+
+An **efficient** estimator is one that, on average, has the closest estimated value $\hat\theta_n$ to the true population parameter. If two estimators are both unbiased, the one with lower variance is more efficient. Efficiency can be quantified as the estimator with the lowest **mean squared error**:
+
+$$
+MSE(\hat\theta_n) = E[(\hat\theta_n - \theta)^2] =Var(\hat\theta_n) + Bias(\hat\theta_n)^2
+$$
+
+We generally want an efficient estimator, since we know it will be giving us the closest guess to the true population parameter $\theta$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Efficient but Biased
+
+Interestingly, it is possible for a biased estimator to be more efficient than an unbiased estimator.
+
+This is particularly the case when the biased estimator has a slight bias but small variance, while the unbiased estimator has a giant variance. In this case, the biased estimator is producing estimates $\hat\theta$ that on average, are closer to the true population parameter $\theta$.
+:::
+
+<br />
+
+### Asymptotically Consistent Estimators {#asymptotically-consistent-estimators}
+
+Asymptotic properties are properties of estimators as the sample size $n$ approaches infinity.
+
+An estimator is consistent, if as we increase sample size towards infinity, the estimate will become more and more concentrated around the true population value $\theta$. At $n = ∞$, our sampling distribution collapses to just one value, the true population value $\theta$. Mathematically:
+
+$$
+Pr(|\hat\theta_n - \theta|> \epsilon) \rightarrow 0, \text { as } n \rightarrow ∞
+$$
+
+Or in other words, the probability that the distance between an estimate $\hat\theta_n$ and the true population value $\theta$ will be higher than a small close-to-zero value $\epsilon$ will be 0, since our estimates $\hat\theta_n$ will converge at the $\theta$.
+
+This is a useful property, since even if our estimator is biased, if it is asymptotically consistent, we know that with large enough sample sizes, that bias becomes infinitely small and negligible.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Biased but Consistent
+
+An estimator can be both biased, but consistent. In smaller sample sizes, the estimator might not be on average correct, but over a large enough sample size, it will become "unbiased".
+
+For example, in the figure below, we can see that this estimator is biased at small values of $n$, but as $n$ increases, it becomes more consistent, collapsing its distribution around the true $\theta$.
+
+![](images/clipboard-1215503621.png){fig-align="center" width="55%"}
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Law of Large Numbers and Consistency
+
+The law of large numbers states that the sample average of a random sample, is a consistent estimator of the population mean.
+
+For example, let us say we have a random variable $x$. We take a random sample of $n$ units, so our sample is $(x_1, \dots, x_n)$.
+
+-   Let us define $\bar x_n$ as our sample average.
+-   Let us define $\mu$ as the true population mean of variable $x$.
+
+The law of large numbers states that:
+
+$$
+plim( \bar x_n) = \mu
+$$
+
+-   Where $plim$ states that as $n$ approaches infinity, the probability distribution of $\bar x_n$ collapses around $\mu$.
+
+<br />
+
+Why is this the case? This sample mean estimator is calculated simply through the formula for mean:
+
+$$
+\bar x_n = \frac{1}{n}\sum\limits_{i=1}^n x_i
+$$
+
+Let us define the variance of our sample of $x_1, \dots, x_n$ as $Var(x_i) = \sigma^2$. We can now find the variance of our sampling distribution of estimator $\bar x_n$:
+
+$$
+\begin{split}
+Var(\bar x_n) & = Var\left( \frac{1}{n}\sum\limits_{i=1}^n x_i \right) \\
+& = \frac{1}{n^2} Var \left(\sum\limits_{i=1}^n x_i\right) \\
+& = \frac{1}{n^2} \sum\limits_{i=1}^n Var(x_i) \\
+& = \frac{1}{n^2} \sigma^2 \\
+& = \frac{\sigma^2}{n}
+\end{split}
+$$
+
+And as sample size $n$ increases to infinity, we get:
+
+$$
+\lim\limits_{n \rightarrow ∞} Var(\bar x_n) = \lim\limits_{n \rightarrow ∞} \frac{\sigma^2}{n} = 0
+$$
+
+Thus, the variance of our estimator $\bar x_n$ shrinks to zero, so as sample size increases to infinity $n$, the sampling distribution of estimator $\bar x_n$ collapses around the true population mean.
+:::
 
 <br />
 
 ### Central Limit Theorem
 
+Another asymptotic property of estimators, as sample size $n$ approaches infinity, is that the sampling distribution approaches a normal distribution.
+
+The **central limit theorem** establishes asymptotic normality of estimators. Let us say we have $N$ number of random variables $\hat\theta_1, \dots, \hat\theta_N$ (estimates are realisations of random variables). The central limit theorem states that:
+
+$$
+Pr(w_n < w) \rightarrow \Phi(w) \quad \text{as } n \rightarrow ∞
+$$
+
+-   Where $w_n$ is a transformed version of the random variable $\hat\theta_n$, defined as $w_n = \frac{\bar\theta_n - \mu}{\sigma / \sqrt{n}}$.
+-   Where $Pr(w_n < w)$ is the cumulative density function of the random variable $w_n$.
+-   Where $\Phi(w)$ is the cumulative density function (cdf) of the standard normal distribution $\mathcal N(0, 1)$.
+
+The importance of CLM comes from the fact that as we increase sample size, our sampling distribution becomes more and more normally distributed.
+
+Recall that we know that the normal distribution has unique [properties of distribution](#properties-of-the-normal-distribution) that allow us to calculate the probability between standard deviations (and any point). Since CLM says that our sampling distribution is normally distributed, we can apply the same properties to learn about the probabilities of getting a certain sample estimates $\hat\theta_n$.
+
 <br />
 
-### Nonparametric Bootstrap
+### Intuition of Hypothesis Testing
+
+Let us say we have status-quo theory, called the **null hypothesis** $H_0$. A status quo theory is the generally accepted value of the true population parameter $\theta$ in our field.
+
+However, you might want to prove this status-quo theory wrong, and have an **alternative hypothesis** $H_1$. You need some way to prove that the status-quo null hypothesis is wrong.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Hypotheses
+
+Let us say we are interested in measuring the relationship between democracy and economic growth.
+
+The status-quo theory is that there is no relationship - since we need to prove there is a relationship. Thus, our null hypothesis is $H_0 : \theta = 0$ (0 representing 0 relationship).
+
+Our alternative hypothesis might be $H_1: \theta ≠ 0$ - i.e. there is a relationship between democracy and economic growth.
+
+To prove our alternative hypothesis, we need to disprove the null hypothesis.
+:::
+
+We cannot know if the null hypothesis is wrong. However, we can calculate the probability of getting a certain sample estimate $\hat\theta_n$ assuming the null hypothesis is true. If we assume an unbiased estimator, that means our hypothetical sampling distribution should have an expected value of our null hypothesis: $E(\hat\theta_n) = H_0$.
+
+Then, we can gather a sample, and calculate some sample estimate $\hat\theta$. Using some math (we will see this later with regression), we can also estimate the variance of the sampling distribution.
+
+Thus, we now know the expectation of the sampling distribution $E(\hat\theta_n) = H_0$ and the variance. We also know that the sampling distribution is normally distributed by the central limit theorem. Thus, using the properties of the normal distribution, we can calculate the probability of getting our sample estimate $\hat\theta$ or an estimate even further from the $H_0$ than our $\hat\theta$.
+
+![](images/clipboard-1533818238.png){fig-align="center" width="45%"}
+
+For example, above, our sample estimate $\hat\theta = -2.228$, and our null hypothesis is $\theta = 0$. The yellow parts highlighted are the probability of getting an sample estimate $\hat\theta_n$ as extreme or more extreme than our $\hat\theta = -2.228$.
+
+If this probability of getting our estimate $\hat\theta$ or more extreme is very small (less than 5% typically), we can believe either one of two things:
+
+1.  We got extremely lucky (less than 5% chance) and got a estimate very far from the null hypothesis.
+2.  Or, we [**typically**]{.underline} believe that we were not actually lucky, but instead, the null hypothesis value of $\theta$ is incorrect.
+
+Thus, conclusion 2 essentially means we reject the null hypothesis, and conclude that our alternative hypothesis is correct.
 
 <br />
 
-### Statistical Testing
+### Mechanics of Hypothesis Testing
 
-<br />
+To start a hypothesis test, you will need to define a status-quo null hypothesis $H_0$ and an alternative hypothesis $H_1$.
 
-### Implementing a Hypothesis Test
+Then, you should take a sample from the population, and compute a sample estimate $\hat\theta$ with your estimator. You can then derive a **standard error** (square root of the variance of the sampling distribution). This standard error formula will differ depending on the statistical model, and we will introduce several of these for regression.
 
-<br />
+Then, you can compute a test statistic. The name of the test-statistic will differ based on the statistical model, but the formula is always the same:
 
-### Types of Errors
+$$
+\text{test statistic} = \frac{\hat\theta - H_0}{\text{standard error of } \hat\theta}
+$$
+
+This formula might look familiar - we are essentially turning our normal distribution of the estimator into the [standard normal distribution](#the-standard-normal-distribution). The test statistic is essentially measuring how many standard deviations away from the null hypothesis our sample estimate $\hat\theta$ is.
+
+![](images/img_standard_normal.svg){fig-align="center" width="70%"}
+
+Now, go onto the x-axis of our standard normal distribution, and start at the mean (at 0). Now, move in both directions by the distance specified by the test statistic. Mark these two points on either side of the mean. Highlight the parts under the sampling distribution beyond these points. The figure below shows this with a test statistic of 2.228:
+
+![](images/clipboard-1533818238.png){fig-align="center" width="45%"}
+
+The highlighted area is the probability of getting a sample estimate $\hat\theta$ equal or more extreme than the one we got, assuming the null hypothesis is true. This probability is called the **p-value**.
+
+If the p-value is below 0.05 (5%), we have sufficient evidence to reject the null hypothesis. If the p-value is above 0.05 (5%), we cannot reject the null hypothesis.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Note on Distributions
+
+Here, we have stated you use the standard normal distribution.
+
+However, with different tests, you might actually use some different distribution. Most often, you will use the t-distribution.
+
+The reason we use the t-distribution is because we often cannot actually calculate the variance of our sampling distribution. Instead, we estimate it with some uncertainty, so the t-distribution accounts for this uncertainty.
+:::
 
 <br />
 
 ### Confidence Intervals
+
+Sometimes, we are not just interested in proving a null hypothesis wrong. We often are interested in the actual parameter value of $\theta$. As we know already, there is variation in our estimates $\hat\theta_n$ between samples.
+
+Thus to account for this uncertainty, we want to create some range around our sample estimate $\hat\theta$ that is likely to contain the true value of $\theta$. This is called a **confidence interval**.
+
+According the the central limit theorem, we know that any sample estimate $\hat\theta_n$ is 95% likely to be within 2 standard deviations of the true population value $\theta$.
+
+Thus, we can construct an interval of 2 standard errors (square deviations) on both sides of our sample estimate $\hat\theta_n$. This means that 95% of the time, our interval will include the true population value of $\theta$. Thus, our 95% confidence interval is:
+
+$$
+(\hat\theta - 1.96se(\hat\theta), \ \ \hat\theta+1.96se(\hat\theta)
+$$
+
+-   Why 1.96? Because exactly 95% of a normal distribution is within 1.96 standard deviations of the mean.
+
+This interval means that under repeated sampling and estimating $\hat\theta_n$, 95% of the confidence intervals we construct will include the true population $\theta$ value.
+
+<br />
+
+### Nonparametric Bootstrap
+
+Most traditional statistical tests rely on asymptotic normality established by the central limit theorem. However, asymptotic normality can only be satisfied if we have a large enough sample size. When we are dealing with small samples, we cannot invoke central limit theorem.
+
+Nonparametric Bootstrap, instead of assuming some sampling distribution, is a method to simulate the sampling distribution. This is done by re-sampling from the sample with replacement. The procedure is as follows:
+
+1.  You take the sample you observe (with sample size $n$), and randomly re-sample $n$ observations from that sample with replacement (so allowing observations to repeat in our re-sample).
+2.  Continue to do this over and over again to get $B$ number of re-samples.
+3.  For each re-sample $b$, you should calculate the $\widehat{\theta_b}$. Plot all of the sample $\widehat{\theta_b}$ in a distribution.
+
+You can also estimate the standard error of $\hat\theta$ using the standard deviation of the distribution. However, do not use these standard errors for confidence intervals or tests unless you are confident the sampling distribution is approximately normal.
+
+Nonparametric Bootstrap is also used in some more complex estimators where it is very difficult to calculate or estimate the standard errors.
 
 <br />
 
@@ -296,16 +565,129 @@ A bernoulli distribution is often employed in randomisation of treatment during 
 
 # **Correlations Between Variables**
 
-### Covariance and Correlation
+### Correlated Variables
+
+In political science and most social sciences, our primary concern is relationships between variables. How does education correlate with voter turnout? Are less educated citizens more anti-immigrant? How do inflation levels correlate with incumbent popularity?
+
+We describe a relationship between two variables $X$ and $Y$ as a correlation.
+
+-   If we are more likely to observe higher values of $Y$ when we also observe higher values of $X$, that means we have a positive correlation.
+-   If we are more likely to observe lower values of $Y$ when we also observe higher values of $X$, that means we have a negative correlation.
+-   If the value of $Y$ does not change no matter the value of $X$, then the two variables are uncorrelated.
+
+[Important Note: correlation is **not** causation!]{.underline}
+
+We can view correlations between variables graphically:
+
+![](images/clipboard-3489268418.png){fig-align="center" width="60%"}
+
+### Quantifying Correlations
+
+Let us say we have some data with $n$ number of observations. Each observation $i$ has values $(X_i, Y_i)$. There are two primary ways to quantify correlations between variables. The first is called **covariance**:
+
+$$
+\begin{align}
+Cov(X,Y) & = E((X_i - \bar X)(Y_i - \bar Y) \\
+& = \frac{1}{n}\sum\limits_{i=1}^n\left[(X_i - \bar X)(Y_i - \bar Y) \right]
+\end{align}
+$$
+
+-   Where $(X_i, Y_i)$ is one data point for an observation $i$.
+-   Where $\bar X$ and $\bar Y$ are the average $X$ and $Y$ values in the data.
+
+If covariance is negative, that means we have a negative correlation. If covariance is positive, we have a positive correlation. If covariance is 0, we have no correlation.
+
+However, we cannot interpret the actual number of covariance, only the sign. This is because covariance is sensitive to measurement scale: if we change something measured in feet to inches, covariance increases.
+
+Obviously, we do not want a measure that is affected by measurement scale. We want some measure of correlation that can be compared across different scales. This is where the **correlation coefficient** comes in:
+
+$$
+Corr(X,Y) = r = \frac{Cov(X, Y)}{\sqrt{Var(X) Var(Y)}}
+$$
+
+Essentially, we are "normalising" the covariance metric by dividing by the variances, which gets rid of the impact of scale.
+
+Correlation coefficients are always between -1 and 1. Values closer to -1 and 1 are stronger correlations, and values closer to 0 are weaker correlations.
+
+![](images/clipboard-3774741322.png){fig-align="center" width="80%"}
+
+We can see here that stronger correlations have points that fit closer to a straight line.
 
 <br />
 
-### Best-Fit Lines
+### Best-Fit Lines and Magnitude
+
+Correlation coefficients have a huge weakness: they measure the "strength" of correlation, but not the magnitude.
+
+![](images/clipboard-1623227249.png){fig-align="center" width="50%"}
+
+We can see above that these two relationships have the same strength of correlation. However, the slope of the left graph is much higher. Why is the slope important? Well, the slope is essentially how much $Y$ changes when $X$ increases by 1. It is the **magnitude** of our relationship.
+
+Thus, we might wish to instead look at relationships with a best-fit straight line. Take this figure below:
+
+![](images/clipboard-3708176954.png){fig-align="center" width="45%"}
+
+We can express this line mathematically as $y = mx + b$, where $m$ is the slope - the amount $y$ change for every one unit increase in $x$. Thus, the slope $m$ is a measurement of the magnitude of correlation between $x$ and $y$.
 
 <br />
 
 ### Simple Linear Regression
 
+Simple Linear Regression is a mathematical model of a best fit line. It takes the following form:
+
+$$
+y_i = \beta_0 + \beta_1x_i + u
+$$
+
+Where $(x_i , y_i)$ are the values of one observation $i$. Where $\beta_1$ is the slope - the measurement of the relationship between $x$ and $y$. Where $\beta_0$ is the intercept (y-intercept), and $u$ is the error term.
+
+Why is there an error term? Well as we have seen in all the figures above, not every point $(x_i, y_i)$ is on the line itself - some are above the line, some are below. $u$ represents this vertical distance between a point and the line of best-fit.
+
+We can also write regression as the [conditional expectation](#conditional-distributions) of the conditional distribution of $y|x$:
+
+$$
+E(y|x) = \beta_0 + \beta_1 x_i
+$$
+
+We have some special terminology for the parts of the simple linear regression.
+
+-   The **independent variable**, also called the explanatory variable or the regressor, is labelled $x$. This is the variable multiplied to the slope parameter $\beta_1$.
+-   The **dependent variable**, also called the response or outcome variable, is labelled $y$.
+
+Throughout this chapter, we have talked about statistical inference and estimators. This is no different in linear regression. The above equation is what we call our population model (also called the data generating process):
+
+$$
+y_i = \beta_0 + \beta_1x_i + u_i
+$$
+
+However, once again, we cannot know the true population values of our intercept and slope. So, we will have a sample model of the following:
+
+$$
+y_i = \widehat{\beta_0} + \widehat{\beta_1}x_i + \widehat{u_i}
+$$
+
+We will discuss the details of this estimation process of $\widehat{\beta_0}, \widehat{\beta_1}, \widehat{u_i}$ in the next chapter, and how we can conduct statistical inference and tests. The points on our predicted best-fit line (so excluding error $\widehat{u_i}$) are called our **fitted values**:
+
+$$
+\widehat{y_i} = \widehat{\beta_0} + \widehat{\beta_1}x_i
+$$
+
 <br />
 
 ### Multiple Linear Regression
+
+In the real world, rarely does only one thing cause another. For example, changes in income could be caused by age, but also education.
+
+Instead of just one explanatory variable $x$, we can create regression models with multiple explanatory variables $x_1, x_2, \dots, x_k$. Our multiple regression model will take the following form:
+
+$$
+y_i = \beta_0 + \beta_1x_{1i} + \beta_2x_{2i} + \dots + \beta_kx_{ki} + u_i
+$$
+
+-   Where $\beta_0$ is the intercept, and $\beta_1, \dots, \beta_k$ are the slope parameters.
+
+Visually, the linear regression becomes more complex, as we are now dealing with $k$ dimensions. Our best-fit line now becomes a best-fit plane. For example, take a regression with $y$ being income, $x_1$ being education, and $x_2$ being seniority:
+
+![](images/clipboard-365376575.png){fig-align="center" width="60%"}
+
+We can do the same things as simple linear regression (conditional expectation, fitted values). The interpretations of our coefficients change slightly, but we will discuss that in the next few chapters.

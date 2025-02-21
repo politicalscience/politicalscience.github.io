@@ -298,20 +298,23 @@ window.Quarto = {
   <li><a href="#the-t-distribution" id="toc-the-t-distribution" class="nav-link" data-scroll-target="#the-t-distribution">The T-Distribution</a></li>
   <li><a href="#bernoulli-and-binomial-distribution" id="toc-bernoulli-and-binomial-distribution" class="nav-link" data-scroll-target="#bernoulli-and-binomial-distribution">Bernoulli and Binomial Distribution</a></li>
   </ul></li>
-  <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference"><strong>Statistical Inference</strong></a>
+  <li><a href="#estimators-and-statistical-inference" id="toc-estimators-and-statistical-inference" class="nav-link" data-scroll-target="#estimators-and-statistical-inference"><strong>Estimators and Statistical Inference</strong></a>
   <ul class="collapse">
-  <li><a href="#estimands-and-estimates" id="toc-estimands-and-estimates" class="nav-link" data-scroll-target="#estimands-and-estimates">Estimands and Estimates</a></li>
+  <li><a href="#estimators-and-sampling-distributions" id="toc-estimators-and-sampling-distributions" class="nav-link" data-scroll-target="#estimators-and-sampling-distributions">Estimators and Sampling Distributions</a></li>
+  <li><a href="#unbiased-estimators" id="toc-unbiased-estimators" class="nav-link" data-scroll-target="#unbiased-estimators">Unbiased Estimators</a></li>
+  <li><a href="#variance-and-efficiency" id="toc-variance-and-efficiency" class="nav-link" data-scroll-target="#variance-and-efficiency">Variance and Efficiency</a></li>
+  <li><a href="#asymptotically-consistent-estimators" id="toc-asymptotically-consistent-estimators" class="nav-link" data-scroll-target="#asymptotically-consistent-estimators">Asymptotically Consistent Estimators</a></li>
   <li><a href="#central-limit-theorem" id="toc-central-limit-theorem" class="nav-link" data-scroll-target="#central-limit-theorem">Central Limit Theorem</a></li>
-  <li><a href="#nonparametric-bootstrap" id="toc-nonparametric-bootstrap" class="nav-link" data-scroll-target="#nonparametric-bootstrap">Nonparametric Bootstrap</a></li>
-  <li><a href="#statistical-testing" id="toc-statistical-testing" class="nav-link" data-scroll-target="#statistical-testing">Statistical Testing</a></li>
-  <li><a href="#implementing-a-hypothesis-test" id="toc-implementing-a-hypothesis-test" class="nav-link" data-scroll-target="#implementing-a-hypothesis-test">Implementing a Hypothesis Test</a></li>
-  <li><a href="#types-of-errors" id="toc-types-of-errors" class="nav-link" data-scroll-target="#types-of-errors">Types of Errors</a></li>
+  <li><a href="#intuition-of-hypothesis-testing" id="toc-intuition-of-hypothesis-testing" class="nav-link" data-scroll-target="#intuition-of-hypothesis-testing">Intuition of Hypothesis Testing</a></li>
+  <li><a href="#mechanics-of-hypothesis-testing" id="toc-mechanics-of-hypothesis-testing" class="nav-link" data-scroll-target="#mechanics-of-hypothesis-testing">Mechanics of Hypothesis Testing</a></li>
   <li><a href="#confidence-intervals" id="toc-confidence-intervals" class="nav-link" data-scroll-target="#confidence-intervals">Confidence Intervals</a></li>
+  <li><a href="#nonparametric-bootstrap" id="toc-nonparametric-bootstrap" class="nav-link" data-scroll-target="#nonparametric-bootstrap">Nonparametric Bootstrap</a></li>
   </ul></li>
   <li><a href="#correlations-between-variables" id="toc-correlations-between-variables" class="nav-link" data-scroll-target="#correlations-between-variables"><strong>Correlations Between Variables</strong></a>
   <ul class="collapse">
-  <li><a href="#covariance-and-correlation" id="toc-covariance-and-correlation" class="nav-link" data-scroll-target="#covariance-and-correlation">Covariance and Correlation</a></li>
-  <li><a href="#best-fit-lines" id="toc-best-fit-lines" class="nav-link" data-scroll-target="#best-fit-lines">Best-Fit Lines</a></li>
+  <li><a href="#correlated-variables" id="toc-correlated-variables" class="nav-link" data-scroll-target="#correlated-variables">Correlated Variables</a></li>
+  <li><a href="#quantifying-correlations" id="toc-quantifying-correlations" class="nav-link" data-scroll-target="#quantifying-correlations">Quantifying Correlations</a></li>
+  <li><a href="#best-fit-lines-and-magnitude" id="toc-best-fit-lines-and-magnitude" class="nav-link" data-scroll-target="#best-fit-lines-and-magnitude">Best-Fit Lines and Magnitude</a></li>
   <li><a href="#simple-linear-regression" id="toc-simple-linear-regression" class="nav-link" data-scroll-target="#simple-linear-regression">Simple Linear Regression</a></li>
   <li><a href="#multiple-linear-regression" id="toc-multiple-linear-regression" class="nav-link" data-scroll-target="#multiple-linear-regression">Multiple Linear Regression</a></li>
   </ul></li>
@@ -510,7 +513,8 @@ Pr(a&lt;x&lt;b) = \int\limits_a^b \frac{1}{\sqrt{2\pi\sigma^2}}e^{\left( -\frac{
 <li>Within <span class="math inline">\((\mu - 3 \sigma, \ \mu + 3 \sigma)\)</span>, 99.7% of the area under the curve is included.</li>
 </ul>
 <p><img src="images/clipboard-2691725554.png" class="img-fluid" style="width:100.0%"></p>
-<p>These properties apply to every single normal distribution. These properties will become critical when we start talking about statistical inference.</p>
+<p>These properties don’t just apply to 1, 2, or 3 standard deviations away. They apply to any amount of standard deviations (such as 1.23478 standard deviations), and there are online tables/calculators that can derive this. This means that we can find the probability between any two points of a normal distribution, just by knowing the mean <span class="math inline">\(\mu\)</span> and standard deviation <span class="math inline">\(\sigma\)</span>.</p>
+<p>These properties <u>apply to every single normal distribution</u>. These properties will become critical when we start talking about statistical inference.</p>
 <p>Another property of the normal distribution is that we can manipulate them as follows.</p>
 <ol type="1">
 <li>We can add a constant <span class="math inline">\(c\)</span> to every single outcome/value in a normal distribution. The resulting distribution will still be a normal distribution, just with its mean shifted by <span class="math inline">\(c\)</span>. Or in other words: <span class="math inline">\(X \sim \mathcal N(\mu + c, \sigma^2)\)</span>.</li>
@@ -527,7 +531,7 @@ Z \sim\mathcal N(0, 1)
 <p>Below is a figure of the standard normal distribution:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/img_standard_normal.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+<p><img src="images/img_standard_normal.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
 </figure>
 </div>
 <p>Since the standard deviation is also equal to 1 in a standard normal, we can talk about units of standard deviation away from the mean.</p>
@@ -574,34 +578,317 @@ p \quad \text{if } x = 1 \\
 <hr>
 </section>
 </section>
-<section id="statistical-inference" class="level1">
-<h1><strong>Statistical Inference</strong></h1>
-<section id="estimands-and-estimates" class="level3">
-<h3 class="anchored" data-anchor-id="estimands-and-estimates">Estimands and Estimates</h3>
+<section id="estimators-and-statistical-inference" class="level1">
+<h1><strong>Estimators and Statistical Inference</strong></h1>
+<section id="estimators-and-sampling-distributions" class="level3">
+<h3 class="anchored" data-anchor-id="estimators-and-sampling-distributions">Estimators and Sampling Distributions</h3>
+<p>An <strong>estimand</strong> is the true value of some true parameter <span class="math inline">\(\theta\)</span> in the population we are trying to measure.</p>
+<p>We often do not have data on the population. We typically have a sample from the population, and use an <strong>estimator</strong> (procedure) to produce a sample <strong>estimate</strong> <span class="math inline">\(\hat\theta\)</span>.</p>
+<ul>
+<li>For example, if we wanted to find the average trust in institutions in the UK, we cannot possibly ask 70 million people. So, instead, we take a sample from the population, and produce a sample estimate.</li>
+</ul>
+<p>However, because of <u>sampling variability</u> (not all random samples will be identical), each sample <span class="math inline">\(n\)</span> will have a different estimate <span class="math inline">\(\hat\theta_n\)</span>.</p>
+<p>Imagine if we keep taking <span class="math inline">\(N\)</span> number of samples, we will have <span class="math inline">\(N\)</span> number of estimates <span class="math inline">\(\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N\)</span>. Thus, any specific estimate <span class="math inline">\(\theta_n\)</span> from sample <span class="math inline">\(n\)</span> can be thought of as a random draw from the <strong>sampling distribution</strong> <span class="math inline">\(\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N\)</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of a Sampling Distribution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us say we want to find the mean salary of all individuals in the UK. The true value of the mean salary for every individual is <span class="math inline">\(\theta\)</span>.</p>
+<p>However, asking all 60 million people is nearly impossible. So, we take a randomly sample of 1000 individuals, and then find the sample mean. Our estimator is thus the sample mean estimator.</p>
+<p>Our first sample of 1000 individuals yields an estimate <span class="math inline">\(\hat\theta_1\)</span>. If we take another sample, we will get slightly different people in this sample, and get another estimate <span class="math inline">\(\hat\theta_2\)</span>. We keep taking samples, and get more and more estimates <span class="math inline">\(\hat\theta_3, \hat\theta_4, \dots, \hat\theta_n\)</span>.</p>
+<p>We plot all of these samples into a distribution as follows:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2444367374.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>This indicates the potential estimates we can get. If we were to conduct only one sample, we would essentially be selecting a random <span class="math inline">\(\hat\theta_i\)</span> value from this distribution.</p>
+<p>The sampling distribution of an estimator is the key property of estimators. The two parameters of interest from this sampling distribution are its <strong>expectation</strong> and <strong>variance</strong>.</p>
+</div>
+</div>
+</div>
+<p>We can describe sampling distributions with their expectation and variance.</p>
+<p><br></p>
+</section>
+<section id="unbiased-estimators" class="level3">
+<h3 class="anchored" data-anchor-id="unbiased-estimators">Unbiased Estimators</h3>
+<p>An estimator of a parameter is <strong>unbiased</strong>, if its estimates <span class="math inline">\(\hat\theta_n\)</span> have an expectation equal to the true population value of the parameter:</p>
+<p><span class="math display">\[
+E(\hat\theta_n) = \theta
+\]</span></p>
+<p>Or in other words, if we repeatedly sample and use the estimator, on average, the estimates will be equal to the true population value (the sampling distribution will have an expectation of the true population value).</p>
+<p>We want an unbiased estimator, because if <span class="math inline">\(E(\hat\theta_n) = \theta\)</span>, that means our “best guess” of the estimator value is the true parameter value <span class="math inline">\(\theta\)</span>. That means any one estimate <span class="math inline">\(\hat\theta_n\)</span> is on average, correct.</p>
+<p>If our estimator is <strong>biased</strong>, we can quantify bias with the following formula:</p>
+<p><span class="math display">\[
+Bias(\hat\theta_n) = E(\hat\theta_n)-\theta
+\]</span></p>
+<p><br></p>
+</section>
+<section id="variance-and-efficiency" class="level3">
+<h3 class="anchored" data-anchor-id="variance-and-efficiency">Variance and Efficiency</h3>
+<p>Unbiasedness is not the only desirable property of estimators - we also care about the variance. After all, if we have two unbiased estimators, the one with less variance will be on average, closer to the true population value, for any one estimate <span class="math inline">\(\hat\theta\)</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of the Importance of Variance
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For example, let us say the true population parameter is <span class="math inline">\(\theta = 0\)</span>. We will have two estimators: estimator <span class="math inline">\(A\)</span> and estimator <span class="math inline">\(B\)</span>:</p>
+<ul>
+<li>Estimator <span class="math inline">\(A\)</span>, after two samples (for simplicity), produces estimates -1 and 1.</li>
+<li>Estimator <span class="math inline">\(B\)</span>, after two samples, produces estimates -100 and 100.</li>
+</ul>
+<p>Both estimators are unbiased <span class="math inline">\(E(\hat\theta_n) = 0\)</span>. However, clearly, estimator <span class="math inline">\(A\)</span> is, on average, closer to <span class="math inline">\(\theta =0\)</span> than estimator <span class="math inline">\(B\)</span>. This is because while both estimators are unbiased, estimator <span class="math inline">\(A\)</span> has a smaller <strong>variance</strong> than estimator <span class="math inline">\(B\)</span> - that is on average, estimator <span class="math inline">\(A\)</span>’s estimators are more closely “packed around” the expectation of the estimator.</p>
+</div>
+</div>
+</div>
+<p>The variance of an estimator (and variance of the sampling distribution) can be quantified as:</p>
+<p><span class="math display">\[
+Var(\hat\theta_n) = E[(\hat\theta_n - E(\hat\theta_n))^2]
+\]</span></p>
+<p>An <strong>efficient</strong> estimator is one that, on average, has the closest estimated value <span class="math inline">\(\hat\theta_n\)</span> to the true population parameter. If two estimators are both unbiased, the one with lower variance is more efficient. Efficiency can be quantified as the estimator with the lowest <strong>mean squared error</strong>:</p>
+<p><span class="math display">\[
+MSE(\hat\theta_n) = E[(\hat\theta_n - \theta)^2] =Var(\hat\theta_n) + Bias(\hat\theta_n)^2
+\]</span></p>
+<p>We generally want an efficient estimator, since we know it will be giving us the closest guess to the true population parameter <span class="math inline">\(\theta\)</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Efficient but Biased
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Interestingly, it is possible for a biased estimator to be more efficient than an unbiased estimator.</p>
+<p>This is particularly the case when the biased estimator has a slight bias but small variance, while the unbiased estimator has a giant variance. In this case, the biased estimator is producing estimates <span class="math inline">\(\hat\theta\)</span> that on average, are closer to the true population parameter <span class="math inline">\(\theta\)</span>.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="asymptotically-consistent-estimators" class="level3">
+<h3 class="anchored" data-anchor-id="asymptotically-consistent-estimators">Asymptotically Consistent Estimators</h3>
+<p>Asymptotic properties are properties of estimators as the sample size <span class="math inline">\(n\)</span> approaches infinity.</p>
+<p>An estimator is consistent, if as we increase sample size towards infinity, the estimate will become more and more concentrated around the true population value <span class="math inline">\(\theta\)</span>. At <span class="math inline">\(n = ∞\)</span>, our sampling distribution collapses to just one value, the true population value <span class="math inline">\(\theta\)</span>. Mathematically:</p>
+<p><span class="math display">\[
+Pr(|\hat\theta_n - \theta|&gt; \epsilon) \rightarrow 0, \text { as } n \rightarrow ∞
+\]</span></p>
+<p>Or in other words, the probability that the distance between an estimate <span class="math inline">\(\hat\theta_n\)</span> and the true population value <span class="math inline">\(\theta\)</span> will be higher than a small close-to-zero value <span class="math inline">\(\epsilon\)</span> will be 0, since our estimates <span class="math inline">\(\hat\theta_n\)</span> will converge at the <span class="math inline">\(\theta\)</span>.</p>
+<p>This is a useful property, since even if our estimator is biased, if it is asymptotically consistent, we know that with large enough sample sizes, that bias becomes infinitely small and negligible.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Biased but Consistent
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>An estimator can be both biased, but consistent. In smaller sample sizes, the estimator might not be on average correct, but over a large enough sample size, it will become “unbiased”.</p>
+<p>For example, in the figure below, we can see that this estimator is biased at small values of <span class="math inline">\(n\)</span>, but as <span class="math inline">\(n\)</span> increases, it becomes more consistent, collapsing its distribution around the true <span class="math inline">\(\theta\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1215503621.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Law of Large Numbers and Consistency
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The law of large numbers states that the sample average of a random sample, is a consistent estimator of the population mean.</p>
+<p>For example, let us say we have a random variable <span class="math inline">\(x\)</span>. We take a random sample of <span class="math inline">\(n\)</span> units, so our sample is <span class="math inline">\((x_1, \dots, x_n)\)</span>.</p>
+<ul>
+<li>Let us define <span class="math inline">\(\bar x_n\)</span> as our sample average.</li>
+<li>Let us define <span class="math inline">\(\mu\)</span> as the true population mean of variable <span class="math inline">\(x\)</span>.</li>
+</ul>
+<p>The law of large numbers states that:</p>
+<p><span class="math display">\[
+plim( \bar x_n) = \mu
+\]</span></p>
+<ul>
+<li>Where <span class="math inline">\(plim\)</span> states that as <span class="math inline">\(n\)</span> approaches infinity, the probability distribution of <span class="math inline">\(\bar x_n\)</span> collapses around <span class="math inline">\(\mu\)</span>.</li>
+</ul>
+<p><br></p>
+<p>Why is this the case? This sample mean estimator is calculated simply through the formula for mean:</p>
+<p><span class="math display">\[
+\bar x_n = \frac{1}{n}\sum\limits_{i=1}^n x_i
+\]</span></p>
+<p>Let us define the variance of our sample of <span class="math inline">\(x_1, \dots, x_n\)</span> as <span class="math inline">\(Var(x_i) = \sigma^2\)</span>. We can now find the variance of our sampling distribution of estimator <span class="math inline">\(\bar x_n\)</span>:</p>
+<p><span class="math display">\[
+\begin{split}
+Var(\bar x_n) &amp; = Var\left( \frac{1}{n}\sum\limits_{i=1}^n x_i \right) \\
+&amp; = \frac{1}{n^2} Var \left(\sum\limits_{i=1}^n x_i\right) \\
+&amp; = \frac{1}{n^2} \sum\limits_{i=1}^n Var(x_i) \\
+&amp; = \frac{1}{n^2} \sigma^2 \\
+&amp; = \frac{\sigma^2}{n}
+\end{split}
+\]</span></p>
+<p>And as sample size <span class="math inline">\(n\)</span> increases to infinity, we get:</p>
+<p><span class="math display">\[
+\lim\limits_{n \rightarrow ∞} Var(\bar x_n) = \lim\limits_{n \rightarrow ∞} \frac{\sigma^2}{n} = 0
+\]</span></p>
+<p>Thus, the variance of our estimator <span class="math inline">\(\bar x_n\)</span> shrinks to zero, so as sample size increases to infinity <span class="math inline">\(n\)</span>, the sampling distribution of estimator <span class="math inline">\(\bar x_n\)</span> collapses around the true population mean.</p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="central-limit-theorem" class="level3">
 <h3 class="anchored" data-anchor-id="central-limit-theorem">Central Limit Theorem</h3>
+<p>Another asymptotic property of estimators, as sample size <span class="math inline">\(n\)</span> approaches infinity, is that the sampling distribution approaches a normal distribution.</p>
+<p>The <strong>central limit theorem</strong> establishes asymptotic normality of estimators. Let us say we have <span class="math inline">\(N\)</span> number of random variables <span class="math inline">\(\hat\theta_1, \dots, \hat\theta_N\)</span> (estimates are realisations of random variables). The central limit theorem states that:</p>
+<p><span class="math display">\[
+Pr(w_n &lt; w) \rightarrow \Phi(w) \quad \text{as } n \rightarrow ∞
+\]</span></p>
+<ul>
+<li>Where <span class="math inline">\(w_n\)</span> is a transformed version of the random variable <span class="math inline">\(\hat\theta_n\)</span>, defined as <span class="math inline">\(w_n = \frac{\bar\theta_n - \mu}{\sigma / \sqrt{n}}\)</span>.</li>
+<li>Where <span class="math inline">\(Pr(w_n &lt; w)\)</span> is the cumulative density function of the random variable <span class="math inline">\(w_n\)</span>.</li>
+<li>Where <span class="math inline">\(\Phi(w)\)</span> is the cumulative density function (cdf) of the standard normal distribution <span class="math inline">\(\mathcal N(0, 1)\)</span>.</li>
+</ul>
+<p>The importance of CLM comes from the fact that as we increase sample size, our sampling distribution becomes more and more normally distributed.</p>
+<p>Recall that we know that the normal distribution has unique <a href="#properties-of-the-normal-distribution">properties of distribution</a> that allow us to calculate the probability between standard deviations (and any point). Since CLM says that our sampling distribution is normally distributed, we can apply the same properties to learn about the probabilities of getting a certain sample estimates <span class="math inline">\(\hat\theta_n\)</span>.</p>
 <p><br></p>
 </section>
-<section id="nonparametric-bootstrap" class="level3">
-<h3 class="anchored" data-anchor-id="nonparametric-bootstrap">Nonparametric Bootstrap</h3>
+<section id="intuition-of-hypothesis-testing" class="level3">
+<h3 class="anchored" data-anchor-id="intuition-of-hypothesis-testing">Intuition of Hypothesis Testing</h3>
+<p>Let us say we have status-quo theory, called the <strong>null hypothesis</strong> <span class="math inline">\(H_0\)</span>. A status quo theory is the generally accepted value of the true population parameter <span class="math inline">\(\theta\)</span> in our field.</p>
+<p>However, you might want to prove this status-quo theory wrong, and have an <strong>alternative hypothesis</strong> <span class="math inline">\(H_1\)</span>. You need some way to prove that the status-quo null hypothesis is wrong.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of Hypotheses
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us say we are interested in measuring the relationship between democracy and economic growth.</p>
+<p>The status-quo theory is that there is no relationship - since we need to prove there is a relationship. Thus, our null hypothesis is <span class="math inline">\(H_0 : \theta = 0\)</span> (0 representing 0 relationship).</p>
+<p>Our alternative hypothesis might be <span class="math inline">\(H_1: \theta ≠ 0\)</span> - i.e.&nbsp;there is a relationship between democracy and economic growth.</p>
+<p>To prove our alternative hypothesis, we need to disprove the null hypothesis.</p>
+</div>
+</div>
+</div>
+<p>We cannot know if the null hypothesis is wrong. However, we can calculate the probability of getting a certain sample estimate <span class="math inline">\(\hat\theta_n\)</span> assuming the null hypothesis is true. If we assume an unbiased estimator, that means our hypothetical sampling distribution should have an expected value of our null hypothesis: <span class="math inline">\(E(\hat\theta_n) = H_0\)</span>.</p>
+<p>Then, we can gather a sample, and calculate some sample estimate <span class="math inline">\(\hat\theta\)</span>. Using some math (we will see this later with regression), we can also estimate the variance of the sampling distribution.</p>
+<p>Thus, we now know the expectation of the sampling distribution <span class="math inline">\(E(\hat\theta_n) = H_0\)</span> and the variance. We also know that the sampling distribution is normally distributed by the central limit theorem. Thus, using the properties of the normal distribution, we can calculate the probability of getting our sample estimate <span class="math inline">\(\hat\theta\)</span> or an estimate even further from the <span class="math inline">\(H_0\)</span> than our <span class="math inline">\(\hat\theta\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1533818238.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>For example, above, our sample estimate <span class="math inline">\(\hat\theta = -2.228\)</span>, and our null hypothesis is <span class="math inline">\(\theta = 0\)</span>. The yellow parts highlighted are the probability of getting an sample estimate <span class="math inline">\(\hat\theta_n\)</span> as extreme or more extreme than our <span class="math inline">\(\hat\theta = -2.228\)</span>.</p>
+<p>If this probability of getting our estimate <span class="math inline">\(\hat\theta\)</span> or more extreme is very small (less than 5% typically), we can believe either one of two things:</p>
+<ol type="1">
+<li>We got extremely lucky (less than 5% chance) and got a estimate very far from the null hypothesis.</li>
+<li>Or, we <u><strong>typically</strong></u> believe that we were not actually lucky, but instead, the null hypothesis value of <span class="math inline">\(\theta\)</span> is incorrect.</li>
+</ol>
+<p>Thus, conclusion 2 essentially means we reject the null hypothesis, and conclude that our alternative hypothesis is correct.</p>
 <p><br></p>
 </section>
-<section id="statistical-testing" class="level3">
-<h3 class="anchored" data-anchor-id="statistical-testing">Statistical Testing</h3>
-<p><br></p>
-</section>
-<section id="implementing-a-hypothesis-test" class="level3">
-<h3 class="anchored" data-anchor-id="implementing-a-hypothesis-test">Implementing a Hypothesis Test</h3>
-<p><br></p>
-</section>
-<section id="types-of-errors" class="level3">
-<h3 class="anchored" data-anchor-id="types-of-errors">Types of Errors</h3>
+<section id="mechanics-of-hypothesis-testing" class="level3">
+<h3 class="anchored" data-anchor-id="mechanics-of-hypothesis-testing">Mechanics of Hypothesis Testing</h3>
+<p>To start a hypothesis test, you will need to define a status-quo null hypothesis <span class="math inline">\(H_0\)</span> and an alternative hypothesis <span class="math inline">\(H_1\)</span>.</p>
+<p>Then, you should take a sample from the population, and compute a sample estimate <span class="math inline">\(\hat\theta\)</span> with your estimator. You can then derive a <strong>standard error</strong> (square root of the variance of the sampling distribution). This standard error formula will differ depending on the statistical model, and we will introduce several of these for regression.</p>
+<p>Then, you can compute a test statistic. The name of the test-statistic will differ based on the statistical model, but the formula is always the same:</p>
+<p><span class="math display">\[
+\text{test statistic} = \frac{\hat\theta - H_0}{\text{standard error of } \hat\theta}
+\]</span></p>
+<p>This formula might look familiar - we are essentially turning our normal distribution of the estimator into the <a href="#the-standard-normal-distribution">standard normal distribution</a>. The test statistic is essentially measuring how many standard deviations away from the null hypothesis our sample estimate <span class="math inline">\(\hat\theta\)</span> is.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/img_standard_normal.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>Now, go onto the x-axis of our standard normal distribution, and start at the mean (at 0). Now, move in both directions by the distance specified by the test statistic. Mark these two points on either side of the mean. Highlight the parts under the sampling distribution beyond these points. The figure below shows this with a test statistic of 2.228:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1533818238.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>The highlighted area is the probability of getting a sample estimate <span class="math inline">\(\hat\theta\)</span> equal or more extreme than the one we got, assuming the null hypothesis is true. This probability is called the <strong>p-value</strong>.</p>
+<p>If the p-value is below 0.05 (5%), we have sufficient evidence to reject the null hypothesis. If the p-value is above 0.05 (5%), we cannot reject the null hypothesis.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note on Distributions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Here, we have stated you use the standard normal distribution.</p>
+<p>However, with different tests, you might actually use some different distribution. Most often, you will use the t-distribution.</p>
+<p>The reason we use the t-distribution is because we often cannot actually calculate the variance of our sampling distribution. Instead, we estimate it with some uncertainty, so the t-distribution accounts for this uncertainty.</p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="confidence-intervals" class="level3">
 <h3 class="anchored" data-anchor-id="confidence-intervals">Confidence Intervals</h3>
+<p>Sometimes, we are not just interested in proving a null hypothesis wrong. We often are interested in the actual parameter value of <span class="math inline">\(\theta\)</span>. As we know already, there is variation in our estimates <span class="math inline">\(\hat\theta_n\)</span> between samples.</p>
+<p>Thus to account for this uncertainty, we want to create some range around our sample estimate <span class="math inline">\(\hat\theta\)</span> that is likely to contain the true value of <span class="math inline">\(\theta\)</span>. This is called a <strong>confidence interval</strong>.</p>
+<p>According the the central limit theorem, we know that any sample estimate <span class="math inline">\(\hat\theta_n\)</span> is 95% likely to be within 2 standard deviations of the true population value <span class="math inline">\(\theta\)</span>.</p>
+<p>Thus, we can construct an interval of 2 standard errors (square deviations) on both sides of our sample estimate <span class="math inline">\(\hat\theta_n\)</span>. This means that 95% of the time, our interval will include the true population value of <span class="math inline">\(\theta\)</span>. Thus, our 95% confidence interval is:</p>
+<p><span class="math display">\[
+(\hat\theta - 1.96se(\hat\theta), \ \ \hat\theta+1.96se(\hat\theta)
+\]</span></p>
+<ul>
+<li>Why 1.96? Because exactly 95% of a normal distribution is within 1.96 standard deviations of the mean.</li>
+</ul>
+<p>This interval means that under repeated sampling and estimating <span class="math inline">\(\hat\theta_n\)</span>, 95% of the confidence intervals we construct will include the true population <span class="math inline">\(\theta\)</span> value.</p>
+<p><br></p>
+</section>
+<section id="nonparametric-bootstrap" class="level3">
+<h3 class="anchored" data-anchor-id="nonparametric-bootstrap">Nonparametric Bootstrap</h3>
+<p>Most traditional statistical tests rely on asymptotic normality established by the central limit theorem. However, asymptotic normality can only be satisfied if we have a large enough sample size. When we are dealing with small samples, we cannot invoke central limit theorem.</p>
+<p>Nonparametric Bootstrap, instead of assuming some sampling distribution, is a method to simulate the sampling distribution. This is done by re-sampling from the sample with replacement. The procedure is as follows:</p>
+<ol type="1">
+<li>You take the sample you observe (with sample size <span class="math inline">\(n\)</span>), and randomly re-sample <span class="math inline">\(n\)</span> observations from that sample with replacement (so allowing observations to repeat in our re-sample).</li>
+<li>Continue to do this over and over again to get <span class="math inline">\(B\)</span> number of re-samples.</li>
+<li>For each re-sample <span class="math inline">\(b\)</span>, you should calculate the <span class="math inline">\(\widehat{\theta_b}\)</span>. Plot all of the sample <span class="math inline">\(\widehat{\theta_b}\)</span> in a distribution.</li>
+</ol>
+<p>You can also estimate the standard error of <span class="math inline">\(\hat\theta\)</span> using the standard deviation of the distribution. However, do not use these standard errors for confidence intervals or tests unless you are confident the sampling distribution is approximately normal.</p>
+<p>Nonparametric Bootstrap is also used in some more complex estimators where it is very difficult to calculate or estimate the standard errors.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -609,20 +896,116 @@ p \quad \text{if } x = 1 \\
 </section>
 <section id="correlations-between-variables" class="level1">
 <h1><strong>Correlations Between Variables</strong></h1>
-<section id="covariance-and-correlation" class="level3">
-<h3 class="anchored" data-anchor-id="covariance-and-correlation">Covariance and Correlation</h3>
+<section id="correlated-variables" class="level3">
+<h3 class="anchored" data-anchor-id="correlated-variables">Correlated Variables</h3>
+<p>In political science and most social sciences, our primary concern is relationships between variables. How does education correlate with voter turnout? Are less educated citizens more anti-immigrant? How do inflation levels correlate with incumbent popularity?</p>
+<p>We describe a relationship between two variables <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> as a correlation.</p>
+<ul>
+<li>If we are more likely to observe higher values of <span class="math inline">\(Y\)</span> when we also observe higher values of <span class="math inline">\(X\)</span>, that means we have a positive correlation.</li>
+<li>If we are more likely to observe lower values of <span class="math inline">\(Y\)</span> when we also observe higher values of <span class="math inline">\(X\)</span>, that means we have a negative correlation.</li>
+<li>If the value of <span class="math inline">\(Y\)</span> does not change no matter the value of <span class="math inline">\(X\)</span>, then the two variables are uncorrelated.</li>
+</ul>
+<p>We can view correlations between variables graphically:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3489268418.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+<p><u>Important Note: correlation is <strong>not</strong> causation!</u></p>
 <p><br></p>
 </section>
-<section id="best-fit-lines" class="level3">
-<h3 class="anchored" data-anchor-id="best-fit-lines">Best-Fit Lines</h3>
+<section id="quantifying-correlations" class="level3">
+<h3 class="anchored" data-anchor-id="quantifying-correlations">Quantifying Correlations</h3>
+<p>Let us say we have some data with <span class="math inline">\(n\)</span> number of observations. Each observation <span class="math inline">\(i\)</span> has values <span class="math inline">\((X_i, Y_i)\)</span>:</p>
+<p>There are two primary ways to quantify correlations between variables. The first is called <strong>covariance</strong>:</p>
+<p><span class="math display">\[
+\begin{align}
+Cov(X,Y) &amp; = E((X_i - \bar X)(Y_i - \bar Y) \\
+&amp; = \frac{1}{n}\sum\limits_{i=1}^n\left[(X_i - \bar X)(Y_i - \bar Y) \right]
+\end{align}
+\]</span></p>
+<ul>
+<li>Where <span class="math inline">\((X_i, Y_i)\)</span> is one data point for an observation <span class="math inline">\(i\)</span>.</li>
+<li>Where <span class="math inline">\(\bar X\)</span> and <span class="math inline">\(\bar Y\)</span> are the average <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> values in the data.</li>
+</ul>
+<p>If covariance is negative, that means we have a negative correlation. If covariance is positive, we have a positive correlation. If covariance is 0, we have no correlation.</p>
+<p>However, we cannot interpret the actual number of covariance, only the sign. This is because covariance is sensitive to measurement scale: if we change something measured in feet to inches, covariance increases.</p>
+<p>Obviously, we do not want a measure that is affected by measurement scale. We want some measure of correlation that can be compared across different scales. This is where the <strong>correlation coefficient</strong> comes in:</p>
+<p><span class="math display">\[
+Corr(X,Y) = r = \frac{Cov(X, Y)}{\sqrt{Var(X) Var(Y)}}
+\]</span></p>
+<p>Essentially, we are “normalising” the covariance metric by dividing by the variances, which gets rid of the impact of scale.</p>
+<p>Correlation coefficients are always between -1 and 1. Values closer to -1 and 1 are stronger correlations, and values closer to 0 are weaker correlations.</p>
+<p><img src="images/clipboard-3774741322.png" class="img-fluid" style="width:100.0%"></p>
+<p>We can see here that stronger correlations have points that fit closer to a straight line.</p>
+<p><br></p>
+</section>
+<section id="best-fit-lines-and-magnitude" class="level3">
+<h3 class="anchored" data-anchor-id="best-fit-lines-and-magnitude">Best-Fit Lines and Magnitude</h3>
+<p>Correlation coefficients have a huge weakness: they measure the “strength” of correlation, but not the magnitude.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1623227249.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+<p>We can see above that these two relationships have the same strength of correlation. However, the slope of the left graph is much higher. Why is the slope important? Well, the slope is essentially how much <span class="math inline">\(Y\)</span> changes when <span class="math inline">\(X\)</span> increases by 1. It is the <strong>magnitude</strong> of our relationship.</p>
+<p>Thus, we might wish to instead look at relationships with a best-fit straight line. Take this figure below:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3708176954.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>We can express this line mathematically as <span class="math inline">\(y = mx + b\)</span>, where <span class="math inline">\(m\)</span> is the slope - the amount <span class="math inline">\(y\)</span> change for every one unit increase in <span class="math inline">\(x\)</span>. Thus, the slope <span class="math inline">\(m\)</span> is a measurement of the magnitude of correlation between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p>
 <p><br></p>
 </section>
 <section id="simple-linear-regression" class="level3">
 <h3 class="anchored" data-anchor-id="simple-linear-regression">Simple Linear Regression</h3>
+<p>Simple Linear Regression is a mathematical model of a best fit line. It takes the following form:</p>
+<p><span class="math display">\[
+y_i = \beta_0 + \beta_1x_i + u
+\]</span></p>
+<p>Where <span class="math inline">\((x_i , y_i)\)</span> are the values of one observation <span class="math inline">\(i\)</span>. Where <span class="math inline">\(\beta_1\)</span> is the slope - the measurement of the relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>. Where <span class="math inline">\(\beta_0\)</span> is the intercept (y-intercept), and <span class="math inline">\(u\)</span> is the error term.</p>
+<p>Why is there an error term? Well as we have seen in all the figures above, not every point <span class="math inline">\((x_i, y_i)\)</span> is on the line itself - some are above the line, some are below. <span class="math inline">\(u\)</span> represents this vertical distance between a point and the line of best-fit.</p>
+<p>We can also write regression as the <a href="#conditional-distributions">conditional expectation</a> of the conditional distribution of <span class="math inline">\(y|x\)</span>:</p>
+<p><span class="math display">\[
+E(y|x) = \beta_0 + \beta_1 x_i
+\]</span></p>
+<p>We have some special terminology for the parts of the simple linear regression.</p>
+<ul>
+<li>The <strong>independent variable</strong>, also called the explanatory variable or the regressor, is labelled <span class="math inline">\(x\)</span>. This is the variable multiplied to the slope parameter <span class="math inline">\(\beta_1\)</span>.</li>
+<li>The <strong>dependent variable</strong>, also called the response or outcome variable, is labelled <span class="math inline">\(y\)</span>.</li>
+</ul>
+<p>Throughout this chapter, we have talked about statistical inference and estimators. This is no different in linear regression. The above equation is what we call our population model (also called the data generating process):</p>
+<p><span class="math display">\[
+y_i = \beta_0 + \beta_1x_i + u_i
+\]</span></p>
+<p>However, once again, we cannot know the true population values of our intercept and slope. So, we will have a sample model of the following:</p>
+<p><span class="math display">\[
+y_i = \widehat{\beta_0} + \widehat{\beta_1}x_i + \widehat{u_i}
+\]</span></p>
+<p>We will discuss the details of this estimation process of <span class="math inline">\(\widehat{\beta_0}, \widehat{\beta_1}, \widehat{u_i}\)</span> in the next chapter, and how we can conduct statistical inference and tests. The points on our predicted best-fit line (so excluding error <span class="math inline">\(\widehat{u_i}\)</span>) are called our <strong>fitted values</strong>:</p>
+<p><span class="math display">\[
+\widehat{y_i} = \widehat{\beta_0} + \widehat{\beta_1}x_i
+\]</span></p>
 <p><br></p>
 </section>
 <section id="multiple-linear-regression" class="level3">
 <h3 class="anchored" data-anchor-id="multiple-linear-regression">Multiple Linear Regression</h3>
+<p>In the real world, rarely does only one thing cause another. For example, changes in income could be caused by age, but also education.</p>
+<p>Instead of just one explanatory variable <span class="math inline">\(x\)</span>, we can create regression models with multiple explanatory variables <span class="math inline">\(x_1, x_2, \dots, x_k\)</span>. Our multiple regression model will take the following form:</p>
+<p><span class="math display">\[
+y_i = \beta_0 + \beta_1x_{1i} + \beta_2x_{2i} + \dots + \beta_kx_{ki} + u_i
+\]</span></p>
+<ul>
+<li>Where <span class="math inline">\(\beta_0\)</span> is the intercept, and <span class="math inline">\(\beta_1, \dots, \beta_k\)</span> are the slope parameters.</li>
+</ul>
+<p>Visually, the linear regression becomes more complex, as we are now dealing with <span class="math inline">\(k\)</span> dimensions. Our best-fit line now becomes a best-fit plane. For example, take a regression with <span class="math inline">\(y\)</span> being income, <span class="math inline">\(x_1\)</span> being education, and <span class="math inline">\(x_2\)</span> being seniority:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-365376575.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+<p>We can do the same things as simple linear regression (conditional expectation, fitted values). The interpretations of our coefficients change slightly, but we will discuss that in the next few chapters.</p>
 
 
 </section>
