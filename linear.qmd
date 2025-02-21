@@ -1,0 +1,1358 @@
+---
+title: "Linear Algebra"
+subtitle: "Introductory Mathematics"
+sidebar: side
+---
+
+This chapter introduces the essentials of linear algebra for political science (for mostly statistics/quantitative methods).
+
+Use the right sidebar for easy navigation.
+
+------------------------------------------------------------------------
+
+# **Vectors**
+
+### Scalars and Vectors
+
+A scalar is any single element or component, like a real number (ex. $x_1 \in \mathbb{R}$).
+
+A vector is a collection of scalars: $(x_1 \ x_2 \ x_3 \ x_4)$. Each scalar is considered a element/component. Vectors can be both row vectors (horiztonal), and column vectors (vertical).
+
+The dimension of a vector is the number of components/scalars/elements in the vector. Vectors will be denoted with a bold lowercase letter: $\mathbf x$, to distinguish them from scalars $x$.
+
+Vectors can be visualised graphically. Each element corresponds to a distance in a direction. For example, take the vector $(3 \ 2)$. Graphically:
+
+![](images/clipboard-3989564868.png){fig-align="center" width="30%"}
+
+If a vector has 3 dimensions, the graphical representation will be in 3 dimensions, and so on.
+
+<br />
+
+### Vector Addition/Subtraction
+
+Vector addition and subtraction is done just by adding the respective elements to each other:
+
+$$
+\begin{pmatrix} 1 \\ 2 \end{pmatrix} + \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 1+3 \\ 2+4 \end{pmatrix} = \begin{pmatrix} 4 \\ 6 \end{pmatrix}
+$$
+
+-   Vector addition only works if the two vectors are of the same dimensionality.
+
+Vector addition can be viewed graphically. Take two 2-dimensional vectors $\mathbf A$ and $\mathbf B$:
+
+![](images/clipboard-1838693072.png){fig-align="center" width="60%"}
+
+<br />
+
+### Scalar Multiplication and Normalisation
+
+Vector scalar multiplication is done by multiplying all elements of the vector by the scalar:
+
+$$
+4 \times \begin{pmatrix} 1 \\ 2 \end{pmatrix} = \begin{pmatrix} 4 \times 1 \\ 4 \times 2 \end{pmatrix} = \begin{pmatrix} 4 \\ 8 \end{pmatrix}
+$$
+
+Graphically, this just multiplies the length of the vector by the scalar (and if the scalar is negative, the direction switches 180 degrees).
+
+The **norm** of a vector is its length (when thinking graphically):
+
+$$
+|| \mathbf{x}|| = \sqrt{x_1^2 + x_2^2 + \dots + x_n^2}
+$$
+
+**Normalizing** a vector is scalar multiplying the vector by $1/||\mathbf{x} ||$.
+
+-   This results in the norm of the vector equaling 1. This can be useful if you want to standardise and compare vectors.
+
+<br />
+
+### Scalar Product
+
+Scalar product, also known as dot product, takes two vectors and creates a scalar.
+
+$$
+\mathbf a \cdot \mathbf b = \sum_i a_ib_i = a_1 b_1 + a_2 b_2+ \dots a_n b_n
+$$
+
+-   Essentially, multiply each respective element with each other. Then sum all of the products.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Scalar Product
+
+Let us do an example of scalar product:
+
+$$
+\begin{pmatrix} 2 \\ 3 \end{pmatrix} \cdot \begin{pmatrix} 4 \\ 5 \end{pmatrix}
+$$
+
+We multiply each respective element with each other, then sum all of the products:
+
+$$
+2 \times 4 + 3 \times 5 = 8 + 15 = 23
+$$
+:::
+
+Dot product calculates the projection/shadow of vector $\mathbf a$ on vector $\mathbf b$. In the figure below, the dot product calcualtes the length of the blue-highlighted line segment:
+
+![](images/clipboard-2938344011.png){fig-align="center" width="45%"}
+
+From here, we can tell if the two vectors are perpendicular, then the dot product would be 0. This is useful for measures of similarity/correlation.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Matrices**
+
+### Types of Matrices
+
+A matrix is a collection of scalars, that are put in a $n \times m$ order with $n$ number of rows, and $m$ number of columns.
+
+$$
+\mathbf A_{2 \times 3} = \begin{pmatrix}
+2 & 3 & 2 \\
+1 & 4 & 1
+\end{pmatrix}
+$$
+
+Matrices can be viewed as a set of row vectors combined, or a set of column vectors combined (this is how datasets are arranged). Each element by the matrix can be denoted $a_{ij}$, which is the element in the $i$th row and $j$th column:
+
+$$
+\mathbf A_{2 \times 3} = \begin{pmatrix}
+a_{11} & a_{12} & a_{13} \\
+a_{21} & a_{22} & a_{23}
+\end{pmatrix}
+$$
+
+There are several very common types of matrices that you need to know.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Square and Zero Matrix
+
+**Square Matrix** is a matrix that have an equal number of rows and columns.
+
+$$
+\mathbf A_{2 \times 2} = \begin{pmatrix}
+a_{11} & a_{12} \\
+a_{21} & a_{22}
+\end{pmatrix}
+$$
+
+These are useful because many matrix manipulations, like inversions and determinants.
+
+**Zero Matrix** is a square matrix with all 0's.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Diagonal, Identity, and Lower/Upper Triangular Matrix
+
+**Diagonal matrices** only have elements along the top-left bottom-right diagonal.
+
+$$
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+a_{11} & 0 & 0 \\
+0 & a_{22} & 0 \\
+0 & 0 & a_{33} \\
+\end{pmatrix}
+$$
+
+An **identity matrix** (notated $\mathbf I$)is a diagonal matrix, but all the diagonal elements equal 1:
+
+$$
+\mathbf I_{2 \times 2} = \begin{pmatrix}
+1 & 0 \\
+0 & 1
+\end{pmatrix}
+$$
+
+-   Any matrix times $\mathbf I$ equals itself (like a 1 in normal multiplication).
+
+A **Lower/Upper Triangular Matrix** is a matrix where only has values above/below the diagonal. For example, the following is a lower triangular matrix:
+
+$$
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+1 & 0 & 0 \\
+3 & 4 & 0 \\
+3 & 3 & 4
+\end{pmatrix}
+$$
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Submatrix
+
+A submatrix is a matrix if you were to remove a row and a column (that is specified by an element).
+
+For example, take this 3 by 3 matrix:
+
+$$
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+a_{11} & a_{12} & a_{13} \\
+a_{21} & a_{22} & a_{23} \\
+a_{31} & a_{32} & a_{33}
+\end{pmatrix}
+$$
+
+Let us find the submatrix of $a_{21}$. This means we will eliminate the 2nd row, and 1st column:
+
+$$
+\mathbf A_{2 \times 2} = \begin{pmatrix}
+a_{12} & a_{13} \\
+a_{32} & a_{33}
+\end{pmatrix}
+$$
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Permutation Matrix
+
+A permutation matrix is a matrix that only has one non-zero element in each row and column.
+
+$$
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+1 & 0 & 0 \\
+0 & 0 & 1 \\
+0 & 1 & 0
+\end{pmatrix}
+$$
+
+The identity matrix is a permutation matrix.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Singular/Non-Singular Matrix
+
+A **singular matrix** is one who's determinant is zero. These cannot be inverted.
+
+A **non-singular matrix** is one who's determinant is not zero. These can be inverted. For non-singular matrices:
+
+$$
+AA^{-1} = I
+$$
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Block/Partitioned/Block Diagonal Matrix
+
+A block or partitioned matrix is a matrix which contains matrices within.
+
+$$
+\mathbf A_{4 \times 4} = \begin{pmatrix}
+\mathbf A_{2 \times 2} & \mathbf B_{2 \times 2} \\
+\mathbf C_{2 \times 2} & \mathbf D_{2 \times 2}
+\end{pmatrix}
+$$
+
+-   Note how the block matrix is 4 by 4, since if we expand out each matrix within, we would get a 4 by 4 matrix.
+
+A **block diagonal** matrix is a block/partitioned matrix with only matrices on its diagonal:
+
+$$
+\mathbf A_{4 \times 4} = \begin{pmatrix}
+\mathbf A_{2 \times 2} & 0 \\
+0 & \mathbf D_{2 \times 2}
+\end{pmatrix}
+$$
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Orthogonal/Orthonormal Matrix
+
+An **orthogonal matrix** is one with columns perpendicular to each other (when treating each column as a vector). In other words, the dot product of any two columns is zero.
+
+$$
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+1 & 0 & 0 \\
+0 & 0 & 5 \\
+0 & 3 & 0
+\end{pmatrix}
+$$
+
+-   The identity matrix is also orthogonal.
+-   Any matrix with one element in each row and column will be orthogonal.
+
+An **orthonormal matrix** is an orthogonal matrix but the lengths/norms of all the columns is 1:
+
+$$
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+1 & 0 & 0 \\
+0 & 0 & 1 \\
+0 & 1 & 0
+\end{pmatrix}
+$$
+:::
+
+<br />
+
+### Matrix Transpose
+
+The matrix transpose is a matrix flipped along its diagonal. It is denoted either $\mathbf A^\mathsf{T}$ or $\mathbf A '$.
+
+In other words, the rows and column locations of each element are inverted (essentially elements $a^\mathsf{T}_{ij} = a_{ji}$):
+
+$$
+\begin{pmatrix}
+2 & 3 & 5 \\
+1 & 4 & 6
+\end{pmatrix}^\mathsf{T} = \begin{pmatrix}
+2 & 1 \\
+3 & 4 \\
+5 & 6
+\end{pmatrix}
+$$
+
+-   Notice how the first column became the first row, the second column became the second row.
+-   You can also get the transpose of a vector.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Properties of Transposes
+
+The **Vector Property** says that the dot product of vectors can be written with transposes:
+
+$$
+\mathbf a \cdot \mathbf b = \mathbf a^\mathsf{T}\mathbf b
+$$
+
+The **Inverse Property** says that the transpose of a transpose is the original matrix:
+
+$$
+\left(\mathbf A^\mathsf{T} \right)^\mathsf{T} = \mathbf A
+$$
+
+The **Addition Property** states that the transpose of a sum of two matrices, is equal to the individual transposes of both matrices added together:
+
+$$
+(\mathbf A + \mathbf B)^\mathsf{T} = \mathbf A^\mathsf{T} + \mathbf B^\mathsf{T} = \mathbf B^\mathsf{T} + \mathbf A^\mathsf{T}
+$$
+
+The **Multiplication Property** says the following (note the order of multiplication):
+
+$$
+( \mathbf{AB})^\mathsf{T} = \mathbf B^\mathsf{T} \mathbf A^\mathsf{T}
+$$
+
+The Symmetrical **Property** says that a matrix that is symmetrical does not change when inversed:
+
+$$
+\mathbf A^\mathsf{T} = \mathbf A \quad \text{s.t.} \quad \mathbf A \text{ is symmetrical}
+$$
+
+The **Inverse Transpose Property** says the following about inverses and transposes:
+
+$$
+\left( \mathbf A^{-1} \right)^\mathsf{T} = \left( \mathbf A^\mathsf{T} \right)^{-1}
+$$
+:::
+
+<br />
+
+### Matrix Algebra
+
+Matrix **addition/subtraction** is the same as vector addition - add the respective elements together:
+
+$$
+\begin{pmatrix}
+1 & 2 \\
+3 & 4
+\end{pmatrix} + \begin{pmatrix}
+5 & 6 \\
+7 & 8
+\end{pmatrix} = \begin{pmatrix}
+1 + 5 & 2 +6 \\
+3+7 & 4 + 8
+\end{pmatrix} = \begin{pmatrix}
+6 & 8 \\
+10 & 12
+\end{pmatrix}
+$$
+
+Matrix [**scalar**]{.underline} **multiplication** is the same as vector scalar multiplication - multiply each element by the scalar:
+
+$$
+3 \times \begin{pmatrix}
+1 & 2 \\
+3 & 4
+\end{pmatrix} = \begin{pmatrix}
+3 \times 1 & 3 \times 2 \\
+3 \times 3 & 3 \times 4
+\end{pmatrix} = \begin{pmatrix}
+3 & 6 \\
+9 & 12
+\end{pmatrix}
+$$
+
+**Matrix Plain Multiplication** is a little more complicated. Let us say you want to multiply $\mathbf A$ and $\mathbf B$ to get a new matrix $\mathbf C$. The elements of $\mathbf C$ are calculated as follows:
+
+$$
+c_{ij} = \sum_ka_{ik}b_{kj} = a_{i1}b_{1j} + a_{i2}b_{2j} + a_{i3}b_{3j}\dots
+$$
+
+In other words, $c_{ij}$ is the dot product of the $i$th row of $\mathbf A$, and the $j$th column of $\mathbf B$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Matrix Multiplication
+
+Let us solve the following problem:
+
+$$
+\begin{pmatrix}
+2 & 1 \\
+3 & 5 \end{pmatrix} \begin{pmatrix}
+6 & 1 \\
+2 & 3 \end{pmatrix} = \mathbf C
+$$
+
+Let us do each dot product for each element of $\mathbf C$:
+
+-   $c_{11}$ is the dot product of the 1st row of the 1st matrix, and the 1st column of the 2nd matrix: $(2 \ 1) \cdot (6 \ 2)$. That means $c_{11} = 2 \times 6 + 1 \times 2 = 12+2 = 14$.
+-   $c_{12}$ is the dot product of the 1st row of the 1st matrix, and the 2nd column of the 2nd matrix: $(2 \ 1) \cdot (1 \ 3)$. That means $c_{12} = 2 \times 1 + 1 \times 3 = 2 + 3 = 5$.
+-   $c_{21}$ is the dot product of the 2nd row of the 1st matrix, and the 1st column of the 2nd matrix: $(3 \ 5) \cdot (6 \ 2)$. That means $c_{21} = 3 \times 6 + 5 \times 2 = 18 + 10 = 28$.
+-   $c_{22}$ is the dot product of the 2nd row of the 1st matrix, and the 2nd column of the 2nd matrix: $(3 \ 5) \cdot (1 \ 3)$. That means $c_{22} = 3 \times 1 + 5 \times 3 = 3 + 15 = 18$.
+
+Thus, we now have our answer:
+
+$$
+\begin{pmatrix}
+2 & 1 \\
+3 & 5 \end{pmatrix} \begin{pmatrix}
+6 & 1 \\
+2 & 3 \end{pmatrix} = \begin{pmatrix}
+14 & 5 \\
+28 & 18 \end{pmatrix}
+$$
+:::
+
+Matrix multiplication is only possible when the number of columns in $\mathbf A$ is equal to the number of rows in $\mathbf B$. So for example, we can multiply $\mathbf A_{2 \times 3}$ and $\mathbf B_{3 \times 4}$. We **cannot** multiply $\mathbf A_{2 \times 3}$ and $\mathbf B_{2 \times 3}$.
+
+The dimensions of product $\mathbf C$ is the number of rows in $\mathbf A$ and the number of columns in $\mathbf B$. So for example, if we multiply $\mathbf A_{2 \times 3}$ and $\mathbf B_{3 \times 4}$, we will get $\mathbf C_{2 \times 4}$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Properties of Matrix Algebra
+
+The **Associative property** applies to addition/subtraction and multiplication:
+
+$$
+\begin{split}
+& (\mathbf A + \mathbf B) + \mathbf C = \mathbf A + (\mathbf B + \mathbf C) \\
+& (\mathbf A \mathbf B)\mathbf C = \mathbf A(\mathbf B \mathbf C)
+\end{split}
+$$
+
+The **Distributive Property** states the following is true:
+
+$$
+(\mathbf A + \mathbf B) \mathbf C = \mathbf A \mathbf C + \mathbf B \mathbf C
+$$
+
+The **Commutative Property** applies [only to addition/subtraction, not multiplication]{.underline}. Commutative property also applies to dot products.
+
+$$
+\begin{split}
+& \mathbf A + \mathbf B = \mathbf B + \mathbf A \\
+& \mathbf a \cdot \mathbf b = \mathbf b \cdot \mathbf a
+\end{split}
+$$
+
+Matrix Multiplication does not have the commutative property: $\mathbf A \mathbf B ≠ \mathbf B \mathbf A$. Although there are two exceptions: $\mathbf A \mathbf I = \mathbf I \mathbf A$, and $\mathbf A \mathbf A^{-1} = \mathbf A^{-1}  \mathbf A$.
+:::
+
+<br />
+
+### Kronecker Product
+
+Take the Kronecker Product of $\mathbf A$ and $\mathbf B$:
+
+$$
+\mathbf A \otimes \mathbf B = \mathbf C
+$$
+
+Let us define $\mathbf A$ and $\mathbf B$ as the following:
+
+$$
+\mathbf A_{2 \times 2} = \begin{pmatrix}
+a_{11} & a_{12} \\
+a_{21} & a_{22}
+\end{pmatrix}, \ \mathbf B_{2 \times 2} = \begin{pmatrix}
+b_{11} & b_{12} \\
+b_{21} & b_{22}
+\end{pmatrix}
+$$
+
+The resulting Kronecker Product $\mathbf C$ would be defined as a block matrix:
+
+$$
+\mathbf C_{4 \times 4} = \begin{pmatrix}
+a_{11}\mathbf B & a_{12} \mathbf B \\
+a_{21} \mathbf B & a_{22} \mathbf B
+\end{pmatrix}
+$$
+
+Essentially, we treat $\mathbf A$ as a collection of scalars. We scalar multiply each scalar element of $\mathbf A$ by the matrix of $\mathbf B$.
+
+If $\mathbf A$ has dimensions $n \times m$, and $\mathbf B$ has dimensions $p \times q$, then $\mathbf C$ will have dimensions $np \times mq$.
+
+<br />
+
+### Traces and Determinants
+
+The trace of $\mathbf A$ is a sum of all diagonal elements. Traces are used in Eigenvalues.
+
+$$
+Tr(\mathbf A) = \sum_i a_{ii} = a_{11} + a_{22} + \dots
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Property of Traces
+
+The **Addition Property** of traces states that the trace of the sum of two matrices is equivalent to the sum of the traces of each individual matrix:
+
+$$
+Tr(\mathbf A + \mathbf B) =Tr(\mathbf A) + Tr(\mathbf B) = Tr(\mathbf B) + Tr(\mathbf A)
+$$
+
+The **Transpose Property** says the trace of the transpose is equal to the trace of the original (since the diagonal remains the same):
+
+$$
+Tr(\mathbf A^\mathsf{T}) = Tr(\mathbf A)
+$$
+
+The **Multiplication Property** says that the trace of multiplication has the commutative property (only for two matrices):
+
+$$
+Tr(\mathbf{AB}) = Tr(\mathbf{BA})
+$$
+:::
+
+**Determinants** tell us if a matrix is singular (and thus has no inverse). If the determinant is 0, then the matrix is singular. The determinant is only computable for square matrices. For a 2 by 2 matrix:
+
+$$
+|\mathbf A_{2 \times 2}| = \left| \begin{pmatrix}
+a_{11} & a_{12} \\
+a_{21} & a_{22}
+\end{pmatrix} \right | = a_{11} a_{22} - a_{12}a_{21}
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of a Determinant
+
+Let us find the determinant of the following matrix:
+
+$$
+\mathbf B_{2 \times 2} = \begin{pmatrix}
+2 & 3 \\
+1 & 4
+\end{pmatrix}
+$$
+
+Using the formula above:
+
+$$
+|\mathbf B| = 2 \times 4 - 3 \times 1 = 8 - 3 = 5
+$$
+
+Thus, this matrix is non-singular.
+:::
+
+For 3 by 3, there is a method called the butterfly method to find the determinant. Take this matrix.
+
+$$
+\mathbf A_{3 \times 3} = \begin{pmatrix}
+a_{11} & a_{12} & a_{13} \\
+a_{21} & a_{22} & a_{23} \\
+a_{31} & a_{32} & a_{33}
+\end{pmatrix}
+$$
+
+The determinant is defined as following:
+
+$$
+\begin{split}
+| \mathbf A| = & a_{11}a_{22}a_{33} + a_{12} a_{23} a_{31} + a_{13}a_{21}a_{32} \\
+& -a_{31}a_{22}a_{13} - a_{11}a_{23}a_{32} - a{12}a_{21}a_{33}
+\end{split}
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Properties of Determinants
+
+The **Transpose Property** states that the determinant of a transpose is equal to the determinant of the original:
+
+$$
+\det(\mathbf A^\mathsf{T}) = \det(\mathbf A)
+$$
+
+The **Identity Property** states that the determinant of an identity matrix is 1:
+
+$$
+\det (\mathbf I)=1
+$$
+
+The **Multiplication Property** states that the determinant of a product is equal to the individual determinants multiplied:
+
+$$
+\det (\mathbf {AB}) = \det (\mathbf A) \det (\mathbf B)
+$$
+
+The **Inverse Property** says that the determinant of an inverse is the inverse of the determinant of the original matrix:
+
+$$
+\det(\mathbf A^{-1}) = \frac{1}{\det(\mathbf A)}
+$$
+
+The **Triangular/Diagonal Property** is the product of all diagonal elements:
+
+$$
+\det (\mathbf A) = \prod_i a_{ii}
+$$
+:::
+
+<br />
+
+### Laplace Expansion and Cofactors
+
+For anything larger than a 3 by 3 matrix, we should us a Laplace expansion to find the determinant.
+
+First, you choose a row or column of the matrix.
+
+-   For every element in that row or column, find the [submatrix](https://politicalscience.github.io/maths/1.html#types-of-matrices) of that element.
+-   Calculate the determinant of each of the submatrices. This is called the *minor*.
+-   Now, convert the minors to **cofactors**. The cofactor is the minor times $(-1)^{i+j}$.
+-   Then, take each element, multiply by its cofactor. Sum all of these products together.
+
+The final sum is the determinant of the matrix.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Laplace Expansion
+
+For example, take this matrix:
+
+$$
+\mathbf A = \begin{pmatrix}
+1 & 2 & 1 \\
+0 & 1 & 1 \\
+5 & 3 & 0
+\end{pmatrix}
+$$
+
+Let us expand over the 1st row $(1 \ 2 \ 1 )$. We expand over the submatrices of each element in that row.
+
+-   For $a_{11} = 1$, the submatrix is $\begin{pmatrix} 1 & 1 \\ 3 & 0 \end{pmatrix}$, and the determinant/minor of that is $1 \times 0 - 1 \times 3 = -3$.
+-   For $a_{12} = 2$, the submatrix is $\begin{pmatrix} 0 & 1 \\ 5 & 0 \end{pmatrix}$. The determinant/minor of that is $0 - 5 = -5$.
+-   For $a_{13} = 1$, the submatrix is $\begin{pmatrix} 0 & 1 \\ 5 & 3 \end{pmatrix}$. The determinant/minor of that is $0 - 5 = -5$.
+
+Now, let us find the cofactors $(-1)^{i + j} \times \text{minor}$:
+
+-   For $a_{11}$, the cofactor is $(-1)^2 \times -3 = 1 \times -3 = -3$.
+-   For $a_{12}$, the cofactor is $(-1)^3 \times -5 = -1 \times -5 = 5$.
+-   For $a_{13}$, the cofactor is $(-1)^4 \times -5 = 1 \times -5 = -5$.
+
+Now, take each element, multiply by its cofactor. Sum all of these products together.
+
+$$
+1(-3) + 2(5) + 1(-5) = -3 + 10 - 5 = 2
+$$
+
+Thus, the determinant of the matrix is $2$.
+:::
+
+This works for any matrix of any size, for any row or any column.
+
+-   So, you should choose rows/columns with more 0's, since the final sum involves multiplying the element with the cofactor, and if the element is 0, then you don't have to consider it.
+
+<br />
+
+### Matrix Inverse
+
+If you take a matrix $\mathbf A$, and multiply by the inverse $\mathbf A^{-1}$, the result will be the identity matrix $\mathbf{I}$.
+
+You can invert any square matrix that does not have a determinant of a 0. This is because the inverse is defined as the following:
+
+$$
+\mathbf A^{-1} = \frac{1}{|\mathbf A|} \mathbf C^\mathsf{T}
+$$
+
+-   Where $| \mathbf A|$ is the determinant of the matrix $\mathbf A$, and $\mathbf C^\mathsf{T}$ is the transpose of the cofactor matrix (consisting of the cofactor of every element of $\mathbf A$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of a 2 by 2 Matrix Inverse
+
+Let us solve for the matrix inverse of a 2 by 2 matrix.
+
+$$
+\mathbf A_{2 \times 2} = \begin{pmatrix}
+a_{11} & a_{12} \\
+a_{21} & a_{22}
+\end{pmatrix}
+$$
+
+We know the determinant of $\mathbf A$ with the formula for 2 by 2 matrix determinants:
+
+$$
+| \mathbf A | = a_{11}a_{22} - a_{12} a_{21}
+$$
+
+Now, let us find the cofactors (note, the determinant of a scalar is just the scalar):
+
+-   $c_{11} = (-1)^{1+1}a_{22} = a_{22}$
+-   $c_{12} = (-1)^{1+2}a_{21} = -a_{21}$
+-   $c_{21} = (-1)^{2+1} a_{12} = -a_{12}$
+-   $c_{22} = (-1)^{2+2} a_{11} = a_{11}$
+
+Thus, our cofactor matrix is:
+
+$$
+\mathbf C_{2 \times 2} = \begin{pmatrix}
+a_{22} & -a_{21} \\
+-a_{12} & a_{11}
+\end{pmatrix}
+$$
+
+The transpose of the cofactor matrix is thus (flipping rows to columns):
+
+$$
+\mathbf C^\mathsf{T} = \begin{pmatrix}
+a_{22} & -a_{12} \\
+-a_{21} & a_{11}
+\end{pmatrix}
+$$
+
+Thus, the inverse is:
+
+$$
+\mathbf A^{-1} = \frac{1}{|\mathbf A|} \mathbf C^\mathsf{T} = \frac{1}{a_{11}a_{22} - a_{12} a_{21}} \begin{pmatrix}
+a_{22} & -a_{12} \\
+-a_{21} & a_{11}
+\end{pmatrix}
+$$
+
+Thus, for example, the following is true:
+
+$$
+\mathbf A = \begin{pmatrix}
+3 & 1 \\
+5 & 2
+\end{pmatrix}, \ \mathbf A^{-1}  = \begin{pmatrix}
+2 & -1 \\
+-5 & 3
+\end{pmatrix}
+$$
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Properties of Inverses
+
+The **Inverse Property** states that the inverse of an inverse is the original matrix:
+
+$$
+\left( \mathbf A^{-1} \right)^{-1} = \mathbf A
+$$
+
+The **Multiplication Property** states the inverse of a product is the following (note the order of the multiplication):
+
+$$
+(\mathbf{AB})^{-1}=\mathbf B^{-1} \mathbf A^{-1}
+$$
+
+The **Scalar Multiplication Property** states that the scalar product is the following:
+
+$$
+(c \mathbf A)^{-1} = \frac{1}{c} \mathbf A^{-1}, \quad \text{s.t.} \quad  c ≠ 0
+$$
+:::
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Vector Spaces**
+
+### Linear Mapping
+
+A mapping is any rule that maps elements from one set to another. A function $f$ is a mapping $f: A \rightarrow B$.
+
+A linear mapping is a mapping that is linear, which must meet the following properties:
+
+-   $f(a+b) = f(a) + f(b)$
+-   $f(ca) = c f(a)$
+
+We can represent linear mappings for finite sets by matrices. Let us say $\mathbf X_{n \times m}$ is a matrix, and $\mathbf y_{m}$ is a vector. Let us find their product:
+
+$$
+\mathbf {Xy} = \mathbf z_m
+$$
+
+What this is saying is take the vector $\mathbf y$, and operate on it using the matrix $\mathbf X$, to produce a new vector $\mathbf z$. Here, the matrix $\mathbf X$ is an operator that maps $\mathbf y \rightarrow \mathbf z$.
+
+<br />
+
+### Linear Combinations and Independence
+
+A **linear combination** is a combination of vectors that is linear (i.e. vectors can be added, and scalar multiplied). For example, this is a linear combination:
+
+$$
+t \mathbf x + (1-t) \mathbf y
+$$
+
+Linear combinations either represents lines (in $\mathbb R^2$), planes (in $\mathbb R^3$), and hyperplanes (a plane of one less dimensions than the space) in higher dimensions.
+
+Now, let us take some linear combination:
+
+$$
+a_1 \mathbf x_1 + a_2 \mathbf x_2+\dots + a_n \mathbf x_n
+$$
+
+This set of vectors $(\mathbf x_1, \dots, \mathbf x_n)$ is **linearlly** **independent** if you cannot go from one vector $\mathbf x_j \in \{ \mathbf x_1, \dots, \mathbf x_n \}$, and linearly transform it (by adding/subtracting/multiplying a constant) into another vector.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Linear Independence
+
+Let us say we have these two vectors:
+
+$$
+\begin{pmatrix} 1 \\ 2 \end{pmatrix}, \begin{pmatrix} 2 \\ 1 \end{pmatrix}
+$$
+
+Are these linearly independent? That means I cannot use a linear transformation to go from one to another.
+
+No, there is no constant you can multiply to get from vector 1 to vector 2, and there are no other vectors to add/subtract to to go from one to another.
+
+Now consider these two vectors:
+
+$$
+\begin{pmatrix} 1 \\ 2 \end{pmatrix}, \begin{pmatrix} 2 \\ 4 \end{pmatrix}
+$$
+
+These are not independent - you can multiply the first vector by a scalar of 2 to get the second vector.
+:::
+
+This can be complicated to see in higher dimensions (since it is hard to consider how multiple vectors can be combined to match another). There, we use the matrix rank (see below).
+
+<br />
+
+### Spanning Vectors and Dimension
+
+A collection of spanning vectors spans some space, if you can write any vector in that space, as a linear combination of the spanning vectors.
+
+For example, take vector $\mathbf e_1 = (1 \ 0)$ and $\mathbf e_2 = (0 \ 1)$. These vectors span some space including $\mathbf z$, if vector $\mathbf z$ can be written as:
+
+$$
+\mathbf z = a \mathbf e_1 + b \mathbf e_2, \quad \text{e.x.} \quad \mathbf z = (a \ b)
+$$
+
+-   In fact, $\mathbf e_1$ and $\mathbf e_2$ span the set of all 2-dimensional vectors.
+
+This allows us to write vectors in terms of the core vectors, and to understand the dimension of the space. The **dimension** of the space is the smallest number of linearly independent vectors that span the space.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Dimensionality
+
+Take these two vectors:
+
+$$
+\begin{pmatrix} 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+$$
+
+These are linearly independent - no factor multipled can get the other vector. Thus, this is 2 dimensional space
+
+Now, let us add a third vector.
+
+$$
+\begin{pmatrix} 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 0 \\ 1 \end{pmatrix}, \begin{pmatrix} 3 \\ 2 \end{pmatrix}
+$$
+
+Is the third vector linearly independent? No. We can write the third vector with a combination of the other two:
+
+$$
+\begin{pmatrix} 3 \\ 2 \end{pmatrix} = 3 \begin{pmatrix} 1 \\ 0 \end{pmatrix} + 2 \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+$$
+
+Thus, the third vector is in the space spanned by the first 2 vectors. The first two vectors spans this space, and thus, it is 2 dimensional space.
+:::
+
+Generally, the dimensionality of the space matches the number of vectors that span the space (so a 2 dimensional space is often spanned by 2 vectors, 3 spanned by 3, etc.).
+
+Note: Dimensionality of a vector space is not always the same as the dimensionality of the vectors.
+
+<br />
+
+### Matrix Rank
+
+As we discussed before, it can be difficult to find if vectors are linearly independent in higher dimensions.
+
+We can stack the row vectors into a matrix (we can also do them in columns):
+
+$$
+\begin{pmatrix} \mathbf x_1 \\ \mathbf x_2 \\ \mathbf x_3 \end{pmatrix} =
+\begin{pmatrix} x_{11} & x_{12} & x_{13} \\
+x_{21} & x_{22} & x_{23} \\
+x_{31} & x_{32} & x_{33} \end{pmatrix}
+$$
+
+The **Rank** of a matrix is the number of linearly independent rows/columns in a matrix.
+
+If the Rank is equal to the total number of rows/columns (all rows/columns are linearly independent), the matrix has **full rank**. A matrix with full rank is non-singular, and thus, can be inverted, and has a non-zero determinant.
+
+Thus, if we find the determinant of the matrix, if it is 0, the vectors are [not]{.underline} linearly independent, and if it is not 0 , they are linearly independent.
+
+We can also know a matrix is not full rank, if the space of the dimension is less than the number of vectors (as explained above).
+
+<br />
+
+### Quadratic Forms
+
+A quadratic form takes the following form:
+
+$$
+\mathbf x^\mathsf{T} \mathbf A \mathbf x
+$$
+
+Where matrix $\mathbf A$ is a square matrix.
+
+If $\mathbf x^\mathsf{T} \mathbf A \mathbf x > 0$ for all values, then the matrix is positive definite. If $\mathbf x^\mathsf{T} \mathbf A \mathbf x < 0$, then negative definite. If $\mathbf x^\mathsf{T} \mathbf A \mathbf x ≤ 0$ it is positive semi-definite.
+
+This will be useful for optimisation and multivariable calculus
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Solving Systems of Equations**
+
+### Matrices and Systems of Equations
+
+You can write any system of linear equations as a matrix times a vector. Let us take this set of equations:
+
+$$
+\begin{cases}
+a_{11}x_1 + a_{12} x_2 + a_{13} x_3 = y_1 \\
+a_{21}x_1 + a_{22}x_2 + a_{23}x_3 = y_2 \\
+a_{31}x_1 + a_{32}x_2 + a_{33}x_3 = y_3
+\end{cases}
+$$
+
+We can write this system of equations as follows:
+
+$$
+\begin{pmatrix}
+a_{11} & a_{12} & a_{13} \\
+a_{21} & a_{22} & a_{23} \\
+a_{31} & a_{32} & a_{33}
+\end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ x_3 \end{pmatrix}
+ = \begin{pmatrix} y_1 \\ y_2 \\ y_3 \end{pmatrix}
+$$
+
+Or even simpler, we can represent it as:
+
+$$
+\mathbf A\mathbf x = \mathbf y
+$$
+
+A unique solution exists when you have the same amount of equations as unknowns, and the equations are non-contradictory.
+
+Overdetermined systems are when there are more equations than unknowns, which might contradict each other. Underdetermined systems are when there are not enough equations compared to unknowns, so we cannot solve it.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Non-Linearly Independent and Identification
+
+Take this system of linear equations:
+
+$$
+\begin{cases}
+x+y=1 \\
+2x + 2y = 2
+\end{cases}
+$$
+
+We can see that the two equations are a common factor of each other. Or in other words, these two vectors are non-linearly independent.
+
+We know when solving for these equations, we cannot actually solve for a unique solution.
+
+We know if a matrix is full rank, then all rows/columns are linearly independent.
+:::
+
+<br />
+
+### Solving Systems of Equations
+
+**Matrix inversion** is a way to solve a system of equations. Take this system of equations:
+
+$$
+\mathbf{Ax} = \mathbf y
+$$
+
+You can solve for $\mathbf x$ by inverting matrix $\mathbf A$ (assuming matrix a is full rank):
+
+$$
+\begin{align}
+\mathbf{Ax} & = \mathbf y \\
+\color{blue}{\mathbf{A}^{-1}}\color{black}{\mathbf{Ax}} & = \color{blue}{\mathbf A^{-1}}\color{black}{\mathbf y} && (\text{multiply both sides by } \color{blue}{\mathbf A^{-1}}\color{black}) \\
+\mathbf x &= \mathbf A^{-1}\mathbf y && (\mathbf A^{-1} \mathbf A\text{ inverses cancel})
+\end{align}
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Matrix Inversion
+
+Take this system of equations:
+
+$$
+\begin{cases}
+3x - 7y = -11 \\
+5x + 10y = 25
+\end{cases}
+$$
+
+We can write this in linear algebra:
+
+$$
+\begin{pmatrix}
+3 & -7 \\
+5 & 10
+\end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix} =
+\begin{pmatrix} -11 \\ 25 \end{pmatrix}
+$$
+
+Now, let us find the inverse of the first matrix:
+
+$$
+\mathbf A^{-1} = \frac{1}{|\mathbf A|}\mathbf C^\mathsf{T}
+$$
+
+We know the determinant $|\mathbf A| = 3(10) - (-7)(5) = 65$.
+
+Now, let us find the cofactor matrix:
+
+-   $c_{11} = (-1)^{1+1}\times 10 = 10$
+-   $c_{12} = (-1)^{1+2} \times 5 = -5$
+-   $c_{21} = (-1)^{2+1} \times -7 = 7$
+-   $c_{22} = (-1)^{2+2} \times 3 = 3$
+
+Thus, the cofactor matrix transposed should be:
+
+$$
+\mathbf C^\mathsf{T} = \begin{pmatrix} 10 & -5 \\ 7 & 3 \end{pmatrix}^\mathsf{T} = \begin{pmatrix} 10 & 7 \\ -5 & 3 \end{pmatrix}
+$$
+
+Thus, the inverse of matrix $\mathbf{A}$ should be:
+
+$$
+\mathbf A^{-1} = \frac{1}{65} \begin{pmatrix} 10 & 7 \\ -5 & 3 \end{pmatrix} = \begin{pmatrix} \frac{2}{13} & \frac{7}{65} \\ -\frac{1}{13} & \frac{3}{65} \end{pmatrix}
+$$
+
+We know the solution should be:
+
+$$
+\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} \frac{2}{13} & \frac{7}{65} \\ -\frac{1}{13} & \frac{3}{65} \end{pmatrix} \begin{pmatrix} -11 \\ 25 \end{pmatrix}
+$$
+
+Thus, doing matrix multiplication to obtain $x$ and $y$:
+
+-   $x =\frac{2}{13}(-11) + \frac{7}{65}(25) = -\frac{22}{13} + \frac{35}{13} = \frac{13}{13}=1$
+-   $y=-\frac{1}{13}(-11) + \frac{3}{65}(25) = \frac{11}{13}+ \frac{15}{13} = \frac{26}{13} = 2$
+
+The solution to this system of equations is: $(1, 2)$.
+:::
+
+**Cramer's rule** is another rule to solve equations, only for square matrices. It is not super commonly used. Given the system of equations:
+
+$$
+\mathbf{Ax} = \mathbf y
+$$
+
+The element $x_i$ is defined as:
+
+$$
+x_i = \frac{|\mathbf B_i|}{\mathbf A}
+$$
+
+Where $\mathbf B_i$ is a matrix obtained by taking the matrix $\mathbf A$, and replacing the $i$th column with the column vector $\mathbf y$.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Eigenvalues and Eigenvectors**
+
+### Definitions
+
+A matrix, as we discussed, can act as an operator that maps some vector to another $\mathbf A : \mathbf x \rightarrow \mathbf y$.
+
+Geometrically, vector $\mathbf x$ points in some dimensional space. Then the matrix $\mathbf A$ comes along, and transforms it into a different vector $\mathbf x$, which might flip the direction, or rotate, or change its norm, etc. Sometimes, $\mathbf y$ will stay in the same direction or opposite direction (along the same line) as the original, even after the operator.
+
+Basically, an eigenvector of matrix $\mathbf A$ is a vector $\mathbf x$, that does not change its direction (stays on the same line) when you apply the operator $\mathbf A$ to get vector $\lambda \mathbf x$. Mathematically:
+
+$$
+\mathbf{Ax} = \lambda \mathbf x
+$$
+
+The $\lambda$ is an eigenvalue that corresponds to the eigenvector.
+
+<br />
+
+### Computing Eigenvalues
+
+Let us start with the eigenvector formula:
+
+$$
+\mathbf{Ax} = \lambda \mathbf x
+$$
+
+We can multiply the right side by the identity matrix (which does not change the result):
+
+$$
+\mathbf{Ax} = \lambda \mathbf {Ix}
+$$
+
+Now, let us move everything to one side, and simplify:
+
+$$
+\begin{split}
+\mathbf{Ax} - \lambda \mathbf {Ix} & = 0 \\
+(\mathbf A - \lambda \mathbf I) \mathbf x & = 0
+\end{split}
+$$
+
+$(\mathbf A - \lambda \mathbf I)$ is an singular matrix, meaning determinant $|(\mathbf A - \lambda \mathbf I)| = 0$. All values of $\lambda$ that solve this determinant equation will be eigenvalues of the matrix.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Solving for Eigenvalues
+
+We know $|(\mathbf A - \lambda \mathbf I)| = 0$. Let us say:
+
+$$
+\mathbf A = \begin{pmatrix} 2 & 1 \\ 3 & 4 \end{pmatrix}, \quad \lambda \mathbf I \begin{pmatrix} \lambda & 0 \\ 0 & \lambda \end{pmatrix}
+$$
+
+Thus:
+
+$$
+\mathbf A - \lambda \mathbf I = \begin{pmatrix} 2 - \lambda & 1 \\ 3 & 4 - \lambda \end{pmatrix}
+$$
+
+We know the determinant should equal 0. We can solve for $\lambda$:
+
+$$
+\begin{split}
+0 & = |(\mathbf A - \lambda \mathbf I)| \\
+0 & = (2-\lambda)(4-\lambda) - 1(3) \\
+0 & = 8-2\lambda - 4 \lambda +\lambda^2 - 4 \\
+0 & = \lambda^2 - 6\lambda +4 \\
+\end{split}
+$$
+
+Let us use the quadratic formula:
+
+$$
+\begin{split}
+\lambda & = \frac{-b ± \sqrt{b^2 - 4ac}}{2a} \\
+\lambda & = \frac{6 ± \sqrt{36 - 4(1)(4)}}{2(1)} \\
+\lambda & = \frac{6 ± \sqrt{20}}{2} \\
+\lambda & = 3 ± \frac{\sqrt{20}}{2} \\
+\lambda & = 3 ± \frac{2 \sqrt{5}}{2} \\
+\lambda & = 3 ± \sqrt{5}
+\end{split}
+$$
+
+Thus, we have found our eigenvalues.
+:::
+
+<br />
+
+### Calculating Eigenvectors
+
+Let us say we have the matrix $\mathbf{A}$:
+
+$$
+\mathbf A = \begin{pmatrix} 2 & 3 \\ 2 & 1 \end{pmatrix}
+$$
+
+First, you need to calculate the eigenvalues $\lambda$ (as shown in the previous section).
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Calculating Eigenvalues
+
+We know $|(\mathbf A - \lambda \mathbf I)| = 0$.
+
+$$
+\mathbf A - \lambda \mathbf I = \begin{pmatrix} 2 - \lambda & 3 \\ 2 & 1 - \lambda \end{pmatrix}
+$$
+
+Now solve $|(\mathbf A - \lambda \mathbf I)| = 0$.
+
+$$
+\begin{split}
+0 & = |(\mathbf A - \lambda \mathbf I)| \\
+0 & = (2 - \lambda)(1- \lambda) - 2(3) \\
+0 & = 2 -2 \lambda - \lambda + \lambda^2 - 6 \\
+0 & = \lambda ^2 - 3\lambda - 4 \\
+0 & = (\lambda - 4)(\lambda + 1) \\
+\lambda & = 4, -1
+\end{split}
+$$
+:::
+
+For every eigenvalue, you will have an eigenvector that makes the eigenvector equation $\mathbf{Ax} = \lambda \mathbf x$ true. From above:
+
+$$
+\begin{split}
+& \mathbf{Ax} = 4 \mathbf x \\
+& \mathbf{Ax} = -1 \mathbf x
+\end{split}
+$$
+
+Remember, $\mathbf x$ is a vector here of 2 elements, $x_1, x_2$ - but we only have one equation for each eigenvalue pair. This means there will be one solution without a unique solution.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Eigenvalues and Non-Unique Solutions
+
+It might seem simple to just solve for our $\mathbf x$ with two unknowns $x_1, x_2$.
+
+But the issue is - our equations are not linearly independent, so we do not have enough information to solve for a unique solution for one.
+
+This is actually okay - why? Well, take a look at these potential eigenvectors:
+
+$$
+\begin{pmatrix} 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 2 \\ 0 \end{pmatrix}, \begin{pmatrix} 3 \\ 0 \end{pmatrix}
+$$
+
+These are different vectors - but they are all eigenvectors. This is because of the equation $\mathbf{Ax} = \lambda \mathbf x$ - if both sides have vector $(1 \ 0)$ multiplied by a constant (like the 2nd and 3rd vectors), the equation is still equal.
+
+Thus, eigenvectors are not defined uniquely - only up to a singular multiplicative constant.
+:::
+
+What we typically do is define $x_1 = 1$ (there are some cases where this does not work). Using this, we can solve for the answer.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Calculating Eigenvectors
+
+Let us continue the same example from before.
+
+$$
+\mathbf A = \begin{pmatrix} 2 & 3 \\ 2 & 1 \end{pmatrix}, \quad \lambda = 4, -1, \quad \mathbf x = \begin{pmatrix} 1 \\ c \end{pmatrix}
+$$
+
+Let us solve for the eigenvalue of $\lambda = 4$.
+
+$$
+\begin{split}
+\mathbf{Ax} & = 4 \mathbf x \\
+\begin{pmatrix} 2 & 3 \\ 2 & 1 \end{pmatrix}\begin{pmatrix} 1 \\ c \end{pmatrix} & = 4\begin{pmatrix} 1 \\ c \end{pmatrix} \\
+\begin{pmatrix} 2+3c \\ 2+c \end{pmatrix} & = \begin{pmatrix} 4 \\ 4c \end{pmatrix}
+\end{split}
+$$
+
+That gives us two equations:
+
+$$
+\begin{split}
+& 2 + 3c = 4 \\
+& 2 + c = 4c
+\end{split}
+$$
+
+The answer is $c = \frac{2}{3}$ (both answers give us the equation).
+
+Thus, the eigenvector with $\lambda = 4$ is:
+
+$$
+\mathbf x = \begin{pmatrix} 1 \\ \frac{2}{3} \end{pmatrix}
+$$
+
+We can do the same for $\lambda = -1$, and we will get eigenvector:
+
+$$
+\mathbf x = \begin{pmatrix} 1 \\ -1 \end{pmatrix}
+$$
+:::
+
+<br />
+
+### Eigenvector Decomposition
+
+Matrix decomposition is to take a matrix $\mathbf A$, and decompose it into other matrices, that when multiplied together, get the original matrix.
+
+If matrix $\mathbf A$ has unique eigenvalues, you can write:
+
+$$
+\mathbf A = \mathbf {QDQ}^{-1}
+$$
+
+Where $\mathbf Q$ is made up of eigenvectors of matrix $\mathbf A$, and $\mathbf D$ is a diagonal matrix with the eigenvalues $\lambda$ on the diagonal:
+
+$$
+\mathbf D = \begin{pmatrix} \lambda_1 & 0 \\ 0 & \lambda_2 \end{pmatrix}, \quad
+\mathbf Q = \begin{pmatrix} \mathbf x_1 & \mathbf x_2\end{pmatrix}
+$$
+
+Eigenvectors decomposition has a few uses:
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Taking the Power of Matrices
+
+Let us say you want to find $\mathbf A^z$. We can use matrix decomposition for this:
+
+$$
+\mathbf A^z = {QDQ}^{-1}{QDQ}^{-1}{QDQ}^{-1}\dots
+$$
+
+Notice how the $\mathbf{Q}^{-1} \mathbf Q$ occurs quite frequently, and we know by properties of inverses, that $\mathbf{Q}^{-1} \mathbf Q = \mathbf I$, and multiplying by $\mathbf I$ does nothing.
+
+Thus, we can rewrite the formula above as:
+
+$$
+\mathbf A^z = \mathbf{QD}^z\mathbf Q^{-1}
+$$
+
+This is much simpler than calculating $\mathbf A^z$, since taking diagonal matrix to a power is defined as:
+
+$$
+\mathbf D^z = \begin{pmatrix} \lambda_1^z & 0 \\ 0 & \lambda_2^z\end{pmatrix}
+$$
+
+Which is much easier to do.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Finding Determinants
+
+Let us say you want to find the determinant of $\mathbf A$. The following is true:
+
+$$
+\begin{split}
+\det (\mathbf A) & = \det(\mathbf{QD}^z\mathbf Q^{-1}) \\
+& = \det (\mathbf Q) \det (\mathbf D) \det (\mathbf Q^{-1}) \\
+& = \det (\mathbf Q) \det (\mathbf D) \frac{1}{\det (\mathbf Q)} \\
+& = \det (\mathbf D)
+\end{split}
+$$
+
+Since $\mathbf D$ is diagonal, the determinant of a diagonal matrix is just the product of the diagonal elements. Thus:
+
+$$
+\det (\mathbf A) = \prod_i \lambda_i
+$$
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Principle Components Analysis
+
+[Principle Components Analysis](https://politicalscience.github.io/multivariate/1.html) (PCA) is used when matrix $\mathbf A$ is symmetric, positive semi-definite.
+
+-   This means the eigenvectors are orthogonal (perpendicular) to each other.
+-   This means eigenvalues will always be real and non-negative.
+
+PCA is done on the covariance matrix, which is symmetric and positive semi-definite.
+
+It is a data reduction technique commonly used in statistics and data science.
+
+-   The eigenvectors of the covariance matrix form the principle components of thee system.
+-   The eigenvalues tell us how much of the variance each component explains (more important principle components have higher eigenvalues).
+:::
