@@ -245,7 +245,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./quant10.qmd" class="sidebar-item-text sidebar-link">
- <span class="menu-text">10 New Advances in Causal Inference</span></a>
+ <span class="menu-text">10 Synthetic Controls Method</span></a>
   </div>
 </li>
         <li class="px-0"><hr class="sidebar-divider hi "></li>
@@ -266,19 +266,19 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model3.qmd" class="sidebar-item-text sidebar-link">
+  <a href="./model3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Random Forests and Bagging</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model4.qmd" class="sidebar-item-text sidebar-link">
+  <a href="./model4.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Principle Components Analysis</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model5.qmd" class="sidebar-item-text sidebar-link">
+  <a href="./model5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Factor Analysis Models</span></a>
   </div>
 </li>
@@ -516,7 +516,7 @@ S(\hat{\boldsymbol\beta}) &amp; = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mat
 \end{align}
 \]</span></p>
 <p>Those are our coefficient solutions to OLS. With the estimated parameters <span class="math inline">\(\widehat{\beta_0}, \dots, \widehat{\beta_k}\)</span>, we now have a best-fit line, called the <strong>fitted values</strong>.</p>
-<p>For more detailed analysis of the OLS estimator, see the <a href="https://politicalscience.github.io/causal/0.html">causal inference</a> section.</p>
+<p>We will discuss the OLS estimator in far more detail in the <a href="./quant3.html">next chapter</a>.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -650,8 +650,7 @@ Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
 0 &amp; 0 &amp; \dots &amp; \sigma^2
 \end{pmatrix}
 \]</span></p>
-<p>Or in other words, no matter the values of any explanatory variable, the error term variance is <strong>constant</strong>.</p>
-<p>If this is false, then we have <u>heteroscedasticity</u>.</p>
+<p>Or in other words, no matter the values of any explanatory variable, the error term variance is <strong>constant</strong>. If this is false, then we have <u>heteroscedasticity</u>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -672,8 +671,8 @@ Intuitive Visualisation of Homoscedasticity
 </div>
 </div>
 </div>
-<p>If you have homoscedasticity, you should use normal OLS standard errors.</p>
-<p>If you have heteroscedasticity, you should use robust OLS standard errors. You should also use robust standard errors if you are not sure which errors to use.</p>
+<p>If you have homoscedasticity, you should use normal OLS standard errors (derived below).</p>
+<p>If you have heteroscedasticity, you should use robust OLS standard errors. You should also use robust standard errors if you are not sure which errors to use. We will not derive robust standard errors in this chapter.</p>
 <p><br></p>
 </section>
 <section id="deriving-standard-errors" class="level3">
@@ -724,8 +723,8 @@ Var(\boldsymbol{\hat\beta} | \mathbf X) &amp; = (\mathbf X^\mathsf{T} \mathbf X)
 &amp; =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{inverses } \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ cancel})
 \end{align}
 \]</span></p>
-<p>However, we do not actually know what <span class="math inline">\(\sigma^2\)</span> is. We can estimate it with <span class="math inline">\(\hat\sigma^2\)</span> (discussed <a href="https://politicalscience.github.io/regression/1.html#residual-standard-deviation">here</a>).</p>
-<p>The standard errors are the square root of the variance. Thus, our standard errors for any coefficient estimate <span class="math inline">\(\hat\beta_j\)</span> are:</p>
+<p>However, we do not actually know what <span class="math inline">\(\sigma^2\)</span> is. We can estimate it with <span class="math inline">\(\hat\sigma^2\)</span> (discussed <a href="#residual-standard-deviation">here</a>).</p>
+<p>Thus, our standard errors (square root of variance) for any coefficient estimate <span class="math inline">\(\hat\beta_j\)</span> are:</p>
 <p><span class="math display">\[
 se(\hat\beta_j) = \hat\sigma \sqrt{(\mathbf X^T \mathbf X)^{-1}_{jj}}
 \]</span></p>
@@ -733,7 +732,7 @@ se(\hat\beta_j) = \hat\sigma \sqrt{(\mathbf X^T \mathbf X)^{-1}_{jj}}
 </section>
 <section id="t-tests" class="level3">
 <h3 class="anchored" data-anchor-id="t-tests">T-Tests</h3>
-<p>In regression, our typical hypotheses are:</p>
+<p>In the last chapter, we discussed the basics of hypothesis testing. In regression, our typical hypotheses are:</p>
 <ul>
 <li><span class="math inline">\(H_0 : \beta_j = 0\)</span> (i.e.&nbsp;there is no relationship between <span class="math inline">\(x_j\)</span> and <span class="math inline">\(y\)</span>).</li>
 <li><span class="math inline">\(H_1:\beta_j ≠ 0\)</span> (i.e.&nbsp;there is a relationship between <span class="math inline">\(x_j\)</span> and <span class="math inline">\(y\)</span>).</li>
@@ -783,7 +782,7 @@ t = \frac{\widehat{\beta_1} - H_0}{\widehat{se}(\widehat{\beta_1})}
 </section>
 <section id="confidence-intervals" class="level3">
 <h3 class="anchored" data-anchor-id="confidence-intervals">Confidence Intervals</h3>
-<p>The 95% confidence intervals of coefficients have the following bounds:</p>
+<p>In the last chapter, we discussed the idea of confidence intervals. The 95% confidence intervals of coefficients have the following bounds:</p>
 <p><span class="math display">\[
 \widehat{\beta_j} - 1.96 \widehat{se}(\widehat{\beta_j}), \ \ \widehat{\beta_j} + 1.96 \widehat{se}(\widehat{\beta_j})
 \]</span></p>
@@ -796,7 +795,8 @@ t = \frac{\widehat{\beta_1} - H_0}{\widehat{se}(\widehat{\beta_1})}
 </section>
 <section id="f-tests" class="level3">
 <h3 class="anchored" data-anchor-id="f-tests">F-Tests</h3>
-<p>F-tests are used to test more than one coefficient at a time. The hypotheses will be:</p>
+<p>F-tests are used to test more than one coefficient at a time. For example, you might want to test if two variables or coefficients are jointly significant (this will become more clear in the extensions of regression).</p>
+<p>Our hypotheses will be:</p>
 <ul>
 <li><span class="math inline">\(M_0 : y = \beta_0 + \beta_1 x_1 + \dots + \beta_g x_g + u_i\)</span> (the smaller null model).</li>
 <li><span class="math inline">\(M_a : y = \beta_0 + \beta_1x_1 + \dots + \beta_g x_g + \dots + \beta_kx_k + u_i\)</span> (the bigger model with additional variables).</li>
@@ -830,7 +830,8 @@ F = \frac{(SSR_0 - SSR_a) / (k_a - k_0)}{SSR_a /(n - k_a - 1)}
 </section>
 <section id="predictive-inference" class="level3">
 <h3 class="anchored" data-anchor-id="predictive-inference">Predictive Inference</h3>
-<p>We can predict using the linear regression by plugging in explanatory variable values, and finding the predicted <span class="math inline">\(\widehat{y_i}\)</span>.</p>
+<p>In political science, we are mostly concerned with the relationship between variables.</p>
+<p>But sometimes, prediction is also a useful tool. We can predict using the linear regression by plugging in explanatory variable values, and finding the predicted <span class="math inline">\(\widehat{y_i}\)</span>.</p>
 <p><span class="math display">\[
 \begin{align}
 \hat{\mathbf y} &amp; = \mathbf X \hat{\boldsymbol\beta}  \\
@@ -841,6 +842,7 @@ F = \frac{(SSR_0 - SSR_a) / (k_a - k_0)}{SSR_a /(n - k_a - 1)}
 <p><span class="math display">\[
 \widehat{y_i} - 1.96 \hat\sigma, \ \widehat{y_i} + 1.96 \hat\sigma
 \]</span></p>
+<p>Note: It is pretty rare to just use linear regression for predictions, since most relationships are not linear. In the <em>further statistical models</em> part of this collection, there are some more accurate predictive methods.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -850,7 +852,7 @@ F = \frac{(SSR_0 - SSR_a) / (k_a - k_0)}{SSR_a /(n - k_a - 1)}
 <h1><strong>Extensions</strong></h1>
 <section id="categorical-explanatory-variables" class="level3">
 <h3 class="anchored" data-anchor-id="categorical-explanatory-variables">Categorical Explanatory Variables</h3>
-<p>Take an explanatory variable <span class="math inline">\(x\)</span>, which has <span class="math inline">\(n\)</span> number of categories <span class="math inline">\(1, \dots, n\)</span>. To include <span class="math inline">\(x\)</span> in our regression, we would create <span class="math inline">\(n-1\)</span> dummy variables, to create the following regression model:</p>
+<p>Take an explanatory variable <span class="math inline">\(x\)</span>, which has <span class="math inline">\(n\)</span> number of categories <span class="math inline">\(1, \dots, n\)</span>. To include <span class="math inline">\(x\)</span> in our regression, we would create <span class="math inline">\(n-1\)</span> dummy (binary) variables, to create the following regression model:</p>
 <p><span class="math display">\[
 E(y_i|x_i) = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{n-1 \ i}
 \]</span></p>
@@ -896,7 +898,7 @@ E(y|x) = \beta_0 + \beta_1x_M + \beta_2 x_H
 </div>
 </div>
 </div>
-<p>Each coefficient <span class="math inline">\(\beta_j\)</span>’s statistical significance is a difference-in-means significance test, not the significance of the categorical variable as a whole. To find if the entire categorical variable is significant, you should use a F-test.</p>
+<p>Each coefficient <span class="math inline">\(\beta_j\)</span>’s statistical significance is a difference-in-means significance test, not the significance of the categorical variable as a whole. To find if the entire categorical variable is significant, you should use a <a href="#f-tests">F-test</a>.</p>
 <p><br></p>
 </section>
 <section id="fixed-effects" class="level3">
@@ -1102,7 +1104,7 @@ x_i &amp; = -\widehat{\beta_1}/2 \widehat{\beta_2}
 </section>
 <section id="logarithmic-transformations" class="level3">
 <h3 class="anchored" data-anchor-id="logarithmic-transformations">Logarithmic Transformations</h3>
-<p>Logarithmic transformations are often used to change skewed variables into normally distributed variables.</p>
+<p>Logarithmic transformations are often used to change skewed variables into normally distributed variables. These are not as common in political science as compared to economics, but can be useful in certain situations.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1273,19 +1275,24 @@ y_i &amp; = e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}
 </section>
 <section id="implementation-in-r" class="level1">
 <h1><strong>Implementation in R</strong></h1>
-<p>You will need package <em>fixest</em>.</p>
+<p>You will need package <em>fixest</em> and <em>estimatr</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(estimatr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Regression with normal standard errors can be done with the <em>lm()</em> function:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3, <span class="at">data =</span> mydata)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Regression with robust standard errors can be done with the <em>feols()</em> function:</p>
+<p>Regression with robust standard errors can be done with the <em>feols()</em> function or <em>lm_robust()</em> function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">feols</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3, <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># feols</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">feols</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3, <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># lm robust</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm_robust</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3, <span class="at">data =</span> mydata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Output will include coefficients, standard errors, p-values, and more.</p>
 <div class="callout callout-style-simple callout-note callout-titled">

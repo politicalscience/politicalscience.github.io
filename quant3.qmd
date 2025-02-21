@@ -218,7 +218,7 @@ Nonparametric Bootstrap is also used in some more complex estimators where it is
 
 ### Deriving the Estimator
 
-Our [linear regression](https://politicalscience.github.io/regression/1.html) model, and the fitted values $\hat{\mathbf{y}}$, take the following form:
+Our [linear regression](quant2.qmd) model, and the fitted values $\hat{\mathbf{y}}$, take the following form:
 
 $$
 \mathbf y = \mathbf X \boldsymbol\beta + \mathbf u, \qquad \hat{\mathbf y} = \mathbf X \hat{\boldsymbol\beta}
@@ -300,7 +300,7 @@ So essentially, [we have **partialed out** the effect of the other explanatory v
 
 ### OLS as an Unbiased Estimator
 
-OLS is an [unbiased estimator](https://politicalscience.github.io/causal/0.html#unbiased-estimators) of the relationship between any $x_j$ and $y$ under 4 conditions:
+OLS is an [unbiased estimator](#unbiased-estimators) of the relationship between any $x_j$ and $y$ under 4 conditions:
 
 1.  **Linearity** in parameters: the model of the population (data generating process) can be modelled as $\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u$.
 2.  **Random Sampling**: the observations in our sample are randomly sampled.
@@ -379,56 +379,7 @@ Essentially, if you see a pattern in the residual plot, it is likely heterosceda
 
 The Gauss-Markov Theorem is one of the main reasons we focus so heavily on the OLS estimator. If we believe our data-generating structure to be linear, then OLS is the best unbiased estimator we can use, since it has the lowest variance.
 
-<br />
-
-### Deriving Variance
-
-Let us assume homoscedasticity. We want to find the variance of our estimator, $Var(\boldsymbol{\hat\beta} | \mathbf X)$. Let us start off with our OLS solution. We can simplify as follows:
-
-$$
-\begin{align}
-\boldsymbol{\hat\beta} & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y \\
-& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}\color{blue}{(\mathbf X \boldsymbol\beta + \mathbf u)} && \color{black}(\text{plug in } \color{blue}{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}\color{black}) \\
-& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&(\text{multiply out})\\
-& = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&( \ \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
-& = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{identity property of } \mathbf I)
-\end{align}
-$$
-
-$$
-Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u \ | \ \mathbf X)
-$$
-
-$\boldsymbol\beta$ is a vector of fixed constants. $(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u$ can be imagined as a matrix of fixed constants, since we are conditioning the above variance on $\mathbf X$ (so for each $\mathbf X$, the statement is fixed).
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Mathematical Lemma
-
-If $\mathbf u$ is an $n$ dimensional vector of random variables, $\mathbf c$ is an $m$ dimensional vector, and $\mathbf B$ is an $n \times m$ dimensional matrix with fixed constants, then the following is true:
-
-$$
-Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^\mathsf{T}
-$$
-
-I will not prove this lemma here, but it is provable.
-:::
-
-With the Lemma above, and with the definition of homoscedasticity, we can simplify:
-
-$$
-\begin{align}
-Var(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) [(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} && (\text{lemma})\\
-& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) \color{blue}{\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}} && \color{black}( \ \color{blue}{[(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} = \mathbf X(\mathbf X^\mathsf{T} \mathbf X)^{-1}}\color{black})\\
-& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\sigma^2 \mathbf I_n}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\color{blue}{Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n}\color{black}) \\
-& =  \color{red}{\sigma^2} \color{black} (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf I_n \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{move scalar } \color{red}{\sigma^2}\color{black})\\
-& =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{identity property of } \mathbf I_n)\\
-& =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{inverses } \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ cancel})
-\end{align}
-$$
-
-However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed [here](https://politicalscience.github.io/regression/1.html#residual-standard-deviation)).
-
-We can use these standard errors (square root of variance) for [hypothesis testing](https://politicalscience.github.io/regression/1.html#t-tests), if we believe homoscedasticity is met. If not, we will need to use **robust standard errors**, which we will not derive here. In modern econometrics, it has become more common to use [robust standard errors by default]{.underline}, unless we can definitively prove homoscedasticity is met.
+The actual variance of OLS under homoscedasticity was derived in the [previous chapter](quant2.qmd#deriving-standard-errors).
 
 <br />
 
@@ -466,7 +417,7 @@ $$
 $$
 :::
 
-Using vector notation, [law of large numbers](https://politicalscience.github.io/causal/0.html#asymptotically-consistent-estimators), and zero-mean and exogeneity condition, we can simplify the above to:
+Using vector notation, [law of large numbers](#asymptotically-consistent-estimators), and zero-mean and exogeneity condition, we can simplify the above to:
 
 $$
 \begin{align}

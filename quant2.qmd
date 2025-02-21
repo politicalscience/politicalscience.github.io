@@ -144,7 +144,7 @@ $$
 
 Those are our coefficient solutions to OLS. With the estimated parameters $\widehat{\beta_0}, \dots, \widehat{\beta_k}$, we now have a best-fit line, called the **fitted values**.
 
-For more detailed analysis of the OLS estimator, see the [causal inference](https://politicalscience.github.io/causal/0.html) section.
+We will discuss the OLS estimator in far more detail in the [next chapter](quant3.qmd).
 
 <br />
 
@@ -274,9 +274,7 @@ Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
 \end{pmatrix}
 $$
 
-Or in other words, no matter the values of any explanatory variable, the error term variance is **constant**.
-
-If this is false, then we have [heteroscedasticity]{.underline}.
+Or in other words, no matter the values of any explanatory variable, the error term variance is **constant**. If this is false, then we have [heteroscedasticity]{.underline}.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Intuitive Visualisation of Homoscedasticity
@@ -292,9 +290,9 @@ The heteroscedasticity residuals have a clear pattern - the up-down variance is 
 Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.
 :::
 
-If you have homoscedasticity, you should use normal OLS standard errors.
+If you have homoscedasticity, you should use normal OLS standard errors (derived below).
 
-If you have heteroscedasticity, you should use robust OLS standard errors. You should also use robust standard errors if you are not sure which errors to use.
+If you have heteroscedasticity, you should use robust OLS standard errors. You should also use robust standard errors if you are not sure which errors to use. We will not derive robust standard errors in this chapter.
 
 <br />
 
@@ -345,9 +343,9 @@ Var(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^\mathsf{T} \mathbf X)^{-1
 \end{align}
 $$
 
-However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed [here](https://politicalscience.github.io/regression/1.html#residual-standard-deviation)).
+However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed [here](#residual-standard-deviation)).
 
-The standard errors are the square root of the variance. Thus, our standard errors for any coefficient estimate $\hat\beta_j$ are:
+Thus, our standard errors (square root of variance) for any coefficient estimate $\hat\beta_j$ are:
 
 $$
 se(\hat\beta_j) = \hat\sigma \sqrt{(\mathbf X^T \mathbf X)^{-1}_{jj}}
@@ -357,7 +355,7 @@ $$
 
 ### T-Tests
 
-In regression, our typical hypotheses are:
+In the last chapter, we discussed the basics of hypothesis testing. In regression, our typical hypotheses are:
 
 -   $H_0 : \beta_j = 0$ (i.e. there is no relationship between $x_j$ and $y$).
 -   $H_1:\beta_j ≠ 0$ (i.e. there is a relationship between $x_j$ and $y$).
@@ -400,7 +398,7 @@ NOTE: this is not causality - we are only looking at the relationship. Causality
 
 ### Confidence Intervals
 
-The 95% confidence intervals of coefficients have the following bounds:
+In the last chapter, we discussed the idea of confidence intervals. The 95% confidence intervals of coefficients have the following bounds:
 
 $$
 \widehat{\beta_j} - 1.96 \widehat{se}(\widehat{\beta_j}), \ \ \widehat{\beta_j} + 1.96 \widehat{se}(\widehat{\beta_j})
@@ -416,7 +414,9 @@ If the confidence interval contains 0, we cannot conclude a relationship between
 
 ### F-Tests
 
-F-tests are used to test more than one coefficient at a time. The hypotheses will be:
+F-tests are used to test more than one coefficient at a time. For example, you might want to test if two variables or coefficients are jointly significant (this will become more clear in the extensions of regression).
+
+Our hypotheses will be:
 
 -   $M_0 : y = \beta_0 + \beta_1 x_1 + \dots + \beta_g x_g + u_i$ (the smaller null model).
 -   $M_a : y = \beta_0 + \beta_1x_1 + \dots + \beta_g x_g + \dots + \beta_kx_k + u_i$ (the bigger model with additional variables).
@@ -442,7 +442,9 @@ The p-value we get is the probability of getting a test statistic equally or mor
 
 ### Predictive Inference
 
-We can predict using the linear regression by plugging in explanatory variable values, and finding the predicted $\widehat{y_i}$.
+In political science, we are mostly concerned with the relationship between variables.
+
+But sometimes, prediction is also a useful tool. We can predict using the linear regression by plugging in explanatory variable values, and finding the predicted $\widehat{y_i}$.
 
 $$
 \begin{align}
@@ -457,6 +459,8 @@ $$
 \widehat{y_i} - 1.96 \hat\sigma, \ \widehat{y_i} + 1.96 \hat\sigma
 $$
 
+Note: It is pretty rare to just use linear regression for predictions, since most relationships are not linear. In the *further statistical models* part of this collection, there are some more accurate predictive methods.
+
 <br />
 
 <br />
@@ -467,7 +471,7 @@ $$
 
 ### Categorical Explanatory Variables
 
-Take an explanatory variable $x$, which has $n$ number of categories $1, \dots, n$. To include $x$ in our regression, we would create $n-1$ dummy variables, to create the following regression model:
+Take an explanatory variable $x$, which has $n$ number of categories $1, \dots, n$. To include $x$ in our regression, we would create $n-1$ dummy (binary) variables, to create the following regression model:
 
 $$
 E(y_i|x_i) = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{n-1 \ i}
@@ -506,7 +510,7 @@ The expected/predicted $y$ (crime rate) for each category is:
 -   High (H): $\beta_0 + \beta_2$.
 :::
 
-Each coefficient $\beta_j$'s statistical significance is a difference-in-means significance test, not the significance of the categorical variable as a whole. To find if the entire categorical variable is significant, you should use a F-test.
+Each coefficient $\beta_j$'s statistical significance is a difference-in-means significance test, not the significance of the categorical variable as a whole. To find if the entire categorical variable is significant, you should use a [F-test](#f-tests).
 
 <br />
 
@@ -667,7 +671,7 @@ We can go beyond quadratic - as long as we always include lower degree terms in 
 
 ### Logarithmic Transformations
 
-Logarithmic transformations are often used to change skewed variables into normally distributed variables.
+Logarithmic transformations are often used to change skewed variables into normally distributed variables. These are not as common in political science as compared to economics, but can be useful in certain situations.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Logging a Skewed Variable
@@ -794,10 +798,11 @@ $$
 
 # **Implementation in R**
 
-You will need package *fixest*.
+You will need package *fixest* and *estimatr*.
 
 ```{r, eval = FALSE}
 library(fixest)
+library(estimatr)
 ```
 
 Regression with normal standard errors can be done with the *lm()* function:
@@ -807,11 +812,15 @@ model <- lm(y ~ x1 + x2 + x3, data = mydata)
 summary(model)
 ```
 
-Regression with robust standard errors can be done with the *feols()* function:
+Regression with robust standard errors can be done with the *feols()* function or *lm_robust()* function:
 
 ```{r, eval = FALSE}
+# feols
 model <- feols(y ~ x1 + x2 + x3, data = mydata, se = "hetero")
 summary(model)
+
+# lm robust
+model <- lm_robust(y ~ x1 + x2 + x3, data = mydata)
 ```
 
 Output will include coefficients, standard errors, p-values, and more.

@@ -19,7 +19,7 @@ Use the right sidebar for quick navigation. R-code provided at the bottom.
 Without randomisation, we need some other way to account for pre-treatment covariates that may be confounding and causing selection bias. Controlling for a set of nodes/confounders $X$ can identify the causal effect of $D \rightarrow Y$, if:
 
 1.  No node within set $X$ is a descendant of $D$ (no element within $X$ results from $D$).
-2.  The nodes within set $X$ [block all back-door paths](https://politicalscience.github.io/causal/1.html#blocked-paths) from $D \rightarrow Y$.
+2.  The nodes within set $X$ [block all back-door paths](quant4.qmd#blocked-paths) from $D \rightarrow Y$.
 
 ![](images/clipboard-378311705.png){fig-align="center" width="45%"}
 
@@ -87,7 +87,7 @@ That means our theory is that age $X$ affects selection into treatment $D$. Youn
 
 ### Identification of the ATE
 
-With our assumptions above, we can identify the ATE. We start with the [conditional average treatment effect](https://politicalscience.github.io/causal/1.html#conditional-average-treatment-effect-cate), conditional on some value of confounders $X_i = x$. Note the properties shown in @eq-independence .
+With our assumptions above, we can identify the ATE. We start with the [conditional average treatment effect](quant4.qmd#conditional-average-treatment-effect-cate), conditional on some value of confounders $X_i = x$. Note the properties shown in @eq-independence .
 
 $$
 \begin{align}
@@ -165,7 +165,7 @@ Even when all assumptions are met for identification of the ATE, the $\tau_{ATE}
 
 ### Ordinary Least Squares Estimator
 
-OLS is a natural approach for controlling for confounders $X$, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](https://politicalscience.github.io/causal/0.html#regression-anatomy-theorem). OLS is a good estimator of $\tau_{ATE}$ under 2 conditions:
+OLS is a natural approach for controlling for confounders $X$, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](quant3.qmd#regression-anatomy-theorem). OLS is a good estimator of $\tau_{ATE}$ under 2 conditions:
 
 1.  **Constant treatment effect**: $\tau_i = Y_{1i} - Y_{0i}$ for all units $i$.
 2.  **Linearity**: Potential outcomes are linear, and can be written as:
@@ -195,7 +195,7 @@ You should be cautious using OLS when assumption 2, **linearity**, is violated. 
 
 What if potential outcomes $Y_i(d)$ is an unknown and non-linear function of $d$ and $X_i$.
 
-We know the OLS is the [best linear predictor of the conditional expectation function](https://politicalscience.github.io/causal/0.html#ols-as-a-conditional-expectation-function) in terms of mean squared error. Thus, $\beta_1$ will provide the best linear approximation to the population regression function.
+We know the OLS is the [best linear predictor of the conditional expectation function](quant3.qmd#ols-as-a-conditional-expectation-function) in terms of mean squared error. Thus, $\beta_1$ will provide the best linear approximation to the population regression function.
 
 This does not mean it is good - just the best linear approximation.
 :::
@@ -346,7 +346,7 @@ $$
 
 ### Matching Estimator
 
-We have a [missing data problem](https://politicalscience.github.io/causal/1.html#observed-outcomes-and-missing-data) in causal inference: we do not know all the potential outcomes. Matching "estimates" missing potential outcomes of a unit.
+We have a [missing data problem](quant4.qmd#observed-outcomes-and-missing-data) in causal inference: we do not know all the potential outcomes. Matching "estimates" missing potential outcomes of a unit.
 
 For each observation in the treated group, matching finds an observation in the untreated group that have the most similar values of a set of pre-treatment covariates $X$. Thus, we have pairs of treatment-control observations that act as counterfactuals. We can estimate the ATT as the average difference in observed outcomes within the pairs:
 
@@ -438,7 +438,7 @@ The figure on the right illustrates this. $d$ represents the dimensions. We can 
 Thus, with a bigger space, the distance between two units increases, so you get worse matches.
 :::
 
-This curse of dimensionality creates a [bias](https://politicalscience.github.io/causal/0.html#unbiased-estimators) problem - since we get non-exact matches. The more dimensions you add, the worse it becomes.
+This curse of dimensionality creates a [bias](quant3.qmd#unbiased-estimators) problem - since we get non-exact matches. The more dimensions you add, the worse it becomes.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## More on Bias
@@ -464,7 +464,7 @@ $$
 \pi(X_i) \equiv Pr(D_i = 1|X_i)
 $$
 
-When supposing the [conditional ignorability and common support assumptions](https://politicalscience.github.io/causal/3.html#identification-assumptions), the propensity score $\pi(X_i)$ has the balancing property: $D_i \perp X_i \ | \ \pi(X_i)$. This implies that conditional ignorability holds on the propensity scores alone:
+When supposing the [conditional ignorability and common support assumptions](#identification-assumptions), the propensity score $\pi(X_i)$ has the balancing property: $D_i \perp X_i \ | \ \pi(X_i)$. This implies that conditional ignorability holds on the propensity scores alone:
 
 $$
 (Y_{1i}, Y_{0i}) \perp\!\!\!\!\perp D_i \ | \ \pi(X_i)
@@ -588,7 +588,7 @@ $$
 $$
 :::
 
-The IPW estimator is [asymptotically consistent](https://politicalscience.github.io/causal/0.html#asymptotically-consistent-estimators), but has very poor small sample properties. They are highly sensitive to extreme values of $\hat\pi(X_i)$. This generates high variance (inefficiency), and can produce significant bias under model mispecification.
+The IPW estimator is [asymptotically consistent](quant3.qmd#asymptotically-consistent-estimators), but has very poor small sample properties. They are highly sensitive to extreme values of $\hat\pi(X_i)$. This generates high variance (inefficiency), and can produce significant bias under model mispecification.
 
 <br />
 

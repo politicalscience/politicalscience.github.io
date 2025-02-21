@@ -1,0 +1,311 @@
+---
+title: "Introductory Statistics"
+subtitle: "Chapter 1, Quantitative Methods (Causal Inference)"
+sidebar: side
+---
+
+This chapter is about the very building blocks of statistics. We start off with a discussion over probability, random variables, and distributions. Then, we talk about the basics of statistical inference and hypothesis testing. We conclude by discussing correlations between variables and the basics of regression.
+
+------------------------------------------------------------------------
+
+# **Random Variables**
+
+### Basics of Probability
+
+An **experiment** is some process that has several different possible outcomes. The **sample space** $\Omega$ of the experiment is the set of all possible outcomes of the experiment.
+
+An **event** $A$ is some subset of outcomes of the sample space, $A \in \Omega$. The probability of event $A$ occuring, that we notate as $Pr(A)$, is the chance of some subset of outcomes $A$ occuring in relation to the set of all possible outcomes $\Omega$.
+
+Let us have two events $A$ and $B$. The following probabilities are:
+
+1.  $Pr(A \cap B)$: the probability that $A$ **and** $B$ both happen. This is called a **join probability**.
+2.  $Pr(A \cup B)$: the probability that $A$ **or** $B$ occurs - at least one occurs.
+3.  $Pr(A^c)$: the probability that **not**-$A$ occurs - so the probability that anything other than $A$ occurs. By definition, $Pr(A^c)  = 1 - Pr(A)$.
+
+Probabilities have a few **axioms**:
+
+1.  For any event $A$, there must be a non-negative probability: $Pr(A) ≥ 0$.
+2.  The probability of all possible outcomes (sample space) is 1: $Pr(\Omega) = 1$.
+
+Finally, if we have mutually exclusive events (i.e. if $A$ occurs than $B$ cannot occur at the same time), then the probability either $A$ or $B$ occurs is:
+
+$$
+Pr(A \cup B) = Pr(A)+Pr(B)
+$$
+
+This can be generalised to any number of events, as long as they are mutually exclusive.
+
+<br />
+
+### Random Variables and Distributions
+
+In statistics, we will talk a lot about random variables. Random variables are outcomes that have some randomness/uncertainty. For example, if you flip a coin, you could get heads or tails.
+
+While we do not know the outcomes of these random events, we do know at what probability things will happen. You know that if you flip a coin, you have a 50% chance you get heads.
+
+We can represent the potential outcomes of random variables, and the associated probabilities with each outcome, in a **distribution**. On the horizontal axis, we plot all possible values of the outcome, and on the vertical axis, we plot the probability of each outcome. For example, below is the distribution of a dice - there are 6 potential outcomes, each with a 1/6 probability.
+
+![](images/clipboard-713724518.png){fig-align="center" width="55%"}
+
+There are two types of random variables:
+
+1.  **Continuous random variables**: these can take any possible value between two numbers as an outcome, including 1, 3, 3.33247, etc.
+2.  **Discrete random variables**: these can only take a certain set of values, not any possible decimal. For example, a dice roll can only take the values of 1, 2, 3,..., and not 3.23478.
+
+<br />
+
+### Probability Density Functions
+
+We know that random variables can be represented by distributions. We can also describe these distributions mathematically. A **probability density function** is a function $p$ that takes one potential outcome as an input, and spits out the probability of that outcome. For example, the probability density function of a dice is:
+
+$$
+Pr(x) = p(x) = 1/6
+$$
+
+We can see that if we want to see the probability of getting a 5 on our dice roll, we plug in $x=5$ to get $p(5) = 1/6$, which is the probability of rolling a 5.
+
+For continuous random variables, things become slightly more complex. This is because it does not make sense to calculate the probability of one specific outcome.
+
+For example, let us say your random variable is the time it will take you to get to school tomorrow. We really do not care about the probability of taking 13.4357 minutes to get to school. What we do care about is a range - lets say the probability of getting to school between 13 and 14 minutes.
+
+More mathematically, the probability density function of a continuous random variable gives you the probability of an outcome between $a$ and $b$:
+
+$$
+Pr(a<x<b) =\int\limits_a^bp(x)dx
+$$
+
+This integral is important - it tells us that the area under a distribution gives us the probability of an event occuring. This will become very valuable later on.
+
+![](images/clipboard-1038590923.png){fig-align="center" width="60%"}
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Cumulative Density Functions
+
+Cumulative density functions measure the cumulative probability below a certain point.
+
+For example, to get the probability of anything below $a$ occurring as an outcome, our cumulative density function is:
+
+$$
+Pr(x<a) = \int\limits_{-∞}^ap(x)dx
+$$
+
+This will be useful in some cases to calculate values for probability density functions.
+:::
+
+<br />
+
+### Expectation and Variance
+
+Every distribution (and its associated probability density function) can be described with two summary statistics: the **Expectation** and **Variance**.
+
+The **expectation**, also called the **mean** or **expected value**, is the "average" outcome value that you would expect to get from the distribution. It is essentially our "best guess" of what the random variable's outcome would be.
+
+Expectation for a discrete random variable $X$ is calculated as a weighted sum of all potential outcomes $x_i$ and their respective probabilities given by the probability density function $p(x_i)$:
+
+$$
+E(X) = \mu_X = \sum\limits_{i=1}^n(x_i \times p(x_i))
+$$
+
+For a continuous random variable $X$, the idea is the same but with an integral:
+
+$$
+E(X) = \mu_X = \int\limits_{-∞}^∞ (x \times p(x))
+$$
+
+Expectation allows us to have our best-guess at what the outcome of a random variable would be. However, we also would like to know how spread out the random variable's distribution is.
+
+For example, let us have two random variables $X$ and $Y$. $X$ has two potential outcomes of 4 and 6. $Y$ has two potential outcomes 0 and 10. Let us assume all outcomes have the same probability. That means $E(X) = E(Y) =5$. However, clearly, these two random variables are not the same - $Y$ is far more spread out.
+
+**Variance** measures the spread of a distribution. It is essentially the average distance of each individual outcome from the expected value $\mu$ of the random variable:
+
+$$
+Var(X) = \sigma^2= E(x - \mu)^2 = \sum\limits_{i=1}^n p(x_i) \times (x_i - \mu_X)^2
+$$
+
+The **standard deviation** is simply the square root of variance.
+
+<br />
+
+### Conditional Distributions
+
+Let us say we have two random variables $X$ and $Y$, each with their own respective distributions.
+
+Often in statistics, we are interested in how two variables interact with each other. For example, we are interested in how democracy affects economic growth. Or how education affects income.
+
+Conditional distributions are a distribution of one random variable $X$, given we hold another variable $Y$ fixed at some value.
+
+For example, imagine $X$ is income and $Y$ is age. The conditional distribution of $X|Y$ is the distribution of income $X$ at every specific age $Y$. For example, $X|Y = 20$ is the distribution of income $X$ for 20 year olds. $X|Y=60$ would be the distribution of income $X$ for 60 year olds.
+
+Conditional distributions have all the same properties as normal distributions. The most important of these is the **conditional expectation**, which we denotate $E(X|Y)$. In the context of above, $E(X|Y=20)$ would be the **expected** income for a 20 year old.
+
+The reason conditional expectations are so important is because they illustrate how one variable affects another. If we see a pattern in going between $E(X|Y=20)$, $E(X|Y = 21)$, and $E(X|Y = 24)$, we might be tempted to say that increasing age $Y$ has some effect on income $X$.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Distributions**
+
+### The Normal Distribution
+
+The most common random variable distribution is the **Normal Distribution**, and is one we will encounter a lot. The normal distribution is for continuous random variables, and takes a famous "bell shape".
+
+![](images/clipboard-352151225.png){fig-align="center" width="40%"}
+
+Every single normal distribution can be defined by two parameters: the mean and the variance. We define a normal distribution as follows:
+
+$$
+\sim \mathcal N(\mu, \sigma^2)
+$$
+
+Where $\mathcal N$ represents the normal distribution, $\mu$ represents the expected value of the distribution, and $\sigma^2$ represents the variance. The figure below shows how normal distributions change when you alter $\mu$ and $\sigma^2$.
+
+![](images/clipboard-2268260367.png){fig-align="center" width="60%"}
+
+::: {.callout-note collapse="true" appearance="simple"}
+## PDF of the Normal Distribution
+
+The probability density function of a normal distribution is:
+
+$$
+Pr(a<x<b) = \int\limits_a^b \frac{1}{\sqrt{2\pi\sigma^2}}e^{\left( -\frac{(x - \mu)^2}{2 \sigma^2}\right)}dx
+$$
+:::
+
+<br />
+
+### Properties of the Normal Distribution
+
+The most important thing about Normal Distributions is a unique property they have - within each standard deviation $\sigma$, every single normal distribution contains the same amount of area under the curve (which is also the probability).
+
+-   Within $(\mu - \sigma, \ \mu + \sigma)$, 68% of the area under the curve is included.
+-   Within $(\mu - 2\sigma, \ \mu + 2\sigma)$, 95% of the area under the curve is included.
+-   Within $(\mu - 3 \sigma, \ \mu + 3 \sigma)$, 99.7% of the area under the curve is included.
+
+![](images/clipboard-2691725554.png){width="100%"}
+
+These properties apply to every single normal distribution. These properties will become critical when we start talking about statistical inference.
+
+Another property of the normal distribution is that we can manipulate them as follows.
+
+1.  We can add a constant $c$ to every single outcome/value in a normal distribution. The resulting distribution will still be a normal distribution, just with its mean shifted by $c$. Or in other words: $X \sim \mathcal N(\mu + c, \sigma^2)$.
+2.  We can multiply by constant $c$ to every single outcome/value in a normal distribution. The resulting distribution will still be a normal distribution, just with its mean multiplied by $c$, and its standard deviation multipled by $c^2$. Or in other words: $X \sim \mathcal N(c \mu, (c \mu)^2)$.
+
+<br />
+
+### The Standard Normal Distribution
+
+The standard normal distribution (often called the $Z$-distribution) is a special version of the normal distribution, with a mean of 0 and a variance of 1:
+
+$$
+Z \sim\mathcal N(0, 1)
+$$
+
+Below is a figure of the standard normal distribution:
+
+![](images/img_standard_normal.svg){fig-align="center" width="90%"}
+
+Since the standard deviation is also equal to 1 in a standard normal, we can talk about units of standard deviation away from the mean.
+
+The best part about the standard normal distribution is that we can transform any other normal distribution into a standard normal. Recall the properties of adding and multiplying constants to a normal distribution from above. That means we can apply a transformation to every value/unit in a normal distribution $X$ to get a standard normal distribution $Z$:
+
+$$
+Z = \frac{x - \mu}{\sigma} \sim \mathcal N(0,1)
+$$
+
+Or in other words, for every value of $x \in X$, subtract the mean, then divide by the standard deviation. If you do this for every value $x \in X$, you will get a standard normal.
+
+<br />
+
+### The T-Distribution
+
+The T-distribution (also called the Student's T-Distribution) is another distribution that is commonly used. The T-distribution looks very similar to that of the normal distribution, with the same bell curve shape. However, the t-distribution are slightly fatter than the normal distribution.
+
+![](images/clipboard-1130923565.png){fig-align="center" width="50%"}
+
+The key difference between the t-distribution and the normal distribution is the parameters. Unlike the normal distribution, which has 2 parameters, the t-distribution has only one parameter: degrees of freedom.
+
+The t-distribution is always centered on 0. Higher degrees of freedom means less thick tails, and lower degrees of freedom mean thicker tails. As degrees of freedom get larger (past 30), it almost perfectly matches the normal distribution.
+
+The importance of the T-distribution is that it is often used for statistical inference when the normal distribution, for whatever reason, cannot be used. This is often because with the normal distribution, we need to know variance $\sigma^2$, but we do not need to know this to use the T-distribution.
+
+<br />
+
+### Bernoulli and Binomial Distribution
+
+A **bernoulli trial** is an experiment that has two possible outcomes: a success $x= 1$ and a failure $x = 0$. We denote the probability of a success as $p$, and the probability of a failure as $q = 1-p$. For example, a coin flip could be seen as a bernoulli trial, with $p = 0.5$.
+
+For example, below is a bernoulli distribution with $p = 0.15$:
+
+![](images/clipboard-2068255268.png){fig-align="center" width="60%"}
+
+The bernoulli distribution is a special case of the **Binomial distribution**, which is basically the question of how many success you will get with $n$ number of trials. When $n=1$ (just one coin flip), we get the bernoulli distribution.
+
+The probability density function of a bernoulli distribution is:
+
+$$
+Pr(x) = \begin{cases}
+p \quad \text{if } x = 1 \\
+1 - p \quad \text{if } x= 0 
+\end{cases}
+$$
+
+A bernoulli distribution is often employed in randomisation of treatment during experiments, as we will see later.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Statistical Inference**
+
+### Estimands and Estimates
+
+<br />
+
+### Central Limit Theorem
+
+<br />
+
+### Nonparametric Bootstrap
+
+<br />
+
+### Statistical Testing
+
+<br />
+
+### Implementing a Hypothesis Test
+
+<br />
+
+### Types of Errors
+
+<br />
+
+### Confidence Intervals
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Correlations Between Variables**
+
+### Covariance and Correlation
+
+<br />
+
+### Best-Fit Lines
+
+<br />
+
+### Simple Linear Regression
+
+<br />
+
+### Multiple Linear Regression

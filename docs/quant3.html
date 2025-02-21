@@ -211,7 +211,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./quant10.qmd" class="sidebar-item-text sidebar-link">
- <span class="menu-text">10 New Advances in Causal Inference</span></a>
+ <span class="menu-text">10 Synthetic Controls Method</span></a>
   </div>
 </li>
         <li class="px-0"><hr class="sidebar-divider hi "></li>
@@ -232,19 +232,19 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model3.qmd" class="sidebar-item-text sidebar-link">
+  <a href="./model3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Random Forests and Bagging</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model4.qmd" class="sidebar-item-text sidebar-link">
+  <a href="./model4.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Principle Components Analysis</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model5.qmd" class="sidebar-item-text sidebar-link">
+  <a href="./model5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Factor Analysis Models</span></a>
   </div>
 </li>
@@ -297,7 +297,6 @@ window.Quarto = {
   <li><a href="#regression-anatomy-theorem" id="toc-regression-anatomy-theorem" class="nav-link" data-scroll-target="#regression-anatomy-theorem">Regression Anatomy Theorem</a></li>
   <li><a href="#ols-as-an-unbiased-estimator" id="toc-ols-as-an-unbiased-estimator" class="nav-link" data-scroll-target="#ols-as-an-unbiased-estimator">OLS as an Unbiased Estimator</a></li>
   <li><a href="#gauss-markov-theorem" id="toc-gauss-markov-theorem" class="nav-link" data-scroll-target="#gauss-markov-theorem">Gauss-Markov Theorem</a></li>
-  <li><a href="#deriving-variance" id="toc-deriving-variance" class="nav-link" data-scroll-target="#deriving-variance">Deriving Variance</a></li>
   <li><a href="#asymptotic-consistency-of-ols" id="toc-asymptotic-consistency-of-ols" class="nav-link" data-scroll-target="#asymptotic-consistency-of-ols">Asymptotic Consistency of OLS</a></li>
   <li><a href="#ols-as-a-conditional-expectation-function" id="toc-ols-as-a-conditional-expectation-function" class="nav-link" data-scroll-target="#ols-as-a-conditional-expectation-function">OLS as a Conditional Expectation Function</a></li>
   </ul></li>
@@ -555,7 +554,7 @@ Pr(w_n &lt; w) \rightarrow \Phi(w) \quad \text{as } n \rightarrow ∞
 <h1><strong>Ordinary Least Squares Estimator</strong></h1>
 <section id="deriving-the-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="deriving-the-estimator">Deriving the Estimator</h3>
-<p>Our <a href="https://politicalscience.github.io/regression/1.html">linear regression</a> model, and the fitted values <span class="math inline">\(\hat{\mathbf{y}}\)</span>, take the following form:</p>
+<p>Our <a href="./quant2.html">linear regression</a> model, and the fitted values <span class="math inline">\(\hat{\mathbf{y}}\)</span>, take the following form:</p>
 <p><span class="math display">\[
 \mathbf y = \mathbf X \boldsymbol\beta + \mathbf u, \qquad \hat{\mathbf y} = \mathbf X \hat{\boldsymbol\beta}
 \]</span></p>
@@ -615,7 +614,7 @@ y_i  &amp; = \underbrace{(\delta_0 + \alpha_0)}_{\beta_0} + \underbrace{\alpha_1
 </section>
 <section id="ols-as-an-unbiased-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="ols-as-an-unbiased-estimator">OLS as an Unbiased Estimator</h3>
-<p>OLS is an <a href="https://politicalscience.github.io/causal/0.html#unbiased-estimators">unbiased estimator</a> of the relationship between any <span class="math inline">\(x_j\)</span> and <span class="math inline">\(y\)</span> under 4 conditions:</p>
+<p>OLS is an <a href="#unbiased-estimators">unbiased estimator</a> of the relationship between any <span class="math inline">\(x_j\)</span> and <span class="math inline">\(y\)</span> under 4 conditions:</p>
 <ol type="1">
 <li><strong>Linearity</strong> in parameters: the model of the population (data generating process) can be modelled as <span class="math inline">\(\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u\)</span>.</li>
 <li><strong>Random Sampling</strong>: the observations in our sample are randomly sampled.</li>
@@ -694,57 +693,7 @@ Visualisation of Homoscedasticity
 </div>
 </div>
 <p>The Gauss-Markov Theorem is one of the main reasons we focus so heavily on the OLS estimator. If we believe our data-generating structure to be linear, then OLS is the best unbiased estimator we can use, since it has the lowest variance.</p>
-<p><br></p>
-</section>
-<section id="deriving-variance" class="level3">
-<h3 class="anchored" data-anchor-id="deriving-variance">Deriving Variance</h3>
-<p>Let us assume homoscedasticity. We want to find the variance of our estimator, <span class="math inline">\(Var(\boldsymbol{\hat\beta} | \mathbf X)\)</span>. Let us start off with our OLS solution. We can simplify as follows:</p>
-<p><span class="math display">\[
-\begin{align}
-\boldsymbol{\hat\beta} &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y \\
-&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}\color{blue}{(\mathbf X \boldsymbol\beta + \mathbf u)} &amp;&amp; \color{black}(\text{plug in } \color{blue}{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}\color{black}) \\
-&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp;(\text{multiply out})\\
-&amp; = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp;( \ \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
-&amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp; (\text{identity property of } \mathbf I)
-\end{align}
-\]</span></p>
-<p><span class="math display">\[
-Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u \ | \ \mathbf X)
-\]</span></p>
-<p><span class="math inline">\(\boldsymbol\beta\)</span> is a vector of fixed constants. <span class="math inline">\((\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u\)</span> can be imagined as a matrix of fixed constants, since we are conditioning the above variance on <span class="math inline">\(\mathbf X\)</span> (so for each <span class="math inline">\(\mathbf X\)</span>, the statement is fixed).</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Mathematical Lemma
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>If <span class="math inline">\(\mathbf u\)</span> is an <span class="math inline">\(n\)</span> dimensional vector of random variables, <span class="math inline">\(\mathbf c\)</span> is an <span class="math inline">\(m\)</span> dimensional vector, and <span class="math inline">\(\mathbf B\)</span> is an <span class="math inline">\(n \times m\)</span> dimensional matrix with fixed constants, then the following is true:</p>
-<p><span class="math display">\[
-Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^\mathsf{T}
-\]</span></p>
-<p>I will not prove this lemma here, but it is provable.</p>
-</div>
-</div>
-</div>
-<p>With the Lemma above, and with the definition of homoscedasticity, we can simplify:</p>
-<p><span class="math display">\[
-\begin{align}
-Var(\boldsymbol{\hat\beta} | \mathbf X) &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) [(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} &amp;&amp; (\text{lemma})\\
-&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) \color{blue}{\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}} &amp;&amp; \color{black}( \ \color{blue}{[(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} = \mathbf X(\mathbf X^\mathsf{T} \mathbf X)^{-1}}\color{black})\\
-&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\sigma^2 \mathbf I_n}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\color{blue}{Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n}\color{black}) \\
-&amp; =  \color{red}{\sigma^2} \color{black} (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf I_n \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{move scalar } \color{red}{\sigma^2}\color{black})\\
-&amp; =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{identity property of } \mathbf I_n)\\
-&amp; =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{inverses } \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ cancel})
-\end{align}
-\]</span></p>
-<p>However, we do not actually know what <span class="math inline">\(\sigma^2\)</span> is. We can estimate it with <span class="math inline">\(\hat\sigma^2\)</span> (discussed <a href="https://politicalscience.github.io/regression/1.html#residual-standard-deviation">here</a>).</p>
-<p>We can use these standard errors (square root of variance) for <a href="https://politicalscience.github.io/regression/1.html#t-tests">hypothesis testing</a>, if we believe homoscedasticity is met. If not, we will need to use <strong>robust standard errors</strong>, which we will not derive here. In modern econometrics, it has become more common to use <u>robust standard errors by default</u>, unless we can definitively prove homoscedasticity is met.</p>
+<p>The actual variance of OLS under homoscedasticity was derived in the <a href="./quant2.html#deriving-standard-errors">previous chapter</a>.</p>
 <p><br></p>
 </section>
 <section id="asymptotic-consistency-of-ols" class="level3">
@@ -767,7 +716,7 @@ Var(\boldsymbol{\hat\beta} | \mathbf X) &amp; = (\mathbf X^\mathsf{T} \mathbf X)
 \end{align}
 \]</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -776,7 +725,7 @@ Vector Notation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The following statements are true:</p>
 <p><span class="math display">\[
@@ -788,7 +737,7 @@ Vector Notation
 </div>
 </div>
 </div>
-<p>Using vector notation, <a href="https://politicalscience.github.io/causal/0.html#asymptotically-consistent-estimators">law of large numbers</a>, and zero-mean and exogeneity condition, we can simplify the above to:</p>
+<p>Using vector notation, <a href="#asymptotically-consistent-estimators">law of large numbers</a>, and zero-mean and exogeneity condition, we can simplify the above to:</p>
 <p><span class="math display">\[
 \begin{align}
 \boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^\mathsf{T} \right)^{-1} \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf u \right) &amp;&amp; (\text{vector notation})\\
@@ -804,7 +753,7 @@ Vector Notation
 <section id="ols-as-a-conditional-expectation-function" class="level3">
 <h3 class="anchored" data-anchor-id="ols-as-a-conditional-expectation-function">OLS as a Conditional Expectation Function</h3>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -813,7 +762,7 @@ Conditional Expectation Functions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>A <strong>conditional expectation function</strong> (CEF) says that the value of <span class="math inline">\(E(y)\)</span> depends on the value of <span class="math inline">\(x\)</span>. We notate a conditional expectation function as <span class="math inline">\(E(y|x)\)</span>. As we noted earlier, the linear regression model can be a conditional expectation function of <span class="math inline">\(E(y|x)\)</span>.</p>
 <p>A <strong>best linear approximation</strong> of a conditional expectation function can take the following form:</p>
