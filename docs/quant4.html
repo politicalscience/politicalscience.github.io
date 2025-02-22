@@ -333,7 +333,6 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#naive-estimator-and-selection-bias" id="toc-naive-estimator-and-selection-bias" class="nav-link" data-scroll-target="#naive-estimator-and-selection-bias">Naive Estimator and Selection Bias</a></li>
   <li><a href="#confounders" id="toc-confounders" class="nav-link" data-scroll-target="#confounders">Confounders</a></li>
-  <li><a href="#omitted-variable-bias-in-regression" id="toc-omitted-variable-bias-in-regression" class="nav-link" data-scroll-target="#omitted-variable-bias-in-regression">Omitted Variable Bias in Regression</a></li>
   <li><a href="#assignment-mechanism" id="toc-assignment-mechanism" class="nav-link" data-scroll-target="#assignment-mechanism">Assignment Mechanism</a></li>
   </ul></li>
   <li><a href="#directed-acyclic-graphs" id="toc-directed-acyclic-graphs" class="nav-link" data-scroll-target="#directed-acyclic-graphs"><strong>Directed Acyclic Graphs</strong></a>
@@ -720,53 +719,12 @@ Naive Estimator Biased for ATE
 <p>Or in other words, the treatment and control groups have some other variable causing differences even before treatment has begun. This implies that the differences between the treatment and control group may not be due to treatment <span class="math inline">\(D\)</span>, but due to the underlying differences before treatment even occurred.</p>
 <p><strong>Confounders</strong> are variables that cause the differences between treatment and control groups before the treatment has started. <u><strong>Confounders correlate with both the treatment variable and the outcome</strong></u>. If a variable only correlates with <span class="math inline">\(D\)</span> or <span class="math inline">\(Y\)</span>, then it is not a confounder. If must correlate with both <span class="math inline">\(D\)</span> <strong>and</strong> <span class="math inline">\(Y\)</span>.</p>
 <p>This is why correlation does not equal causation - if the treatment and control group are different before we start the experiment, we cannot say the difference between the two is purely a result of treatment <span class="math inline">\(D\)</span>.</p>
-<p><br></p>
-</section>
-<section id="omitted-variable-bias-in-regression" class="level3">
-<h3 class="anchored" data-anchor-id="omitted-variable-bias-in-regression">Omitted Variable Bias in Regression</h3>
-<p>We can demonstrate how confounders cause bias in regression. Suppose there is some confounding variable <span class="math inline">\(z\)</span> that we have not included in a “short” regression. The actual, “true” regression of the population, would include this confounder <span class="math inline">\(z\)</span></p>
+<p>We can also think about confounders in terms of <a href="./quant3.html#omitted-variable-bias">omitted variable bias</a>. The formula for omitted variable bias is:</p>
 <p><span class="math display">\[
-\underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}_{\text{short regression}}
-\qquad \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}_{\text{true regression with z} }
+E(\hat{\boldsymbol\beta}) = \boldsymbol\beta + \boldsymbol{\pi \delta}
 \]</span></p>
-<p>The <a href="./quant3.html#deriving-the-estimator">OLS estimate</a> of the “short regression” excluding confounder <span class="math inline">\(z\)</span> is:</p>
-<p><span class="math display">\[
-\boldsymbol{\hat\beta} = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
-\]</span></p>
-<p>Let us now plug in the “true” model into where <span class="math inline">\(\mathbf y\)</span> is:</p>
-<p><span class="math display">\[
-\begin{align}
-\boldsymbol{\hat\beta} &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} (\color{blue}{\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}\color{black}) &amp;&amp; (\text{plug in } \color{blue}{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}\color{black} )\\
-&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp; (\text{multiply out})\\
-&amp; = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp; (\text{inverses } (\color{blue}{\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
-&amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp; (\text{identity property of } \mathbf I)
-\end{align}
-\]</span></p>
-<p>Now, let us find the expected value of <span class="math inline">\(\boldsymbol{\hat\beta}\)</span>, which is conditional on <span class="math inline">\(\mathbf X, \mathbf z\)</span>, and simplify (using <a href="./quant3.html#conditions-for-unbiasedness">zero conditional mean</a>):</p>
-<p><span class="math display">\[
-\begin{align}
-E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z) &amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} E(\mathbf u | \mathbf X, \mathbf z) \\
-&amp; = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta &amp;&amp;(\because E(\mathbf u | \mathbf X, \mathbf z) = 0)
-\end{align}
-\]</span></p>
-<p>Now, what if we had a regression of outcome variable being the confounder <span class="math inline">\(z\)</span>, on the explanatory variables <span class="math inline">\(\mathbf X\)</span>, such that <span class="math inline">\(\mathbf z = \mathbf X \boldsymbol\pi + \mathbf v\)</span>. Our OLS estimate would have the solution:</p>
-<p><span class="math display">\[
-\boldsymbol{\hat\pi} = (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf z
-\]</span></p>
-<p>Now, we can plug <span class="math inline">\(\boldsymbol{\hat\pi}\)</span> into our expected value of <span class="math inline">\(\boldsymbol{\hat\beta}\)</span>:</p>
-<p><span class="math display">\[
-E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)  = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}
-\]</span></p>
-<p>Now, using the law of iterated expectations, we get (assuming we are using an unbiased estimator for <span class="math inline">\(\boldsymbol{\hat\pi}\)</span> such that <span class="math inline">\(E(\boldsymbol{\hat\pi}) = \boldsymbol\pi\)</span>):</p>
-<p><span class="math display">\[
-\begin{align}
-E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)) &amp;&amp; (\text{LIE: } E(X) = E(E(X|Y))\\
-&amp; = E(\boldsymbol\beta + \boldsymbol{\hat\pi \delta})  &amp;&amp; (\text{LIE: } E(X) = E(E(X|Y)) \\
-&amp; = \boldsymbol\beta + E(\boldsymbol{\hat\pi}) \boldsymbol \delta &amp;&amp; (\boldsymbol\beta, \boldsymbol\delta\text{ are constants})\\
-&amp; = \boldsymbol\beta + \boldsymbol{\pi \delta} &amp;&amp; (\text{unbiased estimator } E(\boldsymbol{\hat\pi}) = \boldsymbol\pi)
-\end{align}
-\]</span></p>
-<p>Thus, we can see by not including confounder <span class="math inline">\(z\)</span> in our “short regression”, the estimator is now biased by <span class="math inline">\(\boldsymbol{\hat\pi \delta}\)</span>.</p>
+<p>Where <span class="math inline">\(\boldsymbol\beta\)</span> are the true population parameters, <span class="math inline">\(\boldsymbol\pi\)</span> is the relationship between the confounder and treatment, and <span class="math inline">\(\boldsymbol\delta\)</span> is the relationship between confounder and outcome.</p>
+<p>We can see that if either <span class="math inline">\(\boldsymbol\pi = 0\)</span> or <span class="math inline">\(\boldsymbol\delta = 0\)</span>, then there is 0 omitted variable bias - which implies that a confounder that causes bias must be correlated with both the treatment and outcome.</p>
 <p><br></p>
 </section>
 <section id="assignment-mechanism" class="level3">

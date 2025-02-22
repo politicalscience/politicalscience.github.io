@@ -21,7 +21,7 @@ Without randomisation, we need some other way to account for pre-treatment covar
 1.  No node within set $X$ is a descendant of $D$ (no element within $X$ results from $D$).
 2.  The nodes within set $X$ [block all back-door paths](quant4.qmd#blocked-paths) from $D \rightarrow Y$.
 
-![](images/clipboard-378311705.png){fig-align="center" width="45%"}
+![](images/clipboard-378311705.png){fig-align="center" width="40%"}
 
 In the figure above, let us block the backdoor paths between $D \rightarrow Y$:
 
@@ -48,7 +48,7 @@ Neutral controls are ones that don't identify the causal effect, but improve eff
 
 <br />
 
-### Identification Assumptions
+### Identification Assumptions {#identification-assumptions}
 
 Once we have determined the set of confounders $X$ that we need to control to block all backdoor paths, the assumptions needed for identification of causal effects are:
 
@@ -165,7 +165,7 @@ Even when all assumptions are met for identification of the ATE, the $\tau_{ATE}
 
 ### Ordinary Least Squares Estimator
 
-OLS is a natural approach for controlling for confounders $X$, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](quant3.qmd#regression-anatomy-theorem). OLS is a good estimator of $\tau_{ATE}$ under 2 conditions:
+OLS is a natural approach for controlling for confounders $X$, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](quant3.qmd#partitioned-regression-model). OLS is a good estimator of $\tau_{ATE}$ under 2 conditions:
 
 1.  **Constant treatment effect**: $\tau_i = Y_{1i} - Y_{0i}$ for all units $i$.
 2.  **Linearity**: Potential outcomes are linear, and can be written as:
@@ -186,7 +186,7 @@ $$
 \end{align}
 $$
 
-We also know that conditional ignorability implies [zero-conditional mean](https://politicalscience.github.io/causal/0.html#ols-as-an-unbiased-estimator). Thus $\beta_1$ is an unbiased and asymptotically consistent estimator of the ATE.
+We also know that conditional ignorability implies [zero-conditional mean](quant3.qmd#ols-as-an-unbiased-estimator). Thus $\beta_1$ is an unbiased and asymptotically consistent estimator of the ATE.
 
 You should be cautious using OLS when assumption 2, **linearity**, is violated. OLS is the best linear estimator, but how far your data is from linearity will determine if the estimator is useful.
 
@@ -301,6 +301,8 @@ $$
 
 For subclassificaion to be possible, within each level $j$ of covariate $X$, there must be at least one unit in control $D=0$ and treatment $D=1$.
 
+Subclassification is not a particularly popular estimator, because it only works if all covariates are discrete, and only if you have a manageable amount of categories and covariates.
+
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Intuitive Procedure of Subclassification
 
@@ -358,6 +360,16 @@ $$
 -   Where $Y_i$ is the unit's observed $Y$ in the treatment group.
 -   Where $\tilde Y_i$ is unit $i$'s closest neighbour in the untreated group.
 
+Sometimes, a treatment unit may not have one close control unit to match to. Instead, we could use a combination of control units to match to the treatment unit, and use the average $Y$ of those combination of control units to approximate a more accurate match.
+
+Suppose we use $M_i$ number of close control units to match to a treatment unit $i$. Then, the matching estimator would be defined as follows:
+
+$$
+\hat\tau_{ATT} = \frac{1}{n_1} \sum\limits_{i:D_i = 1}(Y_i - \left(\frac{1}{M_i} \sum\limits_{m=1}^{M_i} \widetilde{Y_{i_m}}\right))
+$$
+
+Where $\widetilde{Y_{i_m}}$ is the obsered outcome for the $m$th match of unit $i$.
+
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Choices during Matching
 
@@ -368,20 +380,6 @@ We have to make several choices when conducting matching.
 3.  **How many to match**. You can decide to match multiple control units to one treatment unit, and use the average of the treatment units to approximate a true control unit. This may result in more accurate matches for treatment units that may not have a good single control unit to match to.
 
 We can also choose to use more advanced matching methods, such as Mahalanobis Distance matching or Propensity Score matching, which are shown below. These are good for matching on more $X$.
-:::
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Matching on Multiple Neighbours
-
-Sometimes, a treatment unit may not have one close control unit to match to. Instead, we could use a combination of control units to match to the treatment unit, and use the average $Y$ of those combination of control units to approximate a more accurate match.
-
-Suppose we use $M_i$ number of close control units to match to a treatment unit $i$. Then, the matching estimator would be defined as follows:
-
-$$
-\hat\tau_{ATT} = \frac{1}{n_1} \sum\limits_{i:D_i = 1}(Y_i - \left(\frac{1}{M_i} \sum\limits_{m=1}^{M_i} \widetilde{Y_{i_m}}\right))
-$$
-
-Where $\widetilde{Y_{i_m}}$ is the obsered outcome for the $m$th match of unit $i$.
 :::
 
 ::: {.callout-note collapse="true" appearance="simple"}
@@ -438,7 +436,7 @@ The figure on the right illustrates this. $d$ represents the dimensions. We can 
 Thus, with a bigger space, the distance between two units increases, so you get worse matches.
 :::
 
-This curse of dimensionality creates a [bias](quant3.qmd#unbiased-estimators) problem - since we get non-exact matches. The more dimensions you add, the worse it becomes.
+This curse of dimensionality creates a [bias](quant1.qmd#unbiased-estimators) problem - since we get non-exact matches. The more dimensions you add, the worse it becomes.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## More on Bias
@@ -588,7 +586,7 @@ $$
 $$
 :::
 
-The IPW estimator is [asymptotically consistent](quant3.qmd#asymptotically-consistent-estimators), but has very poor small sample properties. They are highly sensitive to extreme values of $\hat\pi(X_i)$. This generates high variance (inefficiency), and can produce significant bias under model mispecification.
+The IPW estimator is [asymptotically consistent](quant1.qmd#asymptotically-consistent-estimators), but has very poor small sample properties. They are highly sensitive to extreme values of $\hat\pi(X_i)$. This generates high variance (inefficiency), and can produce significant bias under model mispecification.
 
 <br />
 
@@ -600,7 +598,7 @@ The IPW estimator is [asymptotically consistent](quant3.qmd#asymptotically-consi
 
 ### Testing Assumptions with Falsification
 
-The stronger (bolder) our assumptions for identification, the less credible our results are. Selection on Observables involves a very strong and hard to verify assumption: [conditional ignorability](https://politicalscience.github.io/causal/3.html#identification-assumptions). Can we really be sure that we have controlled for all confounders $X_i$ needed to satisfy conditional ignorability?
+The stronger (bolder) our assumptions for identification, the less credible our results are. Selection on Observables involves a very strong and hard to verify assumption: [conditional ignorability](#identification-assumptions). Can we really be sure that we have controlled for all confounders $X_i$ needed to satisfy conditional ignorability?
 
 **Placebo tests** are a type of falsification test to show evidence against our assumptions. Suppose that we make the assumption of conditional ignorability $(Y_{0i}, Y_{1i}) \perp D_i | X_i$. Suppose we are concerned about the presence of another confounder $U$ that is not included in $X_i$.
 
