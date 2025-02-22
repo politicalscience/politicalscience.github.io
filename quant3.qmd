@@ -48,11 +48,50 @@ $$
 \boldsymbol{\hat\beta} & = (2\mathbf X^\mathsf{T} \mathbf X)^{-1} 2 \mathbf X^\mathsf{T} \mathbf y && (\times (2\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ to both sides})\\
 \boldsymbol{\hat\beta} & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y &&(\text{cancel out } 2^{-1}\times 2)
 \end{align}
-$$
+$$ {#eq-ols}
 
 Those are our coefficient solutions to OLS.
 
 <br />
+
+### OLS Orthogonal Projection
+
+We can use the OLS solution from @eq-ols to get our fitted values $\hat{\mathbf y}$ and residuals $\hat{\mathbf u}$:
+
+$$
+\begin{align}
+\hat{\mathbf y} & = \mathbf X \hat{\boldsymbol\beta} \\
+& = \mathbf X \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y} && \color{black}(\text{plug in OLS solution } \color{blue}{\hat{\boldsymbol\beta} = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y}) \\
+& = \color{red}{\mathbf P}\color{black}{\mathbf y} && \text{(where } \color{red}{\mathbf P :=\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}})
+\end{align}
+$$ {#eq-projection}
+
+$$
+\begin{align}
+\hat{\mathbf u} & = \mathbf y - \hat{\mathbf y} \\
+& = \mathbf y - \color{blue}{\mathbf P\mathbf y} && \color{black}(\text{from equation (2) } \color{blue}{\hat{\mathbf y} = \mathbf P \mathbf y} \color{black}) \\
+& = (\mathbf I - \mathbf P)\mathbf y && (\text{factor out } \mathbf y) \\
+& = \color{purple}{\mathbf M} \color{black}{\mathbf y} && (\text{where } \color{purple}{\mathbf M = \mathbf I - \mathbf P} \color{black})
+\end{align}
+$$
+
+Matrix $\color{red}{\mathbf P}$, called the **projection matrix**, is a matrix operator that performs the operation $\mathbf y \rightarrow \hat{\mathbf y}$. Matrix $\color{purple}{\mathbf M}$, called the **residual maker**, is a matrix operator that performs the operation $\mathbf y \rightarrow \hat{\mathbf u}$.
+
+We know that our fitted values $\hat{\mathbf y}$ are created as a linear combination of our explanatory variables $\mathbf X$ (hence linear regression). That means, by the definition of [vector spaces](linear.qmdl#spanning-vectors-and-dimension), that our explanatory variable vectors $\mathbf x_j$ span a space that includes our fitted values $\hat{\mathbf y}$.
+
+So, what the matrix operator $\color{red}{\mathbf P}$ is doing is essentially taking our original data $\mathbf y$ values, and projecting it into the space spanned by our explanatory variables $\mathbf X$ (called the **column space**). We can see in the figure below, our observed $\mathbf y$ vector is being projected onto the blue plane spanned by $\mathbf X$ to create our fitted values vector $\hat{\mathbf y}$.
+
+![](images/clipboard-880030792.png){fig-align="center" width="60%"}
+
+Residual maker matrix $\color{purple}{\mathbf M}$ projects $\mathbf y$ onto the space orthogonal to the column space of $\mathbf X$ to get our residuals $\hat{\mathbf u}$. We can see this in the figure above, where the residuals vector (notated $\mathbf e$ in the figure) is orthogonal/perpendicular to the space of $\mathbf X$.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Sample Properties of OLS**
 
 ### OLS as an Unbiased Estimator
 
