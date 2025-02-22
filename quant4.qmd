@@ -341,68 +341,6 @@ This is why correlation does not equal causation - if the treatment and control 
 
 <br />
 
-### Omitted Variable Bias in Regression
-
-We can demonstrate how confounders cause bias in regression. Suppose there is some confounding variable $z$ that we have not included in a "short" regression. The actual, "true" regression of the population, would include this confounder $z$
-
-$$
-\underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}_{\text{short regression}}
- \qquad \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}_{\text{true regression with z} }
-$$
-
-The [OLS estimate](quant3.qmd#deriving-the-estimator) of the "short regression" excluding confounder $z$ is:
-
-$$
-\boldsymbol{\hat\beta} = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y
-$$
-
-Let us now plug in the "true" model into where $\mathbf y$ is:
-
-$$
-\begin{align}
-\boldsymbol{\hat\beta} & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} (\color{blue}{\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}\color{black}) && (\text{plug in } \color{blue}{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}\color{black} )\\
-& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{multiply out})\\
-& = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{inverses } (\color{blue}{\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
-& = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{identity property of } \mathbf I)
-\end{align}
-$$
-
-Now, let us find the expected value of $\boldsymbol{\hat\beta}$, which is conditional on $\mathbf X, \mathbf z$, and simplify (using [zero conditional mean](quant3.qmd#conditions-for-unbiasedness)):
-
-$$
-\begin{align}
-E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z) & = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} E(\mathbf u | \mathbf X, \mathbf z) \\
-& = \boldsymbol\beta + (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf z\boldsymbol\delta &&(\because E(\mathbf u | \mathbf X, \mathbf z) = 0)
-\end{align}
-$$
-
-Now, what if we had a regression of outcome variable being the confounder $z$, on the explanatory variables $\mathbf X$, such that $\mathbf z = \mathbf X \boldsymbol\pi + \mathbf v$. Our OLS estimate would have the solution:
-
-$$
-\boldsymbol{\hat\pi} = (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf z
-$$
-
-Now, we can plug $\boldsymbol{\hat\pi}$ into our expected value of $\boldsymbol{\hat\beta}$:
-
-$$
-E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)  = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}
-$$
-
-Now, using the law of iterated expectations, we get (assuming we are using an unbiased estimator for $\boldsymbol{\hat\pi}$ such that $E(\boldsymbol{\hat\pi}) = \boldsymbol\pi$):
-
-$$
-\begin{align}
-E(\boldsymbol{\hat\beta}) & = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)) && (\text{LIE: } E(X) = E(E(X|Y))\\
-& = E(\boldsymbol\beta + \boldsymbol{\hat\pi \delta})  && (\text{LIE: } E(X) = E(E(X|Y)) \\
-& = \boldsymbol\beta + E(\boldsymbol{\hat\pi}) \boldsymbol \delta && (\boldsymbol\beta, \boldsymbol\delta\text{ are constants})\\
-& = \boldsymbol\beta + \boldsymbol{\pi \delta} && (\text{unbiased estimator } E(\boldsymbol{\hat\pi}) = \boldsymbol\pi)
-\end{align}
-$$
-
-Thus, we can see by not including confounder $z$ in our "short regression", the estimator is now biased by $\boldsymbol{\hat\pi \delta}$.
-
-<br />
-
 ### Assignment Mechanism
 
 The Assignment Mechanism is the procedure that determines the treatment status of each unit. In causal inference, we want to restrict the assignment mechanism, in order to remove the effect of selection bias.

@@ -14,44 +14,11 @@ Use the right sidebar for quick navigation. R-code is provided at the bottom.
 
 ### Model Specification
 
-Let us say we have some outcome variable $y$, and several explanatory variables $x_1, x_2, \dots, x_k$. We have data on $n$ number of observations $i = 1, \dots n$.
-
-The linear regression model can be written as a conditional expectation $E(y|x)$ function:
-
-$$
-E(y_i |x_i) = \beta_0 + \beta_1 x_{1i} + \dots + \beta_kx_{ki}
-$$
-
-The linear model can also be specified for any specific outcome value $y_i$ for unit $i$:
+Let us say we have some outcome variable $y$, and several explanatory variables $x_1, x_2, \dots, x_k$. We have data on $n$ number of observations $i = 1, \dots n$. We assume these observations $i = 1, \dots, n$ are independent of each other. The linear model can be specified for any specific outcome value $y_i$ for unit $i$:
 
 $$
 y_i = \beta_0 + \beta_1 x_{1i} + \dots + \beta_kx_{ki} + u_i
 $$
-
-We can also specify the linear model in terms of linear algebra:
-
-$$
-\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} =
-\begin{pmatrix}1 & x_{11} & \dots & x_{k1} \\1 & x_{12} & \dots & x_{k2} \\\vdots & \vdots & \vdots & \vdots \\1 & x_{1n} & \dots & x_{kn}\end{pmatrix}
-\begin{pmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{pmatrix}
-+ \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
-$$
-
-$$
-\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u
-$$
-
-::: {.callout-note collapse="true" appearance="simple"}
-## More Info on Conditional Expectations
-
-Imagine $y$ is income, and $x$ is age.
-
-At age $x=20$, not every 20 year old makes the same amount of income. There is some distribution, with some making more, and some making less. This is the distribution $y|x=20$.
-
-We can find the expected value of this distribution, $E(y|x=20)$. This is a conditional expectation, and indicates the expected income of a 20 year old if we randomly chose one from the distribution.
-
-At $x=30$, the $E(y|x)$ probably is different (30 year olds make more money). Thus, the linear model is essentially stating that the expected $y$ depends on $x$. Or in terms of this example, the expected income depends on the individual's age.
-:::
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## More Info on the Error Term $u_i$
@@ -73,6 +40,42 @@ $$
 However, not every individual lies perfectly on this linear line. This is because there are other factors outside of age that affect $y$ (income), and these other factors are bundled into the error term.
 :::
 
+We can condense this above with the use of vectors (if you multiply the below out, you will see we get the same as above):
+
+$$
+y_i = \mathbf x_i^\mathsf{T}\boldsymbol\beta + u_i, \quad \text{where } \mathbf x_i = \begin{pmatrix} 1 \\ x_{i1} \\ \vdots \\ x_{ki} \end{pmatrix}, \quad \boldsymbol\beta = \begin{pmatrix} \beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{pmatrix}
+$$
+
+We can specify all observations $y_1, \dots, y_n$ in a vector:
+
+$$
+\begin{align}
+\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} & = \begin{pmatrix} \mathbf x_1^\mathsf{T}\boldsymbol\beta + u_1 \\ \mathbf x_2^\mathsf{T}\boldsymbol\beta + u_2 \\ \vdots \\ \mathbf x_n^\mathsf{T}\boldsymbol\beta + u_n\end{pmatrix}\\
+\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} & =
+\begin{pmatrix}1 & x_{11} & \dots & x_{k1} \\1 & x_{12} & \dots & x_{k2} \\\vdots & \vdots & \vdots & \vdots \\1 & x_{1n} & \dots & x_{kn}\end{pmatrix}
+\begin{pmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{pmatrix}
++ \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
+\end{align}
+$$
+
+We typically denote the above model as:
+
+$$
+\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## More Info on Conditional Expectations
+
+Imagine $y$ is income, and $x$ is age.
+
+At age $x=20$, not every 20 year old makes the same amount of income. There is some distribution, with some making more, and some making less. This is the distribution $y|x=20$.
+
+We can find the expected value of this distribution, $E(y|x=20)$. This is a conditional expectation, and indicates the expected income of a 20 year old if we randomly chose one from the distribution.
+
+At $x=30$, the $E(y|x)$ probably is different (30 year olds make more money). Thus, the linear model is essentially stating that the expected $y$ depends on $x$. Or in terms of this example, the expected income depends on the individual's age.
+:::
+
 <br />
 
 ### Estimation Process
@@ -81,7 +84,7 @@ To estimate the population parameters $\beta_0, \dots, \beta_k$, we use our samp
 
 $$
 \begin{align}
-SSR & = \sum\limits_{i=1}^n(y_i - \hat y_i)^2 \\
+SSR = S(\widehat{\beta_0}, \dots, \widehat{\beta_k})& = \sum\limits_{i=1}^n(y_i - \hat y_i)^2 \\
 & = \sum\limits_{i=1}^n(y_i - \color{blue}{(\widehat{\beta_0} + \widehat{\beta_1}x_{1i} + \dots + \widehat{\beta_k}x_{ki})}\color{black})^2 && (\text{plug in } \color{blue}{\hat y = \widehat{\beta_0} + \widehat{\beta_1}x_{1i} + \dots }\color{black}) \\
 & = \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_{1i} - \dots - \widehat{\beta_k}x_{ki})^2 &&(\text{distribute negative sign})
 \end{align}
@@ -91,7 +94,7 @@ In the linear algebra representation (where $\mathbf b$ is the vector of estimat
 
 $$
 \begin{align}
-S(\hat{\boldsymbol\beta}) & = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mathbf y - \hat{\mathbf y})\\
+SSR = S(\hat{\boldsymbol\beta}) & = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mathbf y - \hat{\mathbf y})\\
 & = (\mathbf y - \color{blue}{\mathbf X \hat{\boldsymbol\beta}}\color{black})^\mathsf{T} (\mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}}\color{black}) && (\text{plug in } \color{blue}{\hat{\mathbf y}  = \mathbf X \hat{\boldsymbol\beta}}\color{black}) \\
 \end{align}
 $$
@@ -129,6 +132,31 @@ $$
 \frac{\partial S(\hat{\boldsymbol\beta})}{\partial \hat{\boldsymbol\beta}} = -2\mathbf X^\mathsf{T} \mathbf y + 2 \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta} = 0
 $$
 
+::: {.callout-note collapse="true" appearance="simple"}
+## First Order Conditions for Simple Linear Regression
+
+Currently, we are deriving the first order conditions for multiple linear regression using linear algebra.
+
+For simple linear regression (with one explanatory variable), we can use summation notation. Recall our sum of squared residuals in summation form:
+
+$$
+SSR = S(\widehat{\beta_0}, \widehat{\beta_1})= \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_i)^2
+$$
+
+We want to minimise the SSR in respect to both $\widehat{\beta_0}$ and $\widehat{\beta_1}$. We can do this by taking the partial derivative in respect to both, and setting them equal to 0. We can find the partial derivative with chain rule and sum rule:
+
+$$
+\begin{align}
+\frac{\partial S(\widehat{\beta_0}, \widehat{\beta_1})}{\partial \widehat{\beta_0}} & = \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_i) = 0 \\
+\frac{\partial S(\widehat{\beta_0}, \widehat{\beta_1})}{\partial \widehat{\beta_1}} & = \sum\limits_{i=1}^nx_i(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_i) = 0
+\end{align}
+$$
+
+These conditions create a system of equations, which you can solve for the OLS solutions of $\widehat{\beta_0}$ and $\widehat{\beta_1}$. I will not do that here, since this method is more tedious than the linear algebra method, and can only apply to simple linear regression.
+
+However, while we are not going to solve for our OLS solutions with summations, it is still useful to know these first order conditions, since we will use them in many proofs that show other estimators are the same as OLS because they have the same first order conditions.
+:::
+
 When assuming $\mathbf X^\mathsf{T} \mathbf X$ is invertable (which is true if $\mathbf X$ is full rank), we can isolate $\hat{\beta}$ to find the solution to OLS:
 
 $$
@@ -142,7 +170,49 @@ $$
 
 Those are our coefficient solutions to OLS. With the estimated parameters $\widehat{\beta_0}, \dots, \widehat{\beta_k}$, we now have a best-fit line, called the **fitted values**.
 
-We will discuss the OLS estimator in far more detail in the [next chapter](quant3.qmd).
+We will discuss the OLS estimator in far more detail in the [next chapter](quant3.qmd), discussing its properties, and its strengths/weaknesses.
+
+<br />
+
+### Conditional Expectation Function
+
+Previously, we wrote the linear regression model in respect to $y_i$. However, we can also write the linear regression model as the best linear approximation of a [conditional expectation](quant1.qmd#conditional-distributions) $E(y_i |x_i)$:
+
+$$
+E(y_i|x_i) = \beta_0 + \beta_1 x_1 + \dots + \beta_k x_k
+$$
+
+Best-approximation is defined by the lowest mean-squared error (MSE). Let us prove OLS on $y_i$ gets the same $\beta_0, \dots, \beta_k$ as the best linear approximation of $E(y_i|x_i)$. Take this very simple CEF and its MSE:
+
+$$
+\begin{align}
+E(y_i|x_i) & = b_0 + b_1x_i \\
+MSE & = E(y_i - E(y_i|x_i))^2 \\
+& =  E(y_i - b_0 - b_1x_i)^2
+\end{align}
+$$
+
+The first order conditions are (using chain rule and partial derivatives):
+
+$$
+\begin{split}
+& E(y_i - b_0 - b_1x_i) = 0 \\
+& E(x_i(y_i - b_0 - b_1x_i) = 0
+\end{split}
+$$
+
+Now, recall our OLS minimisation conditions (simple linear regression, presented in the extra info box above). Since by definition, average/expectation is $E(x) = \frac{1}{n} \sum x_i$, we can rewrite as:
+
+$$
+\begin{split}
+& \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = \ n \times E(y_i - \hat\beta_0 - \hat\beta_1x_i) = 0 \\
+& \sum\limits_{i=1}^n x_i (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = \  n \times E(x_i(y_i - \hat\beta_0 - \hat\beta_1x_i)) = 0
+\end{split}
+$$
+
+And since anything multiplied to a zero turns into zero, we can ignore the $n$ in the first order condition. Thus, we can see, are the exact same minimisation conditions as the conditional expectation function. [Thus, OLS is the best approximation of the conditional expectation function]{.underline}.
+
+This property is very useful for interpreting our regression results. You will hear "expected changes in $y$ given an increase in $x$" very frequently when it comes to regression and its applications.
 
 <br />
 
@@ -154,21 +224,17 @@ We will discuss the OLS estimator in far more detail in the [next chapter](quant
 
 ### Interpretation of Parameters
 
-I define $\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}$, multiplied to $x_j \in \{x_1, \dots, x_k\}$. $\widehat{\beta_0}$ is the intercept.
+I define $\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}$, multiplied to $x_j \in \{x_1, \dots, x_k\}$. $\widehat{\beta_0}$ is the intercept. We assume a continuous $y$ variable - for a binary $y$, see the below section on the [linear probability model](#linear-probability-model).
 
-+--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                    | **Continuous** $x_j$                                                                                                                                                    | **Binary** $x_j$                                                                                                                                                             |
-+--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| **Continuous** $y$ | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j}$ unit change in $y$.                                                                      | There is a $\widehat{\beta_j}$ unit difference in $y$ between category $x_j = 1$ and category $x_j = 0$.                                                                     |
-|                    |                                                                                                                                                                         |                                                                                                                                                                              |
-|                    | When all explanatory variables equal 0, the expected value of $y$ is $\widehat{\beta_0}$.                                                                               | For category $x_j = 0$, the expected value of $y$ is $\widehat{\beta_0}$ (when all other explanatory variables equal 0).                                                     |
-+--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| **Binary** $y$     | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j} \times 100$ percentage point change in the probability of a unit being in category $y=1$. | There is a $\widehat{\beta_j}\times 100$ percentage point difference in the probability of a unit being in category $y=1$ between category $x_j = 1$ and category $x_j = 0$. |
-|                    |                                                                                                                                                                         |                                                                                                                                                                              |
-|                    | When all explanatory variables equal 0, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$                                    | For category $x_j = 0$, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$ (when all other explanatory variables equal 0).         |
-+--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                     | **Continuous** $x_j$                                                                                                                                 | **Binary** $x_j$                                                                                                                                           |
++---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| $\widehat{\beta_j}$ | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j}$ unit change in $y$, holding all other explanatory variables constant. | There is a $\widehat{\beta_j}$ unit difference in $y$ between category $x_j = 1$ and category $x_j = 0$, holding all other explanatory variables constant. |
++---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected value of $y$ is $\widehat{\beta_0}$.                                                            | For category $x_j = 0$, the expected value of $y$ is $\widehat{\beta_0}$ (when all other explanatory variables equal 0).                                   |
++---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-If you have multiple explanatory variables, always add: *while holding all other explanatory variables not* $x_j$ *constant.*
+NOTE: $\widehat{\beta_j}$ is a measure of correlation/relationship, [**not** causation]{.underline}. We will get to causation in later chapters.
 
 <br />
 
@@ -193,38 +259,6 @@ Thus, for a one standard deviation $\sigma_x$ increase in $x_j$, there is an exp
 
 <br />
 
-### Residual Standard Deviation {#residual-standard-deviation}
-
-Residuals are the distance of the actual value $y_i$ of observation $i$, compared to the predicted $\widehat{y_i}$ from our fitted values/best-fit line. They can be obtained after we fit our model:
-
-$$
-\begin{align}
-\mathbf{\hat u} & = \mathbf y - \mathbf{\hat y} \\
-& = \mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}} && \color{black}(\text{plug in } \color{blue}{\hat{\mathbf y} = \mathbf{X} \hat{\boldsymbol\beta}} \color{black}) \\
-& = \mathbf y - \mathbf X \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y} && \color{black}(\text{plug in } \color{blue}{\boldsymbol{\hat\beta}  = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y}\color{black})
-\end{align}
-$$
-
-The residual standard deviation $\hat\sigma$ measures the spread/variance of our residuals - so, how far away the actual values $y_i$ are from our predicted values $\widehat{y_i}$ in general for all observations.
-
-The residual variance is estimated with the formula below (with the residual standard deviation being the square root):
-
-$$
-\hat\sigma^2 = \frac{\sum_{i=1}^n \hat u_i^2}{n-k-1} = \frac{\mathbf{\hat u}^\mathsf{T} \mathbf{\hat u}}{n-k-1}
-$$
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Visualisation of Residual Standard Deviation
-
-Below is a figure illustrating different residual standard deviations, with the same best-fit line.
-
-![](images/clipboard-2649765153.png){fig-align="center" width="80%"}
-:::
-
-Smaller $\hat\sigma$ mean the actual values are, on average, close to our predicted values, and larger $\hat\sigma$ mean the actual values are, on average, further away from our predicted values.
-
-<br />
-
 ### R-Squared
 
 Our fitted values equation takes the following form:
@@ -237,7 +271,7 @@ $$
 \end{align}
 $$
 
-We can see that $\mathbf P$ is a matrix that turns $\mathbf y \rightarrow \hat{\mathbf y}$. Matrix $\mathbf P$ is our linear model that projects the true values $\mathbf y$ into a space of our regressors $\mathbf X$.
+We can see that $\mathbf P$ is a matrix that turns $\mathbf y \rightarrow \hat{\mathbf y}$. Matrix $\mathbf P$ is our linear model that projects the true values $\mathbf y$ into a space of our regressors $\mathbf X$. We will not go too into depth here on this, but see the [next chapter](quant3.qmd#ols-orthogonal-projection) for more details.
 
 One thing we might be interested in is how well our model $\mathbf{Py}$ explains the actual $\mathbf y$. One way we can do this is the scalar product of two vectors. We know that the scalar/dot product calculates the project/shadow of one vector on another. Thus, the scalar product $\mathbf y^\mathsf{T}\mathbf{Py}$ describes the shadow the actual $y$ casts on our projected model.
 
@@ -247,9 +281,13 @@ $$
 R^2 = \frac{\mathbf y^\mathsf{T}\mathbf{Py}}{\mathbf y^\mathsf{T}\mathbf y}
 $$
 
-R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained by our explanatory variables. R-Squared is always between 0 and 1 (or 0-100 as a percentage). Higher values indicate our model better explains the variation in $y$.
+We can also reason about $R^2$ in a another way. The total amount of variation in $y$ is called the total sum of squares (SST). The part of $y$ we cannot explain is the Sum of Squared Residuals (SSR) that we minimised for OLS esimtation. That implies that the remaining part SST-SSR is the variation in $y$ that our model explains, called the sum of explained squares (SSE). $R^2$ can be though of the ratio of explained variation in $y$ by our model to the total variation in $y$:
 
-Interpreting R-squared: *The Model explains* $R^2 \times 100$ *percent of the variation in* $y$*.*
+$$
+R^2 = \frac{SSE}{SST} = \frac{SST - SSR}{SST} = 1 - \frac{SSR}{SST} = 1 - \frac{\sum \hat u_i^2}{\sum(y_i - \bar y)^2}
+$$
+
+R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained by our explanatory variables. R-Squared is always between 0 and 1 (or 0-100 as a percentage). Higher values indicate our model better explains the variation in $y$.
 
 <br />
 
@@ -261,104 +299,32 @@ Interpreting R-squared: *The Model explains* $R^2 \times 100$ *percent of the va
 
 ### Homoscedasticity and Heteroscedasticity
 
-[Homoscedasticity]{.underline} is defined as:
-
-$$
-Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
-\sigma^2 & 0 & \dots & 0 \\
-0 & \sigma^2 & \dots & 0 \\
-\vdots & \vdots & \ddots & 0 \\
-0 & 0 & \dots & \sigma^2
-\end{pmatrix}
-$$
-
-Or in other words, no matter the values of any explanatory variable, the error term variance is **constant**. If this is false, then we have [heteroscedasticity]{.underline}.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Intuitive Visualisation of Homoscedasticity
+[Homoscedasticity]{.underline} is the idea that no matter the values of any explanatory variable, the error term variance is **constant**. If this is false, then we have [heteroscedasticity]{.underline}.
 
 An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all $\widehat{u_i}$):
 
-![](images/clipboard-1713529842.png){width="100%"}
+![](images/clipboard-1713529842.png){fig-align="center" width="70%"}
 
-Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of $x$.
-
-The heteroscedasticity residuals have a clear pattern - the up-down variance is smaller when $x$ is smaller, and the up-down variance is larger when $x$ is larger.
+Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of $x$. The heteroscedasticity residuals have a clear pattern - the up-down variance is smaller when $x$ is smaller, and the up-down variance is larger when $x$ is larger.
 
 Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.
-:::
 
-If you have homoscedasticity, you should use normal OLS standard errors (derived below).
+If you have homoscedasticity, you should use normal OLS standard errors. If you have heteroscedasticity, you should use **robust** OLS standard errors. You should also use robust standard errors if you are not sure which errors to use.
 
-If you have heteroscedasticity, you should use robust OLS standard errors. You should also use robust standard errors if you are not sure which errors to use. We will not derive robust standard errors in this chapter.
-
-<br />
-
-### Deriving Standard Errors
-
-We will only derive homoscedastic (normal) standard errors. The robust standard error derivation is beyond the scope of this lesson (just trust the computer that it will calculate it properly).
-
-Let us assume homoscedasticity. We want to find the variance of our estimator, $Var(\boldsymbol{\hat\beta} | \mathbf X)$. Let us start off with our OLS solution. We can simplify as follows:
-
-$$
-\begin{align}
-\boldsymbol{\hat\beta} & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y \\
-& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}(\mathbf X \boldsymbol\beta + \mathbf u) && (\text{plug in } \mathbf y = \mathbf X \boldsymbol\beta + \mathbf u) \\
-& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&(\text{multiply out})\\
-& = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &&( \ \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
-& = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u && (\text{identity property of } \mathbf I)
-\end{align}
-$$
-
-$$
-Var(\boldsymbol{\hat\beta} | \mathbf X) = Var(\boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u \ | \ \mathbf X)
-$$
-
-$\boldsymbol\beta$ is a vector of fixed constants. $(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u$ can be imagined as a matrix of fixed constants, since we are conditioning the above variance on $\mathbf X$ (so for each $\mathbf X$, the statement is fixed).
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Mathematical Lemma
-
-If $\mathbf u$ is an $n$ dimensional vector of random variables, $\mathbf c$ is an $m$ dimensional vector, and $\mathbf B$ is an $n \times m$ dimensional matrix with fixed constants, then the following is true:
-
-$$
-Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^T
-$$
-
-I will not prove this lemma here, but it is provable.
-:::
-
-With the Lemma above, and with the definition of homoscedasticity, we can simplify:
-
-$$
-\begin{align}
-Var(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) [(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} && (\text{lemma})\\
-& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) \color{blue}{\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}} && \color{black}( \ \color{blue}{[(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} = (\mathbf X^\mathsf{T} \mathbf X)^{-1}}\color{black})\\
-& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\sigma^2 \mathbf I_n}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\color{blue}{Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n}\color{black}) \\
-& =  \color{red}{\sigma^2} \color{black} (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf I_n \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{move scalar } \color{red}{\sigma^2}\color{black})\\
-& =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{identity property of } \mathbf I_n)\\
-& =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{inverses } \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ cancel})
-\end{align}
-$$
-
-However, we do not actually know what $\sigma^2$ is. We can estimate it with $\hat\sigma^2$ (discussed [here](#residual-standard-deviation)).
-
-Thus, our standard errors (square root of variance) for any coefficient estimate $\hat\beta_j$ are:
-
-$$
-se(\hat\beta_j) = \hat\sigma \sqrt{(\mathbf X^T \mathbf X)^{-1}_{jj}}
-$$
+We will discuss homoscedasticity and heteroscedasticity in more detail in the [next chapter](#quant3.qmd), as well as derive the standard errors.
 
 <br />
 
 ### T-Tests
 
-In the last chapter, we discussed the basics of hypothesis testing. In regression, our typical hypotheses are:
+In the last chapter, we discussed the [basics of hypothesis testing](quant1.qmd#intuition-of-hypothesis-testing). In regression, our typical hypotheses are:
 
 -   $H_0 : \beta_j = 0$ (i.e. there is no relationship between $x_j$ and $y$).
 -   $H_1:\beta_j ≠ 0$ (i.e. there is a relationship between $x_j$ and $y$).
 
-Using the standard error (see above), we calculate the $t$-statistic, and using the $t$-statistic, we calculate a p-value.
+Using the standard error (see above), we calculate the $t$-statistic, and using the $t$-statistic and a $t$-distribution, we calculate a p-value.
+
+-   Why a t-distribution and not a standard normal distribution? The reason will be explained in the next chapter, but has to deal with the fact we cannot observe the variance of the error term $u_i$, so we have to estimate it.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Details of Running a Hypothesis Test
@@ -388,9 +354,9 @@ The p-value we get is the probability of getting a test statistic equally or mor
 
 -   If $p<0.05$, we believe the probability of a null hypothesis is low enough, such that we reject the null hypothesis (that there is no relationship between $x$ and $y$), and conclude our alternate hypothesis (that there is a relationship between $x$ and $y$).
 
--   If $p > 0.05$, we cannot reject the null hypothesis, and cannot reject that there is no relationship between $x$ and $y$.
+-   If $p > 0.05$, we cannot reject the null hypothesis, and cannot reject there is no relationship between $x$ and $y$.
 
-NOTE: this is not causality - we are only looking at the relationship. Causality needs to be established with an adequate research design.
+NOTE: this is not causality - we are only looking at the relationship. Causality needs to be established with an adequate research design, which we will explore in later chapters.
 
 <br />
 
@@ -451,7 +417,7 @@ $$
 \end{align}
 $$
 
-We also have confidence intervals for every predicted $\widehat{y_i}$. These intervals are calculated with the residual standard deviation (covered previously):
+We also have confidence intervals for every predicted $\widehat{y_i}$. These intervals are calculated with the residual standard deviation (covered in the next chapter):
 
 $$
 \widehat{y_i} - 1.96 \hat\sigma, \ \widehat{y_i} + 1.96 \hat\sigma
@@ -466,6 +432,39 @@ Note: It is pretty rare to just use linear regression for predictions, since mos
 ------------------------------------------------------------------------
 
 # **Extensions**
+
+### Linear Probability Model
+
+The standard linear model assumes a continuous $y$ variable. However, we can adapt the linear model to fit binary $y$ variables. When $y$ is binary (i.e. only has values $y_i \in \{0, 1\}$, our linear model is actually no longer a predictor of $y_i$, since our regression will output values that are not 0 and 1.
+
+Instead, our linear model will now predict the probability of unit $i$ having $y_i = 1$. The is due to the [conditional expectation interpretation of regression](#conditional-expectation-function), and the expectation of the [bernoulli distribution](quant1.qmd#bernoulli-and-binomial-distribution):
+
+$$
+\begin{align}
+E(y_i|x_i) & = \underbrace{0 \times Pr(y_i = 0|x_i) \ + \ \times Pr(y_i = 1|x_i)}_{\text{a weighted avg. formula}} \\
+& = Pr(y_i=1|x_i)
+\end{align}
+$$
+
+Thus, we can rewrite our linear model with the primary outcome being $Pr(y_i = 1|x_i)$. This model is called the **linear probability model**:
+
+$$
+Pr(y_i = 1|x_i) = \beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + u_i
+$$
+
+Our interpretations of coefficients also slightly change.
+
++---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                     | **Continuous** $x_j$                                                                                                                                                                                                      | **Binary** $x_j$                                                                                                                                                                                                               |
++---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| $\widehat{\beta_j}$ | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j} \times 100$ percentage point change in the probability of a unit being in category $y=1$, holding all other explanatory variables constant. | There is a $\widehat{\beta_j}\times 100$ percentage point difference in the probability of a unit being in category $y=1$ between category $x_j = 1$ and category $x_j = 0$, holding all other explanatory variables constant. |
++---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$                                                                                      | For category $x_j = 0$, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$ (when all other explanatory variables equal 0).                                                           |
++---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+Note: we cannot do linear regression with a categorical (more than 2 categories and undordered) $y$. We will need to use a multinomial logistic regression. We can do a linear regression with an ordinal $y$ (more than 2 categories with an order) by pretending that the ordinal $y$ is continuous. We can also is a ordinal logistic regression for that.
+
+<br />
 
 ### Categorical Explanatory Variables
 
@@ -687,17 +686,17 @@ If we take the log of this variable, we get the following distribution that is a
 
 We have 3 types of logarithmic transformations:
 
-+------------+-------------------------------------+-----------------------------------------+
-|            | $x$                                 | $\log (x)$                              |
-+------------+-------------------------------------+-----------------------------------------+
-| $y$        | Linear Model:                       | Linear-Log Model:                       |
-|            |                                     |                                         |
-|            | $y = \beta_0 + \beta_1 x + u$       | $y = \beta_0 + \beta_1 \log x + u$      |
-+------------+-------------------------------------+-----------------------------------------+
-| $\log (y)$ | Log-Linear Model:                   | Log-Log Model:                          |
-|            |                                     |                                         |
-|            | $\log(y) = \beta_0 + \beta_1 x + u$ | $\log y = \beta_0 + \beta_1 \log x + u$ |
-+------------+-------------------------------------+-----------------------------------------+
++--------------+-------------------------------------+-----------------------------------------+
+|              | $x$                                 | $\log (x)$                              |
++--------------+-------------------------------------+-----------------------------------------+
+| $y$          | Linear Model:                       | Linear-Log Model:                       |
+|              |                                     |                                         |
+|              | $y = \beta_0 + \beta_1 x + u$       | $y = \beta_0 + \beta_1 \log x + u$      |
++--------------+-------------------------------------+-----------------------------------------+
+| $\log (y)$   | Log-Linear Model:                   | Log-Log Model:                          |
+|              |                                     |                                         |
+|              | $\log(y) = \beta_0 + \beta_1 x + u$ | $\log y = \beta_0 + \beta_1 \log x + u$ |
++--------------+-------------------------------------+-----------------------------------------+
 
 <br />
 
