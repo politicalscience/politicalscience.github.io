@@ -128,35 +128,29 @@ $$
 
 <br />
 
-### Complications and Limitations
+### Internal Validity
 
-Randomisation can be complicated by a few factors:
+Internal validity is the validity of the research design in identifying causal effects. Randomisation can be complicated by a few factors:
 
 1.  Missing data (often due to individuals dropping out). We are concerned that there is some covariate that is causing some people to drop out, which re-introduces selection bias.
 2.  Measurement Problems: Hawthorne Effect - subjects know what you are studying, and will change their behaviour as a result.
 3.  Non-Compliance: Some units assigned to treatment might not take the treatment, and some units assigned to control may take the treatment (this can often be dealt with by using an instrumental variable design).
 
-Randomisation does not help with external validity - the ability to extrapolate our results to external situations.
+Some of these issues are very hard to overcome, so it is important to identify these limitations in our experiments. One way to check validity is to do a [balance check](#the-balancing-property) between key covariates.
 
-::: {.callout-note collapse="true" appearance="simple"}
-## More on External Validity
+<br />
 
-External validity asks if we can generalise our conclusions from our subjects, to other subjects outside our experiment. Can we extrapolate our estimates to to other populations?
+### External Validity
+
+External validity has little to do with causal identifiction with the subjects in our experiment. Instead, External validity asks if we can generalise our conclusions from our subjects, to other subjects outside our experiment. Can we extrapolate our estimates to to other populations? This is important - if we cannot extrapolate, some results may be very niche.
 
 For example, if we measured the effect of migration on tolerance for our subjects in India, can we say the same effect is true of someone in Japan, the US, or Europe?
 
-This is important - if we cannot extrapolate, some results may be very niche.
+Randomisation does not help with external validity - the ability to extrapolate our results to external situations. To extrapolate to a greater population, our actual sample of observations in our experiment, should be representative of the greater population. This is called 𝑋-Validity: we can study this with data - to see how representative our population is compared to the population.
 
-To extrapolate to a greater population, our actual sample of observations in our experiment, should be representative of the greater population. This is often violated, as random sample for experiments is very very difficult.
-
-This is called 𝑋-Validity: we can study this with data - to see how representative our population is compared to the population.
-
-Non-representative programme of treatment is another threat: Sometimes, treatments will differ between areas.
-
-For example, if we are encouraging people to migrate to test how that changes their tolerance, how are the governmental/ngo/private agencies working with you affecting the process. Would less capable agencies create different effects?
+Non-representative programme of treatment is another threat: Sometimes, treatments will differ between areas. For example, if we are encouraging people to migrate to test how that changes their tolerance, how are the governmental/ngo/private agencies working with you affecting the process. Would less capable agencies create different effects?
 
 This is called $C$-validity, and we cannot measure this with data, unless you redo your experiment in another context.
-:::
 
 <br />
 
@@ -247,14 +241,35 @@ We should not include post-treatment covariates. Anything that is measured post-
 
 # **Statistical Inference**
 
-### Standard Inference
+### Standard Errors of the Estimator
 
-We can use a **t**-test for statistical inference.
+Standard errors are needed if we want to conduct classical hypothesis testing. If we use the OLS estimator, we can use robust standard errors, as we derived in the last chapter.
 
-1.  Estimate the $\hat\tau_{ATE}$ and robust standard error $\widehat{rse}(\hat\tau_{ATE})$.
-2.  State hypotheses, normally $H_0 : \tau_{ATE} = 0$ and $H_1 \tau_{ATE} ≠ 0$.
-3.  Calculate the t-test statistic $\hat\tau /\widehat{rse}(\hat\tau)$.
-4.  Refer to the relevant t-distribution, and calculate the p-value.
+If we use the difference-in-means estimator, we can calculate the standard errors with the following formula:
+
+We can also use [Nonparametric Bootstrap](quant1.qmd#nonparametric-bootstrap) to create our sampling distribution and standard errors for statistical inference, instead of relying on asymptotic normality of the standard t-test.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Block Bootstrap
+
+For blocked experiments, you should randomly sample blocks, not units, to create your bootstrap re-samples.
+
+For example, if your data is clustered in cities, you should re-sample by cities.
+:::
+
+<br />
+
+### Classical Hypothesis Testing
+
+We can use a **t**-test for statistical inference. We first estimate the $\hat\tau_{ATE}$ and robust standard error $\widehat{rse}(\hat\tau_{ATE})$.
+
+Then, we state our hypotheses, which are normally:
+
+$$
+H_0 : \tau_{ATE} = 0, \quad H_1:  \tau_{ATE} ≠ 0
+$$
+
+Finally, we can calculate the t-test statistic $\hat\tau /\widehat{rse}(\hat\tau)$, refer to the relevant t-distribution, and calculate the p-value.
 
 Generally, we use a statistical significance level of $\alpha = 0.05$, so we reject the null if $|t|>1.96$.
 
@@ -280,37 +295,23 @@ $$
 H_0^s : Y_1 = Y_0, \quad H_A^s : Y_1 ≠ Y_0
 $$
 
-Assuming $H_0$ is true, we can actually fully construct the potential outcomes $Y_{0i}$ and $Y_{1i}$, since we know every unit has 0 individual treatment effect.
+Assuming $H_0$ is true, we can actually fully construct the potential outcomes $Y_{0i}$ and $Y_{1i}$, since we know every unit has 0 individual treatment effect. Then, we can "recreate" the sampling distribution without asymptotic properties.
 
-Once constructed, we can imagine what different treatments we would observe under different randomization schemes (given $H_0$ is true). Thus, we can construct the sampling distribution, so we do not need to "imagine" a hypothetical sampling distribution.
-
-Procedure for conducting randomisation inference (also called permutation test or Fisher's exact test) is as follows:
-
-1.  Calculate the total number of randomisations possible. This is calculated as a permutation of $_NP_{N_1}$ ($N$ choose $N_1$).
-2.  Calculate and store the value of $\widehat{\tau_j}$ of each permuted dataset $j$. Thus, we will have a distribution of $\widehat{\tau_j}$.
-3.  Calculate $p$-value as the proportion of $\widehat{\tau_j}$ that are as or more extreme than the actually observed $\hat\tau$.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Details on Randomisation Inference
-
-If we have $N$ total units, and $N_1$ in the treatment group and $N_0$ in the control group, we can calculate all possible randomisation permutations as follows:
+First, we want to calculate the total number of randomisations possible. If we have $N$ total units, and $N_1$ in the treatment group and $N_0$ in the control group, we can calculate all possible randomisation permutations as follows:
 
 $$
 \begin{pmatrix} N \\ N_1 \end{pmatrix} = \frac{N!}{N_1 ! N_0 !}
 $$
 
-This is the total number of assignments possible given $N$, $N_1$, and $N_0$.
+This is the total number of assignments possible given $N$, $N_1$, and $N_0$. Then, we can calculate the $\widehat{\tau_j}$ of every possible randomisation assignment. The figure below shows this:
 
-Then, we can calculate the $\widehat{\tau_j}$ of every possible randomisation assignment. The figure below shows this:
+![](images/clipboard-717815317.png){fig-align="center" width="40%"}
 
-![](images/clipboard-717815317.png){fig-align="center" width="70%"}
+Now, plot all $\widehat{\tau_j}$ in our sampling distribution:
 
-Now, plot all $\widehat{\tau_j}$ in a distribution:
+![](images/clipboard-3711064458.png){fig-align="center" width="35%"}
 
-![](images/clipboard-3711064458.png){fig-align="center" width="60%"}
-
-Let us say our sample $\hat\tau = 6$. We would simply find the area under the curve that is above $\hat\tau = 6$, and below $-\hat\tau = -6$.
-:::
+Let us say our sample $\hat\tau = 6$. We would simply find the area under the curve that is above $\hat\tau = 6$, and below $-\hat\tau = -6$. This would be our p-value.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Pros/Cons of Randomisation Inference

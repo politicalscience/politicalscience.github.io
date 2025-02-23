@@ -14,7 +14,7 @@ Use the right sidebar for quick navigation. R-code for causal diagrams is provid
 
 # **Potential Outcomes Framework**
 
-### Treatment and Potential Outcomes
+### Treatment Variable
 
 In causal inference, we are interested in how treatment $D$ causes outcome variable $Y$.
 
@@ -27,16 +27,13 @@ D_i = \begin{cases}
 \end{cases}
 $$
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Further information on Treatment Variables
-
 Causal variables/treatments must occur before the outcome. A variable cannot cause something to occur in the past.
 
-Causal variables/treatments must be able to be manipulated (in order to imagine a world where the treatment did not occur).
+Causal variables/treatments must be able to be manipulated (in order to imagine a world where the treatment did not occur). For example, $D$ cannot be sex assigned at birth, ethnicity, etc. For example, major global events (how did 9/11 cause the Arab spring?)
 
--   For example, $D$ cannot be sex assigned at birth, ethnicity, etc.
--   For example, major global events (how did 9/11 cause the Arab spring?)
-:::
+<br />
+
+### Potential Outcomes
 
 Imagine there are two hypothetical parallel worlds - one where unit $i$ receives the treatment $D$, and one where unit $i$ does not receive the treatment $D$. Everything else in these worlds is identical.
 
@@ -49,11 +46,9 @@ Y_{di}, Y_i(d) =\begin{cases}
 \end{cases}
 $$
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Example of Potential Outcomes
-
 For example, imagine we are interested in finding the effect of democracy $D$ on GDP growth $Y$. Potential outcome $Y_{1i}$ is the potential GDP growth of country $i$ if they were a democracy, and outcome $Y_{0i}$ is the potential GDP growth of a country $i$ if they were not a democracy.
-:::
+
+Note that these are hypothetical worlds - we will obviously not observe both of them at the same time. The next section discusses this.
 
 <br />
 
@@ -226,7 +221,7 @@ This is the causal effect of only variables who meet the condition of the covari
 
 This is often used for tailoring products/medicine/advertising to certain groups of people. It is also frequently used in identification strategies.
 
-This estimand will go by other names, including the Local Average Treatment Effect (LATE).
+This estimand will go by other names, including the **Local Average Treatment Effect (LATE)**.
 
 <br />
 
@@ -362,6 +357,8 @@ There are two types of studies that use different assignment mechanisms:
 
 Generally, the most credible studies are randomisation studies, since we can control interventions to parse out the effect of confounders. Observational studies generally rely on more assumptions that need to be met, and need to be defended for the study to be credible.
 
+In the next chapter, we will start off with Randomised Controlled Trials, which are a form of randomisation experiment. After that, we will start discusses observational studies, and what assumptions we need in these studies to identify the causal effect without selection bias.
+
 <br />
 
 <br />
@@ -372,61 +369,28 @@ Generally, the most credible studies are randomisation studies, since we can con
 
 ### Components of the Graphs
 
-Causal Diagrams are a visual way to represent causal theories and frameworks, which allows us to visualise how variables interact with each other.
-
-Each Directed Acyclic Graph (DAG) has the following components:
+Causal Diagrams are a visual way to represent causal theories and frameworks, which allows us to visualise how variables interact with each other. Each Directed Acyclic Graph (DAG) has the following components:
 
 1.  Nodes: representing variables (which are also called vertices).
 2.  Directed Edges: Arrows that encode one-way causal theories between variables. For example, we might believe $Z$ causes $X$, so we will draw an arrow from $Z$ to $X$. These connections are **observable** (solid) or **unobservable** (dashed).
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Example of Directed Acyclic Graphs
+![](images/clipboard-3648393347.png){fig-align="center" width="35%"}
 
-Below is an example of a directed acyclic graph:
+In the figure above, we have two unobserved variables: $Q$ and $Y$ We have three observed variables: $Z$, $D$, and $Y$. We can see the causal theories represented by arrows.
 
-![](images/clipboard-3648393347.png){fig-align="center" width="50%"}
-
-What does this diagram show?
-
--   We have two unobserved variables: $Q$ and $Y$
--   We have three observed variables: $Z$, $D$, and $Y$.
--   We can see the causal theories represented by arrows.
-
-What can we learn from this diagram?
-
--   $Z \rightarrow Y$ is confounded by $W$: $W$ is affecting who gets treatment $Z$, and causing $Y$. Thus, $W$ is affecting who gets selected into treatment $Z$, and selecting your potential outcome $Y$. Thus, this is an example of selection bias.
--   $D \rightarrow Y$ is confounded by $Q$.
--   $Z \rightarrow D$ is not confounded, so we can estimate this causal effect.
-
-Note: All these conclusions are only true if our causal theory is correct (we have specified all the possible variables, and we have specified the correct causal relationships).
-:::
-
-Features of a Directed Acyclic Graph:
-
-1.  They must be acyclic: This means that they are not circular - $A$ does not terminate back at $A$.
-2.  Non-Connections: The absence of relationships between variables.
+We can see the causal effec $Z \rightarrow Y$ is confounded by $W$: $W$ is affecting who gets treatment $Z$, and causing $Y$. Thus, $W$ is affecting who gets selected into treatment $Z$, and selecting your potential outcome $Y$. Thus, this is an example of selection bias. $D \rightarrow Y$ is confounded by $Q$. $Z \rightarrow D$ is not confounded, so we can estimate this causal effect.
 
 <br />
 
 ### Representing Interventions
 
-Treatments (interventions by the researcher, for example) are when we determine one variable exogenously (such as by randomisation).
+Treatments (interventions by the researcher, for example) are when we determine one variable exogenously (such as by randomisation). Or in other words, one variable is determined randomly externally, not caused by any variables within the directed acyclic graphs.
 
-Or in other words, one variable is determined randomly externally, not caused by any variables within the directed acyclic graphs.
+Treatments are represented by the **do()** operator. When the treatment is exogenous, we can break all the connections into that variable's node. This is because we are determining the value of the variable, not any other variables.
 
-Treatments are represented by the **do()** operator. When the treatment is exogenous, we can break all the connections into that variable's node.
+![](images/clipboard-1438441757.png){fig-align="center" width="35%"}
 
-This is because we are determining the value of the variable, not any other variables.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Example of Interventions
-
-![](images/clipboard-1438441757.png){fig-align="center" width="50%"}
-
-An intervention here is on variable $D$. That means the value of $D$ is being chosen outside of this graph (by randomisation, or the researcher).
-
-This allows us to delete the arrow between $Q \rightarrow D$ and $Z \rightarrow D$. This is because we are exogenously determining $D$, so $Q$ and $Z$ are not determining the value of $D$.
-:::
+An intervention here is on variable $D$. That means the value of $D$ is being chosen outside of this graph (by randomisation, or the researcher). This allows us to delete the arrow between $Q \rightarrow D$ and $Z \rightarrow D$. This is because we are exogenously determining $D$, so $Q$ and $Z$ are not determining the value of $D$.
 
 With exogenously determined variables, we can find the causal effect that variable is causing on another.
 
@@ -439,15 +403,13 @@ A set of nodes $\{ \mathbf S \}$ blocks a path $p$ if either:
 1.  If the path $p$ contains at least one arrow-emitting node included in the set of nodes $S$, or
 2.  The path $p$ contains at least one collision node (multiple arrows point into it) that is outside the set of nodes $S$, and the collision node has no descendant within the set of nodes $S$ (no arrows go out of it to another node).
 
-Take this directed acyclic graph:
-
 ![](images/clipboard-2373065460.png){fig-align="center" width="40%"}
 
-We can see the following:
+Take this above causal diagram. We can see the following:
 
-1.  The path $D \rightarrow P \rightarrow Y$ is blocked by set $\{P\}$, because the node $P$ is one arrow-emitting node that is in the path $D \rightarrow P \rightarrow Y$.
-2.  The path $D \leftarrow M \rightarrow Y$ is blocked by set $\{M\}$, because the node $M$ is one arrow-emitting node in the path $D \leftarrow M \rightarrow Y$.
-3.  $D \leftarrow Z \rightarrow M \rightarrow Y$ is blocked by $\{M\}$, $\{Z\}$, or $\{M, Z\}$ - note $D$ and $Y$ do not emit arrows so they cannot block.
+1.  The path $D \rightarrow P \rightarrow Y$ is blocked by set $\{P\}$, because node $P$ is one arrow-emitting node in the path $D \rightarrow P \rightarrow Y$.
+2.  The path $D \leftarrow M \rightarrow Y$ is blocked by set $\{M\}$, because node $M$ is one arrow-emitting node in the path $D \leftarrow M \rightarrow Y$.
+3.  $D \leftarrow Z \rightarrow M \rightarrow Y$ is blocked by $\{M\}$, $\{Z\}$, or $\{M, Z\}$.
 
 Blocking paths is important, since in order to estimate $D \rightarrow Y$, we need to block any other path between $D$ and $Y$ that is not directly $D \rightarrow Y$.
 
