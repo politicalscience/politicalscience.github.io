@@ -781,17 +781,13 @@ This can be complicated to see in higher dimensions (since it is hard to conside
 
 <br />
 
-### Vector Spaces
+### Vector Spaces and Matrix Rank
 
-A collection of spanning vectors spans some space, if you can write any vector in that space, as a linear combination of the spanning vectors.
-
-For example, take vector $\mathbf e_1 = (1 \ 0)$ and $\mathbf e_2 = (0 \ 1)$. These vectors span some space including $\mathbf z$, if vector $\mathbf z$ can be written as:
+A collection of spanning vectors spans some space, if you can write any vector in that space, as a linear combination of the spanning vectors. For example, take vector $\mathbf e_1 = (1 \ 0)$ and $\mathbf e_2 = (0 \ 1)$. These vectors span some space including $\mathbf z$, if vector $\mathbf z$ can be written as:
 
 $$
 \mathbf z = a \mathbf e_1 + b \mathbf e_2, \quad \text{e.x.} \quad \mathbf z = (a \ b)
 $$
-
--   In fact, $\mathbf e_1$ and $\mathbf e_2$ span the set of all 2-dimensional vectors.
 
 This allows us to write vectors in terms of the core vectors, and to understand the dimension of the space. The **dimension** of the space is the smallest number of linearly independent vectors that span the space.
 
@@ -821,17 +817,9 @@ $$
 Thus, the third vector is in the space spanned by the first 2 vectors. The first two vectors spans this space, and thus, it is 2 dimensional space.
 :::
 
-Generally, the dimensionality of the space matches the number of vectors that span the space (so a 2 dimensional space is often spanned by 2 vectors, 3 spanned by 3, etc.).
+Generally, the dimensionality of the space matches the number of vectors that span the space (so a 2 dimensional space is often spanned by 2 vectors, 3 spanned by 3, etc.). Dimensionality of a vector space is not always the same as the dimensionality of the vectors.
 
-Note: Dimensionality of a vector space is not always the same as the dimensionality of the vectors.
-
-<br />
-
-### Matrix Rank
-
-As we discussed before, it can be difficult to find if vectors are linearly independent in higher dimensions.
-
-We can stack the row vectors into a matrix (we can also do them in columns):
+It can be difficult to find if vectors are linearly independent in higher dimensions. Instead, we can stack the row vectors into a matrix (we can also do them in columns):
 
 $$
 \begin{pmatrix} \mathbf x_1 \\ \mathbf x_2 \\ \mathbf x_3 \end{pmatrix} =
@@ -840,13 +828,9 @@ x_{21} & x_{22} & x_{23} \\
 x_{31} & x_{32} & x_{33} \end{pmatrix}
 $$
 
-The **Rank** of a matrix is the number of linearly independent rows/columns in a matrix.
+The **Rank** of a matrix is the number of linearly independent rows/columns in a matrix. If the Rank is equal to the total number of rows/columns (all rows/columns are linearly independent), the matrix has **full rank**. A matrix with full rank is non-singular, and thus, can be inverted, and has a non-zero determinant.
 
-If the Rank is equal to the total number of rows/columns (all rows/columns are linearly independent), the matrix has **full rank**. A matrix with full rank is non-singular, and thus, can be inverted, and has a non-zero determinant.
-
-Thus, if we find the determinant of the matrix, if it is 0, the vectors are [not]{.underline} linearly independent, and if it is not 0 , they are linearly independent.
-
-We can also know a matrix is not full rank, if the space of the dimension is less than the number of vectors (as explained above).
+Thus, if we find the determinant of the matrix, if it is 0, the vectors are [not]{.underline} linearly independent, and if it is not 0 , they are linearly independent. We can also know a matrix is not full rank, if the space of the dimension is less than the number of vectors (as explained above).
 
 <br />
 
@@ -1007,28 +991,19 @@ This will be useful for optimisation and multivariable calculus. We will specifi
 
 <br />
 
-### Eigenvalues
+### Eigenvector Decomposition.
 
-A matrix, as we discussed, can act as an operator that maps some vector to another $\mathbf A : \mathbf x \rightarrow \mathbf y$.
-
-Geometrically, vector $\mathbf x$ points in some dimensional space. Then the matrix $\mathbf A$ comes along, and transforms it into a different vector $\mathbf x$, which might flip the direction, or rotate, or change its norm, etc. Sometimes, $\mathbf y$ will stay in the same direction or opposite direction (along the same line) as the original, even after the operator.
-
-Basically, an **eigenvector** of matrix $\mathbf A$ is a vector $\mathbf x$, that does not change its direction (stays on the same line) when you apply the operator $\mathbf A$ to get vector $\lambda \mathbf x$. Mathematically:
+Geometrically, vector $\mathbf x$ points in some direction. Then matrix $\mathbf A$ lineally maps it into a different vector $\mathbf y$, which might change the direction or change its norm. An **eigenvector** of matrix $\mathbf A$ is a vector $\mathbf x$, that does not change its direction (stays on the same linear line) when you apply the mapping operator $\mathbf A$:
 
 $$
 \mathbf{Ax} = \lambda \mathbf x
 $$
 
-The $\lambda$ is an **eigenvalue** that corresponds to the eigenvector. We can compute eigenvalues. Let us start with the eigenvector formula above. We can multiply the right side by the identity matrix (which does not change the result):
-
-$$
-\mathbf{Ax} = \lambda \mathbf {Ix}
-$$
-
-Now, let us move everything to one side, and simplify:
+The $\lambda$ is an **eigenvalue** that corresponds to the eigenvector. We can compute them by manipulating the above:
 
 $$
 \begin{split}
+\mathbf{Ax} = \lambda \mathbf {Ix} \\
 \mathbf{Ax} - \lambda \mathbf {Ix} & = 0 \\
 (\mathbf A - \lambda \mathbf I) \mathbf x & = 0
 \end{split}
@@ -1037,59 +1012,13 @@ $$
 $(\mathbf A - \lambda \mathbf I)$ is an singular matrix, meaning determinant $|(\mathbf A - \lambda \mathbf I)| = 0$. All values of $\lambda$ that solve this determinant equation will be eigenvalues of the matrix.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Example of Solving for Eigenvalues
+## Step by Step Calculating Eigenvalues
 
-We know $|(\mathbf A - \lambda \mathbf I)| = 0$. Let us say:
-
-$$
-\mathbf A = \begin{pmatrix} 2 & 1 \\ 3 & 4 \end{pmatrix}, \quad \lambda \mathbf I \begin{pmatrix} \lambda & 0 \\ 0 & \lambda \end{pmatrix}
-$$
-
-Thus:
-
-$$
-\mathbf A - \lambda \mathbf I = \begin{pmatrix} 2 - \lambda & 1 \\ 3 & 4 - \lambda \end{pmatrix}
-$$
-
-We know the determinant should equal 0. We can solve for $\lambda$:
-
-$$
-\begin{split}
-0 & = |(\mathbf A - \lambda \mathbf I)| \\
-0 & = (2-\lambda)(4-\lambda) - 1(3) \\
-0 & = 8-2\lambda - 4 \lambda +\lambda^2 - 4 \\
-0 & = \lambda^2 - 6\lambda +4 \\
-\end{split}
-$$
-
-Let us use the quadratic formula:
-
-$$
-\begin{split}
-\lambda & = \frac{-b ± \sqrt{b^2 - 4ac}}{2a} \\
-\lambda & = \frac{6 ± \sqrt{36 - 4(1)(4)}}{2(1)} \\
-\lambda & = \frac{6 ± \sqrt{20}}{2} \\
-\lambda & = 3 ± \frac{\sqrt{20}}{2} \\
-\lambda & = 3 ± \frac{2 \sqrt{5}}{2} \\
-\lambda & = 3 ± \sqrt{5}
-\end{split}
-$$
-
-Thus, we have found our eigenvalues.
-:::
-
-<br />
-
-### Eigenvectors and Decomoposition
-
-Let us say we have the matrix $\mathbf{A}$. First, you need to calculate the eigenvalues $\lambda$ (as shown previously).
+For example, let us say we have the matrix $\mathbf{A}$.
 
 $$
 \mathbf A = \begin{pmatrix} 2 & 3 \\ 2 & 1 \end{pmatrix}
 $$
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Example of Calculating Eigenvalues
 
 We know $|(\mathbf A - \lambda \mathbf I)| = 0$.
 
@@ -1111,7 +1040,7 @@ $$
 $$
 :::
 
-For every $\lambda$, you will have an eigenvector that makes $\mathbf{Ax} = \lambda \mathbf x$ true. From our example:
+For every $\lambda$, you will have an **eigenvector** that makes $\mathbf{Ax} = \lambda \mathbf x$ true. From our example in the info box:
 
 $$
 \begin{split}
@@ -1120,27 +1049,7 @@ $$
 \end{split}
 $$
 
-Remember, $\mathbf x$ is a vector here of 2 elements, $x_1, x_2$ - but we only have one equation for each eigenvalue pair. This means there will be one solution without a unique solution. Thus, we typically define $x_1 = 1$ so there is a unique solution. Using this, we can solve for the answer.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Eigenvalues and Non-Unique Solutions
-
-It might seem simple to just solve for our $\mathbf x$ with two unknowns $x_1, x_2$.
-
-But the issue is - our equations are not linearly independent, so we do not have enough information to solve for a unique solution for one.
-
-This is actually okay - why? Well, take a look at these potential eigenvectors:
-
-$$
-\begin{pmatrix} 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 2 \\ 0 \end{pmatrix}, \begin{pmatrix} 3 \\ 0 \end{pmatrix}
-$$
-
-These are different vectors - but they are all eigenvectors. This is because of the equation $\mathbf{Ax} = \lambda \mathbf x$ - if both sides have vector $(1 \ 0)$ multiplied by a constant (like the 2nd and 3rd vectors), the equation is still equal.
-
-Thus, eigenvectors are not defined uniquely - only up to a singular multiplicative constant.
-
-We typically define $x_1 = 1$ (there are cases where this does not work). Using this, we can solve for the answer.
-:::
+$\mathbf x$ is a vector of 2 elements, $x_1, x_2$ - but we only have one equation for each eigenvalue pair - an underdetermined system. Thus, we typically define $x_1 = 1$ so there is a unique solution when computing $\mathbf x$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Example of Calculating Eigenvectors
@@ -1188,15 +1097,12 @@ $$
 Matrix **decomposition** is to take a matrix $\mathbf A$, and decompose it into other matrices, that when multiplied together, get the original matrix. If matrix $\mathbf A$ has unique eigenvalues, you can write:
 
 $$
-\mathbf A = \mathbf {QDQ}^{-1}
-$$
-
-Where $\mathbf Q$ is made up of eigenvectors of $\mathbf A$, and $\mathbf D$ is a diagonal matrix with the $\lambda$ on the diagonal:
-
-$$
+\mathbf A = \mathbf {QDQ}^{-1}, \quad
 \mathbf D = \begin{pmatrix} \lambda_1 & 0 \\ 0 & \lambda_2 \end{pmatrix}, \quad
 \mathbf Q = \begin{pmatrix} \mathbf x_1 & \mathbf x_2\end{pmatrix}
 $$
+
+Where $\mathbf Q$ is made up of eigenvectors of $\mathbf A$, and $\mathbf D$ is a diagonal matrix with the $\lambda$ on the diagonal:
 
 <br />
 
@@ -1356,6 +1262,10 @@ Thus, to **optimise** a function (find the $x$ value that produces the minima/ma
 3.  If we are interested in the actual function value at the extrema, we can plug them back into the original function, $f(x_s)$.
 
 If we want to find the maximum within some sub-domain of the function $[a, b]$, we should also plug in $f(a)$ and $f(b)$ into the original function to see if these edge-cases of the sub-domain are higher/lower than our calculated maxima/minima.
+
+<br />
+
+### Constrained Optimisation
 
 <br />
 
