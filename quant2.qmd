@@ -222,11 +222,13 @@ This property is very useful for interpreting our regression results. You will h
 
 I define $\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}$, multiplied to $x_j \in \{x_1, \dots, x_k\}$. $\widehat{\beta_0}$ is the intercept. We assume a continuous $y$ variable - for a binary $y$, see the below section on the [linear probability model](#linear-probability-model).
 
-|                     |                                                                                                                                                      |                                                                                                                                                            |
-|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
++---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |                     | **Continuous** $x_j$                                                                                                                                 | **Binary** $x_j$                                                                                                                                           |
++---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_j}$ | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j}$ unit change in $y$, holding all other explanatory variables constant. | There is a $\widehat{\beta_j}$ unit difference in $y$ between category $x_j = 1$ and category $x_j = 0$, holding all other explanatory variables constant. |
++---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected value of $y$ is $\widehat{\beta_0}$.                                                            | For category $x_j = 0$, the expected value of $y$ is $\widehat{\beta_0}$ (when all other explanatory variables equal 0).                                   |
++---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Sometimes, these interpretations don't make much sense. For example, if $y$ is *democracy*, what does a 5 unit increase in democracy actually mean? Instead, w can express the change of $y$ and $x$ in terms of standard deviations. Or in other words, we want to find the change in $\frac{\hat y_i}{\sigma_y}$ for every one standard deviation $\sigma_x$ increase in $x$. For simplicity, let us use a simple linear regression $E(y_i|x_i) = \beta_0 + \beta_1 x_i$:
 
@@ -244,7 +246,7 @@ Thus, for a one standard deviation $\sigma_x$ increase in $x_j$, there is an exp
 
 <br />
 
-### R-Squared
+### R-Squared and Other Fit Metrics
 
 Our fitted values equation takes the following form:
 
@@ -258,9 +260,7 @@ $$
 
 We can see that $\mathbf P$ is a matrix that turns $\mathbf y \rightarrow \hat{\mathbf y}$. Matrix $\mathbf P$ is our linear model that projects the true values $\mathbf y$ into a space of our regressors $\mathbf X$. We will not go too into depth here on this, but see the [next chapter](quant3.qmd#ols-orthogonal-projection) for more details.
 
-One thing we might be interested in is how well our model $\mathbf{Py}$ explains the actual $\mathbf y$. One way we can do this is the scalar product of two vectors. We know that the scalar/dot product calculates the project/shadow of one vector on another. Thus, the scalar product $\mathbf y^\mathsf{T}\mathbf{Py}$ describes the shadow the actual $y$ casts on our projected model.
-
-However, this value will change based on the scale of our $y$ variable. Thus, we will divide it by $\mathbf y^\mathsf{T}\mathbf y$, which is the "maximum" shadow possible (perfect shadow). This ratio is called $R^2$.
+One thing we might be interested in is how well our model $\mathbf{Py}$ explains the actual $\mathbf y$. One way we can do this is the scalar product: the scalar product $\mathbf y^\mathsf{T}\mathbf{Py}$ describes the shadow the actual $y$ casts on our projected model. However, this value will change based on the scale of our $y$ variable. Thus, we will divide it by $\mathbf y^\mathsf{T}\mathbf y$, which is the "maximum" shadow possible (perfect shadow). This ratio is called $R^2$.
 
 $$
 R^2 = \frac{\mathbf y^\mathsf{T}\mathbf{Py}}{\mathbf y^\mathsf{T}\mathbf y}
@@ -272,7 +272,9 @@ $$
 R^2 = \frac{SSE}{SST} = \frac{SST - SSR}{SST} = 1 - \frac{SSR}{SST} = 1 - \frac{\sum \hat u_i^2}{\sum(y_i - \bar y)^2}
 $$
 
-R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained by our explanatory variables. R-Squared is always between 0 and 1 (or 0-100 as a percentage). Higher values indicate our model better explains the variation in $y$.
+R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained by our explanatory variables. R-Squared is always between 0 and 1 (0%-100%). Higher values indicate our model better explains the variation in $y$.
+
+There are a few other fit metrics, based around the idea of maximum likelihood estimation (explained in the next chapter). These metrics include **Akaike Information Criterion (AIC)** and **Bayesian Information Criterion (BIC)**. Lower values indiciate a better model. However, unlike $R^2$, neither has a nice substantive interpretation.
 
 <br />
 
@@ -439,11 +441,13 @@ $$
 
 Our interpretations of coefficients also slightly change.
 
-|                     |                                                                                                                                                                                                                           |                                                                                                                                                                                                                                |
-|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
++---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |                     | **Continuous** $x_j$                                                                                                                                                                                                      | **Binary** $x_j$                                                                                                                                                                                                               |
++---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_j}$ | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j} \times 100$ percentage point change in the probability of a unit being in category $y=1$, holding all other explanatory variables constant. | There is a $\widehat{\beta_j}\times 100$ percentage point difference in the probability of a unit being in category $y=1$ between category $x_j = 1$ and category $x_j = 0$, holding all other explanatory variables constant. |
++---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$                                                                                      | For category $x_j = 0$, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$ (when all other explanatory variables equal 0).                                                           |
++---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Note: we cannot do linear regression with a categorical (more than 2 categories and undordered) $y$. We will need to use a multinomial logistic regression. We can do a linear regression with an ordinal $y$ (more than 2 categories with an order) by pretending that the ordinal $y$ is continuous. We can also is a ordinal logistic regression for that.
 
@@ -606,17 +610,17 @@ If we take the log of this variable, we get the following distribution that is a
 
 We have 3 types of logarithmic transformations:
 
-+------------+-------------------------------------+-----------------------------------------+
-|            | $x$                                 | $\log (x)$                              |
-+------------+-------------------------------------+-----------------------------------------+
-| $y$        | Linear Model:                       | Linear-Log Model:                       |
-|            |                                     |                                         |
-|            | $y = \beta_0 + \beta_1 x + u$       | $y = \beta_0 + \beta_1 \log x + u$      |
-+------------+-------------------------------------+-----------------------------------------+
-| $\log (y)$ | Log-Linear Model:                   | Log-Log Model:                          |
-|            |                                     |                                         |
-|            | $\log(y) = \beta_0 + \beta_1 x + u$ | $\log y = \beta_0 + \beta_1 \log x + u$ |
-+------------+-------------------------------------+-----------------------------------------+
++--------------+-------------------------------------+-----------------------------------------+
+|              | $x$                                 | $\log (x)$                              |
++--------------+-------------------------------------+-----------------------------------------+
+| $y$          | Linear Model:                       | Linear-Log Model:                       |
+|              |                                     |                                         |
+|              | $y = \beta_0 + \beta_1 x + u$       | $y = \beta_0 + \beta_1 \log x + u$      |
++--------------+-------------------------------------+-----------------------------------------+
+| $\log (y)$   | Log-Linear Model:                   | Log-Log Model:                          |
+|              |                                     |                                         |
+|              | $\log(y) = \beta_0 + \beta_1 x + u$ | $\log y = \beta_0 + \beta_1 \log x + u$ |
++--------------+-------------------------------------+-----------------------------------------+
 
 <br />
 
@@ -720,21 +724,17 @@ $$
 When we have hierarchical or panel data, we need to control for differences between clusters. We essentially include the cluster variable as a categorical variable in our regression.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Hierarchical/Clustered Data
+## Hierarchical/Clustered Data and Panel Data
 
-Hierarchical data is data where the basic units of analysis $i$ are clustered, grouped, or nested into clusters.
+**Hierarchical data** is data where the basic units of analysis $i$ are clustered, grouped, or nested into clusters.
 
 For example, let us say we are measuring how income affects voter turnout in european countries. We have observations from France, Switzerland, Germany, and many other countries. However, these observations can be grouped by the country they came from.
 
 Why is this grouping important? This is because there may be something in common between observations within the same cluster. For example, Switzerland might just have higher voter turnout in general due to something about Swiss institutions or culture.
 
 This means that observations aren't random - i.e. we know that if we select from switzerland, it is likely to have higher turnout - observations from the same country are correlated. Thus, we need some way to account for this clustering of observations. We will explore this below.
-:::
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Panel Data
-
-Panel data is data that can be clustered in two ways - by unit, and by time. For example, let us say we have a dataset on all countries and their GDP between 1960-2020.
+**Panel data** is data that can be clustered in two ways - by unit, and by time. For example, let us say we have a dataset on all countries and their GDP between 1960-2020.
 
 -   We will have clusters based on country: Germany will have an observation in 1960, in 1961, ..., to 2020. Same for every other country. These observations are grouped by the unit (country in this case).
 -   We will also have clusters based on time: We will have all GDP observations for all countries in 1960, in 1961, etc. These observations are grouped by the time (year in this case).
@@ -756,8 +756,7 @@ For panel data, we use two-way fixed effects, which is basically just two fixed 
 $$
 \begin{split}
 y_{it} & = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
-& \text{where } \alpha_i =  \alpha_{00} + \underbrace{\alpha_{02}D_{i2} + \alpha_{03}D_{i3} + \dots + \alpha_{0m}D_{im}}_{\text{unique intercepts for each unit}} \\
-& \text{where } \gamma_t =  \gamma_{00} + \underbrace{\gamma_{02}T_{i2} + \gamma_{03}D_{t3} + \dots + \gamma_{0n}T_{in}}_{\text{unique intercepts for each time}} \\
+& \text{where } \alpha_i =  \alpha_{00} + \underbrace{\alpha_{02}D_{2t} + \alpha_{03}D_{3t} + \dots + \alpha_{0m}D_{mt}}_{\text{unique intercepts for each unit}}, \quad \gamma_t =  \gamma_{00} + \underbrace{\gamma_{02}T_{i2} + \dots + \gamma_{0n}T_{in}}_{\text{unique intercepts for each time}} \\
 \end{split}
 $$
 
@@ -778,19 +777,36 @@ For two-way fixed effects, we add a unique intercept term for every year and cou
 
 ### Spatial Regression Models
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Spatial Relationships
-:::
+If we have spatial data, a region's neighbours may have some effect on a region's own outcomes:
+
+1.  The outcome $y$ of a region might be affected by a neighbouring region's $y$ values (Lag $y$)
+2.  The outcome $y$ of a region might be affected by a neighbour's $X$ values (lag $X$).
+3.  The residuals $u$ of a region might be affected by the residuals in a neigbouring region (spatial autocorrelation).
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Weights Matrix
 :::
 
-Big model with all factors goes here.
+We define neighbours with a weights matrix $\mathbf W$. The largest spatial model is the **Manski Model**:
 
-Explain smaller models
+$$
+\mathbf y = \underbrace{\rho\mathbf W\mathbf y}_{lag \ y} + \mathbf X\boldsymbol\beta + \underbrace{\mathbf{WX}\boldsymbol\theta}_{lag \ x} + \underbrace{\lambda \mathbf{Wu}}_{autocorr.} + \boldsymbol\epsilon
+$$
 
-Interpretations of coefficients.
+-   $\rho$ (scalar) is the lag $y$ coefficient. For every one unit increase in the average value of $y$ in neighbouring regions, there is an expected $\rho$ unit change in $y$ in the region, holding all else constant.
+-   $\boldsymbol\beta$ (vector) is our normal OLS coefficients $\beta_0, \dots, \beta_k$, and would be interpreted in the same way.
+-   $\boldsymbol\theta$ (vector) is the lag $X$ coefficients $\theta_0, \dots, \theta_k$. For every one unit increase in the average $x_j$ of neighbouring regions, there is an expected $\theta_j$ unit change in $y$ in the region, holding all else constant.
+-   $\lambda$ (scalar) is spatial autocorrelation coefficient. Unobserved factors shared by neighbouring regions contribute to a $\lambda$-unit change in $y$, holding all else constant.
+
+However, in reality, we often cannot estimate this entire model due to the large amount of parameters. Thus, multiple variations exist with only parts of the full model:
+
+1.  Keleijian-Prucha Model: $\mathbf y = \rho \mathbf W \mathbf y + \mathbf X \boldsymbol\beta + \lambda \mathbf {Wu} + \boldsymbol\epsilon$.
+2.  Spatial Durbin Model: $\mathbf y = \rho \mathbf{WY} + \mathbf X \boldsymbol\beta + \mathbf{WX}\boldsymbol\theta + \boldsymbol\epsilon$.
+3.  Spatially Lagged X Model: $\mathbf y = \mathbf X \boldsymbol\beta + \mathbf {WX} \boldsymbol\theta + \boldsymbol\epsilon$.
+4.  Spatial Lag Model (Spatial Autoregressive): $\mathbf y = \rho \mathbf{Wy} + \mathbf X \boldsymbol\beta + \boldsymbol\epsilon$.
+5.  Spatial Error Model: $\mathbf y = \mathbf X\boldsymbol\beta + \lambda \mathbf{Wu} + \boldsymbol\epsilon$.
+
+The models are estimated with Maximum Likelihood Estimation (discussed in next chapter), and model selection can be done with a combination of eliminating insignificant portions, and AIC and BIC.
 
 <br />
 
