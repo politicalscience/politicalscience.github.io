@@ -296,7 +296,7 @@ window.Quarto = {
   <li><a href="#maximum-likelihood-estimator" id="toc-maximum-likelihood-estimator" class="nav-link" data-scroll-target="#maximum-likelihood-estimator"><strong>Maximum Likelihood Estimator</strong></a>
   <ul class="collapse">
   <li><a href="#likelihood-functions" id="toc-likelihood-functions" class="nav-link" data-scroll-target="#likelihood-functions">Likelihood Functions</a></li>
-  <li><a href="#gradient-descent" id="toc-gradient-descent" class="nav-link" data-scroll-target="#gradient-descent">Gradient Descent</a></li>
+  <li><a href="#gradient-descent-algorithms" id="toc-gradient-descent-algorithms" class="nav-link" data-scroll-target="#gradient-descent-algorithms">Gradient Descent Algorithms</a></li>
   <li><a href="#ols-as-a-maximum-likelihood-estimator" id="toc-ols-as-a-maximum-likelihood-estimator" class="nav-link" data-scroll-target="#ols-as-a-maximum-likelihood-estimator">OLS as a Maximum Likelihood Estimator</a></li>
   </ul></li>
   </ul>
@@ -406,7 +406,7 @@ SSR = S(\widehat{\beta_0}, \widehat{\beta_1})= \sum\limits_{i=1}^n(y_i - \wideha
 &amp; = \color{red}{\mathbf P}\color{black}{\mathbf y} &amp;&amp; \text{(where } \color{red}{\mathbf P :=\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}})
 \end{align}
 \tag{2}\]</span></span></p>
-<p>Matrix <span class="math inline">\(\color{red}{\mathbf P}\)</span>, called the <strong>projection matrix</strong>, is a matrix operator that performs the operation <span class="math inline">\(\mathbf y \rightarrow \hat{\mathbf y}\)</span>.</p>
+<p>Matrix <span class="math inline">\(\color{red}{\mathbf P}\)</span>, called the <strong>projection matrix</strong>, is a matrix operator that performs the <a href="./math.html#linear-mappings-and-combinations">linear mapping</a> <span class="math inline">\(\mathbf y \rightarrow \hat{\mathbf y}\)</span>.</p>
 <p>We can also use the OLS solution from <a href="#eq-ols" class="quarto-xref">Equation&nbsp;1</a> to get our residuals <span class="math inline">\(\hat{\mathbf u}\)</span>:</p>
 <p><span class="math display">\[
 \begin{align}
@@ -416,8 +416,8 @@ SSR = S(\widehat{\beta_0}, \widehat{\beta_1})= \sum\limits_{i=1}^n(y_i - \wideha
 &amp; = \color{purple}{\mathbf M} \color{black}{\mathbf y} &amp;&amp; (\text{where } \color{purple}{\mathbf M = \mathbf I - \mathbf P} \color{black})
 \end{align}
 \]</span></p>
-<p>Matrix <span class="math inline">\(\color{purple}{\mathbf M}\)</span>, called the <strong>residual maker</strong>, is a matrix operator that performs the operation <span class="math inline">\(\mathbf y \rightarrow \hat{\mathbf u}\)</span>.</p>
-<p>Both <span class="math inline">\(\color{red}{\mathbf P}\)</span> and <span class="math inline">\(\color{purple}{\mathbf M}\)</span> are symmetric matrices - i.e.&nbsp;<span class="math inline">\(\mathbf P^\mathsf{T} = \mathbf P\)</span>. They are also both indempotent matrices - i.e.&nbsp;<span class="math inline">\(\mathbf {PP} = \mathbf P\)</span>. We can prove this second statement using the first (I will only do it for <span class="math inline">\(\mathbf P\)</span>, but the same applies for <span class="math inline">\(\mathbf M\)</span>:</p>
+<p>Matrix <span class="math inline">\(\color{purple}{\mathbf M}\)</span>, called the <strong>residual maker</strong>, is a matrix operator that performs the <a href="./math.html#linear-mappings-and-combinations">linear mapping</a> <span class="math inline">\(\mathbf y \rightarrow \hat{\mathbf u}\)</span>.</p>
+<p>Both <span class="math inline">\(\color{red}{\mathbf P}\)</span> and <span class="math inline">\(\color{purple}{\mathbf M}\)</span> are <a href="./math.html#types-of-matrices">symmetric matrices</a>: <span class="math inline">\(\mathbf P^\mathsf{T} = \mathbf P\)</span>. They are also both <a href="./math.html#types-of-matrices">indempotent matrices</a>: <span class="math inline">\(\mathbf {PP} = \mathbf P\)</span>. We can prove this second statement using the first (I will only do it for <span class="math inline">\(\mathbf P\)</span>, but the same applies for <span class="math inline">\(\mathbf M\)</span>:</p>
 <p><span id="eq-pp"><span class="math display">\[
 \begin{align}
 \mathbf{PP} &amp; = \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \underbrace{\mathbf X^\mathsf{T} \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}}_{= \ \mathbf I} \mathbf X^\mathsf{T} \\
@@ -425,7 +425,7 @@ SSR = S(\widehat{\beta_0}, \widehat{\beta_1})= \sum\limits_{i=1}^n(y_i - \wideha
 &amp; = \mathbf P
 \end{align}
 \tag{3}\]</span></span></p>
-<p><span class="math inline">\(\color{red}{\mathbf P}\)</span> and <span class="math inline">\(\color{purple}{\mathbf M}\)</span> are also orthogonal to each other - i.e.&nbsp;<span class="math inline">\(\mathbf P^\mathsf{T} \mathbf M = 0\)</span>:</p>
+<p><span class="math inline">\(\color{red}{\mathbf P}\)</span> and <span class="math inline">\(\color{purple}{\mathbf M}\)</span> are also <a href="./math.html#types-of-matrices">orthogonal</a> to each other - i.e.&nbsp;<span class="math inline">\(\mathbf P^\mathsf{T} \mathbf M = 0\)</span>:</p>
 <p><span class="math display">\[
 \begin{align}
 \mathbf P^\mathsf{T}\mathbf M &amp; = \mathbf {PM} &amp;&amp; (\because \mathbf P^\mathsf{T} = \mathbf P) \\
@@ -579,7 +579,7 @@ E(\boldsymbol{\hat\beta}|\mathbf X) &amp; = \boldsymbol\beta + (\mathbf X^\maths
 E(\boldsymbol{\hat\beta}|\mathbf X) &amp; = \boldsymbol\beta &amp;&amp;(E(\mathbf u | \mathbf X) = 0)
 \end{align}
 \]</span></p>
-<p>Now, we can use the law of iterated expectations (LIE) to conclude this proof:</p>
+<p>Now, we can use the <a href="./quant1.html#algebraic-properties-of-expectation">law of iterated expectations (LIE)</a> to conclude this proof:</p>
 <p><span class="math display">\[
 \begin{align}
 E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X)) &amp;&amp; (\text{LIE: E(X) = E(E(X|Y))})\\
@@ -706,9 +706,10 @@ Var(\tilde{\boldsymbol\beta}|\mathbf X) - Var(\hat{\boldsymbol\beta} |\mathbf X)
 &amp; = \sigma^2(\mathbf{CC}^\mathsf{T} - (\mathbf X^\mathsf{T}\mathbf X)^{-1}) &amp;&amp; (\text{factor out }\sigma^2) \\
 &amp; = \sigma^2(\mathbf{CC}^\mathsf{T} - \color{red}{\mathbf{CX}}\color{black}(\mathbf X^\mathsf{T}\mathbf X)^{-1}\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T}}\color{black}) &amp;&amp; (\text{since }\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T} = \mathbf{CX} = \mathbf I} \color{black}) \\
 &amp; = \sigma^2 \mathbf C (\mathbf I - \mathbf X(\mathbf X^\mathsf{T}\mathbf X)^{-1}\mathbf X^\mathsf{T})\mathbf C^\mathsf{T} &amp;&amp; (\text{factor out } \mathbf C, \mathbf C^\mathsf{T}) \\
+&amp; = \sigma^2 \mathbf C\color{blue}{\mathbf M} \color{black}{\mathbf C}^\mathsf{T} &amp;&amp; \text{(residual maker matrix M)}
 \end{align}
 \]</span></p>
-<p>Since <span class="math inline">\(\sigma^2 \mathbf C (\mathbf I - \mathbf X(\mathbf X^\mathsf{T}\mathbf X)^{-1}\mathbf X^\mathsf{T})\mathbf C^\mathsf{T}\)</span> is positive semi-definite (I will not prove this, but it is provable), we know that <span class="math inline">\(Var(\tilde{\boldsymbol\beta}|\mathbf X) &gt; Var(\hat{\boldsymbol\beta}|\mathbf X)\)</span>. Thus, OLS is BLUE under the Gauss-Markov Theorem.</p>
+<p>Since <span class="math inline">\(\sigma^2 \mathbf {CM}\mathbf C^\mathsf{T}\)</span> is positive semi-definite (I will not prove this, but it is provable), we know that <span class="math inline">\(Var(\tilde{\boldsymbol\beta}|\mathbf X) &gt; Var(\hat{\boldsymbol\beta}|\mathbf X)\)</span>. Thus, OLS is BLUE under the Gauss-Markov Theorem.</p>
 <p><br></p>
 </section>
 <section id="asymptotic-consistency-of-ols" class="level3">
@@ -927,8 +928,8 @@ E(y_i - \hat\mu) = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \hat\mu) = 0
 <h3 class="anchored" data-anchor-id="likelihood-functions">Likelihood Functions</h3>
 <p><br></p>
 </section>
-<section id="gradient-descent" class="level3">
-<h3 class="anchored" data-anchor-id="gradient-descent">Gradient Descent</h3>
+<section id="gradient-descent-algorithms" class="level3">
+<h3 class="anchored" data-anchor-id="gradient-descent-algorithms">Gradient Descent Algorithms</h3>
 <p><br></p>
 </section>
 <section id="ols-as-a-maximum-likelihood-estimator" class="level3">

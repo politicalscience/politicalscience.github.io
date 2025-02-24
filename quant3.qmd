@@ -96,7 +96,7 @@ $$
 \end{align}
 $$ {#eq-projection}
 
-Matrix $\color{red}{\mathbf P}$, called the **projection matrix**, is a matrix operator that performs the operation $\mathbf y \rightarrow \hat{\mathbf y}$.
+Matrix $\color{red}{\mathbf P}$, called the **projection matrix**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $\mathbf y \rightarrow \hat{\mathbf y}$.
 
 We can also use the OLS solution from @eq-ols to get our residuals $\hat{\mathbf u}$:
 
@@ -109,9 +109,9 @@ $$
 \end{align}
 $$
 
-Matrix $\color{purple}{\mathbf M}$, called the **residual maker**, is a matrix operator that performs the operation $\mathbf y \rightarrow \hat{\mathbf u}$.
+Matrix $\color{purple}{\mathbf M}$, called the **residual maker**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $\mathbf y \rightarrow \hat{\mathbf u}$.
 
-Both $\color{red}{\mathbf P}$ and $\color{purple}{\mathbf M}$ are symmetric matrices - i.e. $\mathbf P^\mathsf{T} = \mathbf P$. They are also both indempotent matrices - i.e. $\mathbf {PP} = \mathbf P$. We can prove this second statement using the first (I will only do it for $\mathbf P$, but the same applies for $\mathbf M$:
+Both $\color{red}{\mathbf P}$ and $\color{purple}{\mathbf M}$ are [symmetric matrices](math.qmd#types-of-matrices): $\mathbf P^\mathsf{T} = \mathbf P$. They are also both [indempotent matrices](math.qmd#types-of-matrices): $\mathbf {PP} = \mathbf P$. We can prove this second statement using the first (I will only do it for $\mathbf P$, but the same applies for $\mathbf M$:
 
 $$
 \begin{align}
@@ -121,7 +121,7 @@ $$
 \end{align}
 $$ {#eq-pp}
 
-$\color{red}{\mathbf P}$ and $\color{purple}{\mathbf M}$ are also orthogonal to each other - i.e. $\mathbf P^\mathsf{T} \mathbf M = 0$:
+$\color{red}{\mathbf P}$ and $\color{purple}{\mathbf M}$ are also [orthogonal](math.qmd#types-of-matrices) to each other - i.e. $\mathbf P^\mathsf{T} \mathbf M = 0$:
 
 $$
 \begin{align}
@@ -187,7 +187,7 @@ We are not really going to discuss what happens when autocorrelation is present,
 
 <br />
 
-### Homoscedasticity and Heteroscedasticity
+### Homoscedasticity and Heteroscedasticity {#homoscedasticity-and-heteroscedasticity}
 
 Now, there are two possible forms of our covariance matrix of errors. **Homoscedasticity** assumes that every single unit $i$ has the same variance in error $\sigma_i^2$. Or in other words, the error of $u_i$ does not depend on unit $i$'s $\mathbf X$ values:
 
@@ -275,7 +275,7 @@ E(\boldsymbol{\hat\beta}|\mathbf X) & = \boldsymbol\beta &&(E(\mathbf u | \mathb
 \end{align}
 $$
 
-Now, we can use the law of iterated expectations (LIE) to conclude this proof:
+Now, we can use the [law of iterated expectations (LIE)](quant1.qmd#algebraic-properties-of-expectation) to conclude this proof:
 
 $$
 \begin{align}
@@ -406,10 +406,11 @@ Var(\tilde{\boldsymbol\beta}|\mathbf X) - Var(\hat{\boldsymbol\beta} |\mathbf X)
 & = \sigma^2(\mathbf{CC}^\mathsf{T} - (\mathbf X^\mathsf{T}\mathbf X)^{-1}) && (\text{factor out }\sigma^2) \\
 & = \sigma^2(\mathbf{CC}^\mathsf{T} - \color{red}{\mathbf{CX}}\color{black}(\mathbf X^\mathsf{T}\mathbf X)^{-1}\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T}}\color{black}) && (\text{since }\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T} = \mathbf{CX} = \mathbf I} \color{black}) \\
 & = \sigma^2 \mathbf C (\mathbf I - \mathbf X(\mathbf X^\mathsf{T}\mathbf X)^{-1}\mathbf X^\mathsf{T})\mathbf C^\mathsf{T} && (\text{factor out } \mathbf C, \mathbf C^\mathsf{T}) \\
+& = \sigma^2 \mathbf C\color{blue}{\mathbf M} \color{black}{\mathbf C}^\mathsf{T} && \text{(residual maker matrix M)}
 \end{align}
 $$
 
-Since $\sigma^2 \mathbf C (\mathbf I - \mathbf X(\mathbf X^\mathsf{T}\mathbf X)^{-1}\mathbf X^\mathsf{T})\mathbf C^\mathsf{T}$ is positive semi-definite (I will not prove this, but it is provable), we know that $Var(\tilde{\boldsymbol\beta}|\mathbf X) > Var(\hat{\boldsymbol\beta}|\mathbf X)$. Thus, OLS is BLUE under the Gauss-Markov Theorem.
+Since $\sigma^2 \mathbf {CM}\mathbf C^\mathsf{T}$ is positive semi-definite (I will not prove this, but it is provable), we know that $Var(\tilde{\boldsymbol\beta}|\mathbf X) > Var(\hat{\boldsymbol\beta}|\mathbf X)$. Thus, OLS is BLUE under the Gauss-Markov Theorem.
 
 <br />
 
@@ -677,7 +678,7 @@ Which as we can see, are the exact same minimisation conditions as the method of
 
 <br />
 
-### Gradient Descent
+### Gradient Descent Algorithms
 
 <br />
 
