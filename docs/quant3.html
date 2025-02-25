@@ -296,7 +296,7 @@ window.Quarto = {
   <li><a href="#maximum-likelihood-estimator" id="toc-maximum-likelihood-estimator" class="nav-link" data-scroll-target="#maximum-likelihood-estimator"><strong>Maximum Likelihood Estimator</strong></a>
   <ul class="collapse">
   <li><a href="#likelihood-functions" id="toc-likelihood-functions" class="nav-link" data-scroll-target="#likelihood-functions">Likelihood Functions</a></li>
-  <li><a href="#gradient-descent-algorithms" id="toc-gradient-descent-algorithms" class="nav-link" data-scroll-target="#gradient-descent-algorithms">Gradient Descent Algorithms</a></li>
+  <li><a href="#properties-and-information-criterion" id="toc-properties-and-information-criterion" class="nav-link" data-scroll-target="#properties-and-information-criterion">Properties and Information Criterion</a></li>
   <li><a href="#ols-as-a-maximum-likelihood-estimator" id="toc-ols-as-a-maximum-likelihood-estimator" class="nav-link" data-scroll-target="#ols-as-a-maximum-likelihood-estimator">OLS as a Maximum Likelihood Estimator</a></li>
   </ul></li>
   </ul>
@@ -342,8 +342,8 @@ window.Quarto = {
 \begin{align}
 S(\hat{\boldsymbol\beta}) &amp; = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mathbf y - \hat{\mathbf y})\\
 &amp; = (\mathbf y - \color{blue}{\mathbf X \hat{\boldsymbol\beta}}\color{black})^\mathsf{T} (\mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}}\color{black}) &amp;&amp; (\text{plug in } \color{blue}{\hat{\mathbf y}  = \mathbf X \hat{\boldsymbol\beta}}\color{black}) \\
-&amp; = \mathbf y^\mathsf{T} \mathbf y - \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{Xb} &amp;&amp; (\text{distribute out)} \\
-&amp; = \mathbf y^\mathsf{T} \mathbf y - \color{blue}{2\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y}\color{black} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta} &amp;&amp;(\text{combine } \color{blue}{- \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta}}\color{black})
+&amp; = \mathbf y^\mathsf{T} \mathbf y - \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X}\boldsymbol\beta &amp;&amp; (\text{distribute out)} \\
+&amp; = \mathbf y^\mathsf{T} \mathbf y - \color{blue}{2\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y}\color{black} + \underbrace{\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta}}_{\text{quadratic}} &amp;&amp;(\text{combine } \color{blue}{- \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta}}\color{black})
 \end{align}
 \]</span></p>
 <p>Now, let us find the first order condition:</p>
@@ -926,14 +926,108 @@ E(y_i - \hat\mu) = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \hat\mu) = 0
 <h1><strong>Maximum Likelihood Estimator</strong></h1>
 <section id="likelihood-functions" class="level3">
 <h3 class="anchored" data-anchor-id="likelihood-functions">Likelihood Functions</h3>
+<p>We have a set of population parameters <span class="math inline">\(\boldsymbol\theta\)</span> we want to estimate. This set of parameters determines our population distribution of <span class="math inline">\(y\)</span>, which we can describe with some <a href="./quant1.html#probability-density-functions">probability density function</a> <span class="math inline">\(f(y, \boldsymbol\theta)\)</span>. For example, in linear regression, our population <span class="math inline">\(y\)</span> is determined by the population parameters <span class="math inline">\(\beta_0, \dots, \beta_k\)</span>.</p>
+<p>When we are estimating parameters, we will have sample data with <span class="math inline">\(n\)</span> number of observations, with each observation <span class="math inline">\(i\)</span> having its own <span class="math inline">\(y_i\)</span> value. Thus, our sample looks something like <span class="math inline">\((y_1, \dots, y_n)\)</span>. Based on the probability density function of the population <span class="math inline">\(y\)</span>, the probability of selecting point <span class="math inline">\(y_1\)</span> from the population data is <span class="math inline">\(f(y_1, \boldsymbol\theta)\)</span>, and the probability of selection point <span class="math inline">\(y_i\)</span> is <span class="math inline">\(f(y_i, \boldsymbol\theta)\)</span>.</p>
+<p>We know by the rules of probability, that the <a href="./math.html#basics-of-probability">probability of multiple independent events</a> is the product of their probabilities. Thus, the probability that we get a specific sample with <span class="math inline">\(y\)</span> values <span class="math inline">\((y_1, \dots ,y_n)\)</span>, based on the value of our population parameters <span class="math inline">\(\boldsymbol\theta\)</span> is given by the <strong>likelihood function</strong> <span class="math inline">\(L\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
+L(\boldsymbol\theta, y_1, \dots y_n) &amp; = f(y_1;\boldsymbol\theta) \times f(y_2;\boldsymbol\theta) \times \dots \times f(y_n;\boldsymbol\theta) \\
+&amp; = \prod\limits_{i=1}^n f(y_i, \boldsymbol\theta) \\
+\end{align}
+\]</span></p>
+<p>We want to find some values of <span class="math inline">\(\boldsymbol\theta\)</span> that make it the highest probability we observe our sample <span class="math inline">\(y_1, \dots ,y_n\)</span>. This is done by maximising the likelihood function <span class="math inline">\(L\)</span>. However, maximising the actual likelihood function is very difficult, because of the product notation. Luckily, we can use the log of the likelihood function, which retains the same maximum/minimum points. Using the properties of logarithms, we can also rewrite our log-likelihood function in terms of summation notation, making maximisation far easier.</p>
+<p><span id="eq-loglike"><span class="math display">\[
+\begin{align}
+\log L(\boldsymbol\theta, y_1, \dots y_n) &amp; = \log \left(\prod_{i=1}^n f(y_i; \theta) \right) \\
+&amp; = \log[f(y_1, \boldsymbol\theta) \times f(y_2, \boldsymbol\theta) \times \dots \times f(y_n, \boldsymbol\theta)] &amp;&amp; \text{(expand product notation)} \\
+&amp; = \log[f(y_1, \boldsymbol\theta)] + \log [f(y_2, \boldsymbol\theta)] + \dots + \log[f(y_n, \boldsymbol\theta)] &amp;&amp; \text{(property of logs)} \\
+&amp; = \sum\limits_{i=1}^n \log[f(y_i, \boldsymbol\theta)] &amp;&amp; \text{(condense into sum)}
+\end{align}
+\tag{8}\]</span></span></p>
+<p>We then maximise this log-likelihood function to obtain our estimates <span class="math inline">\(\hat{\boldsymbol\theta}\)</span>. Sometimes, maximisation is not possible with mathematics, so we need algorithms to do this.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Gradient Descent Algorithms
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In some more complex models, we cannot mathematically find the minimum of the log-likelihood function. So instead, we resort to a series of computer algorithms called gradient descent. The algorithm takes the following form:</p>
+<ol type="1">
+<li>We randomly choose values of <span class="math inline">\(\boldsymbol\theta\)</span> to start (let us notate the chosen as <span class="math inline">\(\boldsymbol\theta^*\)</span>), and calculate the likelihood <span class="math inline">\(L\)</span> with those chosen at <span class="math inline">\(\boldsymbol\theta^*\)</span>.</li>
+<li>We then slightly shift the values of <span class="math inline">\(\boldsymbol\theta^*\)</span> upwards and downwards, calculating all the likelihoods. We see in which shift-direction does the likelihood <span class="math inline">\(L\)</span> increase the most.</li>
+<li>Once we determine the direction that <span class="math inline">\(L\)</span> increases the most, we shift int hat direction to a new <span class="math inline">\(\boldsymbol\theta'\)</span> value. Once again, we slightly shift values of <span class="math inline">\(\boldsymbol\theta'\)</span> upwards and downwards, and see which shift-direction does the likelihood <span class="math inline">\(L\)</span> increase the most.</li>
+<li>We keep repeating this process of moving in the direction that increases <span class="math inline">\(L\)</span> the most, shifting around in all directions at that point, and once again moving in the direction that increases <span class="math inline">\(L\)</span> the most.</li>
+<li>We stop when we are at some point <span class="math inline">\(\boldsymbol\theta^!\)</span> where all directions of shits decrease <span class="math inline">\(L\)</span>. We are “at the top of the mountain”, and that becomes our estimate.</li>
+</ol>
+<p>This is a very simple gradient descent algorithm. You might point out that this algorithm only works if there is one global maximum, and no local maxima (since we would stop the algorithm at a local extrema if this were the case). This usually is not an issue since in common regression models (linear, logistic, poisson), their is only one global maximum. The figure below shows this:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3075379377.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
+</figure>
+</div>
+<p>A solution for this problem of local maxima (which becomes more an issue with machine learning models) is to basically do the estimation algorithm multiple times, each time starting at some random <span class="math inline">\(\boldsymbol\theta^*\)</span>. Then, we find the time with the largest <span class="math inline">\(L\)</span>. This will in theory help us determine which are local and global maxima.</p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
-<section id="gradient-descent-algorithms" class="level3">
-<h3 class="anchored" data-anchor-id="gradient-descent-algorithms">Gradient Descent Algorithms</h3>
+<section id="properties-and-information-criterion" class="level3">
+<h3 class="anchored" data-anchor-id="properties-and-information-criterion">Properties and Information Criterion</h3>
+<p>The Maximum Likelihood Estimator has a few very desirable properties for us.</p>
+<ol type="1">
+<li>The maximum likelihood estimator is <a href="./quant1.html#asymptotically-consistent-estimators">asymptotically consistent</a> <span class="math inline">\(plim(\hat\theta_{MLE}) = \theta\)</span>.</li>
+<li>The maximum likelihood estimator is <a href="./quant1.html#asymptotically-consistent-estimators">asymptotically normal</a>, which allows for statistical inference.</li>
+<li>The maximum likelihood estimator also has the smallest asymptotic variance in the general class of estimators. Thus in large sample sizes, the MLE is asymptotically efficient.</li>
+</ol>
+<p>Another reason the maximum likelihood estimator is so useful is because it is relatively intuitive. The MLE is simply maximising the likelihood we observe our sample given the population parameters. It is not imposing some strange criteria of maximisation.</p>
+<p>Finally, maximum likelihood estimation allows us to use <strong>Information Criterion</strong> statistics, which can tell us how good our model is. Recall that the likelihood function <span class="math inline">\(L\)</span> is essentially the probability of observing our sample data given our model and parameters. Thus, we should expect better specified models to have a higher likelihood <span class="math inline">\(L\)</span>.</p>
+<p>You could compare the likelihood <span class="math inline">\(L\)</span> between models without any modification. In fact, the likelihood ratio test (similar to f-test but for MLE) does exactly this, and is commonly used in non-OLS estimated models (logistic, poisson, factor anlaysis, etc.).</p>
+<p>However, statisticians don’t just want the best fitting model - they also want a model that balances complexity. This implies some punishment for adding a ton of extra variables. The most popular is <strong>Akaike’s Information Criterion (AIC)</strong>, which is calculated as follows:</p>
+<p><span class="math display">\[
+AIC = -2 \log L + 2k
+\]</span></p>
+<ul>
+<li>Where <span class="math inline">\(L\)</span> is the likelihood of the model, and <span class="math inline">\(k\)</span> is the number of parameters.</li>
+</ul>
+<p>The lower the AIC, the better the model is considered. There are also alternatives, including <strong>Bayesian Information Criterion (BIC)</strong>, but these are less commonly used.</p>
 <p><br></p>
 </section>
 <section id="ols-as-a-maximum-likelihood-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="ols-as-a-maximum-likelihood-estimator">OLS as a Maximum Likelihood Estimator</h3>
+<p>One common question of students regarding OLS is - why least squares (SSR), and why not minimising the absolute values of errors (or the quartic of errors)? Well the answer is that <u>OLS is a maximum likelihood estimator</u> when assuming homoscedasticity and error term <span class="math inline">\(u \sim \mathcal N (0, \sigma^2)\)</span>.</p>
+<p>We know in a simple linear regression, <span class="math inline">\(\mu = E(y|x) = \beta_0 - \beta_1 x_i\)</span>. Let us plug that into the <a href="./quant1.html#the-normal-distribution">probability density function of a normal distribution</a> to get the PDF of <span class="math inline">\(y\)</span> in a simple linear regression:</p>
+<p><span class="math display">\[
+f(y) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{(y- \mu)^2}{2 \sigma^2}\right)}, \quad f(y_i|\beta_0, \beta_1, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}
+\]</span></p>
+<p>By <a href="#eq-loglike" class="quarto-xref">Equation&nbsp;8</a>, the log-likelihood function of our sample for linear regression is:</p>
+<p><span class="math display">\[
+\begin{align}
+\log L(y_i | \beta_0, \beta_1 \sigma^2) &amp; = \log \left(\prod\limits_{i=1}^n f(y_i | \beta_0, \beta_1, \sigma^2) \right) \\
+&amp; = \sum\limits_{i=1}^n \log f(y_i, \beta_0, \beta_1, \sigma^2) &amp;&amp; (\text{from eq. (8)}) \\
+&amp; = \sum\limits_{i=1}^n \log \left( \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)} \right) \\
+&amp; = \sum\limits_{i=1}^n \log \left( \frac{1}{\sqrt{2\pi\sigma^2}}\right) + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) &amp;&amp; \text{(prop. of logs)} \\
+&amp; = \sum\limits_{i=1}^n \log (1) - \log (\sqrt{2\pi\sigma^2})  + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) &amp;&amp; \text{(prop. of logs)} \\
+&amp; = \sum\limits_{i=1}^n \log (1) - \log (\sqrt{2\pi})  - \log(\sqrt{\sigma^2}) + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) &amp;&amp; \text{(prop. of roots)} \\
+&amp; = \sum\limits_{i=1}^n 0 - \frac{1}{2}\log ({2\pi})  - \frac{1}{2}\log(\sqrt{\sigma^2}) + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) &amp;&amp; \text{(prop. of logs)} \\
+&amp; = \sum\limits_{i=1}^n -\frac{1}{2} \log (2\pi) - \frac{1}{2} \log (\sigma^2) + \left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right) \\
+&amp; = -\frac{n}{2} \log (2\pi) - \frac{n}{2} \log (\sigma^2)  -\frac{1}{2 \sigma^2}\sum\limits_{i=1}^n(y_i - \beta_0 - \beta_1 x_i)^2 &amp;&amp; \text{(prop. of sums)}
+\end{align}
+\]</span></p>
+<p>Now, let us find the first-order conditions of this equation in respect to parameters <span class="math inline">\(\beta_0, \beta_1, \sigma^2\)</span> to maximise:</p>
+<p><span class="math display">\[
+\begin{align}
+&amp; \frac{\partial \log L}{\partial \hat\beta_0} = \frac{1}{\sigma^2}\sum\limits_{i=1}^n (y_i - \hat\beta_0 - \hat\beta_1x_i) = 0\\
+&amp; \frac{\partial \log L}{\partial \hat\beta_1} = \frac{1}{\sigma^2}\sum\limits_{i=1}^n x_i(y_i - \hat\beta_0 - \hat\beta_1x_i) = 0\\
+&amp; \frac{\partial \log L}{\partial \hat\sigma^2} = -\frac{n}{2 \hat\sigma^2} + \frac{1}{2\hat\sigma^4} \sum\limits_{i=1}^n (y_i - \hat\beta_0 - \hat\beta_1x_i) = 0\\
+\end{align}
+\]</span></p>
+<p>We can ignore the third condition. If we look at the first two conditions, since anything times 0 equals 0, we can ignore the <span class="math inline">\(\frac{1}{\sigma^2}\)</span>. Ignoring those, we see we have the exact same <a href="#deriving-the-estimator">first order conditions as OLS</a>, which will yield the same estimates. This illustrates that OLS is a case of MLE, and the same intuitive reasoning of MLE can be applied to OLS.</p>
 
 
 </section>

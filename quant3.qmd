@@ -28,8 +28,8 @@ $$
 \begin{align}
 S(\hat{\boldsymbol\beta}) & = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mathbf y - \hat{\mathbf y})\\
 & = (\mathbf y - \color{blue}{\mathbf X \hat{\boldsymbol\beta}}\color{black})^\mathsf{T} (\mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}}\color{black}) && (\text{plug in } \color{blue}{\hat{\mathbf y}  = \mathbf X \hat{\boldsymbol\beta}}\color{black}) \\
-& = \mathbf y^\mathsf{T} \mathbf y - \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{Xb} && (\text{distribute out)} \\ 
-& = \mathbf y^\mathsf{T} \mathbf y - \color{blue}{2\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y}\color{black} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta} &&(\text{combine } \color{blue}{- \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta}}\color{black})
+& = \mathbf y^\mathsf{T} \mathbf y - \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X}\boldsymbol\beta && (\text{distribute out)} \\ 
+& = \mathbf y^\mathsf{T} \mathbf y - \color{blue}{2\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y}\color{black} + \underbrace{\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta}}_{\text{quadratic}} &&(\text{combine } \color{blue}{- \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta}}\color{black})
 \end{align}
 $$
 
@@ -676,10 +676,112 @@ Which as we can see, are the exact same minimisation conditions as the method of
 
 ### Likelihood Functions
 
+We have a set of population parameters $\boldsymbol\theta$ we want to estimate. This set of parameters determines our population distribution of $y$, which we can describe with some [probability density function](quant1.qmd#probability-density-functions) $f(y, \boldsymbol\theta)$. For example, in linear regression, our population $y$ is determined by the population parameters $\beta_0, \dots, \beta_k$.
+
+When we are estimating parameters, we will have sample data with $n$ number of observations, with each observation $i$ having its own $y_i$ value. Thus, our sample looks something like $(y_1, \dots, y_n)$. Based on the probability density function of the population $y$, the probability of selecting point $y_1$ from the population data is $f(y_1, \boldsymbol\theta)$, and the probability of selection point $y_i$ is $f(y_i, \boldsymbol\theta)$.
+
+We know by the rules of probability, that the [probability of multiple independent events](math.qmd#basics-of-probability) is the product of their probabilities. Thus, the probability that we get a specific sample with $y$ values $(y_1, \dots ,y_n)$, based on the value of our population parameters $\boldsymbol\theta$ is given by the **likelihood function** $L$:
+
+$$
+\begin{align}
+L(\boldsymbol\theta, y_1, \dots y_n) & = f(y_1;\boldsymbol\theta) \times f(y_2;\boldsymbol\theta) \times \dots \times f(y_n;\boldsymbol\theta) \\
+& = \prod\limits_{i=1}^n f(y_i, \boldsymbol\theta) \\
+\end{align}
+$$
+
+We want to find some values of $\boldsymbol\theta$ that make it the highest probability we observe our sample $y_1, \dots ,y_n$. This is done by maximising the likelihood function $L$. However, maximising the actual likelihood function is very difficult, because of the product notation. Luckily, we can use the log of the likelihood function, which retains the same maximum/minimum points. Using the properties of logarithms, we can also rewrite our log-likelihood function in terms of summation notation, making maximisation far easier.
+
+$$
+\begin{align}
+\log L(\boldsymbol\theta, y_1, \dots y_n) & = \log \left(\prod_{i=1}^n f(y_i; \theta) \right) \\
+& = \log[f(y_1, \boldsymbol\theta) \times f(y_2, \boldsymbol\theta) \times \dots \times f(y_n, \boldsymbol\theta)] && \text{(expand product notation)} \\
+& = \log[f(y_1, \boldsymbol\theta)] + \log [f(y_2, \boldsymbol\theta)] + \dots + \log[f(y_n, \boldsymbol\theta)] && \text{(property of logs)} \\ 
+& = \sum\limits_{i=1}^n \log[f(y_i, \boldsymbol\theta)] && \text{(condense into sum)}
+\end{align}
+$$ {#eq-loglike}
+
+We then maximise this log-likelihood function to obtain our estimates $\hat{\boldsymbol\theta}$. Sometimes, maximisation is not possible with mathematics, so we need algorithms to do this.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Gradient Descent Algorithms
+
+In some more complex models, we cannot mathematically find the minimum of the log-likelihood function. So instead, we resort to a series of computer algorithms called gradient descent. The algorithm takes the following form:
+
+1.  We randomly choose values of $\boldsymbol\theta$ to start (let us notate the chosen as $\boldsymbol\theta^*$), and calculate the likelihood $L$ with those chosen at $\boldsymbol\theta^*$.
+2.  We then slightly shift the values of $\boldsymbol\theta^*$ upwards and downwards, calculating all the likelihoods. We see in which shift-direction does the likelihood $L$ increase the most.
+3.  Once we determine the direction that $L$ increases the most, we shift int hat direction to a new $\boldsymbol\theta'$ value. Once again, we slightly shift values of $\boldsymbol\theta'$ upwards and downwards, and see which shift-direction does the likelihood $L$ increase the most.
+4.  We keep repeating this process of moving in the direction that increases $L$ the most, shifting around in all directions at that point, and once again moving in the direction that increases $L$ the most.
+5.  We stop when we are at some point $\boldsymbol\theta^!$ where all directions of shits decrease $L$. We are "at the top of the mountain", and that becomes our estimate.
+
+This is a very simple gradient descent algorithm. You might point out that this algorithm only works if there is one global maximum, and no local maxima (since we would stop the algorithm at a local extrema if this were the case). This usually is not an issue since in common regression models (linear, logistic, poisson), their is only one global maximum. The figure below shows this:
+
+![](images/clipboard-3075379377.png){fig-align="center" width="50%"}
+
+A solution for this problem of local maxima (which becomes more an issue with machine learning models) is to basically do the estimation algorithm multiple times, each time starting at some random $\boldsymbol\theta^*$. Then, we find the time with the largest $L$. This will in theory help us determine which are local and global maxima.
+:::
+
 <br />
 
-### Gradient Descent Algorithms
+### Properties and Information Criterion
+
+The Maximum Likelihood Estimator has a few very desirable properties for us.
+
+1.  The maximum likelihood estimator is [asymptotically consistent](quant1.qmd#asymptotically-consistent-estimators) $plim(\hat\theta_{MLE}) = \theta$.
+2.  The maximum likelihood estimator is [asymptotically normal](quant1.qmd#asymptotically-consistent-estimators), which allows for statistical inference.
+3.  The maximum likelihood estimator also has the smallest asymptotic variance in the general class of estimators. Thus in large sample sizes, the MLE is asymptotically efficient.
+
+Another reason the maximum likelihood estimator is so useful is because it is relatively intuitive. The MLE is simply maximising the likelihood we observe our sample given the population parameters. It is not imposing some strange criteria of maximisation.
+
+Finally, maximum likelihood estimation allows us to use **Information Criterion** statistics, which can tell us how good our model is. Recall that the likelihood function $L$ is essentially the probability of observing our sample data given our model and parameters. Thus, we should expect better specified models to have a higher likelihood $L$.
+
+You could compare the likelihood $L$ between models without any modification. In fact, the likelihood ratio test (similar to f-test but for MLE) does exactly this, and is commonly used in non-OLS estimated models (logistic, poisson, factor anlaysis, etc.).
+
+However, statisticians don't just want the best fitting model - they also want a model that balances complexity. This implies some punishment for adding a ton of extra variables. The most popular is **Akaike's Information Criterion (AIC)**, which is calculated as follows:
+
+$$
+AIC = -2 \log L + 2k
+$$
+
+-   Where $L$ is the likelihood of the model, and $k$ is the number of parameters.
+
+The lower the AIC, the better the model is considered. There are also alternatives, including **Bayesian Information Criterion (BIC)**, but these are less commonly used.
 
 <br />
 
 ### OLS as a Maximum Likelihood Estimator
+
+One common question of students regarding OLS is - why least squares (SSR), and why not minimising the absolute values of errors (or the quartic of errors)? Well the answer is that [OLS is a maximum likelihood estimator]{.underline} when assuming homoscedasticity and error term $u \sim \mathcal N (0, \sigma^2)$.
+
+We know in a simple linear regression, $\mu = E(y|x) = \beta_0 - \beta_1 x_i$. Let us plug that into the [probability density function of a normal distribution](quant1.qmd#the-normal-distribution) to get the PDF of $y$ in a simple linear regression:
+
+$$
+f(y) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{(y- \mu)^2}{2 \sigma^2}\right)}, \quad f(y_i|\beta_0, \beta_1, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}
+$$
+
+By @eq-loglike, the log-likelihood function of our sample for linear regression is:
+
+$$
+\begin{align}
+\log L(y_i | \beta_0, \beta_1 \sigma^2) & = \log \left(\prod\limits_{i=1}^n f(y_i | \beta_0, \beta_1, \sigma^2) \right) \\
+& = \sum\limits_{i=1}^n \log f(y_i, \beta_0, \beta_1, \sigma^2) && (\text{from eq. (8)}) \\
+& = \sum\limits_{i=1}^n \log \left( \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)} \right) \\
+& = \sum\limits_{i=1}^n \log \left( \frac{1}{\sqrt{2\pi\sigma^2}}\right) + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) && \text{(prop. of logs)} \\
+& = \sum\limits_{i=1}^n \log (1) - \log (\sqrt{2\pi\sigma^2})  + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) && \text{(prop. of logs)} \\
+& = \sum\limits_{i=1}^n \log (1) - \log (\sqrt{2\pi})  - \log(\sqrt{\sigma^2}) + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) && \text{(prop. of roots)} \\
+& = \sum\limits_{i=1}^n 0 - \frac{1}{2}\log ({2\pi})  - \frac{1}{2}\log(\sqrt{\sigma^2}) + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) && \text{(prop. of logs)} \\
+& = \sum\limits_{i=1}^n -\frac{1}{2} \log (2\pi) - \frac{1}{2} \log (\sigma^2) + \left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right) \\
+& = -\frac{n}{2} \log (2\pi) - \frac{n}{2} \log (\sigma^2)  -\frac{1}{2 \sigma^2}\sum\limits_{i=1}^n(y_i - \beta_0 - \beta_1 x_i)^2 && \text{(prop. of sums)}
+\end{align}
+$$
+
+Now, let us find the first-order conditions of this equation in respect to parameters $\beta_0, \beta_1, \sigma^2$ to maximise:
+
+$$
+\begin{align}
+& \frac{\partial \log L}{\partial \hat\beta_0} = \frac{1}{\sigma^2}\sum\limits_{i=1}^n (y_i - \hat\beta_0 - \hat\beta_1x_i) = 0\\
+& \frac{\partial \log L}{\partial \hat\beta_1} = \frac{1}{\sigma^2}\sum\limits_{i=1}^n x_i(y_i - \hat\beta_0 - \hat\beta_1x_i) = 0\\
+& \frac{\partial \log L}{\partial \hat\sigma^2} = -\frac{n}{2 \hat\sigma^2} + \frac{1}{2\hat\sigma^4} \sum\limits_{i=1}^n (y_i - \hat\beta_0 - \hat\beta_1x_i) = 0\\
+\end{align}
+$$
+
+We can ignore the third condition. If we look at the first two conditions, since anything times 0 equals 0, we can ignore the $\frac{1}{\sigma^2}$. Ignoring those, we see we have the exact same [first order conditions as OLS](#deriving-the-estimator), which will yield the same estimates. This illustrates that OLS is a case of MLE, and the same intuitive reasoning of MLE can be applied to OLS.

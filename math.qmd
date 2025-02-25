@@ -973,22 +973,6 @@ We know when solving for these equations, we cannot actually solve for a unique 
 We know if a matrix is full rank, then all rows/columns are linearly independent.
 :::
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Quadratic Forms
-
-A quadratic form takes the following form:
-
-$$
-\mathbf x^\mathsf{T} \mathbf A \mathbf x
-$$
-
-Where matrix $\mathbf A$ is a square matrix.
-
-If $\mathbf x^\mathsf{T} \mathbf A \mathbf x > 0$ for all values, then the matrix is positive definite. If $\mathbf x^\mathsf{T} \mathbf A \mathbf x < 0$, then negative definite. If $\mathbf x^\mathsf{T} \mathbf A \mathbf x ≤ 0$ it is positive semi-definite.
-
-This will be useful for optimisation and multivariable calculus. We will specifically see this in deriving the OLS estimator.
-:::
-
 <br />
 
 ### Eigenvector Decomposition.
@@ -1103,6 +1087,22 @@ $$
 $$
 
 Where $\mathbf Q$ is made up of eigenvectors of $\mathbf A$, and $\mathbf D$ is a diagonal matrix with the $\lambda$ on the diagonal:
+
+<br />
+
+### Quadratic Forms
+
+A quadratic form takes the following form:
+
+$$
+\mathbf x^\mathsf{T} \mathbf A \mathbf x
+$$
+
+Where matrix $\mathbf A$ is a square matrix.
+
+If $\mathbf x^\mathsf{T} \mathbf A \mathbf x > 0$ for all values, then the matrix is positive definite. If $\mathbf x^\mathsf{T} \mathbf A \mathbf x < 0$, then negative definite. If $\mathbf x^\mathsf{T} \mathbf A \mathbf x ≤ 0$ it is positive semi-definite.
+
+This will be useful for optimisation and multivariable calculus. We will specifically see this in deriving the OLS estimator.
 
 <br />
 
@@ -1262,6 +1262,10 @@ Thus, to **optimise** a function (find the $x$ value that produces the minima/ma
 3.  If we are interested in the actual function value at the extrema, we can plug them back into the original function, $f(x_s)$.
 
 If we want to find the maximum within some sub-domain of the function $[a, b]$, we should also plug in $f(a)$ and $f(b)$ into the original function to see if these edge-cases of the sub-domain are higher/lower than our calculated maxima/minima.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Unconstrained Maximisation
+:::
 
 <br />
 
@@ -1437,13 +1441,17 @@ Probabilities have a few **axioms**:
 1.  For any event $A$, there must be a non-negative probability: $Pr(A) ≥ 0$.
 2.  The probability of all possible outcomes (sample space) is 1: $Pr(\Omega) = 1$.
 
-Finally, if we have mutually exclusive events (i.e. if $A$ occurs than $B$ cannot occur at the same time), then the probability either $A$ or $B$ occurs is:
+If we have mutually exclusive events (i.e. if $A$ occurs than $B$ cannot occur at the same time), then the probability **either** $A$ or $B$ occuring is:
 
 $$
-Pr(A \cup B) = Pr(A)+Pr(B)
+Pr(A \cup B) = Pr(A)+Pr(B), \quad \text{more than 2 events}: Pr\left(\bigcup\limits_{i=1}^n A_i\right) = \sum\limits_{i=1}^n Pr(A_i)
 $$
 
-This can be generalised to any number of events, as long as they are mutually exclusive.
+If we have independent events (i.e. if $A$ occurs, that does not affect the probability of $B$ occuring), then the probability that **both** $A$ and $B$ occuring is:
+
+$$
+Pr (A \cap B) = Pr(A) Pr(B), \quad \text{more than 2 events}: Pr\left(\bigcap\limits_{i=1}^n A_i) \right) = \prod\limits_{i=1}^n Pr(A_i)
+$$
 
 <br />
 
@@ -1455,7 +1463,7 @@ $$
 Pr(A|B) = \frac{Pr(A \cap B)}{Pr(B)}
 $$
 
-The law of **Total Probability** helps us calculate the probability of an event $A$, by considering different mutually exclusive events that partition the sample space $\omega$.
+The law of **Total Probability** helps us calculate the probability of an event $A$, by considering different mutually exclusive events that partition the sample space $\Omega$.
 
 For example, perhaps you want to calculate the overall smoking rate $A$. Assuming all humans can be divided into male or female, and no one can be both male and female, you can calculate the total smoking rate of the population, if you know the conditional probabilities of smoking for males and females, and their proportion in the population.
 
@@ -1463,9 +1471,9 @@ $$
 Pr(A) = Pr(A|B_M) Pr(B_M) + Pr(A|B_F)Pr(B_F)
 $$
 
-Where $B_M$ is male and $B_F$ is female.
+-   Where $B_M$ is male and $B_F$ is female.
 
-Furthermore, we know that events $B$ and $B^c$ completely partition the sample space $\omega$. Thus, we can also write the law of total probability as:
+Furthermore, we know that events $B$ and $B^c$ completely partition the sample space $\Omega$. Thus, we can also write the law of total probability as:
 
 $$
 Pr(A) = Pr(A|B)Pr(B) + Pr(A|B^c)Pr(B^c)
