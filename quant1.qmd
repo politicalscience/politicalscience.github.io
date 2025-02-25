@@ -12,24 +12,19 @@ This chapter is about the very building blocks of statistics. We start off with 
 
 ### Random Variables and Distributions
 
-In statistics, we will talk a lot about random variables. Random variables are outcomes that have some randomness/uncertainty. For example, if you flip a coin, you could get heads or tails.
-
-While we do not know the outcomes of these random events, we do know at what probability things will happen. You know that if you flip a coin, you have a 50% chance you get heads.
+In statistics, we will talk a lot about random variables. Random variables are outcomes that have some randomness/uncertainty. For example, if you flip a coin, you could get heads or tails. While we do not know the outcomes of these random events, we do know at what probability things will happen. You know that if you flip a coin, you have a 50% chance you get heads.
 
 We can represent the potential outcomes of random variables, and the associated probabilities with each outcome, in a **distribution**. On the horizontal axis, we plot all possible values of the outcome, and on the vertical axis, we plot the probability of each outcome. For example, below is the distribution of a dice - there are 6 potential outcomes, each with a 1/6 probability.
 
 ![](images/clipboard-713724518.png){fig-align="center" width="45%"}
 
-There are two types of random variables:
-
-1.  **Continuous random variables**: these can take any possible value between two numbers as an outcome, including 1, 3, 3.33247, etc.
-2.  **Discrete random variables**: these can only take a certain set of values, not any possible decimal. For example, a dice roll can only take the values of 1, 2, 3,..., and not 3.23478.
+**Continuous random variables** can take any possible value within a range, including 1, 2, 1.33247. **Discrete random variables** can only take a certain set of values, not any possible decimal. For example, a dice roll can only take the values of 1, 2, 3,..., and not 3.23478. A discrete random variable with only 2 potential outcomes is a **binary random variable**.
 
 <br />
 
-### Probability Density Functions
+### Probability Density Functions {#probability-density-functions}
 
-We know that random variables can be represented by distributions. We can also describe these distributions mathematically. A **probability density function** is a function $p$ that takes one potential outcome as an input, and spits out the probability of that outcome. For example, the probability density function of a dice is:
+We can describe these distributions mathematically. A **probability density function** is a function $p$ that takes one potential outcome as an input, and spits out the probability of that outcome. For example, the probability density function of a dice is:
 
 $$
 Pr(x) = p(x) = 1/6
@@ -37,9 +32,7 @@ $$
 
 We can see that if we want to see the probability of getting a 5 on our dice roll, we plug in $x=5$ to get $p(5) = 1/6$, which is the probability of rolling a 5.
 
-For continuous random variables, things become slightly more complex. This is because it does not make sense to calculate the probability of one specific outcome.
-
-For example, let us say your random variable is the time it will take you to get to school tomorrow. We really do not care about the probability of taking 13.4357 minutes to get to school. What we do care about is a range - lets say the probability of getting to school between 13 and 14 minutes.
+For continuous random variables, things become slightly more complex. This is because it does not make sense to calculate the probability of one specific outcome. For example, let us say your random variable is the time it will take you to get to school tomorrow. We really do not care about the probability of taking 13.4357 minutes to get to school. What we do care about is a range - lets say the probability of getting to school between 13 and 14 minutes.
 
 More mathematically, the probability density function of a continuous random variable gives you the probability of an outcome between $a$ and $b$:
 
@@ -47,9 +40,9 @@ $$
 Pr(a<x<b) =\int\limits_a^bp(x)dx
 $$
 
-This integral is important - it tells us that the area under a distribution gives us the probability of an event occuring. This will become very valuable later on.
+This integral is important - it tells us that the area under a distribution gives us the probability of an event.
 
-![](images/clipboard-1038590923.png){fig-align="center" width="55%"}
+![](images/clipboard-1038590923.png){fig-align="center" width="45%"}
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Cumulative Density Functions
@@ -69,8 +62,6 @@ This will be useful in some cases to calculate values for probability density fu
 
 ### Expectation and Variance
 
-Every distribution (and its associated probability density function) can be described with two summary statistics: the **Expectation** and **Variance**.
-
 The **expectation**, also called the **mean** or **expected value**, is the "average" outcome value that you would expect to get from the distribution. It is essentially our "best guess" of what the random variable's outcome would be.
 
 Expectation for a discrete random variable $X$ is calculated as a weighted sum of all potential outcomes $x_i$ and their respective probabilities given by the probability density function $p(x_i)$:
@@ -85,9 +76,12 @@ $$
 E(X) = \mu_X = \int\limits_{-∞}^∞ (x \times p(x))
 $$
 
-Expectation allows us to have our best-guess at what the outcome of a random variable would be. However, we also would like to know how spread out the random variable's distribution is.
+Expectations have a few unique algebraic properties:
 
-For example, let us have two random variables $X$ and $Y$. $X$ has two potential outcomes of 4 and 6. $Y$ has two potential outcomes 0 and 10. Let us assume all outcomes have the same probability. That means $E(X) = E(Y) =5$. However, clearly, these two random variables are not the same - $Y$ is far more spread out.
+1.  The expectation of a constant is itself: $E(c) = c$.
+2.  Expectations can be added: $E(X+Y) = E(X) + E(Y)$.
+3.  Expectations multiplied with constants: $E(cX) = c \cdot E(X)$.
+4.  Law of iterated expectations: $E(X) = E[E(X|Y)]$.
 
 **Variance** measures the spread of a distribution. It is essentially the average distance of each individual outcome from the expected value $\mu$ of the random variable:
 
@@ -115,43 +109,6 @@ The reason conditional expectations are so important is because they illustrate 
 
 <br />
 
-### Algebraic Properties of Expectation
-
-Expected values have a lot of unique properties when it comes to manipulation. These will become extremely useful as we move into causal inference, as we will be playing with a lot of expectations.
-
-First, the expectation of a constant is the constant.
-
-$$
-E(c) = c, \quad \text{c is a constant}
-$$
-
-Second, expectations of random variables are linear: they can be added or subtracted as follows:
-
-$$
-E(X+Y) = E(X) + E(Y), \quad \text{X, Y are random variables}
-$$
-
-Third, expectations multiplied to a constant can be taken out:
-
-$$
-E(cX) = c \times E(X), \quad \text{c is a constant, X is a random variable}
-$$
-
-Fourth, we must be careful about multiplying expected values of random variables when they are not independent:
-
-$$
-\begin{align}
-E(XY) & ≠ E(X)E(Y) \quad \text{if X,Y are dependent} \\
-E(XY) & = E(X)E(Y) \quad \text{if X, Y are independent}
-\end{align}
-$$
-
-And finally, is the law of iterated expectations, which is very useful for statistical proofs:
-
-$$
-E(X) = E( \ E(X|Y) \ )
-$$
-
 <br />
 
 ------------------------------------------------------------------------
@@ -160,47 +117,27 @@ $$
 
 ### The Normal Distribution
 
-The most common random variable distribution is the **Normal Distribution**, and is one we will encounter a lot. The normal distribution is for continuous random variables, and takes a famous "bell shape".
-
-![](images/clipboard-352151225.png){fig-align="center" width="40%"}
-
-Every single normal distribution can be defined by two parameters: the mean and the variance. We define a normal distribution as follows:
+The **normal distribution** is for continuous random variables, and takes a famous "bell shape" (hence why it is also called the bell curve). Every normal distribution and its [probability density function (PDF)](#probability-density-functions) can be defined by two parameters: the mean and the variance:
 
 $$
-\sim \mathcal N(\mu, \sigma^2)
+\sim \mathcal N(\mu, \sigma^2), \quad PDF: Pr(a<x<b) = \int\limits_a^b \frac{1}{\sqrt{2\pi\sigma^2}}e^{\left( -\frac{(x - \mu)^2}{2 \sigma^2}\right)}dx
 $$
 
 Where $\mathcal N$ represents the normal distribution, $\mu$ represents the expected value of the distribution, and $\sigma^2$ represents the variance. The figure below shows how normal distributions change when you alter $\mu$ and $\sigma^2$.
 
-![](images/clipboard-2268260367.png){fig-align="center" width="55%"}
-
-::: {.callout-note collapse="true" appearance="simple"}
-## PDF of the Normal Distribution
-
-The probability density function of a normal distribution is:
-
-$$
-Pr(a<x<b) = \int\limits_a^b \frac{1}{\sqrt{2\pi\sigma^2}}e^{\left( -\frac{(x - \mu)^2}{2 \sigma^2}\right)}dx
-$$
-:::
+![](images/clipboard-2268260367.png){fig-align="center" width="60%"}
 
 <br />
 
 ### Properties of the Normal Distribution {#properties-of-the-normal-distribution}
 
-The most important thing about Normal Distributions is a unique property they have - within each standard deviation $\sigma$, every single normal distribution contains the same amount of area under the curve (which is also the probability).
-
--   Within $(\mu - \sigma, \ \mu + \sigma)$, 68% of the area under the curve is included.
--   Within $(\mu - 2\sigma, \ \mu + 2\sigma)$, 95% of the area under the curve is included.
--   Within $(\mu - 3 \sigma, \ \mu + 3 \sigma)$, 99.7% of the area under the curve is included.
+Normal Distributions have a unique property - within any standard deviations $\sigma$ from the mean, every single normal distribution contains the same amount of area under the curve (which is also the probability):
 
 ![](images/clipboard-2691725554.png){fig-align="center" width="80%"}
 
-These properties don't just apply to 1, 2, or 3 standard deviations away. They apply to any amount of standard deviations (such as 1.23478 standard deviations), and there are online tables/calculators that can derive this. This means that we can find the probability between any two points of a normal distribution, just by knowing the mean $\mu$ and standard deviation $\sigma$.
+These properties don't just apply to 1, 2, or 3 standard deviations away from the mean. They apply to any amount of standard deviations (such as 1.23478 standard deviations), and there are online tables/calculators that can derive this. This means that we can find the probability between any two points of a normal distribution, just by knowing the mean $\mu$ and standard deviation $\sigma$.
 
-These properties [apply to every single normal distribution]{.underline}. These properties will become critical when we start talking about statistical inference.
-
-Another property of the normal distribution is that we can manipulate them as follows.
+Another property of the normal distribution is that we can manipulate them as follows:
 
 1.  We can add a constant $c$ to every single outcome/value in a normal distribution. The resulting distribution will still be a normal distribution, just with its mean shifted by $c$. Or in other words: $X \sim \mathcal N(\mu + c, \sigma^2)$.
 2.  We can multiply by constant $c$ to every single outcome/value in a normal distribution. The resulting distribution will still be a normal distribution, just with its mean multiplied by $c$, and its standard deviation multipled by $c^2$. Or in other words: $X \sim \mathcal N(c \mu, (c \mu)^2)$.
@@ -215,11 +152,7 @@ $$
 Z \sim\mathcal N(0, 1)
 $$
 
-Below is a figure of the standard normal distribution:
-
 ![](images/img_standard_normal.svg){fig-align="center" width="70%"}
-
-Since the standard deviation is also equal to 1 in a standard normal, we can talk about units of standard deviation away from the mean.
 
 The best part about the standard normal distribution is that we can transform any other normal distribution into a standard normal. Recall the properties of adding and multiplying constants to a normal distribution from above. That means we can apply a transformation to every value/unit in a normal distribution $X$ to get a standard normal distribution $Z$:
 
@@ -233,13 +166,13 @@ Or in other words, for every value of $x \in X$, subtract the mean, then divide 
 
 ### The T-Distribution
 
-The T-distribution (also called the Student's T-Distribution) is another distribution that is commonly used. The T-distribution looks very similar to that of the normal distribution, with the same bell curve shape. However, the t-distribution are slightly fatter than the normal distribution.
+The **T-distribution** looks very similar to that of the normal distribution, with the same bell curve shape. However, the t-distribution's tails are slightly fatter than the normal distribution, and the peak is slightly shorter.
 
 ![](images/clipboard-1130923565.png){fig-align="center" width="45%"}
 
 The key difference between the t-distribution and the normal distribution is the parameters. Unlike the normal distribution, which has 2 parameters, the t-distribution has only one parameter: degrees of freedom.
 
-The t-distribution is always centered on 0. Higher degrees of freedom means less thick tails, and lower degrees of freedom mean thicker tails. As degrees of freedom get larger (past 30), it almost perfectly matches the normal distribution.
+The t-distribution is always centered on 0. Higher degrees of freedom means less thick tails. As degrees of freedom get larger (past 30), it almost perfectly fits a normal distribution.
 
 The importance of the T-distribution is that it is often used for statistical inference when the normal distribution, for whatever reason, cannot be used. This is often because with the normal distribution, we need to know variance $\sigma^2$, but we do not need to know this to use the T-distribution.
 
@@ -308,27 +241,11 @@ We can describe sampling distributions with their expectation and variance.
 
 <br />
 
-### Unbiased Estimators {#unbiased-estimators}
+### Finite Sample Properties of Estimators {#unbiased-estimators}
 
-An estimator of a parameter is **unbiased**, if its estimates $\hat\theta_n$ have an expectation equal to the true population value of the parameter:
-
-$$
-E(\hat\theta_n) = \theta
-$$
-
-Or in other words, if we repeatedly sample and use the estimator, on average, the estimates will be equal to the true population value (the sampling distribution will have an expectation of the true population value).
+An estimator of a parameter is **unbiased**, if its estimates $\hat\theta_n$ have an expectation equal to the true population value of the parameter: $E(\hat\theta_n) = \theta$. Or in other words, if we repeatedly sample and use the estimator, on average, the estimates will be equal to the true population value (the sampling distribution will have an expectation of the true population value).
 
 We want an unbiased estimator, because if $E(\hat\theta_n) = \theta$, that means our "best guess" of the estimator value is the true parameter value $\theta$. That means any one estimate $\hat\theta_n$ is on average, correct.
-
-If our estimator is **biased**, we can quantify bias with the following formula:
-
-$$
-Bias(\hat\theta_n) = E(\hat\theta_n)-\theta
-$$
-
-<br />
-
-### Variance and Efficiency
 
 Unbiasedness is not the only desirable property of estimators - we also care about the variance. After all, if we have two unbiased estimators, the one with less variance will be on average, closer to the true population value, for any one estimate $\hat\theta$.
 
@@ -343,7 +260,7 @@ For example, let us say the true population parameter is $\theta = 0$. We will h
 Both estimators are unbiased $E(\hat\theta_n) = 0$. However, clearly, estimator $A$ is, on average, closer to $\theta =0$ than estimator $B$. This is because while both estimators are unbiased, estimator $A$ has a smaller **variance** than estimator $B$ - that is on average, estimator $A$'s estimators are more closely "packed around" the expectation of the estimator.
 :::
 
-The variance of an estimator (and variance of the sampling distribution) can be quantified as:
+The **variance** of an estimator (and variance of the sampling distribution) can be quantified as:
 
 $$
 Var(\hat\theta_n) = E[(\hat\theta_n - E(\hat\theta_n))^2]
@@ -355,7 +272,7 @@ $$
 MSE(\hat\theta_n) = E[(\hat\theta_n - \theta)^2] =Var(\hat\theta_n) + Bias(\hat\theta_n)^2
 $$
 
-We generally want an efficient estimator, since we know it will be giving us the closest guess to the true population parameter $\theta$.
+We generally want an efficient estimator, since gives us the closest guess to the true population parameter $\theta$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Efficient but Biased
@@ -367,19 +284,17 @@ This is particularly the case when the biased estimator has a slight bias but sm
 
 <br />
 
-### Asymptotically Consistent Estimators {#asymptotically-consistent-estimators}
+### Asymptotic Properties of Estimators {#asymptotically-consistent-estimators}
 
 Asymptotic properties are properties of estimators as the sample size $n$ approaches infinity.
 
-An estimator is consistent, if as we increase sample size towards infinity, the estimate will become more and more concentrated around the true population value $\theta$. At $n = ∞$, our sampling distribution collapses to just one value, the true population value $\theta$. Mathematically:
+An estimator is **asymptotically consistent**, if as we increase sample size towards infinity, the estimate will become more and more concentrated around the true population value $\theta$. At $n = ∞$, our sampling distribution collapses to just one value, the true population value $\theta$. Mathematically:
 
 $$
 Pr(|\hat\theta_n - \theta|> \epsilon) \rightarrow 0, \text { as } n \rightarrow ∞
 $$
 
-Or in other words, the probability that the distance between an estimate $\hat\theta_n$ and the true population value $\theta$ will be higher than a small close-to-zero value $\epsilon$ will be 0, since our estimates $\hat\theta_n$ will converge at the $\theta$.
-
-This is a useful property, since even if our estimator is biased, if it is asymptotically consistent, we know that with large enough sample sizes, that bias becomes infinitely small and negligible.
+That means with a consistent estimator, increasing the sample size will get us more and more accurate results.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Biased but Consistent
@@ -409,8 +324,6 @@ $$
 
 -   Where $plim$ states that as $n$ approaches infinity, the probability distribution of $\bar x_n$ collapses around $\mu$.
 
-<br />
-
 Why is this the case? This sample mean estimator is calculated simply through the formula for mean:
 
 $$
@@ -438,13 +351,7 @@ $$
 Thus, the variance of our estimator $\bar x_n$ shrinks to zero, so as sample size increases to infinity $n$, the sampling distribution of estimator $\bar x_n$ collapses around the true population mean.
 :::
 
-<br />
-
-### Central Limit Theorem
-
-Another asymptotic property of estimators, as sample size $n$ approaches infinity, is that the sampling distribution approaches a normal distribution.
-
-The **central limit theorem** establishes asymptotic normality of estimators. Let us say we have $N$ number of random variables $\hat\theta_1, \dots, \hat\theta_N$ (estimates are realisations of random variables). The central limit theorem states that:
+Another asymptotic property of estimators, as sample size $n$ approaches infinity, is that the sampling distribution approaches a normal distribution. The **central limit theorem** establishes asymptotic normality of estimators. Let us say we have $N$ number of random variables $\hat\theta_1, \dots, \hat\theta_N$ (estimates are realisations of random variables). The central limit theorem states that:
 
 $$
 Pr(w_n < w) \rightarrow \Phi(w) \quad \text{as } n \rightarrow ∞
@@ -454,17 +361,13 @@ $$
 -   Where $Pr(w_n < w)$ is the cumulative density function of the random variable $w_n$.
 -   Where $\Phi(w)$ is the cumulative density function (cdf) of the standard normal distribution $\mathcal N(0, 1)$.
 
-The importance of CLM comes from the fact that as we increase sample size, our sampling distribution becomes more and more normally distributed.
-
-Recall that we know that the normal distribution has unique [properties of distribution](#properties-of-the-normal-distribution) that allow us to calculate the probability between standard deviations (and any point). Since CLM says that our sampling distribution is normally distributed, we can apply the same properties to learn about the probabilities of getting a certain sample estimates $\hat\theta_n$.
+The importance of CLM comes from the fact that as we increase sample size, our sampling distribution becomes more and more normally distributed. Recall that we know that the normal distribution has unique [properties of distribution](#properties-of-the-normal-distribution) that allow us to calculate the probability between standard deviations (and any point). Since CLM says that our sampling distribution is normally distributed, we can apply the same properties to learn about the probabilities of getting a certain sample estimates $\hat\theta_n$.
 
 <br />
 
 ### Intuition of Hypothesis Testing
 
-Let us say we have status-quo theory, called the **null hypothesis** $H_0$. A status quo theory is the generally accepted value of the true population parameter $\theta$ in our field.
-
-However, you might want to prove this status-quo theory wrong, and have an **alternative hypothesis** $H_1$. You need some way to prove that the status-quo null hypothesis is wrong.
+We have status-quo theory, called the **null hypothesis** $H_0$. A status quo theory is the generally accepted value of the true population parameter $\theta$ in our field. However, you might want to prove this status-quo theory wrong, and have an **alternative hypothesis** $H_1$. You need some way to prove that the status-quo null hypothesis is wrong.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Example of Hypotheses
@@ -493,7 +396,7 @@ If this probability of getting our estimate $\hat\theta$ or more extreme is very
 1.  We got extremely lucky (less than 5% chance) and got a estimate very far from the null hypothesis.
 2.  Or, we [**typically**]{.underline} believe that we were not actually lucky, but instead, the null hypothesis value of $\theta$ is incorrect.
 
-Thus, conclusion 2 essentially means we reject the null hypothesis, and conclude that our alternative hypothesis is correct.
+Thus, conclusion 2 essentially means we reject the null hypothesis, and conclude our alternative hypothesis.
 
 <br />
 
@@ -511,15 +414,13 @@ $$
 
 This formula might look familiar - we are essentially turning our normal distribution of the estimator into the [standard normal distribution](#the-standard-normal-distribution). The test statistic is essentially measuring how many standard deviations away from the null hypothesis our sample estimate $\hat\theta$ is.
 
-![](images/img_standard_normal.svg){fig-align="center" width="70%"}
+![](images/img_standard_normal.svg){fig-align="center" width="50%"}
 
-Now, go onto the x-axis of our standard normal distribution, and start at the mean (at 0). Now, move in both directions by the distance specified by the test statistic. Mark these two points on either side of the mean. Highlight the parts under the sampling distribution beyond these points. The figure below shows this with a test statistic of 2.228:
+Now, go onto the x-axis of our standard normal distribution, and start at the mean (at 0). Now, move in both directions by the distance specified by the test statistic. Mark these two points on either side of the mean. Highlight the are under the sampling distribution beyond these points. The figure below shows a test statistic of 2.228:
 
-![](images/clipboard-1533818238.png){fig-align="center" width="45%"}
+![](images/clipboard-1533818238.png){fig-align="center" width="35%"}
 
-The highlighted area is the probability of getting a sample estimate $\hat\theta$ equal or more extreme than the one we got, assuming the null hypothesis is true. This probability is called the **p-value**.
-
-If the p-value is below 0.05 (5%), we have sufficient evidence to reject the null hypothesis. If the p-value is above 0.05 (5%), we cannot reject the null hypothesis.
+The highlighted area is the probability (**p-value**) of getting a sample estimate $\hat\theta$ equal or more extreme than the one we got, assuming the null hypothesis is true. If the p-value is below 0.05 (5%), we have sufficient evidence to reject the null hypothesis. If the p-value is above 0.05 (5%), we cannot reject the null hypothesis.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Note on Distributions
