@@ -258,7 +258,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./model3.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Supervised Learning Methods</span></a>
+ <span class="menu-text">Spatial, Temporal, and Big Data</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -287,7 +287,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model9.qmd" class="sidebar-item-text sidebar-link">
+  <a href="./model8.qmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Structural Equation Models</span></a>
   </div>
 </li>
@@ -328,11 +328,10 @@ window.Quarto = {
   <li><a href="#polynomial-transformations" id="toc-polynomial-transformations" class="nav-link" data-scroll-target="#polynomial-transformations">Polynomial Transformations</a></li>
   <li><a href="#logarithmic-transformations" id="toc-logarithmic-transformations" class="nav-link" data-scroll-target="#logarithmic-transformations">Logarithmic Transformations</a></li>
   </ul></li>
-  <li><a href="#extension-types-of-data" id="toc-extension-types-of-data" class="nav-link" data-scroll-target="#extension-types-of-data"><strong>Extension: Types of Data</strong></a>
+  <li><a href="#extension-hiearchical-data" id="toc-extension-hiearchical-data" class="nav-link" data-scroll-target="#extension-hiearchical-data"><strong>Extension: Hiearchical Data</strong></a>
   <ul class="collapse">
   <li><a href="#clustered-and-panel-data" id="toc-clustered-and-panel-data" class="nav-link" data-scroll-target="#clustered-and-panel-data">Clustered and Panel Data</a></li>
-  <li><a href="#spatial-regression-models" id="toc-spatial-regression-models" class="nav-link" data-scroll-target="#spatial-regression-models">Spatial Regression Models</a></li>
-  <li><a href="#time-series-models" id="toc-time-series-models" class="nav-link" data-scroll-target="#time-series-models">Time Series Models</a></li>
+  <li><a href="#fixed-effects" id="toc-fixed-effects" class="nav-link" data-scroll-target="#fixed-effects">Fixed Effects</a></li>
   </ul></li>
   <li><a href="#implementation-in-r" id="toc-implementation-in-r" class="nav-link" data-scroll-target="#implementation-in-r"><strong>Implementation in R</strong></a></li>
   </ul>
@@ -1034,9 +1033,9 @@ Logging a Skewed Variable
 <p>We have 3 types of logarithmic transformations:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
-<col style="width: 39%">
-<col style="width: 43%">
+<col style="width: 13%">
+<col style="width: 40%">
+<col style="width: 44%">
 </colgroup>
 <tbody>
 <tr class="odd">
@@ -1171,36 +1170,22 @@ y_i &amp; = e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}
 <hr>
 </section>
 </section>
-<section id="extension-types-of-data" class="level1">
-<h1><strong>Extension: Types of Data</strong></h1>
+<section id="extension-hiearchical-data" class="level1">
+<h1><strong>Extension: Hiearchical Data</strong></h1>
 <section id="clustered-and-panel-data" class="level3">
 <h3 class="anchored" data-anchor-id="clustered-and-panel-data">Clustered and Panel Data</h3>
-<p>When we have hierarchical or panel data, we need to control for differences between clusters. We essentially include the cluster variable as a categorical variable in our regression.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Hierarchical/Clustered Data and Panel Data
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
 <p><strong>Hierarchical data</strong> is data where the basic units of analysis <span class="math inline">\(i\)</span> are clustered, grouped, or nested into clusters.</p>
 <p>For example, let us say we are measuring how income affects voter turnout in european countries. We have observations from France, Switzerland, Germany, and many other countries. However, these observations can be grouped by the country they came from.</p>
 <p>Why is this grouping important? This is because there may be something in common between observations within the same cluster. For example, Switzerland might just have higher voter turnout in general due to something about Swiss institutions or culture.</p>
 <p>This means that observations aren’t random - i.e.&nbsp;we know that if we select from switzerland, it is likely to have higher turnout - observations from the same country are correlated. Thus, we need some way to account for this clustering of observations. We will explore this below.</p>
 <p><strong>Panel data</strong> is data that can be clustered in two ways - by unit, and by time. For example, let us say we have a dataset on all countries and their GDP between 1960-2020.</p>
-<ul>
-<li>We will have clusters based on country: Germany will have an observation in 1960, in 1961, …, to 2020. Same for every other country. These observations are grouped by the unit (country in this case).</li>
-<li>We will also have clusters based on time: We will have all GDP observations for all countries in 1960, in 1961, etc. These observations are grouped by the time (year in this case).</li>
-</ul>
-</div>
-</div>
-</div>
-<p>Let us say we have <span class="math inline">\(m\)</span> number of clusters <span class="math inline">\(i = 1, \dots, m\)</span>. Within each cluster, we will have units <span class="math inline">\(t = 1, \dots, n\)</span>. Our cluster fixed effects model will take the form:</p>
+<p>We will have clusters based on country: Germany will have an observation in 1960, in 1961, …, to 2020. Same for every other country. These observations are grouped by the unit (country in this case).</p>
+<p>We will also have clusters based on time: We will have all GDP observations for all countries in 1960, in 1961, etc. These observations are grouped by the time (year in this case).</p>
+<p><br></p>
+</section>
+<section id="fixed-effects" class="level3">
+<h3 class="anchored" data-anchor-id="fixed-effects">Fixed Effects</h3>
+<p>When we have hierarchical or panel data, we need to control for differences between clusters. We essentially include the cluster variable as a categorical variable in our regression. Let us say we have <span class="math inline">\(m\)</span> number of clusters <span class="math inline">\(i = 1, \dots, m\)</span>. Within each cluster, we will have units <span class="math inline">\(t = 1, \dots, n\)</span>. Our model takes the form:</p>
 <p><span class="math display">\[
 \begin{split}
 y_{it} &amp; = \alpha_i + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
@@ -1208,9 +1193,11 @@ y_{it} &amp; = \alpha_i + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
 \end{split}
 \]</span></p>
 <ul>
+<li>Where <span class="math inline">\(y_{it}\)</span> is the <span class="math inline">\(y\)</span> value for the <span class="math inline">\(i\)</span>th observation within the <span class="math inline">\(t\)</span>th cluster.</li>
 <li>Where <span class="math inline">\(D_{i2}, D_{i3}, \dots, D_{im}\)</span> are dummy variables for clusters <span class="math inline">\(2, \dots, m\)</span>. Cluster 1 is the reference category.</li>
 </ul>
-<p>For panel data, we use two-way fixed effects, which is basically just two fixed effects for different clustering. Let us say we have <span class="math inline">\(i = 1, \dots, m\)</span> units with <span class="math inline">\(t = 1, \dots, n\)</span> different numbers of time periods. Our two way fixed effects model takes the form:</p>
+<p>We essentially add a unique intercept term for every cluster, accounting for the average differences in <span class="math inline">\(y\)</span> between each category. <span class="math inline">\(\beta_{00}\)</span> is the intercept for the reference category 1. <span class="math inline">\(\beta_{00} + \beta_{0i}\)</span> is the intercept for the <span class="math inline">\(i\)</span>th category.</p>
+<p>For panel data, we use <strong>two-way fixed effects</strong>, which is basically just two fixed effects for different clustering. Let us say we have <span class="math inline">\(i = 1, \dots, m\)</span> units with <span class="math inline">\(t = 1, \dots, n\)</span> different numbers of time periods. Our two way fixed effects model takes the form:</p>
 <p><span class="math display">\[
 \begin{split}
 y_{it} &amp; = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
@@ -1218,78 +1205,11 @@ y_{it} &amp; = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
 \end{split}
 \]</span></p>
 <ul>
+<li>Where <span class="math inline">\(y_{it}\)</span> is the <span class="math inline">\(y\)</span> value of the <span class="math inline">\(i\)</span>th unit at time period <span class="math inline">\(t\)</span>.</li>
 <li>Where <span class="math inline">\(D_{i2}, D_{i3}, \dots, D_{im}\)</span> are dummy variables for units <span class="math inline">\(2, \dots, m\)</span>., and <span class="math inline">\(T_{i2}, T_{i3}, \dots, T_{in}\)</span> are dummy variables for time periods <span class="math inline">\(2, \dots, n\)</span>.</li>
 </ul>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Intuitive Explanation of Fixed Effects
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>For one-way fixed effects, we essentially add a unique intercept term for every cluster, accounting for the average differences in <span class="math inline">\(y\)</span> between each category.</p>
-<ul>
-<li><span class="math inline">\(\beta_{00}\)</span> is the intercept for the reference category 1.</li>
-<li><span class="math inline">\(\beta_{00} + \beta_{0i}\)</span> is the intercept for the <span class="math inline">\(i\)</span>th category.</li>
-</ul>
 <p>For two-way fixed effects, we add a unique intercept term for every year and country, accounting for the average differences in <span class="math inline">\(y\)</span> between each country, and the average differences in <span class="math inline">\(y\)</span> between each year.</p>
-</div>
-</div>
-</div>
-<p><br></p>
-</section>
-<section id="spatial-regression-models" class="level3">
-<h3 class="anchored" data-anchor-id="spatial-regression-models">Spatial Regression Models</h3>
-<p>If we have spatial data, a region’s neighbours may have some effect on a region’s own outcomes:</p>
-<ol type="1">
-<li>The outcome <span class="math inline">\(y\)</span> of a region might be affected by a neighbouring region’s <span class="math inline">\(y\)</span> values (Lag <span class="math inline">\(y\)</span>)</li>
-<li>The outcome <span class="math inline">\(y\)</span> of a region might be affected by a neighbour’s <span class="math inline">\(X\)</span> values (lag <span class="math inline">\(X\)</span>).</li>
-<li>The residuals <span class="math inline">\(u\)</span> of a region might be affected by the residuals in a neigbouring region (spatial autocorrelation).</li>
-</ol>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Weights Matrix
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-
-</div>
-</div>
-</div>
-<p>We define neighbours with a weights matrix <span class="math inline">\(\mathbf W\)</span>. The largest spatial model is the <strong>Manski Model</strong>:</p>
-<p><span class="math display">\[
-\mathbf y = \underbrace{\rho\mathbf W\mathbf y}_{lag \ y} + \mathbf X\boldsymbol\beta + \underbrace{\mathbf{WX}\boldsymbol\theta}_{lag \ x} + \underbrace{\lambda \mathbf{Wu}}_{autocorr.} + \boldsymbol\epsilon
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\rho\)</span> (scalar) is the lag <span class="math inline">\(y\)</span> coefficient. For every one unit increase in the average value of <span class="math inline">\(y\)</span> in neighbouring regions, there is an expected <span class="math inline">\(\rho\)</span> unit change in <span class="math inline">\(y\)</span> in the region, holding all else constant.</li>
-<li><span class="math inline">\(\boldsymbol\beta\)</span> (vector) is our normal OLS coefficients <span class="math inline">\(\beta_0, \dots, \beta_k\)</span>, and would be interpreted in the same way.</li>
-<li><span class="math inline">\(\boldsymbol\theta\)</span> (vector) is the lag <span class="math inline">\(X\)</span> coefficients <span class="math inline">\(\theta_0, \dots, \theta_k\)</span>. For every one unit increase in the average <span class="math inline">\(x_j\)</span> of neighbouring regions, there is an expected <span class="math inline">\(\theta_j\)</span> unit change in <span class="math inline">\(y\)</span> in the region, holding all else constant.</li>
-<li><span class="math inline">\(\lambda\)</span> (scalar) is spatial autocorrelation coefficient. Unobserved factors shared by neighbouring regions contribute to a <span class="math inline">\(\lambda\)</span>-unit change in <span class="math inline">\(y\)</span>, holding all else constant.</li>
-</ul>
-<p>However, in reality, we often cannot estimate this entire model due to the large amount of parameters. Thus, multiple variations exist with only parts of the full model:</p>
-<ol type="1">
-<li>Keleijian-Prucha Model: <span class="math inline">\(\mathbf y = \rho \mathbf W \mathbf y + \mathbf X \boldsymbol\beta + \lambda \mathbf {Wu} + \boldsymbol\epsilon\)</span>.</li>
-<li>Spatial Durbin Model: <span class="math inline">\(\mathbf y = \rho \mathbf{WY} + \mathbf X \boldsymbol\beta + \mathbf{WX}\boldsymbol\theta + \boldsymbol\epsilon\)</span>.</li>
-<li>Spatially Lagged X Model: <span class="math inline">\(\mathbf y = \mathbf X \boldsymbol\beta + \mathbf {WX} \boldsymbol\theta + \boldsymbol\epsilon\)</span>.</li>
-<li>Spatial Lag Model (Spatial Autoregressive): <span class="math inline">\(\mathbf y = \rho \mathbf{Wy} + \mathbf X \boldsymbol\beta + \boldsymbol\epsilon\)</span>.</li>
-<li>Spatial Error Model: <span class="math inline">\(\mathbf y = \mathbf X\boldsymbol\beta + \lambda \mathbf{Wu} + \boldsymbol\epsilon\)</span>.</li>
-</ol>
-<p>The models are estimated with Maximum Likelihood Estimation (discussed in next chapter), and model selection can be done with a combination of eliminating insignificant portions, and AIC and BIC.</p>
-<p><br></p>
-</section>
-<section id="time-series-models" class="level3">
-<h3 class="anchored" data-anchor-id="time-series-models">Time Series Models</h3>
+<p>Note: when conducting statistical inference with fixed-effects models, we must adjust our standard errors to clustered-standard errors. This is because observatios within a cluster are not independent of each other.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -1318,7 +1238,7 @@ Weights Matrix
 </div>
 <p>Output will include coefficients, standard errors, p-values, and more.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1327,7 +1247,7 @@ Binary and Categorical Variables
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can include binary and categorical variables by using the <em>as.factor()</em> function:</p>
 <div class="cell">
@@ -1338,7 +1258,7 @@ Binary and Categorical Variables
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1347,7 +1267,7 @@ Fixed Effects
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can include one-way fixed effects by adding a | after your regression formula in <em>feols()</em>:</p>
 <div class="cell">
@@ -1365,7 +1285,7 @@ Fixed Effects
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1374,7 +1294,7 @@ Interaction Effects
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Two interact two variables, use * between them. This will automatically include both the interaction term, and the two variables by themselves.</p>
 <div class="cell">
@@ -1388,7 +1308,7 @@ Interaction Effects
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1397,7 +1317,7 @@ Polynomial Transformations
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>To conduct a polynomial transformation, you can use the <em>I()</em> function. The second argument is the degree of the polynomial:</p>
 <div class="cell">
@@ -1407,7 +1327,7 @@ Polynomial Transformations
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1416,7 +1336,7 @@ Logarithmic Transformations
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The best way to do a logarithmic transformation is to create a new variable that is the log of the variable you want to transform using the <em>log()</em> function, before you even start the regression:</p>
 <div class="cell">
@@ -1426,7 +1346,7 @@ Logarithmic Transformations
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1435,7 +1355,7 @@ Confidence Intervals
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>To find the confidence intervals for coefficients, first estimate the model with <em>lm()</em> or <em>feols()</em> as shown previously, then use the <em>confint()</em> command:</p>
 <div class="cell">
@@ -1445,7 +1365,7 @@ Confidence Intervals
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1454,7 +1374,7 @@ F-Tests
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>To run a f-test, use the <em>anova()</em> command, and input your two different models, with the null model going first.</p>
 <div class="cell">
@@ -1465,7 +1385,7 @@ F-Tests
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1474,7 +1394,7 @@ LaTeX Regression Tables
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-23" class="callout-23-contents callout-collapse collapse">
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can use the <em>texreg</em> package to make nice regression tables automatically.</p>
 <div class="cell">
@@ -1493,7 +1413,7 @@ LaTeX Regression Tables
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1502,7 +1422,7 @@ Prediction
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>We can use the <em>predict()</em> function to generate fitted value predictions in R:</p>
 <div class="cell">

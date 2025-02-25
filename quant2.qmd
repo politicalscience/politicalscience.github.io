@@ -222,13 +222,11 @@ This property is very useful for interpreting our regression results. You will h
 
 I define $\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}$, multiplied to $x_j \in \{x_1, \dots, x_k\}$. $\widehat{\beta_0}$ is the intercept. We assume a continuous $y$ variable - for a binary $y$, see the below section on the [linear probability model](#linear-probability-model).
 
-+---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                     |                                                                                                                                                      |                                                                                                                                                            |
+|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |                     | **Continuous** $x_j$                                                                                                                                 | **Binary** $x_j$                                                                                                                                           |
-+---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_j}$ | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j}$ unit change in $y$, holding all other explanatory variables constant. | There is a $\widehat{\beta_j}$ unit difference in $y$ between category $x_j = 1$ and category $x_j = 0$, holding all other explanatory variables constant. |
-+---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected value of $y$ is $\widehat{\beta_0}$.                                                            | For category $x_j = 0$, the expected value of $y$ is $\widehat{\beta_0}$ (when all other explanatory variables equal 0).                                   |
-+---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Sometimes, these interpretations don't make much sense. For example, if $y$ is *democracy*, what does a 5 unit increase in democracy actually mean? Instead, w can express the change of $y$ and $x$ in terms of standard deviations. Or in other words, we want to find the change in $\frac{\hat y_i}{\sigma_y}$ for every one standard deviation $\sigma_x$ increase in $x$. For simplicity, let us use a simple linear regression $E(y_i|x_i) = \beta_0 + \beta_1 x_i$:
 
@@ -441,13 +439,11 @@ $$
 
 Our interpretations of coefficients also slightly change.
 
-+---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                     |                                                                                                                                                                                                                           |                                                                                                                                                                                                                                |
+|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |                     | **Continuous** $x_j$                                                                                                                                                                                                      | **Binary** $x_j$                                                                                                                                                                                                               |
-+---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_j}$ | For every one unit increase in $x_j$, there is an expected $\widehat{\beta_j} \times 100$ percentage point change in the probability of a unit being in category $y=1$, holding all other explanatory variables constant. | There is a $\widehat{\beta_j}\times 100$ percentage point difference in the probability of a unit being in category $y=1$ between category $x_j = 1$ and category $x_j = 0$, holding all other explanatory variables constant. |
-+---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$                                                                                      | For category $x_j = 0$, the expected probability of a unit being in category $y=1$ is $\widehat{\beta_0} \times 100$ (when all other explanatory variables equal 0).                                                           |
-+---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Note: we cannot do linear regression with a categorical (more than 2 categories and undordered) $y$. We will need to use a multinomial logistic regression. We can do a linear regression with an ordinal $y$ (more than 2 categories with an order) by pretending that the ordinal $y$ is continuous. We can also is a ordinal logistic regression for that.
 
@@ -610,17 +606,17 @@ If we take the log of this variable, we get the following distribution that is a
 
 We have 3 types of logarithmic transformations:
 
-+--------------+-------------------------------------+-----------------------------------------+
-|              | $x$                                 | $\log (x)$                              |
-+--------------+-------------------------------------+-----------------------------------------+
-| $y$          | Linear Model:                       | Linear-Log Model:                       |
-|              |                                     |                                         |
-|              | $y = \beta_0 + \beta_1 x + u$       | $y = \beta_0 + \beta_1 \log x + u$      |
-+--------------+-------------------------------------+-----------------------------------------+
-| $\log (y)$   | Log-Linear Model:                   | Log-Log Model:                          |
-|              |                                     |                                         |
-|              | $\log(y) = \beta_0 + \beta_1 x + u$ | $\log y = \beta_0 + \beta_1 \log x + u$ |
-+--------------+-------------------------------------+-----------------------------------------+
++------------+-------------------------------------+-----------------------------------------+
+|            | $x$                                 | $\log (x)$                              |
++------------+-------------------------------------+-----------------------------------------+
+| $y$        | Linear Model:                       | Linear-Log Model:                       |
+|            |                                     |                                         |
+|            | $y = \beta_0 + \beta_1 x + u$       | $y = \beta_0 + \beta_1 \log x + u$      |
++------------+-------------------------------------+-----------------------------------------+
+| $\log (y)$ | Log-Linear Model:                   | Log-Log Model:                          |
+|            |                                     |                                         |
+|            | $\log(y) = \beta_0 + \beta_1 x + u$ | $\log y = \beta_0 + \beta_1 \log x + u$ |
++------------+-------------------------------------+-----------------------------------------+
 
 <br />
 
@@ -717,14 +713,9 @@ $$
 
 ------------------------------------------------------------------------
 
-# **Extension: Types of Data**
+# **Extension: Hiearchical Data**
 
 ### Clustered and Panel Data
-
-When we have hierarchical or panel data, we need to control for differences between clusters. We essentially include the cluster variable as a categorical variable in our regression.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Hierarchical/Clustered Data and Panel Data
 
 **Hierarchical data** is data where the basic units of analysis $i$ are clustered, grouped, or nested into clusters.
 
@@ -736,11 +727,15 @@ This means that observations aren't random - i.e. we know that if we select from
 
 **Panel data** is data that can be clustered in two ways - by unit, and by time. For example, let us say we have a dataset on all countries and their GDP between 1960-2020.
 
--   We will have clusters based on country: Germany will have an observation in 1960, in 1961, ..., to 2020. Same for every other country. These observations are grouped by the unit (country in this case).
--   We will also have clusters based on time: We will have all GDP observations for all countries in 1960, in 1961, etc. These observations are grouped by the time (year in this case).
-:::
+We will have clusters based on country: Germany will have an observation in 1960, in 1961, ..., to 2020. Same for every other country. These observations are grouped by the unit (country in this case).
 
-Let us say we have $m$ number of clusters $i = 1, \dots, m$. Within each cluster, we will have units $t = 1, \dots, n$. Our cluster fixed effects model will take the form:
+We will also have clusters based on time: We will have all GDP observations for all countries in 1960, in 1961, etc. These observations are grouped by the time (year in this case).
+
+<br />
+
+### Fixed Effects
+
+When we have hierarchical or panel data, we need to control for differences between clusters. We essentially include the cluster variable as a categorical variable in our regression. Let us say we have $m$ number of clusters $i = 1, \dots, m$. Within each cluster, we will have units $t = 1, \dots, n$. Our model takes the form:
 
 $$
 \begin{split}
@@ -749,9 +744,12 @@ y_{it} & = \alpha_i + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
 \end{split}
 $$
 
+-   Where $y_{it}$ is the $y$ value for the $i$th observation within the $t$th cluster.
 -   Where $D_{i2}, D_{i3}, \dots, D_{im}$ are dummy variables for clusters $2, \dots, m$. Cluster 1 is the reference category.
 
-For panel data, we use two-way fixed effects, which is basically just two fixed effects for different clustering. Let us say we have $i = 1, \dots, m$ units with $t = 1, \dots, n$ different numbers of time periods. Our two way fixed effects model takes the form:
+We essentially add a unique intercept term for every cluster, accounting for the average differences in $y$ between each category. $\beta_{00}$ is the intercept for the reference category 1. $\beta_{00} + \beta_{0i}$ is the intercept for the $i$th category.
+
+For panel data, we use **two-way fixed effects**, which is basically just two fixed effects for different clustering. Let us say we have $i = 1, \dots, m$ units with $t = 1, \dots, n$ different numbers of time periods. Our two way fixed effects model takes the form:
 
 $$
 \begin{split}
@@ -760,57 +758,12 @@ y_{it} & = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
 \end{split}
 $$
 
+-   Where $y_{it}$ is the $y$ value of the $i$th unit at time period $t$.
 -   Where $D_{i2}, D_{i3}, \dots, D_{im}$ are dummy variables for units $2, \dots, m$., and $T_{i2}, T_{i3}, \dots, T_{in}$ are dummy variables for time periods $2, \dots, n$.
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Intuitive Explanation of Fixed Effects
-
-For one-way fixed effects, we essentially add a unique intercept term for every cluster, accounting for the average differences in $y$ between each category.
-
--   $\beta_{00}$ is the intercept for the reference category 1.
--   $\beta_{00} + \beta_{0i}$ is the intercept for the $i$th category.
-
 For two-way fixed effects, we add a unique intercept term for every year and country, accounting for the average differences in $y$ between each country, and the average differences in $y$ between each year.
-:::
 
-<br />
-
-### Spatial Regression Models
-
-If we have spatial data, a region's neighbours may have some effect on a region's own outcomes:
-
-1.  The outcome $y$ of a region might be affected by a neighbouring region's $y$ values (Lag $y$)
-2.  The outcome $y$ of a region might be affected by a neighbour's $X$ values (lag $X$).
-3.  The residuals $u$ of a region might be affected by the residuals in a neigbouring region (spatial autocorrelation).
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Weights Matrix
-:::
-
-We define neighbours with a weights matrix $\mathbf W$. The largest spatial model is the **Manski Model**:
-
-$$
-\mathbf y = \underbrace{\rho\mathbf W\mathbf y}_{lag \ y} + \mathbf X\boldsymbol\beta + \underbrace{\mathbf{WX}\boldsymbol\theta}_{lag \ x} + \underbrace{\lambda \mathbf{Wu}}_{autocorr.} + \boldsymbol\epsilon
-$$
-
--   $\rho$ (scalar) is the lag $y$ coefficient. For every one unit increase in the average value of $y$ in neighbouring regions, there is an expected $\rho$ unit change in $y$ in the region, holding all else constant.
--   $\boldsymbol\beta$ (vector) is our normal OLS coefficients $\beta_0, \dots, \beta_k$, and would be interpreted in the same way.
--   $\boldsymbol\theta$ (vector) is the lag $X$ coefficients $\theta_0, \dots, \theta_k$. For every one unit increase in the average $x_j$ of neighbouring regions, there is an expected $\theta_j$ unit change in $y$ in the region, holding all else constant.
--   $\lambda$ (scalar) is spatial autocorrelation coefficient. Unobserved factors shared by neighbouring regions contribute to a $\lambda$-unit change in $y$, holding all else constant.
-
-However, in reality, we often cannot estimate this entire model due to the large amount of parameters. Thus, multiple variations exist with only parts of the full model:
-
-1.  Keleijian-Prucha Model: $\mathbf y = \rho \mathbf W \mathbf y + \mathbf X \boldsymbol\beta + \lambda \mathbf {Wu} + \boldsymbol\epsilon$.
-2.  Spatial Durbin Model: $\mathbf y = \rho \mathbf{WY} + \mathbf X \boldsymbol\beta + \mathbf{WX}\boldsymbol\theta + \boldsymbol\epsilon$.
-3.  Spatially Lagged X Model: $\mathbf y = \mathbf X \boldsymbol\beta + \mathbf {WX} \boldsymbol\theta + \boldsymbol\epsilon$.
-4.  Spatial Lag Model (Spatial Autoregressive): $\mathbf y = \rho \mathbf{Wy} + \mathbf X \boldsymbol\beta + \boldsymbol\epsilon$.
-5.  Spatial Error Model: $\mathbf y = \mathbf X\boldsymbol\beta + \lambda \mathbf{Wu} + \boldsymbol\epsilon$.
-
-The models are estimated with Maximum Likelihood Estimation (discussed in next chapter), and model selection can be done with a combination of eliminating insignificant portions, and AIC and BIC.
-
-<br />
-
-### Time Series Models
+Note: when conducting statistical inference with fixed-effects models, we must adjust our standard errors to clustered-standard errors. This is because observatios within a cluster are not independent of each other.
 
 <br />
 

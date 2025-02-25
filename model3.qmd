@@ -1,22 +1,145 @@
 ---
-title: "Supervised Learning Methods"
+title: "Spatial, Temporal, and Big Data"
 subtitle: "Further Statistical Models"
 sidebar: side
 ---
 
-So far, we have covered traditional statistical models. In this chapter, we introduce some supervised learning data science methods, including Regression Trees, Random Forest, Causal Forests, and Naive Bayes.
+This chapter covers methods for different data types. We start with models for spatial data. Then we move to models for time series data. Then finally, we move into simple machine learning methods for big data, including random forest and naive bayes.
 
 Use the right sidebar for navigation. R-code provided at the bottom.
 
 ------------------------------------------------------------------------
 
-# **Regression Trees**
+# **Spatial Regression Models**
 
-### Trees and Stratification
+### Spatial Data and Spatial Weights
 
-Regression Trees are an alternative way to obtain predictions of an outcome $y$ from explanatory variables $x$.
+Spatial data is data that has some geographic-spatial component. If we have spatial data, a region's neighbours may have some effect on a region's own outcomes:
 
-Instead of modelling how $y$ changes with every unit increase in $x$, regression trees instead model stratification.
+1.  **Lag y**: The outcome $y$ of a region might be affected by a neighbouring region's $y$ values. For example, one state having a high crime rate may affect another nearby state's crime rate as criminals can move across the border.
+2.  **Lag X**: The outcome $y$ of a region might be affected by a neighbour's $X$ values. For example, one state's low vaccination rate could affect the prevalence of a disease in a nearby state.
+3.  **Spatial Autocorrelation**: The residuals $u$ of a region might be affected by the residuals in a neigbouring region. For example, perhaps if we are studying how minimum wage affects unemployment rates, there could be some common factor with nearby states that affects unemployment rates (for example, prevalence of a certain industry) which is not included in our model.
+
+To include spatial considerations, we include a spatial weights matrix $\mathbf W$. This defines what regions are "neighbours". For example, imagine 3 regions A, B, C, with A on the left, B in the middle, and C on the right. The spatial weights matrix would be a matrix with rows $i = A, B ,C$ and columns $j = A, B, C$.Element $w_{ij}=1$ if regions $i$ and $j$ border each other, and $w_{ij} = 0$ if regions $i$ and $j$ do not touch each other:
+
+$$
+\mathbf W_{3 \times 3} = \begin{pmatrix}
+0 & 1 & 0 \\
+1 & 0 & 1 \\
+0 & 1 & 0
+\end{pmatrix}
+$$
+
+We often "normalise/standardise" our weights matrix so that each row adds up to 1. Essentially, we divide an element by the number of 1's in each row:
+
+$$
+\mathbf W_{3 \times 3} = \begin{pmatrix}
+0 & 1 & 0 \\
+0.5 & 0 & 0,5 \\
+0 & 1 & 0
+\end{pmatrix}
+$$
+
+There are other ways to define neighbours $w_{ij} = 1$ outside of just borders. For example, we could consider any region who's centroid is within $x$ miles of another state's centroid as a neighbour. This is up to the modelers discretion.
+
+<br />
+
+### Spatial Regression
+
+We define neighbours with a weights matrix $\mathbf W$. The largest spatial model is the **Manski Model**, which incorporates lag y, lag X, and spatial autocorrelation.
+
+$$
+\mathbf y = \underbrace{\rho\mathbf W\mathbf y}_{lag \ y} + \mathbf X\boldsymbol\beta + \underbrace{\mathbf{WX}\boldsymbol\theta}_{lag \ x} + \underbrace{\lambda \mathbf{Wu}}_{autocorr.} + \boldsymbol\epsilon
+$$
+
+-   $\rho$ (scalar) is the lag $y$ coefficient, and measures how an average of neighbouring region's $y$ values are associated with a region's own $y$ values. For every one unit increase in the average value of $y$ in neighbouring regions, there is an expected $\rho$ unit change in $y$ in the region, holding all else constant.
+-   $\boldsymbol\beta$ (vector) is our normal OLS coefficients $\beta_0, \dots, \beta_k$, and would be interpreted in the same way.
+-   $\boldsymbol\theta$ (vector) is the lag $X$ coefficients $\theta_0, \dots, \theta_k$, and measures how an average of neighbouring region's $X$ values are associated with a region's own $y$ values. For every one unit increase in the average $x_j$ of neighbouring regions, there is an expected $\theta_j$ unit change in $y$ in the region, holding all else constant.
+-   $\lambda$ (scalar) is spatial autocorrelation coefficient, and measures how an average of neighbouring regions' error terms are associated with a region's own error term. Unobserved factors shared by neighbouring regions contribute to a $\lambda$-unit change in $y$, holding all else constant.
+
+However, in reality, we often cannot estimate this entire model due to the large amount of parameters. Thus, multiple variations exist with only parts of the full model:
+
+1.  Keleijian-Prucha Model: $\mathbf y = \rho \mathbf W \mathbf y + \mathbf X \boldsymbol\beta + \lambda \mathbf {Wu} + \boldsymbol\epsilon$.
+2.  Spatial Durbin Model: $\mathbf y = \rho \mathbf{WY} + \mathbf X \boldsymbol\beta + \mathbf{WX}\boldsymbol\theta + \boldsymbol\epsilon$.
+3.  Spatially Lagged X Model: $\mathbf y = \mathbf X \boldsymbol\beta + \mathbf {WX} \boldsymbol\theta + \boldsymbol\epsilon$.
+4.  Spatial Lag Model (Spatial Autoregressive): $\mathbf y = \rho \mathbf{Wy} + \mathbf X \boldsymbol\beta + \boldsymbol\epsilon$.
+5.  Spatial Error Model: $\mathbf y = \mathbf X\boldsymbol\beta + \lambda \mathbf{Wu} + \boldsymbol\epsilon$.
+
+The models are estimated with Maximum Likelihood Estimation, and model selection can be done with a combination of theory regarding the topic, eliminating insignificant portions, and AIC and BIC metrics.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Time Series Models**
+
+### Time Series and Stationary Processes
+
+Time series are a set of data collected at successive time points $t \in \mathbb Z$. Each observation $X_t$ is at time point $t$. For example, a time series with $T$ number of time periods would be $(X_1, X_2, \dots, X_T)$. Examples of time series include monthly unemployment data, daily currency exchange rates, and monthly politician approval rates.
+
+The goal of time series modelling is to predict $X_t$ with past data. There are several factors that might affect $X_t$:
+
+1.  Previous values of $X_t$ in the time series.
+2.  Long-term **trends**: these are long-term movements in the mean of a section of the time series. This can be an upward trend, a downward trend, or a stationary trend (no changes).
+3.  **Seasonality**: cyclical repeating patterns in certain periods, for example, business cycles, or sales being higher during the holiday season.
+4.  **Randomness**: other random/systematic fluctuations.
+
+One important idea is a **stationary process**, where there is zero trend over time.
+
+-   A strong stationary process essentially means every single time period $X_t$ is independent of each other - random draws from the same distirbution. This is unlikely to be true for most time-series data.
+-   A weak stationary process is when the expected value of our time series is constant over different groups of time periods: $E(X_t) = \mu$.
+
+Most time-series data will not be either strong or weak stationary. However, we can transform most time-series data into weak stationary processes through **differencing**. We refer to the new differenced time series as $X'_t$:
+
+-   Zero differencing $d=0$ is no differencing: $X_t' = X_t$. We just use our original time-series.
+-   First order differencing $d = 1$ is $X_t' = X_t - X_{t-1}$. Basically we take our $X_t$ at time period $t$, and subtract away the previous time period $X_{t-1}$.
+-   Second order differencing $d = 2$ is $X'_t = (X_t - X_{t-1}) - (X_{t-1}-X_{t-2})$.
+
+Any further order of differencing $d$ is increasingly uncommon. The point of differencing is that we keep increasing $d$ until we have a weak stationary process.
+
+<br />
+
+### ARIMA and SARIMA
+
+The most popular model is the **ARIMA** (Auto-regressive Integrated Moving Average Model). ARIMA assumes that we have stationary trends (no seasonality):
+
+$$
+\text{ARIMA}(p, d, q) \ : \ X_t'^d = \underbrace{\sum\limits_{i=1}^p \phi_iX_{t-i}}_{\text{AR}} + \underbrace{\sum\limits_{i=1}^q \theta_i\epsilon_{t-i}}_{\text{MA}} + \epsilon_t
+$$
+
+-   $X_t'^d$ is $d$-ordered differenced time series that is stationary.
+-   The **AR** (Autoregressive) section is how previous values of $X$ before time period $t$ predict the current $X_t$. $p$ is the number of previous time periods to include (which we have to choose).
+-   The **MA** (Moving Average) section is how previous values of error $\epsilon$ before time period $t$ predict the current $\epsilon_t$. $q$ is the number of previous time periods to include (which we have to choose).
+
+We can choose $p$ and $q$ by first choosing a variety of $p$ and $q$, estimating each model with maximum likelihood estimation, and choosing the model (and $p$ and $q$) that has the least AIC or BIC value.
+
+ARIMA is a non-seasonal models, since seasonality is technically non-stationary by definition. **SARIMA** models are the seasonal extension: we add seasons by doing seasonal differencing. This means taking $X_t$, and subtracting the $X$ value from the same point in the last season. Let us say each season is $S$ number of time periods long. So, a first-order seasonal difference would be $Z_t = X_t - X_{t-S}$.
+
+A **SARIMA** model will take the following form:
+
+$$
+\text{SARIMA}(p, q, d)(P, Q,D)S \ : \ Z_t^{*d} = \underbrace{\overbrace{\sum\limits_{i=1}^p \phi_iX_{t-i}}^{\text{AR}} + \overbrace{\sum\limits_{i=1}^q \theta_i\epsilon_{t-i}}^{\text{MA}}}_{\text{ARIMA}} + \underbrace{\overbrace{\sum\limits_{i=1}^P \Phi_iX_{t-Si}}^{\text{AR}} + \overbrace{\sum\limits_{i=1}^Q \Theta_i\epsilon_{t-Si}}^{\text{MA}}}_{\text{Seasonality}} + \epsilon_t
+$$
+
+Where $Z^{*d}$ is a $d$-order difference of $D$-order seasonal differences $Z_t'^D$. For example, if $d= 1$ and $D=1$:
+
+$$
+Z^{*d}_t = Z_t - Z_{t-1} = (X_t - X_{t-S}) - (X_{t-1} - X_{t-1-S}), \qquad \text{where } Z_t = X_t - X_{t-S}
+$$
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Trees and Random Forests**
+
+### Regression Trees
+
+Regression Trees are an alternative way to obtain predictions of an outcome $y$ from explanatory variables $x$. Instead of modelling how $y$ changes with every unit increase in $x$, regression trees instead model stratification.
 
 Tree-based methods will divide the independent variable $x_j$ into 2 regions, splitting $x$ at some value $x = s$. For example, if we had an $x$ variable such that $x \in [0, 100]$, we could split the variable at $x = s$ to create two regions: $x^{(1)} \in [0, s]$ and $x^{(2)} \in [s, 100]$.
 
@@ -25,13 +148,7 @@ Then, tree-based methods will calculate the mean $y$ value in each region create
 -   If a unit $i$ has an $x$ value that falls into region $x^{(1)} \in [0, s]$, their predicted $\hat y = \bar y^{(1)}$.
 -   If a unit $i$ has an $x$ value that falls into region $x^{(2)} \in [s,100]$, their prediction $\hat y = \bar y^{(2)}$.
 
-<br />
-
-### Determining the Thresholds
-
-So we know that trees will stratify/divide our observations into groups by some threshold $x = s$. But how do we decide which threshold $s$,?
-
-For continuous $y$ variables, to determine the threshold $s$ in which to split $x$, the algorithm of tree regressions will find the optimal threshold $x = s$ that reduces the **residual sum of squares** (RSS) of the predictions the most:
+But how do we decide which threshold $s$? For continuous $y$ variables, to determine the threshold $s$ in which to split $x$, the algorithm of tree regressions will find the optimal threshold $x = s$ that reduces the **residual sum of squares** (RSS) of the predictions the most:
 
 $$
 RSS = \sum\limits_{i=1}^n(y_i - \hat y_i)^2
@@ -39,13 +156,10 @@ $$
 
 Essentially, the computer tests every possible threshold value of $x_j = s$, and finds the threshold that reduces the sum of squares the most.
 
-For binary $y$ variables, trees will determine the threshold $s$ in which to split $x$, based on the threshold $x=s$ that reduces the **classification error rate**.
+For binary $y$ variables, trees will determine the threshold $s$ in which to split $x$, based on the threshold $x=s$ that reduces the **classification error rate**. The classification error is essentially how many predictions $\hat y$ do not match to the actual $y$.
 
-The classification error is essentially how many predictions $\hat y$ do not match to the actual $y$.
-
-<br />
-
-### Growing a Tree
+::: {.callout-note collapse="true" appearance="simple"}
+## Procedure of Growing a Tree
 
 The process of growing a tree is as follows. Assume now we have more than one explanatory variable.
 
@@ -58,6 +172,7 @@ The process of growing a tree is as follows. Assume now we have more than one ex
 7.  Continue doing this until some stopping criteria. Find the average $y$ in each of the groups you have, and those are the predicted $\hat y$.
 
 It is possible for a variable to occur multiple times with different thresholds.
+:::
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Example of Growing a Tree
@@ -79,37 +194,13 @@ The earlier a variable is split, the more *influential* the variable is. We will
 
 <br />
 
-### Benefits and Drawbacks
+### Limitations and Bootstrap Aggregation
 
-Simple regression trees have both benefits and drawbacks.
+One of the best things about decision trees is that they incorporate interactions between variables. Lower-level splits of variables are interacting with higher-level splits of variables. This allows regression trees to be excellent for non-linear predictions. Regression trees are also great for visualisation, and are quite easy to explain visually without invoking complex statistics or mathematics.
 
-One of the best things about decision trees is that they incorporate interactions between variables. Lower-level splits of variables are interacting with higher-level splits of variables. This allows regression trees to be excellent for non-linear predictions.
+The downside of regression trees is that they have extremely high variance. If you just slightly change the data, your predicted results will be completely different, and even the order of variables and thresholds will completely change. This is called **overfitting**. Overfitting causes simple regression trees to be poor predictors of out-of-sample data.
 
-Regression trees are also great for visualisation, and are quite easy to explain visually without invoking complex statistics or mathematics.
-
-The downside of regression trees is that they have extremely high variance. If you just slightly change the data, your predicted results will be completely different, and even the order of variables and thresholds will completely change. This is called **overfitting**.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## The Problem of Overfitting
-:::
-
-This is not a good thing - after all, we want to be able to predict unseen data. Overfitting causes simple regression trees to be poor predictors on their own.
-
-Thus, we almost never use simple regression trees for prediction. We tend to use more advanced models, Random Forest and Bagging, which build on regression trees, but solve this issue of overfitting.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-# **Bagging and Random Forest**
-
-### Bootstrap Sampling
-
-While regression trees have some benefits, they suffer from overfitting and high variance. **Bootstrap Aggregation** is a procedure for reducing the variance of a statistical learning method.
-
-This procedure builds on a simple statistical idea: in a set of $n$ samples $Z_1, \dots, Z_n$ each with variance $\sigma^2$, the variance of the means $\bar Z$ of all the samples is $\frac{\sigma^2}{n}$. Since $n$ is in the denominator, that implies increasing the number of samples $n$ will reduce the variance of our predictions.
+**Bootstrap Aggregation** is a solution to this variance and overfitting problem. This procedure builds on a simple statistical idea: in a set of $n$ samples $Z_1, \dots, Z_n$ each with variance $\sigma^2$, the variance of the means $\bar Z$ of all the samples is $\frac{\sigma^2}{n}$. Since $n$ is in the denominator, that implies increasing the number of samples $n$ will reduce the variance of our predictions.
 
 However, we typically only have one sample of data. How can we increase $n$ if we only have one sample? The answer is **Bootstrap Sampling**. Essentially, we sample with replacement from our original sample.
 
@@ -119,7 +210,7 @@ If we do this procedure multiple times, we will end up with a few similar, but s
 
 <br />
 
-### Bagging Models
+### Bagging and Random Forest
 
 **Bagging** models apply bootstrap sampling to tree regressions.
 
@@ -133,17 +224,9 @@ $$
 
 Bagging reduces the variance of trees, and is one of the most accurate prediction methods, frequently outperforming both linear and non-linear methods.
 
-However, bagging is still not perfect. This is because bagging trees are heavily correlated: in general, the trees will have the same top-level $x_p$ variable, especially if there is one very strong predictor in our explanatory variables.
+However, bagging is still not perfect. This is because bagging trees are heavily correlated: in general, the trees will have the same top-level $x_p$ variable, especially if there is one very strong predictor in our explanatory variables. This is an issue - highly correlated trees, even if averaged, do not reduce the variance as much as we might need.
 
-This is an issue - highly correlated trees, even if averaged, do not reduce the variance as much as we might need. This is where the next class of models, Random Forests, come in.
-
-<br />
-
-### Random Forest Models
-
-Bagging has an issue of having highly correlated trees, which may not reduce variance as much as we desire. **Random Forests** solve this issue by not only bootstrapping observations like Bagging does, but also sampling a subset of explanatory variables for each tree.
-
-For example, let us say you a set of explanatory variables $\mathcal X = \{x_1, \dots  x_k\}$. For every bootstrap sample of observations $b$ that we did in bagging, Random forest will also sample a subset of explanatory variables $\mathcal X_b$, which contains only $g<k$ number of explanatory variables.
+**Random Forests** solve this issue by not only bootstrapping observations like Bagging does, but also sampling a subset of explanatory variables for each tree. For example, let us say you a set of explanatory variables $\mathcal X = \{x_1, \dots  x_k\}$. For every bootstrap sample of observations $b$ that we did in bagging, Random forest will also sample a subset of explanatory variables $\mathcal X_b$, which contains only $g<k$ number of explanatory variables.
 
 This means that each tree Random Forest produces only has a subset of $g$ explanatory variables, not the total number of $k$ explanatory variables. This means that sometimes, influential variables $x_p$ will not be included in the subset $\mathcal X_b$, which will allow for other predictors to get a chance to shine.
 
@@ -153,28 +236,16 @@ Generally, the size of the subset of explanatory variables $\mathcal X_b$ will t
 
 <br />
 
-### Model Selection for Prediction
+### Model Selection
 
 There are a few choices you must make when specifying the model you are using.
 
 1.  Should you use Random Forest or Bagging? Typically, Random Forest is better, but this is not always the case.
 2.  If you do choose Random Forest, what size of the subset of explanatory variables $\mathcal X_b$ should you use? Typically, the standard is to use the square root of the number of explanatory variables, but this is not a fixed rule.
 
-**Mean of squared residuals** is a general measure of how well the model performed. It is the mean of the squared errors, where the errors are the differences between the actual dataset $y_i$ value and the predicted $\hat y_i$ value.
+For **prediction** tasks, **Mean of squared residuals** is a general measure of how well the model performed. It is the mean of the squared errors, where the errors are the differences between the actual dataset $y_i$ value and the predicted $\hat y_i$ value. In R, the mean of squared residuals metric is calculated on testing data - testing the model on units that were not included in a specific bootstrap sample. Thus, this is a good measure of how predictive your model is, without worrying about overfitting.
 
-In R, the mean of squared residuals metric is calculated on testing data - testing the model on units that were not included in a specific bootstrap sample. Thus, this is a good measure of how predictive your model is, without worrying about overfitting.
-
-You should test all different possibilities of model selection choices, and see which one reduces the mean of squared residuals the most.
-
-<br />
-
-### Model Selection for Classification
-
-For classification tasks, you have the same decisions (bagging vs. random forest, what size $\mathcal X_b$) as prediction tasks.
-
-The simplest metric to help you make the decision is the **error rate**. This is simply the percentage of observations the model got wrong (predicted one category when it should have been the other).
-
-We can also dig into more detail.
+For **classification** tasks, the simplest metric to help you make the decision is the **error rate**. This is simply the percentage of observations the model got wrong (predicted one category when it should have been the other). We can also dig into more detail:
 
 -   The **False Positive Rate** is the observations that are $y=0$, but our model predicted incorrectly as $\hat y = 1$.
 -   The **False Negative Rate** is the observations that are $y=1$, but our model predicted incorrectly as $\hat y = 0$.
@@ -190,23 +261,19 @@ The metric on which to focus on depends on our goals of classification. Choosing
 
 ### Importance Statistics
 
-One of the downsides of Bagging and Random Forest is that they are harder to interpret than Regression Trees.
+One of the downsides of Bagging and Random Forest is that they are harder to interpret than traditional statistical models and also regression trees.
 
 Regression Trees produce a nice diagram, with the most important variables near the top. However, Bagging and Random Forest average hundreds or thousands of different trees, so we cannot really draw a diagram out.
 
 This is where importance statistics comes in. To calculate importance, we "remember" the reduction in RSS (or error rate) every time we split a tree, for every bagging sample $b$. Then, we figure out which variables on average reduce the RSS (or error rate) the most.
 
-![](images/clipboard-364907520.png){fig-align="center" width="80%"}
+![](images/clipboard-364907520.png){fig-align="center" width="70%"}
 
 Above is an example of the importance plot. This allows us to determine which explanatory variables are the most influential in determining the predictions, which can be useful in interpretation.
 
 <br />
 
-<br />
-
-------------------------------------------------------------------------
-
-# **Causal Forests**
+### Causal Trees and Forests
 
 <br />
 
@@ -215,10 +282,6 @@ Above is an example of the importance plot. This allows us to determine which ex
 ------------------------------------------------------------------------
 
 # **Naive Bayes Classifier**
-
-<br />
-
-<br />
 
 ------------------------------------------------------------------------
 
