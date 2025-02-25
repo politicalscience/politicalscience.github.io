@@ -77,7 +77,7 @@ These conditions create a system of equations, which you can solve for the OLS s
 $$
 \begin{align}
 \widehat{\beta_0} & = \bar y - \widehat{\beta_1} \bar x \\
-\widehat{\beta_1} & = \frac{\sum_{i=1}^n(x_i - \bar x)(y_i - \bar y)}{\sum_{i=1}^n(x_i - \bar x)^2} = \frac{Cov(x, y)}{Var(y)}
+\widehat{\beta_1} & = \frac{\sum_{i=1}^n(x_i - \bar x)(y_i - \bar y)}{\sum_{i=1}^n(x_i - \bar x)^2} = \frac{Cov(x, y)}{V(y)}
 \end{align}
 $$
 :::
@@ -162,7 +162,7 @@ Residual maker matrix $\color{purple}{\mathbf M}$ projects $\mathbf y$ onto the 
 Aside from the population parameters $\boldsymbol\beta$, there is another part of the linear model that needs to be estimated: the population **covariance matrix** of error terms $u_1, \dots u_n$:
 
 $$
-\underbrace{Var(\mathbf u|\mathbf X)}_{\text{cov. matrix}} = \begin{pmatrix}
+\underbrace{V(\mathbf u|\mathbf X)}_{\text{cov. matrix}} = \begin{pmatrix}
 Var(u_1) & Cov(u_1, u_2) & Cov(u_1, u_3) & \dots \\
 Cov(u_2, u_1) & Var(u_2) & Cov(u_2, u_3) & \dots \\
 Cov(u_3, u_1) & Cov(u_3, u_2) & Var(u_3) & \vdots \\
@@ -175,7 +175,7 @@ Under the assumption of **independence of observations** (a key assumption of th
 Thus, under this assumption, we have a diagonal matrix.
 
 $$
-\underbrace{Var(\mathbf u|\mathbf X)}_{\text{cov. matrix}} = \begin{pmatrix}
+\underbrace{V(\mathbf u|\mathbf X)}_{\text{cov. matrix}} = \begin{pmatrix}
 Var(u_1) & 0 & 0 & \dots \\
 0 & Var(u_2) & 0 & \dots \\
 0 & 0 & Var(u_3) & \vdots \\
@@ -192,7 +192,7 @@ We are not really going to discuss what happens when autocorrelation is present,
 Now, there are two possible forms of our covariance matrix of errors. **Homoscedasticity** assumes that every single unit $i$ has the same variance in error $\sigma_i^2$. Or in other words, the error of $u_i$ does not depend on unit $i$'s $\mathbf X$ values:
 
 $$
-Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
+V(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
 \sigma^2 & 0 & \dots & 0 \\
 0 & \sigma^2 & \dots & 0 \\
 \vdots & \vdots & \ddots & 0 \\
@@ -213,7 +213,7 @@ $\sigma^2$ is a population parameter. We can estimate it with the following unbi
 **Heteroscedasticity** is when we do not believe the assumption of a constant variance for all units. Instead, we assume each unit $i = 1, \dots, n$ has their own variance $\sigma^2_1, \dots, \sigma^2_n$:
 
 $$
-Var(\mathbf u | \mathbf X) = \begin{pmatrix}
+V(\mathbf u | \mathbf X) = \begin{pmatrix}
 \sigma^2_1 & 0 & \dots & 0 \\
 0 & \sigma^2_2 & \dots & 0 \\
 \vdots & \vdots & \ddots & 0 \\
@@ -296,7 +296,7 @@ We want to find the variance of our estimator, $Var(\boldsymbol{\hat\beta} | \ma
 $$
 \begin{align}
 \boldsymbol{\hat\beta} & = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u  \\
-Var(\boldsymbol{\hat\beta} | \mathbf X) & = Var(\boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u \ | \ \mathbf X)
+V(\boldsymbol{\hat\beta} | \mathbf X) & = V(\boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u \ | \ \mathbf X)
 \end{align}
 $$
 
@@ -306,7 +306,7 @@ $$
 If $\mathbf u$ is an $n$ dimensional vector of random variables, $\mathbf c$ is an $m$ dimensional vector, and $\mathbf B$ is an $n \times m$ dimensional matrix with fixed constants, then the following is true:
 
 $$
-Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^T
+V(\mathbf c + \mathbf{Bu}) = \mathbf B V(\mathbf u)\mathbf B^T
 $$ {#eq-lemma}
 
 I will not prove this lemma here, but it is provable.
@@ -316,8 +316,8 @@ $\boldsymbol\beta$ is a vector of fixed constants. $(\mathbf X^\mathsf{T} \mathb
 
 $$
 \begin{align}
-Var(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) [(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} && (\text{lemma})\\
-& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) \color{blue}{\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}} && \color{black}( \ \color{blue}{[(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} = \mathbf X(\mathbf X^\mathsf{T} \mathbf X)^{-1}}\color{black})\\
+V(\boldsymbol{\hat\beta} | \mathbf X) & = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} V(\mathbf u | \mathbf X) [(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} && (\text{lemma})\\
+& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} V(\mathbf u | \mathbf X) \color{blue}{\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}} && \color{black}( \ \color{blue}{[(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} = \mathbf X(\mathbf X^\mathsf{T} \mathbf X)^{-1}}\color{black})\\
 \end{align}
 $$
 
@@ -325,7 +325,7 @@ From here on, [homoscedasticity and heteroscedasticity](#homoscedasticity-and-he
 
 $$
 \begin{align}
-Var(\hat{\boldsymbol\beta}|\mathbf X)& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\sigma^2 \mathbf I_n}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\color{blue}{Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n}\color{black}) \\
+V(\hat{\boldsymbol\beta}|\mathbf X)& = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\sigma^2 \mathbf I_n}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\color{blue}{V(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n}\color{black}) \\
 & =  \color{red}{\sigma^2} \color{black} (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf I_n \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{move scalar } \color{red}{\sigma^2}\color{black})\\
 & =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{identity property of } \mathbf I_n)\\
 & =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} && (\text{inverses } \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ cancel})
@@ -335,7 +335,7 @@ $$
 Now, let us calculate the variance for when heteroscedasticity is present, as defined by @eq-hetero :
 
 $$
-Var(\hat{\boldsymbol\beta}|\mathbf X)  = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\begin{pmatrix}
+V(\hat{\boldsymbol\beta}|\mathbf X)  = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\begin{pmatrix}
 \sigma^2_1 & 0 & \dots & 0 \\
 0 & \sigma^2_2 & \dots & 0 \\
 \vdots & \vdots & \ddots & 0 \\
@@ -381,10 +381,10 @@ Now, let us calculate the variance of estimator $\tilde{\boldsymbol\beta}$:
 
 $$
 \begin{align}
-Var(\tilde{\boldsymbol\beta}|\mathbf X) & = Var(\mathbf {Cy} | \mathbf X)\\
-& = Var(\mathbf C(\color{blue}{\mathbf X\boldsymbol\beta + \mathbf u} \color{black})| \mathbf X) && (\text{plug in } \color{blue}{\mathbf y =\mathbf X\boldsymbol\beta + \mathbf u} \color{black}) \\
-& = Var(\mathbf{CX} \boldsymbol\beta + \mathbf{Cu}| \mathbf X) && (\text{multiply out)} \\
-& = Var(\boldsymbol\beta + \mathbf{Cu} | \mathbf X) && (\text{because }\color{red}{\mathbf {CX} = \mathbf I} \color{black})
+V(\tilde{\boldsymbol\beta}|\mathbf X) & = V(\mathbf {Cy} | \mathbf X)\\
+& = V(\mathbf C(\color{blue}{\mathbf X\boldsymbol\beta + \mathbf u} \color{black})| \mathbf X) && (\text{plug in } \color{blue}{\mathbf y =\mathbf X\boldsymbol\beta + \mathbf u} \color{black}) \\
+& = V(\mathbf{CX} \boldsymbol\beta + \mathbf{Cu}| \mathbf X) && (\text{multiply out)} \\
+& = V(\boldsymbol\beta + \mathbf{Cu} | \mathbf X) && (\text{because }\color{red}{\mathbf {CX} = \mathbf I} \color{black})
 \end{align}
 $$
 
@@ -392,7 +392,7 @@ Using the above lemma in @eq-lemma that we used for OLS variance, we get:
 
 $$
 \begin{align}
-Var(\tilde{\boldsymbol\beta}|\mathbf X) & = \mathbf CVar(\mathbf u|\mathbf X)\mathbf C^\mathsf{T} && (\text{using lemma}) \\
+V(\tilde{\boldsymbol\beta}|\mathbf X) & = \mathbf CVar(\mathbf u|\mathbf X)\mathbf C^\mathsf{T} && (\text{using lemma}) \\
 & = \mathbf C \color{blue}{\sigma^2\mathbf I} \color{black}{\mathbf C^\mathsf{T}} && (\text{homoscedasticity } \color{blue}{Var(\mathbf u|\mathbf X) = \sigma^2 \mathbf I}) \\
 & = \sigma^2 \mathbf {CC}^\mathsf{T} && (\text{identity property + rearrange})
 \end{align}
@@ -402,7 +402,7 @@ Now, we want to show that the variance of the OLS estimator $\hat{\boldsymbol\be
 
 $$
 \begin{align}
-Var(\tilde{\boldsymbol\beta}|\mathbf X) - Var(\hat{\boldsymbol\beta} |\mathbf X) & = \sigma^2\mathbf{CC}^\mathsf{T} - \sigma^2(\mathbf X^\mathsf{T}\mathbf X)^{-1} \\
+V(\tilde{\boldsymbol\beta}|\mathbf X) - V(\hat{\boldsymbol\beta} |\mathbf X) & = \sigma^2\mathbf{CC}^\mathsf{T} - \sigma^2(\mathbf X^\mathsf{T}\mathbf X)^{-1} \\
 & = \sigma^2(\mathbf{CC}^\mathsf{T} - (\mathbf X^\mathsf{T}\mathbf X)^{-1}) && (\text{factor out }\sigma^2) \\
 & = \sigma^2(\mathbf{CC}^\mathsf{T} - \color{red}{\mathbf{CX}}\color{black}(\mathbf X^\mathsf{T}\mathbf X)^{-1}\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T}}\color{black}) && (\text{since }\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T} = \mathbf{CX} = \mathbf I} \color{black}) \\
 & = \sigma^2 \mathbf C (\mathbf I - \mathbf X(\mathbf X^\mathsf{T}\mathbf X)^{-1}\mathbf X^\mathsf{T})\mathbf C^\mathsf{T} && (\text{factor out } \mathbf C, \mathbf C^\mathsf{T}) \\
@@ -410,7 +410,7 @@ Var(\tilde{\boldsymbol\beta}|\mathbf X) - Var(\hat{\boldsymbol\beta} |\mathbf X)
 \end{align}
 $$
 
-Since $\sigma^2 \mathbf {CM}\mathbf C^\mathsf{T}$ is positive semi-definite (I will not prove this, but it is provable), we know that $Var(\tilde{\boldsymbol\beta}|\mathbf X) > Var(\hat{\boldsymbol\beta}|\mathbf X)$. Thus, OLS is BLUE under the Gauss-Markov Theorem.
+Since $\sigma^2 \mathbf {CM}\mathbf C^\mathsf{T}$ is positive semi-definite (I will not prove this, but it is provable), we know that $V(\tilde{\boldsymbol\beta}|\mathbf X) > V(\hat{\boldsymbol\beta}|\mathbf X)$. Thus, OLS is BLUE under the Gauss-Markov Theorem.
 
 <br />
 
@@ -676,16 +676,16 @@ Which as we can see, are the exact same minimisation conditions as the method of
 
 ### Likelihood Functions
 
-We have a set of population parameters $\boldsymbol\theta$ we want to estimate. This set of parameters determines our population distribution of $y$, which we can describe with some [probability density function](quant1.qmd#probability-density-functions) $f(y, \boldsymbol\theta)$. For example, in linear regression, our population $y$ is determined by the population parameters $\beta_0, \dots, \beta_k$.
+We have a set of population parameters $\boldsymbol\theta$ we want to estimate. This set of parameters determines our population distribution of $y$, which we can describe with some [probability density function](quant1.qmd#probability-density-functions) $\varphi(y, \boldsymbol\theta)$. For example, in linear regression, our population $y$ is determined by the population parameters $\beta_0, \dots, \beta_k$.
 
-When we are estimating parameters, we will have sample data with $n$ number of observations, with each observation $i$ having its own $y_i$ value. Thus, our sample looks something like $(y_1, \dots, y_n)$. Based on the probability density function of the population $y$, the probability of selecting point $y_1$ from the population data is $f(y_1, \boldsymbol\theta)$, and the probability of selection point $y_i$ is $f(y_i, \boldsymbol\theta)$.
+When we are estimating parameters, we will have sample data with $n$ number of observations, with each observation $i$ having its own $y_i$ value. Thus, our sample looks something like $(y_1, \dots, y_n)$. Based on the probability density function of the population $y$, the probability of selecting point $y_1$ from the population data is $\varphi(y_1, \boldsymbol\theta)$, and the probability of selection point $y_i$ is $\varphi(y_i, \boldsymbol\theta)$.
 
 We know by the rules of probability, that the [probability of multiple independent events](math.qmd#basics-of-probability) is the product of their probabilities. Thus, the probability that we get a specific sample with $y$ values $(y_1, \dots ,y_n)$, based on the value of our population parameters $\boldsymbol\theta$ is given by the **likelihood function** $L$:
 
 $$
 \begin{align}
-L(\boldsymbol\theta, y_1, \dots y_n) & = f(y_1;\boldsymbol\theta) \times f(y_2;\boldsymbol\theta) \times \dots \times f(y_n;\boldsymbol\theta) \\
-& = \prod\limits_{i=1}^n f(y_i, \boldsymbol\theta) \\
+L(\boldsymbol\theta, y_1, \dots y_n) & = \varphi(y_1;\boldsymbol\theta) \times \varphi(y_2;\boldsymbol\theta) \times \dots \times \varphi(y_n;\boldsymbol\theta) \\
+& = \prod\limits_{i=1}^n \varphi(y_i, \boldsymbol\theta) \\
 \end{align}
 $$
 
@@ -693,10 +693,10 @@ We want to find some values of $\boldsymbol\theta$ that make it the highest prob
 
 $$
 \begin{align}
-\log L(\boldsymbol\theta, y_1, \dots y_n) & = \log \left(\prod_{i=1}^n f(y_i; \theta) \right) \\
-& = \log[f(y_1, \boldsymbol\theta) \times f(y_2, \boldsymbol\theta) \times \dots \times f(y_n, \boldsymbol\theta)] && \text{(expand product notation)} \\
-& = \log[f(y_1, \boldsymbol\theta)] + \log [f(y_2, \boldsymbol\theta)] + \dots + \log[f(y_n, \boldsymbol\theta)] && \text{(property of logs)} \\ 
-& = \sum\limits_{i=1}^n \log[f(y_i, \boldsymbol\theta)] && \text{(condense into sum)}
+\log L(\boldsymbol\theta, y_1, \dots y_n) & = \log \left(\prod_{i=1}^n \varphi(y_i; \theta) \right) \\
+& = \log[\varphi(y_1, \boldsymbol\theta) \times \varphi(y_2, \boldsymbol\theta) \times \dots \times \varphi(y_n, \boldsymbol\theta)] && \text{(expand product notation)} \\
+& = \log[\varphi(y_1, \boldsymbol\theta)] + \log [\varphi(y_2, \boldsymbol\theta)] + \dots + \log[\varphi(y_n, \boldsymbol\theta)] && \text{(property of logs)} \\ 
+& = \sum\limits_{i=1}^n \log[\varphi(y_i, \boldsymbol\theta)] && \text{(condense into sum)}
 \end{align}
 $$ {#eq-loglike}
 
@@ -755,15 +755,15 @@ One common question of students regarding OLS is - why least squares (SSR), and 
 We know in a simple linear regression, $\mu = E(y|x) = \beta_0 - \beta_1 x_i$. Let us plug that into the [probability density function of a normal distribution](quant1.qmd#the-normal-distribution) to get the PDF of $y$ in a simple linear regression:
 
 $$
-f(y) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{(y- \mu)^2}{2 \sigma^2}\right)}, \quad f(y_i|\beta_0, \beta_1, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}
+\varphi(y) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{(y- \mu)^2}{2 \sigma^2}\right)}, \quad \varphi(y_i|\beta_0, \beta_1, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}
 $$
 
 By @eq-loglike, the log-likelihood function of our sample for linear regression is:
 
 $$
 \begin{align}
-\log L(y_i | \beta_0, \beta_1 \sigma^2) & = \log \left(\prod\limits_{i=1}^n f(y_i | \beta_0, \beta_1, \sigma^2) \right) \\
-& = \sum\limits_{i=1}^n \log f(y_i, \beta_0, \beta_1, \sigma^2) && (\text{from eq. (8)}) \\
+\log L(y_i | \beta_0, \beta_1 \sigma^2) & = \log \left(\prod\limits_{i=1}^n \varphi(y_i | \beta_0, \beta_1, \sigma^2) \right) \\
+& = \sum\limits_{i=1}^n \log \varphi(y_i, \beta_0, \beta_1, \sigma^2) && (\text{from eq. (8)}) \\
 & = \sum\limits_{i=1}^n \log \left( \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)} \right) \\
 & = \sum\limits_{i=1}^n \log \left( \frac{1}{\sqrt{2\pi\sigma^2}}\right) + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) && \text{(prop. of logs)} \\
 & = \sum\limits_{i=1}^n \log (1) - \log (\sqrt{2\pi\sigma^2})  + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) && \text{(prop. of logs)} \\

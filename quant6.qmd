@@ -70,7 +70,7 @@ $$ {#eq-independence}
 2.  **Common Support**: for any unit $i$ with value of $X_i$, there is a non-zero probability that they could be assigned to both control $D_i = 0$ or treatment $D_i = 1$.
 
 $$
-0 < Pr(D_i = 1 \ | X_i = x) < 1 \quad \forall \ x \in \mathcal X
+0 < P(D_i = 1 \ | X_i = x) < 1 \quad \forall \ x \in \mathcal X
 $$
 
 ::: {.callout-note collapse="true" appearance="simple"}
@@ -103,8 +103,8 @@ Now, let us discuss the ATE, and plug in the CATE from @eq-cate to identify it:
 $$
 \begin{align}
 \tau_{ATE} & = E(Y_{1i} - Y_{0i}) \\
-& = \int \underbrace{E(Y_{1i} - Y_{0i} \ | \ X_i = x)}_{\tau_{CATE}(x)} d \ \underbrace{Pr(X_i = x)}_{\text{weight}} && (\text{weighted average})\\
-& = \int(\underbrace{E(Y_i|D_i = 1, X_i) - E(Y_i|D_i = 0, X_i)}_{\because \text{ equation (2)}})d \ Pr(X_i = x)
+& = \int \underbrace{E(Y_{1i} - Y_{0i} \ | \ X_i = x)}_{\tau_{CATE}(x)} d \ \underbrace{P(X_i = x)}_{\text{weight}} && (\text{weighted average})\\
+& = \int(\underbrace{E(Y_i|D_i = 1, X_i) - E(Y_i|D_i = 0, X_i)}_{\because \text{ equation (2)}})d \ P(X_i = x)
 \end{align}
 $$ {#eq-ate}
 
@@ -113,7 +113,7 @@ Thus $\tau_{ATE}$ is identified as the weighted average of all the CATEs, who th
 We assumed that the pre-treatment covariate $X$ is continuous. This is why we need an integral. However, we can simplify this if $X$ is discrete:
 
 $$
-\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x) 
+\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) P(X_i = x) 
 $$ {#eq-discreteate}
 
 <br />
@@ -142,8 +142,8 @@ Now, look at the ATT, and plug in CATT from @eq-catt to identify it.
 $$
 \begin{align}
 \tau_{ATT} & = E(Y_{1i} - Y_{0i}|D_i = 1) \\
-& = \int \underbrace{E(Y_{1i} - Y_{0i}|D_i = 1, X_i = x)}_{\tau_{CATT}(x)}d \ \underbrace{Pr(X_i = x|D_i = 1)}_{Pr(X_i = x) \text{ within treated}} \\
-& = \int (\underbrace{E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)}_{\because \text{ equation (6)}})d \ Pr(X_i = x|D_i = 1)
+& = \int \underbrace{E(Y_{1i} - Y_{0i}|D_i = 1, X_i = x)}_{\tau_{CATT}(x)}d \ \underbrace{P(X_i = x|D_i = 1)}_{P(X_i = x) \text{ within treated}} \\
+& = \int (\underbrace{E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)}_{\because \text{ equation (6)}})d \ P(X_i = x|D_i = 1)
 \end{align}
 $$
 
@@ -211,13 +211,13 @@ What if there are **heterogenous** treatment effects (where $\tau_i$ is differen
 Recall the discrete identification of the ATE (in equation @eq-discreteate ) is a weighted average of CATEs:
 
 $$
-\hat\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{Pr(X_i = x)}_{\text{weight}} \\
+\hat\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{P(X_i = x)}_{\text{weight}} \\
 $$
 
 OLS, when there are non constant treatment effects, can also be rewritten as a weighted average of CATEs:
 
 $$
-\hat\beta_{OLS} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{ \frac{Var(D_i|X_i = X)Pr(X_i = x)}{\sum Var(D_i | X_i = x')Pr(X_i = x')} }_{\text{weight}} \\
+\hat\beta_{OLS} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{ \frac{Var(D_i|X_i = X)P(X_i = x)}{\sum Var(D_i | X_i = x')P(X_i = x')} }_{\text{weight}} \\
 $$
 
 Notice how the weights are different. The weights in the OLS are the conditional variances of $D_i$. This means that OLS is **not** an unbiased estimator of the ATE or ATT, but rather, a weighted average of the ATT and ATU.
@@ -237,7 +237,7 @@ Where:
 
 $$
 \begin{split}
-w_1 & = \frac{(1 - Pr(D=1)) Var(\pi(X)|D = 0)}{Pr(D=1)Var(\pi(X)|D=1) + (1-Pr(D=1)Var(\pi(X)|D=0)} \\
+w_1 & = \frac{(1 - P(D=1)) V(\pi(X)|D = 0)}{P(D=1)V(\pi(X)|D=1) + (1-P(D=1)V(\pi(X)|D=0)} \\
 w_0 & = 1 - w_1
 \end{split}
 $$
@@ -329,7 +329,7 @@ This illustrates how with large amounts of confounders, you will need a huge num
 When pre-treatment covariate $X$ is discrete, the identification result of the ATT is:
 
 $$
-\tau_{ATT} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x | D_i = 1)
+\tau_{ATT} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) P(X_i = x | D_i = 1)
 $$
 
 We can calculate this within our give sample to get the subclassificaiton estimator:
@@ -459,7 +459,7 @@ There is a new method: **Bias-corrected matching**, which estimates bias inehere
 Propensity Score matching is an alternative way to match over many dimensions. The **propensity score** is an unobserved property, defined as the probability of a unit $i$ of receiving treatment:
 
 $$
-\pi(X_i) \equiv Pr(D_i = 1|X_i)
+\pi(X_i) \equiv P(D_i = 1|X_i)
 $$
 
 When supposing the [conditional ignorability and common support assumptions](#identification-assumptions), the propensity score $\pi(X_i)$ has the balancing property: $D_i \perp X_i \ | \ \pi(X_i)$. This implies that conditional ignorability holds on the propensity scores alone:
@@ -470,7 +470,7 @@ $$
 
 Thus, instead of conditioning on $X_i$ as we did in selection on observables, we can instead condition on $\pi (X_i)$, and still identify the causal estimand.
 
-However, we do not actually observe $\pi (X_i)$. We estimate $\pi (X_i)$ with a binary response model, with outcome variable $D_i$, and explanatory variables $X_i$. This will get us a fitted probability $Pr(D_i = 1) = \hat\pi(X_i)$.
+However, we do not actually observe $\pi (X_i)$. We estimate $\pi (X_i)$ with a binary response model, with outcome variable $D_i$, and explanatory variables $X_i$. This will get us a fitted probability $P(D_i = 1) = \hat\pi(X_i)$.
 
 Then, once we have the propensity score estimates $\hat\pi(X_i)$, we can do nearest neighbour matching with the propensity scores (in $\mathbb R^1$). This will allow us to identify the $\tau_{ATT}$.
 
@@ -498,8 +498,8 @@ We know that the ATE can be written as a weighted average, as shown in @eq-discr
 
 $$
 \begin{split}
-& = \sum\limits_{x \in \mathcal X} \underbrace{(E(Y_{1i}|D_i = 1, X_i = x)}_{\because \text{ observed}} - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ observed}})Pr(X_i = x) \\
-& = \sum\limits_{x \in \mathcal X}  (\underbrace{E(Y_{1i}|X_i = x)}_{\because \text{ eq. (1)}} - \underbrace{E(Y_{0i}|X_i = x)}_{\because \text{ eq. (1)}})Pr(X_i = x) \\
+& = \sum\limits_{x \in \mathcal X} \underbrace{(E(Y_{1i}|D_i = 1, X_i = x)}_{\because \text{ observed}} - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ observed}})P(X_i = x) \\
+& = \sum\limits_{x \in \mathcal X}  (\underbrace{E(Y_{1i}|X_i = x)}_{\because \text{ eq. (1)}} - \underbrace{E(Y_{0i}|X_i = x)}_{\because \text{ eq. (1)}})P(X_i = x) \\
 & = \underbrace{E[E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x)]}_{\text{definition of weighted average}}
 \end{split}
 $$
@@ -676,11 +676,11 @@ $$
 \begin{align}
 \tau_{ATE}  = & E(Y_{1i} - Y_{0i}) \\
 & \\
- = & E(Y_{1i} - Y_{0i} | D_i = 1) Pr(D_i = 1) \\
-& \quad - E(Y_{1i} - Y_{0i}|D_i = 0)Pr(D_i = 0)  && (\text{def. of weighted avg.})\\
+ = & E(Y_{1i} - Y_{0i} | D_i = 1) P(D_i = 1) \\
+& \quad - E(Y_{1i} - Y_{0i}|D_i = 0)P(D_i = 0)  && (\text{def. of weighted avg.})\\
 & \\
-= & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}- \color{red}{E(Y_{0i}|D_i = 1)} \color{black}] Pr(D_i = 1) \\
-& \quad + [ \color{red}{E(Y_{1i}|D_i = 0)} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0) && (\text{observed + unobserved})
+= & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}- \color{red}{E(Y_{0i}|D_i = 1)} \color{black}] P(D_i = 1) \\
+& \quad + [ \color{red}{E(Y_{1i}|D_i = 0)} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]P(D_i = 0) && (\text{observed + unobserved})
 \end{align}
 $$
 
@@ -701,8 +701,8 @@ Thus, the lowest possible $\tau$ (sharp lower bound) is:
 
 $$
 \begin{split}
-\tau_L = & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_H} \color{black}] Pr(D_i = 1) \\
-& \quad + [ \color{red}{Y_L} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0)
+\tau_L = & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_H} \color{black}] P(D_i = 1) \\
+& \quad + [ \color{red}{Y_L} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]P(D_i = 0)
 \end{split}
 $$
 
@@ -715,8 +715,8 @@ Thus, the highest possible $\tau$ (sharp upper bound) is:
 
 $$
 \begin{split}
-\tau_H = & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_L} \color{black}] Pr(D_i = 1) \\
-& \quad + [ \color{red}{Y_H} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]Pr(D_i = 0)
+\tau_H = & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_L} \color{black}] P(D_i = 1) \\
+& \quad + [ \color{red}{Y_H} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]P(D_i = 0)
 \end{split}
 $$
 
@@ -743,8 +743,8 @@ This implies a tighter sharp upper bound on $\tau$.
 
 $$
 \begin{align}
-\tau_H = & [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{E(Y_{0i}|D_i = 0)} \color{black}] Pr(D_i = 1) \\
-& \quad + [ \color{red}{E(Y_{1i}|D_i =1)} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]Pr(D_i = 0) \\
+\tau_H = & [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{E(Y_{0i}|D_i = 0)} \color{black}] P(D_i = 1) \\
+& \quad + [ \color{red}{E(Y_{1i}|D_i =1)} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]P(D_i = 0) \\
 = & E(Y_i|D_i = 1) - E(Y_i|D_i = 0) && (\text{def. of weighted avg.})\\
 \end{align}
 $$

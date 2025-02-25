@@ -388,7 +388,7 @@ SSR = S(\widehat{\beta_0}, \widehat{\beta_1})= \sum\limits_{i=1}^n(y_i - \wideha
 <p><span class="math display">\[
 \begin{align}
 \widehat{\beta_0} &amp; = \bar y - \widehat{\beta_1} \bar x \\
-\widehat{\beta_1} &amp; = \frac{\sum_{i=1}^n(x_i - \bar x)(y_i - \bar y)}{\sum_{i=1}^n(x_i - \bar x)^2} = \frac{Cov(x, y)}{Var(y)}
+\widehat{\beta_1} &amp; = \frac{\sum_{i=1}^n(x_i - \bar x)(y_i - \bar y)}{\sum_{i=1}^n(x_i - \bar x)^2} = \frac{Cov(x, y)}{V(y)}
 \end{align}
 \]</span></p>
 </div>
@@ -459,7 +459,7 @@ SSR = S(\widehat{\beta_0}, \widehat{\beta_1})= \sum\limits_{i=1}^n(y_i - \wideha
 <h3 class="anchored" data-anchor-id="error-covariance-matrix">Error Covariance Matrix</h3>
 <p>Aside from the population parameters <span class="math inline">\(\boldsymbol\beta\)</span>, there is another part of the linear model that needs to be estimated: the population <strong>covariance matrix</strong> of error terms <span class="math inline">\(u_1, \dots u_n\)</span>:</p>
 <p><span class="math display">\[
-\underbrace{Var(\mathbf u|\mathbf X)}_{\text{cov. matrix}} = \begin{pmatrix}
+\underbrace{V(\mathbf u|\mathbf X)}_{\text{cov. matrix}} = \begin{pmatrix}
 Var(u_1) &amp; Cov(u_1, u_2) &amp; Cov(u_1, u_3) &amp; \dots \\
 Cov(u_2, u_1) &amp; Var(u_2) &amp; Cov(u_2, u_3) &amp; \dots \\
 Cov(u_3, u_1) &amp; Cov(u_3, u_2) &amp; Var(u_3) &amp; \vdots \\
@@ -469,7 +469,7 @@ Cov(u_3, u_1) &amp; Cov(u_3, u_2) &amp; Var(u_3) &amp; \vdots \\
 <p>Under the assumption of <strong>independence of observations</strong> (a key assumption of the linear model), the covariance elements should all equal 0. This assumption is also called <strong>no autocorrelation</strong>.</p>
 <p>Thus, under this assumption, we have a diagonal matrix.</p>
 <p><span class="math display">\[
-\underbrace{Var(\mathbf u|\mathbf X)}_{\text{cov. matrix}} = \begin{pmatrix}
+\underbrace{V(\mathbf u|\mathbf X)}_{\text{cov. matrix}} = \begin{pmatrix}
 Var(u_1) &amp; 0 &amp; 0 &amp; \dots \\
 0 &amp; Var(u_2) &amp; 0 &amp; \dots \\
 0 &amp; 0 &amp; Var(u_3) &amp; \vdots \\
@@ -483,7 +483,7 @@ Var(u_1) &amp; 0 &amp; 0 &amp; \dots \\
 <h3 class="anchored" data-anchor-id="homoscedasticity-and-heteroscedasticity">Homoscedasticity and Heteroscedasticity</h3>
 <p>Now, there are two possible forms of our covariance matrix of errors. <strong>Homoscedasticity</strong> assumes that every single unit <span class="math inline">\(i\)</span> has the same variance in error <span class="math inline">\(\sigma_i^2\)</span>. Or in other words, the error of <span class="math inline">\(u_i\)</span> does not depend on unit <span class="math inline">\(i\)</span>’s <span class="math inline">\(\mathbf X\)</span> values:</p>
 <p><span id="eq-homo"><span class="math display">\[
-Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
+V(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
 \sigma^2 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \sigma^2 &amp; \dots &amp; 0 \\
 \vdots &amp; \vdots &amp; \ddots &amp; 0 \\
@@ -514,7 +514,7 @@ Visualisation of <span class="math inline">\(\sigma^2\)</span>
 <p><span class="math inline">\(\sigma^2\)</span> is a population parameter. We can estimate it with the following unbiased estimator <span class="math inline">\(s^2 = \frac{\hat{\mathbf u}^\mathsf{T} \hat{\mathbf u}}{n-k-1}\)</span>. This is the reason we use a t-distribution in hypotheses tests - to account for the uncertainty of this estimator. We will show this later when deriving variance.</p>
 <p><strong>Heteroscedasticity</strong> is when we do not believe the assumption of a constant variance for all units. Instead, we assume each unit <span class="math inline">\(i = 1, \dots, n\)</span> has their own variance <span class="math inline">\(\sigma^2_1, \dots, \sigma^2_n\)</span>:</p>
 <p><span id="eq-hetero"><span class="math display">\[
-Var(\mathbf u | \mathbf X) = \begin{pmatrix}
+V(\mathbf u | \mathbf X) = \begin{pmatrix}
 \sigma^2_1 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \sigma^2_2 &amp; \dots &amp; 0 \\
 \vdots &amp; \vdots &amp; \ddots &amp; 0 \\
@@ -596,7 +596,7 @@ E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X)) &amp;&a
 <p><span class="math display">\[
 \begin{align}
 \boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u  \\
-Var(\boldsymbol{\hat\beta} | \mathbf X) &amp; = Var(\boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u \ | \ \mathbf X)
+V(\boldsymbol{\hat\beta} | \mathbf X) &amp; = V(\boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u \ | \ \mathbf X)
 \end{align}
 \]</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
@@ -613,7 +613,7 @@ Lemma: Variance
 <div class="callout-body-container callout-body">
 <p>If <span class="math inline">\(\mathbf u\)</span> is an <span class="math inline">\(n\)</span> dimensional vector of random variables, <span class="math inline">\(\mathbf c\)</span> is an <span class="math inline">\(m\)</span> dimensional vector, and <span class="math inline">\(\mathbf B\)</span> is an <span class="math inline">\(n \times m\)</span> dimensional matrix with fixed constants, then the following is true:</p>
 <p><span id="eq-lemma"><span class="math display">\[
-Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^T
+V(\mathbf c + \mathbf{Bu}) = \mathbf B V(\mathbf u)\mathbf B^T
 \tag{7}\]</span></span></p>
 <p>I will not prove this lemma here, but it is provable.</p>
 </div>
@@ -622,14 +622,14 @@ Var(\mathbf c + \mathbf{Bu}) = \mathbf B Var(\mathbf u)\mathbf B^T
 <p><span class="math inline">\(\boldsymbol\beta\)</span> is a vector of fixed constants. <span class="math inline">\((\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u\)</span> can be imagined as a matrix of fixed constants, since we are conditioning the above variance on <span class="math inline">\(\mathbf X\)</span> (so for each <span class="math inline">\(\mathbf X\)</span>, the statement is fixed). With the Lemma above, we can simplify:</p>
 <p><span class="math display">\[
 \begin{align}
-Var(\boldsymbol{\hat\beta} | \mathbf X) &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) [(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} &amp;&amp; (\text{lemma})\\
-&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} Var(\mathbf u | \mathbf X) \color{blue}{\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}} &amp;&amp; \color{black}( \ \color{blue}{[(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} = \mathbf X(\mathbf X^\mathsf{T} \mathbf X)^{-1}}\color{black})\\
+V(\boldsymbol{\hat\beta} | \mathbf X) &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} V(\mathbf u | \mathbf X) [(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} &amp;&amp; (\text{lemma})\\
+&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} V(\mathbf u | \mathbf X) \color{blue}{\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}} &amp;&amp; \color{black}( \ \color{blue}{[(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} = \mathbf X(\mathbf X^\mathsf{T} \mathbf X)^{-1}}\color{black})\\
 \end{align}
 \]</span></p>
 <p>From here on, <a href="#homoscedasticity-and-heteroscedasticity">homoscedasticity and heteroscedasticity</a> matter. Let us first start by deriving variance with homoscedasticity, using the definition given by <a href="#eq-homo" class="quarto-xref">Equation&nbsp;4</a> :</p>
 <p><span class="math display">\[
 \begin{align}
-Var(\hat{\boldsymbol\beta}|\mathbf X)&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\sigma^2 \mathbf I_n}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\color{blue}{Var(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n}\color{black}) \\
+V(\hat{\boldsymbol\beta}|\mathbf X)&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\sigma^2 \mathbf I_n}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\color{blue}{V(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n}\color{black}) \\
 &amp; =  \color{red}{\sigma^2} \color{black} (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf I_n \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{move scalar } \color{red}{\sigma^2}\color{black})\\
 &amp; =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{identity property of } \mathbf I_n)\\
 &amp; =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{inverses } \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ cancel})
@@ -637,7 +637,7 @@ Var(\hat{\boldsymbol\beta}|\mathbf X)&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-
 \]</span></p>
 <p>Now, let us calculate the variance for when heteroscedasticity is present, as defined by <a href="#eq-hetero" class="quarto-xref">Equation&nbsp;5</a> :</p>
 <p><span class="math display">\[
-Var(\hat{\boldsymbol\beta}|\mathbf X)  = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\begin{pmatrix}
+V(\hat{\boldsymbol\beta}|\mathbf X)  = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\begin{pmatrix}
 \sigma^2_1 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \sigma^2_2 &amp; \dots &amp; 0 \\
 \vdots &amp; \vdots &amp; \ddots &amp; 0 \\
@@ -685,16 +685,16 @@ E(\tilde{\boldsymbol\beta} &amp; = E(E(\tilde{\boldsymbol\beta}|\mathbf X)) &amp
 <p>Now, let us calculate the variance of estimator <span class="math inline">\(\tilde{\boldsymbol\beta}\)</span>:</p>
 <p><span class="math display">\[
 \begin{align}
-Var(\tilde{\boldsymbol\beta}|\mathbf X) &amp; = Var(\mathbf {Cy} | \mathbf X)\\
-&amp; = Var(\mathbf C(\color{blue}{\mathbf X\boldsymbol\beta + \mathbf u} \color{black})| \mathbf X) &amp;&amp; (\text{plug in } \color{blue}{\mathbf y =\mathbf X\boldsymbol\beta + \mathbf u} \color{black}) \\
-&amp; = Var(\mathbf{CX} \boldsymbol\beta + \mathbf{Cu}| \mathbf X) &amp;&amp; (\text{multiply out)} \\
-&amp; = Var(\boldsymbol\beta + \mathbf{Cu} | \mathbf X) &amp;&amp; (\text{because }\color{red}{\mathbf {CX} = \mathbf I} \color{black})
+V(\tilde{\boldsymbol\beta}|\mathbf X) &amp; = V(\mathbf {Cy} | \mathbf X)\\
+&amp; = V(\mathbf C(\color{blue}{\mathbf X\boldsymbol\beta + \mathbf u} \color{black})| \mathbf X) &amp;&amp; (\text{plug in } \color{blue}{\mathbf y =\mathbf X\boldsymbol\beta + \mathbf u} \color{black}) \\
+&amp; = V(\mathbf{CX} \boldsymbol\beta + \mathbf{Cu}| \mathbf X) &amp;&amp; (\text{multiply out)} \\
+&amp; = V(\boldsymbol\beta + \mathbf{Cu} | \mathbf X) &amp;&amp; (\text{because }\color{red}{\mathbf {CX} = \mathbf I} \color{black})
 \end{align}
 \]</span></p>
 <p>Using the above lemma in <a href="#eq-lemma" class="quarto-xref">Equation&nbsp;7</a> that we used for OLS variance, we get:</p>
 <p><span class="math display">\[
 \begin{align}
-Var(\tilde{\boldsymbol\beta}|\mathbf X) &amp; = \mathbf CVar(\mathbf u|\mathbf X)\mathbf C^\mathsf{T} &amp;&amp; (\text{using lemma}) \\
+V(\tilde{\boldsymbol\beta}|\mathbf X) &amp; = \mathbf CVar(\mathbf u|\mathbf X)\mathbf C^\mathsf{T} &amp;&amp; (\text{using lemma}) \\
 &amp; = \mathbf C \color{blue}{\sigma^2\mathbf I} \color{black}{\mathbf C^\mathsf{T}} &amp;&amp; (\text{homoscedasticity } \color{blue}{Var(\mathbf u|\mathbf X) = \sigma^2 \mathbf I}) \\
 &amp; = \sigma^2 \mathbf {CC}^\mathsf{T} &amp;&amp; (\text{identity property + rearrange})
 \end{align}
@@ -702,14 +702,14 @@ Var(\tilde{\boldsymbol\beta}|\mathbf X) &amp; = \mathbf CVar(\mathbf u|\mathbf X
 <p>Now, we want to show that the variance of the OLS estimator <span class="math inline">\(\hat{\boldsymbol\beta}\)</span> (under homoscedasticity) is smaller than any linear estimator <span class="math inline">\(\tilde{\boldsymbol\beta}\)</span>. Let us find the difference between the variances of estimator <span class="math inline">\(\tilde{\boldsymbol\beta}\)</span> and <span class="math inline">\(\hat{\boldsymbol\beta}\)</span>. Note: since <span class="math inline">\(\color{red}{\mathbf{CX} = \mathbf I}\)</span>, the following is also true: <span class="math inline">\(\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T} = (\mathbf{CX})^\mathsf{T} = \mathbf I}\)</span>.</p>
 <p><span class="math display">\[
 \begin{align}
-Var(\tilde{\boldsymbol\beta}|\mathbf X) - Var(\hat{\boldsymbol\beta} |\mathbf X) &amp; = \sigma^2\mathbf{CC}^\mathsf{T} - \sigma^2(\mathbf X^\mathsf{T}\mathbf X)^{-1} \\
+V(\tilde{\boldsymbol\beta}|\mathbf X) - V(\hat{\boldsymbol\beta} |\mathbf X) &amp; = \sigma^2\mathbf{CC}^\mathsf{T} - \sigma^2(\mathbf X^\mathsf{T}\mathbf X)^{-1} \\
 &amp; = \sigma^2(\mathbf{CC}^\mathsf{T} - (\mathbf X^\mathsf{T}\mathbf X)^{-1}) &amp;&amp; (\text{factor out }\sigma^2) \\
 &amp; = \sigma^2(\mathbf{CC}^\mathsf{T} - \color{red}{\mathbf{CX}}\color{black}(\mathbf X^\mathsf{T}\mathbf X)^{-1}\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T}}\color{black}) &amp;&amp; (\text{since }\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T} = \mathbf{CX} = \mathbf I} \color{black}) \\
 &amp; = \sigma^2 \mathbf C (\mathbf I - \mathbf X(\mathbf X^\mathsf{T}\mathbf X)^{-1}\mathbf X^\mathsf{T})\mathbf C^\mathsf{T} &amp;&amp; (\text{factor out } \mathbf C, \mathbf C^\mathsf{T}) \\
 &amp; = \sigma^2 \mathbf C\color{blue}{\mathbf M} \color{black}{\mathbf C}^\mathsf{T} &amp;&amp; \text{(residual maker matrix M)}
 \end{align}
 \]</span></p>
-<p>Since <span class="math inline">\(\sigma^2 \mathbf {CM}\mathbf C^\mathsf{T}\)</span> is positive semi-definite (I will not prove this, but it is provable), we know that <span class="math inline">\(Var(\tilde{\boldsymbol\beta}|\mathbf X) &gt; Var(\hat{\boldsymbol\beta}|\mathbf X)\)</span>. Thus, OLS is BLUE under the Gauss-Markov Theorem.</p>
+<p>Since <span class="math inline">\(\sigma^2 \mathbf {CM}\mathbf C^\mathsf{T}\)</span> is positive semi-definite (I will not prove this, but it is provable), we know that <span class="math inline">\(V(\tilde{\boldsymbol\beta}|\mathbf X) &gt; V(\hat{\boldsymbol\beta}|\mathbf X)\)</span>. Thus, OLS is BLUE under the Gauss-Markov Theorem.</p>
 <p><br></p>
 </section>
 <section id="asymptotic-consistency-of-ols" class="level3">
@@ -926,22 +926,22 @@ E(y_i - \hat\mu) = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \hat\mu) = 0
 <h1><strong>Maximum Likelihood Estimator</strong></h1>
 <section id="likelihood-functions" class="level3">
 <h3 class="anchored" data-anchor-id="likelihood-functions">Likelihood Functions</h3>
-<p>We have a set of population parameters <span class="math inline">\(\boldsymbol\theta\)</span> we want to estimate. This set of parameters determines our population distribution of <span class="math inline">\(y\)</span>, which we can describe with some <a href="./quant1.html#probability-density-functions">probability density function</a> <span class="math inline">\(f(y, \boldsymbol\theta)\)</span>. For example, in linear regression, our population <span class="math inline">\(y\)</span> is determined by the population parameters <span class="math inline">\(\beta_0, \dots, \beta_k\)</span>.</p>
-<p>When we are estimating parameters, we will have sample data with <span class="math inline">\(n\)</span> number of observations, with each observation <span class="math inline">\(i\)</span> having its own <span class="math inline">\(y_i\)</span> value. Thus, our sample looks something like <span class="math inline">\((y_1, \dots, y_n)\)</span>. Based on the probability density function of the population <span class="math inline">\(y\)</span>, the probability of selecting point <span class="math inline">\(y_1\)</span> from the population data is <span class="math inline">\(f(y_1, \boldsymbol\theta)\)</span>, and the probability of selection point <span class="math inline">\(y_i\)</span> is <span class="math inline">\(f(y_i, \boldsymbol\theta)\)</span>.</p>
+<p>We have a set of population parameters <span class="math inline">\(\boldsymbol\theta\)</span> we want to estimate. This set of parameters determines our population distribution of <span class="math inline">\(y\)</span>, which we can describe with some <a href="./quant1.html#probability-density-functions">probability density function</a> <span class="math inline">\(\varphi(y, \boldsymbol\theta)\)</span>. For example, in linear regression, our population <span class="math inline">\(y\)</span> is determined by the population parameters <span class="math inline">\(\beta_0, \dots, \beta_k\)</span>.</p>
+<p>When we are estimating parameters, we will have sample data with <span class="math inline">\(n\)</span> number of observations, with each observation <span class="math inline">\(i\)</span> having its own <span class="math inline">\(y_i\)</span> value. Thus, our sample looks something like <span class="math inline">\((y_1, \dots, y_n)\)</span>. Based on the probability density function of the population <span class="math inline">\(y\)</span>, the probability of selecting point <span class="math inline">\(y_1\)</span> from the population data is <span class="math inline">\(\varphi(y_1, \boldsymbol\theta)\)</span>, and the probability of selection point <span class="math inline">\(y_i\)</span> is <span class="math inline">\(\varphi(y_i, \boldsymbol\theta)\)</span>.</p>
 <p>We know by the rules of probability, that the <a href="./math.html#basics-of-probability">probability of multiple independent events</a> is the product of their probabilities. Thus, the probability that we get a specific sample with <span class="math inline">\(y\)</span> values <span class="math inline">\((y_1, \dots ,y_n)\)</span>, based on the value of our population parameters <span class="math inline">\(\boldsymbol\theta\)</span> is given by the <strong>likelihood function</strong> <span class="math inline">\(L\)</span>:</p>
 <p><span class="math display">\[
 \begin{align}
-L(\boldsymbol\theta, y_1, \dots y_n) &amp; = f(y_1;\boldsymbol\theta) \times f(y_2;\boldsymbol\theta) \times \dots \times f(y_n;\boldsymbol\theta) \\
-&amp; = \prod\limits_{i=1}^n f(y_i, \boldsymbol\theta) \\
+L(\boldsymbol\theta, y_1, \dots y_n) &amp; = \varphi(y_1;\boldsymbol\theta) \times \varphi(y_2;\boldsymbol\theta) \times \dots \times \varphi(y_n;\boldsymbol\theta) \\
+&amp; = \prod\limits_{i=1}^n \varphi(y_i, \boldsymbol\theta) \\
 \end{align}
 \]</span></p>
 <p>We want to find some values of <span class="math inline">\(\boldsymbol\theta\)</span> that make it the highest probability we observe our sample <span class="math inline">\(y_1, \dots ,y_n\)</span>. This is done by maximising the likelihood function <span class="math inline">\(L\)</span>. However, maximising the actual likelihood function is very difficult, because of the product notation. Luckily, we can use the log of the likelihood function, which retains the same maximum/minimum points. Using the properties of logarithms, we can also rewrite our log-likelihood function in terms of summation notation, making maximisation far easier.</p>
 <p><span id="eq-loglike"><span class="math display">\[
 \begin{align}
-\log L(\boldsymbol\theta, y_1, \dots y_n) &amp; = \log \left(\prod_{i=1}^n f(y_i; \theta) \right) \\
-&amp; = \log[f(y_1, \boldsymbol\theta) \times f(y_2, \boldsymbol\theta) \times \dots \times f(y_n, \boldsymbol\theta)] &amp;&amp; \text{(expand product notation)} \\
-&amp; = \log[f(y_1, \boldsymbol\theta)] + \log [f(y_2, \boldsymbol\theta)] + \dots + \log[f(y_n, \boldsymbol\theta)] &amp;&amp; \text{(property of logs)} \\
-&amp; = \sum\limits_{i=1}^n \log[f(y_i, \boldsymbol\theta)] &amp;&amp; \text{(condense into sum)}
+\log L(\boldsymbol\theta, y_1, \dots y_n) &amp; = \log \left(\prod_{i=1}^n \varphi(y_i; \theta) \right) \\
+&amp; = \log[\varphi(y_1, \boldsymbol\theta) \times \varphi(y_2, \boldsymbol\theta) \times \dots \times \varphi(y_n, \boldsymbol\theta)] &amp;&amp; \text{(expand product notation)} \\
+&amp; = \log[\varphi(y_1, \boldsymbol\theta)] + \log [\varphi(y_2, \boldsymbol\theta)] + \dots + \log[\varphi(y_n, \boldsymbol\theta)] &amp;&amp; \text{(property of logs)} \\
+&amp; = \sum\limits_{i=1}^n \log[\varphi(y_i, \boldsymbol\theta)] &amp;&amp; \text{(condense into sum)}
 \end{align}
 \tag{8}\]</span></span></p>
 <p>We then maximise this log-likelihood function to obtain our estimates <span class="math inline">\(\hat{\boldsymbol\theta}\)</span>. Sometimes, maximisation is not possible with mathematics, so we need algorithms to do this.</p>
@@ -1003,13 +1003,13 @@ AIC = -2 \log L + 2k
 <p>One common question of students regarding OLS is - why least squares (SSR), and why not minimising the absolute values of errors (or the quartic of errors)? Well the answer is that <u>OLS is a maximum likelihood estimator</u> when assuming homoscedasticity and error term <span class="math inline">\(u \sim \mathcal N (0, \sigma^2)\)</span>.</p>
 <p>We know in a simple linear regression, <span class="math inline">\(\mu = E(y|x) = \beta_0 - \beta_1 x_i\)</span>. Let us plug that into the <a href="./quant1.html#the-normal-distribution">probability density function of a normal distribution</a> to get the PDF of <span class="math inline">\(y\)</span> in a simple linear regression:</p>
 <p><span class="math display">\[
-f(y) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{(y- \mu)^2}{2 \sigma^2}\right)}, \quad f(y_i|\beta_0, \beta_1, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}
+\varphi(y) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{(y- \mu)^2}{2 \sigma^2}\right)}, \quad \varphi(y_i|\beta_0, \beta_1, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}
 \]</span></p>
 <p>By <a href="#eq-loglike" class="quarto-xref">Equation&nbsp;8</a>, the log-likelihood function of our sample for linear regression is:</p>
 <p><span class="math display">\[
 \begin{align}
-\log L(y_i | \beta_0, \beta_1 \sigma^2) &amp; = \log \left(\prod\limits_{i=1}^n f(y_i | \beta_0, \beta_1, \sigma^2) \right) \\
-&amp; = \sum\limits_{i=1}^n \log f(y_i, \beta_0, \beta_1, \sigma^2) &amp;&amp; (\text{from eq. (8)}) \\
+\log L(y_i | \beta_0, \beta_1 \sigma^2) &amp; = \log \left(\prod\limits_{i=1}^n \varphi(y_i | \beta_0, \beta_1, \sigma^2) \right) \\
+&amp; = \sum\limits_{i=1}^n \log \varphi(y_i, \beta_0, \beta_1, \sigma^2) &amp;&amp; (\text{from eq. (8)}) \\
 &amp; = \sum\limits_{i=1}^n \log \left( \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)} \right) \\
 &amp; = \sum\limits_{i=1}^n \log \left( \frac{1}{\sqrt{2\pi\sigma^2}}\right) + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) &amp;&amp; \text{(prop. of logs)} \\
 &amp; = \sum\limits_{i=1}^n \log (1) - \log (\sqrt{2\pi\sigma^2})  + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\right)}\right) &amp;&amp; \text{(prop. of logs)} \\

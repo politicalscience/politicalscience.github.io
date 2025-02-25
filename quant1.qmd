@@ -12,32 +12,32 @@ This chapter is about the very building blocks of statistics. We start off with 
 
 ### Random Variables and Distributions
 
-In statistics, we will talk a lot about random variables. Random variables are outcomes that have some randomness/uncertainty. For example, if you flip a coin, you could get heads or tails. While we do not know the outcomes of these random events, we do know at what probability things will happen. You know that if you flip a coin, you have a 50% chance you get heads.
+In statistics, we will talk a lot about random variables. Random variables are outcomes that have some randomness/uncertainty. There is a set of possible outcomes $\Omega$, called the sample space. Within the sample space there exists events $\omega$ (potential outcomes). We do not know which event will be observed, but we know each outcome $\omega$'s probability of realisation $Pr(\omega \in \Omega)$.
 
-We can represent the potential outcomes of random variables, and the associated probabilities with each outcome, in a **distribution**. On the horizontal axis, we plot all possible values of the outcome, and on the vertical axis, we plot the probability of each outcome. For example, below is the distribution of a dice - there are 6 potential outcomes, each with a 1/6 probability.
+We can represent the potential outcomes of random variables, and the associated probabilities with each outcome, in a **distribution**. On the horizontal axis is all $\omega$, and the vertical axis is $P(\omega)$, the probability event (possible outcome) $\omega$ is realised:
 
 ![](images/clipboard-713724518.png){fig-align="center" width="45%"}
 
-**Continuous random variables** can take any possible value within a range, including 1, 2, 1.33247. **Discrete random variables** can only take a certain set of values, not any possible decimal. For example, a dice roll can only take the values of 1, 2, 3,..., and not 3.23478. A discrete random variable with only 2 potential outcomes is a **binary random variable**.
+**Continuous random variables** $\omega \in [a, b]$ can take any possible value within a range, including any decimal. **Discrete random variables** can only take a certain set of values $\omega \in \{a, b, \dots \}$, not any possible decimal. For example, a dice roll can only take the values of 1, 2, 3,..., and not 3.23478. A discrete random variable with only 2 potential outcomes $\omega \in \{0, 1 \}$ is a **binary random variable**.
 
 <br />
 
 ### Probability Density Functions {#probability-density-functions}
 
-We can describe these distributions mathematically. A **probability density function** is a function $p$ that takes one potential outcome as an input, and spits out the probability of that outcome. For example, the probability density function of a dice is:
+We can describe these distributions mathematically. A **probability density function** is a function $\varphi$ that takes one potential outcome as an input, and spits out the probability of that outcome. For example, the probability density function of a dice is:
 
 $$
-Pr(x) = p(x) = 1/6
+\varphi(x) = 1/6
 $$
 
-We can see that if we want to see the probability of getting a 5 on our dice roll, we plug in $x=5$ to get $p(5) = 1/6$, which is the probability of rolling a 5.
+We can see that if we want to see the probability of getting a 5 on our dice roll, we plug in $x=5$ to get $\varphi(5) = 1/6$, which is the probability of rolling a 5.
 
 For continuous random variables, things become slightly more complex. This is because it does not make sense to calculate the probability of one specific outcome. For example, let us say your random variable is the time it will take you to get to school tomorrow. We really do not care about the probability of taking 13.4357 minutes to get to school. What we do care about is a range - lets say the probability of getting to school between 13 and 14 minutes.
 
 More mathematically, the probability density function of a continuous random variable gives you the probability of an outcome between $a$ and $b$:
 
 $$
-Pr(a<x<b) =\int\limits_a^bp(x)dx
+P(a<x<b) =\int\limits_a^b \varphi(x)dx
 $$
 
 This integral is important - it tells us that the area under a distribution gives us the probability of an event.
@@ -52,7 +52,7 @@ Cumulative density functions measure the cumulative probability below a certain 
 For example, to get the probability of anything below $a$ occurring as an outcome, our cumulative density function is:
 
 $$
-Pr(x<a) = \int\limits_{-∞}^ap(x)dx
+P(x<a) = \int\limits_{-∞}^a \varphi(x)dx
 $$
 
 This will be useful in some cases to calculate values for probability density functions.
@@ -67,13 +67,13 @@ The **expectation**, also called the **mean** or **expected value**, is the "ave
 Expectation for a discrete random variable $X$ is calculated as a weighted sum of all potential outcomes $x_i$ and their respective probabilities given by the probability density function $p(x_i)$:
 
 $$
-E(X) = \mu_X = \sum\limits_{i=1}^n(x_i \times p(x_i))
+E(X) = \mu_X = \sum\limits_{i=1}^n(x_i \times \varphi(x_i))
 $$
 
 For a continuous random variable $X$, the idea is the same but with an integral:
 
 $$
-E(X) = \mu_X = \int\limits_{-∞}^∞ (x \times p(x))
+E(X) = \mu_X = \int\limits_{-∞}^∞ (x \times \varphi(x))
 $$
 
 Expectations have a few unique algebraic properties:
@@ -86,7 +86,7 @@ Expectations have a few unique algebraic properties:
 **Variance** measures the spread of a distribution. It is essentially the average distance of each individual outcome from the expected value $\mu$ of the random variable:
 
 $$
-Var(X) = \sigma^2= E(x - \mu)^2 = \sum\limits_{i=1}^n p(x_i) \times (x_i - \mu_X)^2
+V(X) = \sigma^2= E(x - \mu)^2 = \sum\limits_{i=1}^n \varphi(x_i) \times (x_i - \mu_X)^2
 $$
 
 The **standard deviation** is simply the square root of variance.
@@ -120,7 +120,7 @@ The reason conditional expectations are so important is because they illustrate 
 The **normal distribution** is for continuous random variables, and takes a famous "bell shape" (hence why it is also called the bell curve). Every normal distribution and its [probability density function (PDF)](#probability-density-functions) can be defined by two parameters: the mean and the variance:
 
 $$
-\sim \mathcal N(\mu, \sigma^2), \quad PDF: Pr(a<x<b) = \int\limits_a^b \frac{1}{\sqrt{2\pi\sigma^2}}e^{\left( -\frac{(x - \mu)^2}{2 \sigma^2}\right)}dx
+\sim \mathcal N(\mu, \sigma^2), \quad P(a<x<b) = \int\limits_a^b \frac{1}{\sqrt{2\pi\sigma^2}}e^{\left( -\frac{(x - \mu)^2}{2 \sigma^2}\right)}dx
 $$
 
 Where $\mathcal N$ represents the normal distribution, $\mu$ represents the expected value of the distribution, and $\sigma^2$ represents the variance. The figure below shows how normal distributions change when you alter $\mu$ and $\sigma^2$.
@@ -149,8 +149,10 @@ Another property of the normal distribution is that we can manipulate them as fo
 The standard normal distribution (often called the $Z$-distribution) is a special version of the normal distribution, with a mean of 0 and a variance of 1:
 
 $$
-Z \sim\mathcal N(0, 1)
+Z \sim\mathcal N(0, 1), \quad Pr(a<z<b) = \int\limits_a^b \frac{e^{-\frac{z^2}{2}}}{\sqrt{2\pi}}dz = \int\limits_a^b\phi(z)dz
 $$
+
+Note: we denote the PDF of the standard normal as $\phi$, and the CDF of the standard normal as $\Phi$.
 
 ![](images/img_standard_normal.svg){fig-align="center" width="70%"}
 
@@ -191,7 +193,7 @@ The bernoulli distribution is a special case of the **Binomial distribution**, w
 The probability density function of a bernoulli distribution is:
 
 $$
-Pr(x) = \begin{cases}
+P(x) = \begin{cases}
 p \quad \text{if } x = 1 \\
 1 - p \quad \text{if } x= 0 
 \end{cases}
@@ -263,13 +265,13 @@ Both estimators are unbiased $E(\hat\theta_n) = 0$. However, clearly, estimator 
 The **variance** of an estimator (and variance of the sampling distribution) can be quantified as:
 
 $$
-Var(\hat\theta_n) = E[(\hat\theta_n - E(\hat\theta_n))^2]
+V(\hat\theta_n) = E[(\hat\theta_n - E(\hat\theta_n))^2]
 $$
 
 An **efficient** estimator is one that, on average, has the closest estimated value $\hat\theta_n$ to the true population parameter. If two estimators are both unbiased, the one with lower variance is more efficient. Efficiency can be quantified as the estimator with the lowest **mean squared error**:
 
 $$
-MSE(\hat\theta_n) = E[(\hat\theta_n - \theta)^2] =Var(\hat\theta_n) + Bias(\hat\theta_n)^2
+MSE(\hat\theta_n) = E[(\hat\theta_n - \theta)^2] =V(\hat\theta_n) + Bias(\hat\theta_n)^2
 $$
 
 We generally want an efficient estimator, since gives us the closest guess to the true population parameter $\theta$.
@@ -291,7 +293,7 @@ Asymptotic properties are properties of estimators as the sample size $n$ approa
 An estimator is **asymptotically consistent**, if as we increase sample size towards infinity, the estimate will become more and more concentrated around the true population value $\theta$. At $n = ∞$, our sampling distribution collapses to just one value, the true population value $\theta$. Mathematically:
 
 $$
-Pr(|\hat\theta_n - \theta|> \epsilon) \rightarrow 0, \text { as } n \rightarrow ∞
+P(|\hat\theta_n - \theta|> \varepsilon) \rightarrow 0, \text { as } n \rightarrow ∞
 $$
 
 That means with a consistent estimator, increasing the sample size will get us more and more accurate results.
@@ -354,11 +356,11 @@ Thus, the variance of our estimator $\bar x_n$ shrinks to zero, so as sample siz
 Another asymptotic property of estimators, as sample size $n$ approaches infinity, is that the sampling distribution approaches a normal distribution. The **central limit theorem** establishes asymptotic normality of estimators. Let us say we have $N$ number of random variables $\hat\theta_1, \dots, \hat\theta_N$ (estimates are realisations of random variables). The central limit theorem states that:
 
 $$
-Pr(w_n < w) \rightarrow \Phi(w) \quad \text{as } n \rightarrow ∞
+P(w_n < w) \rightarrow \Phi(w) \quad \text{as } n \rightarrow ∞
 $$
 
 -   Where $w_n$ is a transformed version of the random variable $\hat\theta_n$, defined as $w_n = \frac{\bar\theta_n - \mu}{\sigma / \sqrt{n}}$.
--   Where $Pr(w_n < w)$ is the cumulative density function of the random variable $w_n$.
+-   Where $P(w_n < w)$ is the cumulative density function of the random variable $w_n$.
 -   Where $\Phi(w)$ is the cumulative density function (cdf) of the standard normal distribution $\mathcal N(0, 1)$.
 
 The importance of CLM comes from the fact that as we increase sample size, our sampling distribution becomes more and more normally distributed. Recall that we know that the normal distribution has unique [properties of distribution](#properties-of-the-normal-distribution) that allow us to calculate the probability between standard deviations (and any point). Since CLM says that our sampling distribution is normally distributed, we can apply the same properties to learn about the probabilities of getting a certain sample estimates $\hat\theta_n$.
@@ -513,7 +515,7 @@ However, we cannot interpret the actual number of covariance, only the sign. Thi
 Obviously, we do not want a measure that is affected by measurement scale. We want some measure of correlation that can be compared across different scales. This is where the **correlation coefficient** comes in:
 
 $$
-Corr(X,Y) = r = \frac{Cov(X, Y)}{\sqrt{Var(X) Var(Y)}}
+Corr(X,Y) = r = \frac{Cov(X, Y)}{\sqrt{V(X) V(Y)}}
 $$
 
 Essentially, we are "normalising" the covariance metric by dividing by the variances, which gets rid of the impact of scale.
@@ -547,35 +549,35 @@ We can express this line mathematically as $y = mx + b$, where $m$ is the slope 
 Simple Linear Regression is a mathematical model of a best fit line. It takes the following form:
 
 $$
-y_i = \beta_0 + \beta_1x_i + u
+Y_i = \beta_0 + \beta_1X_i + u_i
 $$
 
-Where $(x_i , y_i)$ are the values of one observation $i$. Where $\beta_1$ is the slope - the measurement of the relationship between $x$ and $y$. Where $\beta_0$ is the intercept (y-intercept), and $u$ is the error term: the vertical distance between the actual points and the best-fit line.
+Where $(X_i , Y_i)$ are the values of one observation $i$. Where $\beta_1$ is the slope - the measurement of the relationship between $x$ and $y$. Where $\beta_0$ is the intercept (y-intercept), and $u$ is the error term: the vertical distance between the actual points and the best-fit line.
 
 We have some special terminology for the parts of the simple linear regression. The **independent variable**, also called the explanatory variable or the regressor, is labelled $x$. This is the variable multiplied to the slope parameter $\beta_1$. The **dependent variable**, also called the response or outcome variable, is labelled $y$.
 
-We can also write regression as the [conditional expectation](#conditional-distributions) of the conditional distribution of $y|x$:
+We can also write regression as the [conditional expectation](#conditional-distributions) of the conditional distribution of $Y|X$:
 
 $$
-E(y_i|x_i) = \beta_0 + \beta_1 x_i
+E(Y_i|X_i) = \beta_0 + \beta_1 X_i
 $$
 
 Throughout this chapter, we have talked about statistical inference and estimators. This is no different in linear regression. The above equation is what we call our population model (also called the data generating process):
 
 $$
-y_i = \beta_0 + \beta_1x_i + u_i
+Y_i = \beta_0 + \beta_1X_i + u_i
 $$
 
 However, once again, we cannot know the true population values of our intercept and slope. So, we will have a sample model of the following:
 
 $$
-y_i = \widehat{\beta_0} + \widehat{\beta_1}x_i + \widehat{u_i}
+Y_i = \widehat{\beta_0} + \widehat{\beta_1}X_i + \widehat{u_i}
 $$
 
 We will discuss the details of this estimation process of $\widehat{\beta_0}, \widehat{\beta_1}, \widehat{u_i}$ in the next chapter, and how we can conduct statistical inference and tests. The points on our predicted best-fit line (so excluding error $\widehat{u_i}$) are called our **fitted values**:
 
 $$
-\widehat{y_i} = \widehat{\beta_0} + \widehat{\beta_1}x_i
+\widehat{Y_i} = \widehat{\beta_0} + \widehat{\beta_1}X_i
 $$
 
 The simple linear regression model is very simple. In the real world, rarely does only one thing cause another. For example, changes in income could be caused by age, but also education. Instead of just one explanatory variable $x$, we can create regression models with multiple explanatory variables $x_1, x_2, \dots, x_k$. This is the multiple linear regression that we will introduce in the next chapter.
