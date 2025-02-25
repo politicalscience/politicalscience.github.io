@@ -1,75 +1,12 @@
 ---
-title: "Spatial, Temporal, and Big Data"
+title: "Forecasting and Prediction Models"
 subtitle: "Further Statistical Models"
 sidebar: side
 ---
 
-This chapter covers methods for different data types. We start with models for spatial data. Then we move to models for time series data. Then finally, we move into simple machine learning methods for big data, including random forest and naive bayes.
+This chapter covers methods for forecasting and prediction. We start with time-series models for forecasting future values. Then, we explore a series of machine learning models that help with prediction/classification tasks.
 
 Use the right sidebar for navigation. R-code provided at the bottom.
-
-------------------------------------------------------------------------
-
-# **Spatial Regression Models**
-
-### Spatial Data and Spatial Weights
-
-Spatial data is data that has some geographic-spatial component. If we have spatial data, a region's neighbours may have some effect on a region's own outcomes:
-
-1.  **Lag y**: The outcome $y$ of a region might be affected by a neighbouring region's $y$ values. For example, one state having a high crime rate may affect another nearby state's crime rate as criminals can move across the border.
-2.  **Lag X**: The outcome $y$ of a region might be affected by a neighbour's $X$ values. For example, one state's low vaccination rate could affect the prevalence of a disease in a nearby state.
-3.  **Spatial Autocorrelation**: The residuals $u$ of a region might be affected by the residuals in a neigbouring region. For example, perhaps if we are studying how minimum wage affects unemployment rates, there could be some common factor with nearby states that affects unemployment rates (for example, prevalence of a certain industry) which is not included in our model.
-
-To include spatial considerations, we include a spatial weights matrix $\mathbf W$. This defines what regions are "neighbours". For example, imagine 3 regions A, B, C, with A on the left, B in the middle, and C on the right. The spatial weights matrix would be a matrix with rows $i = A, B ,C$ and columns $j = A, B, C$.Element $w_{ij}=1$ if regions $i$ and $j$ border each other, and $w_{ij} = 0$ if regions $i$ and $j$ do not touch each other:
-
-$$
-\mathbf W_{3 \times 3} = \begin{pmatrix}
-0 & 1 & 0 \\
-1 & 0 & 1 \\
-0 & 1 & 0
-\end{pmatrix}
-$$
-
-We often "normalise/standardise" our weights matrix so that each row adds up to 1. Essentially, we divide an element by the number of 1's in each row:
-
-$$
-\mathbf W_{3 \times 3} = \begin{pmatrix}
-0 & 1 & 0 \\
-0.5 & 0 & 0,5 \\
-0 & 1 & 0
-\end{pmatrix}
-$$
-
-There are other ways to define neighbours $w_{ij} = 1$ outside of just borders. For example, we could consider any region who's centroid is within $x$ miles of another state's centroid as a neighbour. This is up to the modelers discretion.
-
-<br />
-
-### Spatial Regression
-
-We define neighbours with a weights matrix $\mathbf W$. The largest spatial model is the **Manski Model**, which incorporates lag y, lag X, and spatial autocorrelation.
-
-$$
-\mathbf y = \underbrace{\rho\mathbf W\mathbf y}_{lag \ y} + \mathbf X\boldsymbol\beta + \underbrace{\mathbf{WX}\boldsymbol\theta}_{lag \ x} + \underbrace{\lambda \mathbf{Wu}}_{autocorr.} + \boldsymbol\epsilon
-$$
-
--   $\rho$ (scalar) is the lag $y$ coefficient, and measures how an average of neighbouring region's $y$ values are associated with a region's own $y$ values. For every one unit increase in the average value of $y$ in neighbouring regions, there is an expected $\rho$ unit change in $y$ in the region, holding all else constant.
--   $\boldsymbol\beta$ (vector) is our normal OLS coefficients $\beta_0, \dots, \beta_k$, and would be interpreted in the same way.
--   $\boldsymbol\theta$ (vector) is the lag $X$ coefficients $\theta_0, \dots, \theta_k$, and measures how an average of neighbouring region's $X$ values are associated with a region's own $y$ values. For every one unit increase in the average $x_j$ of neighbouring regions, there is an expected $\theta_j$ unit change in $y$ in the region, holding all else constant.
--   $\lambda$ (scalar) is spatial autocorrelation coefficient, and measures how an average of neighbouring regions' error terms are associated with a region's own error term. Unobserved factors shared by neighbouring regions contribute to a $\lambda$-unit change in $y$, holding all else constant.
-
-However, in reality, we often cannot estimate this entire model due to the large amount of parameters. Thus, multiple variations exist with only parts of the full model:
-
-1.  Keleijian-Prucha Model: $\mathbf y = \rho \mathbf W \mathbf y + \mathbf X \boldsymbol\beta + \lambda \mathbf {Wu} + \boldsymbol\epsilon$.
-2.  Spatial Durbin Model: $\mathbf y = \rho \mathbf{WY} + \mathbf X \boldsymbol\beta + \mathbf{WX}\boldsymbol\theta + \boldsymbol\epsilon$.
-3.  Spatially Lagged X Model: $\mathbf y = \mathbf X \boldsymbol\beta + \mathbf {WX} \boldsymbol\theta + \boldsymbol\epsilon$.
-4.  Spatial Lag Model (Spatial Autoregressive): $\mathbf y = \rho \mathbf{Wy} + \mathbf X \boldsymbol\beta + \boldsymbol\epsilon$.
-5.  Spatial Error Model: $\mathbf y = \mathbf X\boldsymbol\beta + \lambda \mathbf{Wu} + \boldsymbol\epsilon$.
-
-The models are estimated with Maximum Likelihood Estimation, and model selection can be done with a combination of theory regarding the topic, eliminating insignificant portions, and AIC and BIC metrics.
-
-<br />
-
-<br />
 
 ------------------------------------------------------------------------
 
@@ -86,36 +23,95 @@ The goal of time series modelling is to predict $X_t$ with past data. There are 
 3.  **Seasonality**: cyclical repeating patterns in certain periods, for example, business cycles, or sales being higher during the holiday season.
 4.  **Randomness**: other random/systematic fluctuations.
 
-One important idea is a **stationary process**, where there is zero trend over time.
+One important idea is a (weak) **stationary process**, where there is zero trend over time. A weak stationary process is when the expected value and variance of our time series is constant over different (but same-sized) groups of time periods: $E(X_t) = \mu$, $Var(X_t) = \sigma^2$.
 
--   A strong stationary process essentially means every single time period $X_t$ is independent of each other - random draws from the same distirbution. This is unlikely to be true for most time-series data.
--   A weak stationary process is when the expected value of our time series is constant over different groups of time periods: $E(X_t) = \mu$.
-
-Most time-series data will not be either strong or weak stationary. However, we can transform most time-series data into weak stationary processes through **differencing**. We refer to the new differenced time series as $X'_t$:
+Most time-series data will not be weak stationary. However, we can transform most time-series data into weak stationary processes through **differencing**. We refer to the new differenced time series as $X'_t$:
 
 -   Zero differencing $d=0$ is no differencing: $X_t' = X_t$. We just use our original time-series.
 -   First order differencing $d = 1$ is $X_t' = X_t - X_{t-1}$. Basically we take our $X_t$ at time period $t$, and subtract away the previous time period $X_{t-1}$.
 -   Second order differencing $d = 2$ is $X'_t = (X_t - X_{t-1}) - (X_{t-1}-X_{t-2})$.
 
-Any further order of differencing $d$ is increasingly uncommon. The point of differencing is that we keep increasing $d$ until we have a weak stationary process.
+Any further order of differencing $d$ is increasingly uncommon. The point of differencing is that we keep increasing $d$ until we have a weak stationary process. We denote a time series that has been differenced at $d$-order with $X_i'^d$.
 
 <br />
 
-### ARIMA and SARIMA
+### MA and AR Models
 
-The most popular model is the **ARIMA** (Auto-regressive Integrated Moving Average Model). ARIMA assumes that we have stationary trends (no seasonality):
+**MA (Moving Average)** **models** are when $X_t$ at time $t$ depends on past error terms $\epsilon_{t-1}, \dots, \epsilon_{t-q}$. This implies that $X_t$ is dependent on short-term noise/fluctuation. The model is specified with stationarity assumed for $X'_t$:
 
 $$
-\text{ARIMA}(p, d, q) \ : \ X_t'^d = \underbrace{\sum\limits_{i=1}^p \phi_iX_{t-i}}_{\text{AR}} + \underbrace{\sum\limits_{i=1}^q \theta_i\epsilon_{t-i}}_{\text{MA}} + \epsilon_t
+\begin{align}
+MA(q) \ : \ X_t'^d & = \omega +  \theta_1 \varepsilon_{t-1} + \theta_2 \varepsilon_{t-2} + \dots + \theta_q \varepsilon_{t-q} + \varepsilon_t \\
+& = \omega + \sum\limits_{i=1}^q \theta_i \epsilon_{t-i} \ + \varepsilon_t
+\end{align}
+$$
+
+Where $\omega$ is some constant (the mean of the time series), and $\theta_1, \dots, \theta_q$ are the coefficients. This model is estimated with maximum likelihood. To choose $q$, we find the model with the lowest AIC or BIC.
+
+**AR (Auto-regressive) models** are when $X_t$ at time $t$ depends on past values $X_{t-1}, \dots, X_{t-p}$. This implies that $X_t$ is dependent on previous values in the time series, for example, in variables with momentum (ex. stock prices, sales). The model is specified with stationarity assumed for $X'_t$:
+
+$$
+\begin{align}
+AR(p) \ : \ X_t'^d& = \omega + \phi_1 X_{t-1} + \phi_2 X_{t-2} + \dots + \phi_p X_{t-p} + \varepsilon_t \\
+& = \omega + \sum\limits_{i=1}^p \phi_i X_{t-i} \ + \varepsilon_t
+\end{align}
+$$
+
+Let us demonstrate a unique property of autoregressive models. Consider AR(1):
+
+$$
+AR(1) : X_t' = \omega + \phi_1 X_{t-1} + \varepsilon_i
+$$
+
+Knowing this, we can also predict $X'_{t-1}$, and then plug this back into our original $X'_t$. Then, we can do the same with $X'_{t-2}$, plug it in, and then $X'_{t-3}$, and so on $k$ number of times, until we can get the following model:
+
+$$
+X'_t = \phi^kX_{t-k} + \sum\limits_{j=0}^{k-1} \phi_j \varepsilon_{t-j}
+$$
+
+And when $|\phi| < 1$, the model is equivalent to a moving average model where $q = ∞$:
+
+$$
+X'_t = \sum\limits_{j=0}^∞ \phi_j \varepsilon_{t-j} = MA (∞)
+$$
+
+<br />
+
+### ARIMA Model
+
+The most popular model is the **ARIMA** (Auto-regressive Integrated Moving Average Model), which combines AR and MA models. ARIMA assumes that we have stationary trends:
+
+$$
+\text{ARIMA}(p, d, q) \ : \ X_t'^d = \underbrace{\sum\limits_{i=1}^p \phi_iX_{t-i}}_{\text{AR}} + \underbrace{\sum\limits_{i=1}^q \theta_i\varepsilon_{t-i}}_{\text{MA}} + \varepsilon_t
 $$
 
 -   $X_t'^d$ is $d$-ordered differenced time series that is stationary.
 -   The **AR** (Autoregressive) section is how previous values of $X$ before time period $t$ predict the current $X_t$. $p$ is the number of previous time periods to include (which we have to choose).
 -   The **MA** (Moving Average) section is how previous values of error $\epsilon$ before time period $t$ predict the current $\epsilon_t$. $q$ is the number of previous time periods to include (which we have to choose).
 
-We can choose $p$ and $q$ by first choosing a variety of $p$ and $q$, estimating each model with maximum likelihood estimation, and choosing the model (and $p$ and $q$) that has the least AIC or BIC value.
+The model is estimated with maximum likelihood estimation. We can choose $p$ and $q$ by first choosing a variety of $p$ and $q$, estimating each model, and choosing the model (and $p$ and $q$) that has the least AIC or BIC value.
 
-ARIMA is a non-seasonal models, since seasonality is technically non-stationary by definition. **SARIMA** models are the seasonal extension: we add seasons by doing seasonal differencing. This means taking $X_t$, and subtracting the $X$ value from the same point in the last season. Let us say each season is $S$ number of time periods long. So, a first-order seasonal difference would be $Z_t = X_t - X_{t-S}$.
+ARIMA is a non-seasonal models, since seasonality is technically non-stationary by definition. An extension of this model for seasonaility is called SARIMA.
+
+ARIMA is very popular for a multitude of reasons.
+
+1.  First, most situations in the real world have both AR and MA components: generally, $X_t$ is determined by some combination of past $X_t$ and errors.
+2.  ARIMA is a general framework. An $\text{ARIMA}(p, 0, 0) = \text{AR}(p)$, and a $\text{ARIM}(0,0,q) = \text{MA}(q)$. This allows us to adapt ARIMA to a wide variety of data without being forced into one specific model selection.
+3.  ARIMA has quite good accuracy in time series forecasting, even compared to machine learning and modern techniques.
+
+<br />
+
+### Seasonality Differencing and SARIMA
+
+**SARIMA** (Seasonal Auto-regressive Integrated Moving Average) models are the seasonal extension: we add seasons by doing additional seasonal differencing.
+
+A seasonal differenced is taking $X_t$, and subtracting the $X$ value from the same point in the last season. Let us say each season is $S$ number of time periods long. So, a first-order seasonal difference would be $Z_t = X_t - X_{t-S}$.
+
+We can also combine a seasonal differenced $Z_t$ with a normal difference. For example, if $d= 1$ and $D=1$:
+
+$$
+Z^{*d}_t = Z_t - Z_{t-1} = (X_t - X_{t-S}) - (X_{t-1} - X_{t-1-S}), \qquad \text{where } Z_t = X_t - X_{t-S}
+$$
 
 A **SARIMA** model will take the following form:
 
@@ -123,11 +119,46 @@ $$
 \text{SARIMA}(p, q, d)(P, Q,D)S \ : \ Z_t^{*d} = \underbrace{\overbrace{\sum\limits_{i=1}^p \phi_iX_{t-i}}^{\text{AR}} + \overbrace{\sum\limits_{i=1}^q \theta_i\epsilon_{t-i}}^{\text{MA}}}_{\text{ARIMA}} + \underbrace{\overbrace{\sum\limits_{i=1}^P \Phi_iX_{t-Si}}^{\text{AR}} + \overbrace{\sum\limits_{i=1}^Q \Theta_i\epsilon_{t-Si}}^{\text{MA}}}_{\text{Seasonality}} + \epsilon_t
 $$
 
-Where $Z^{*d}$ is a $d$-order difference of $D$-order seasonal differences $Z_t'^D$. For example, if $d= 1$ and $D=1$:
+Where $Z^{*d}$ is a $d$-order difference of $D$-order seasonal differences $Z_t'^D$. Note that the seasonality section's parameters and model components are all specified with capital letters.
+
+Choosing $p, q, P, Q$ is the same as in a ARIMA model - we should estimate models with different combinations, and see which model has the lowest AIC and BIC.
+
+<br />
+
+### Vector Autoregressive Models
+
+Vector Autoregressive (VAR) Models are a multivariate version of AR (auto-regressive) models. Here, we have multiple different time-series, and the VAR model allows relationships to occur between the variables in the model.
+
+Let us take a simple VAR(1) model with only 1 previous time period, and 2 different time series $Y_t$ and $Z_t$:
 
 $$
-Z^{*d}_t = Z_t - Z_{t-1} = (X_t - X_{t-S}) - (X_{t-1} - X_{t-1-S}), \qquad \text{where } Z_t = X_t - X_{t-S}
+\begin{align}
+Y_t & = \omega_y + \phi_{y1} Y_{t-1} + \phi_{y2}Z_{t-1} + \varepsilon_{yt} \\
+Z_t & = \omega_z + \phi_{z1}Y_{t-1} + \phi_{z2}Z_{t-1} + \varepsilon_{zt}
+\end{align}
 $$
+
+We can see that both $Y_t$ and $Z_t$ depend on their own lag in $t-1$, and the other's lag in $t-1$. We can also rewrite the above in matrix notation:
+
+$$
+\begin{pmatrix} Y_t\\ Z_t\end{pmatrix} = \begin{pmatrix} \omega_y \\ \omega_z \end{pmatrix} +
+\begin{pmatrix} \phi_{y1} & \phi_{y2} \\ \phi_{z1} & \phi_{z2} \end{pmatrix}
+\begin{pmatrix} Y_{t-1} \\ Z_{t-1}  \end{pmatrix} +
+\begin{pmatrix} \varepsilon_{yt} \\ \varepsilon_{zt}\end{pmatrix}
+$$
+
+We can simplify this into matrix form to:
+
+$$
+VAR(1) \ : \ \mathbf y_t = \boldsymbol\omega + \boldsymbol\Phi \mathbf y_{t-1} + \boldsymbol\varepsilon_t
+$$
+
+And if we have VAR(p) model, we can generalise this to:
+
+$$
+VAR(p) \ : \ \mathbf y_t = \boldsymbol\omega + \boldsymbol\Phi_1 \mathbf y_{t-1} + \boldsymbol\Phi_2 \mathbf y_{t-2} + \dots + \boldsymbol\Phi_p \mathbf y_{t-p} + \boldsymbol\varepsilon
+$$\
+Note that there also exists a Vector Autoregressive Moving Average (VARMA) model, however, unlike the ARIMA which is more popular than the AR model, in the vector cases, VAR is more popular than VARMA. This is mainly to do with estimation challenges regarding VARMA.
 
 <br />
 
@@ -273,7 +304,7 @@ Above is an example of the importance plot. This allows us to determine which ex
 
 <br />
 
-### Causal Trees and Forests
+### Extension: Causal Forests
 
 <br />
 

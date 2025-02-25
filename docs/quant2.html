@@ -258,7 +258,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./model3.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Spatial, Temporal, and Big Data</span></a>
+ <span class="menu-text">Forecasting and Prediction Models</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -332,6 +332,11 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#clustered-and-panel-data" id="toc-clustered-and-panel-data" class="nav-link" data-scroll-target="#clustered-and-panel-data">Clustered and Panel Data</a></li>
   <li><a href="#fixed-effects" id="toc-fixed-effects" class="nav-link" data-scroll-target="#fixed-effects">Fixed Effects</a></li>
+  </ul></li>
+  <li><a href="#extension-spatial-data" id="toc-extension-spatial-data" class="nav-link" data-scroll-target="#extension-spatial-data"><strong>Extension: Spatial Data</strong></a>
+  <ul class="collapse">
+  <li><a href="#spatial-data-and-spatial-weights" id="toc-spatial-data-and-spatial-weights" class="nav-link" data-scroll-target="#spatial-data-and-spatial-weights">Spatial Data and Spatial Weights</a></li>
+  <li><a href="#spatial-regression" id="toc-spatial-regression" class="nav-link" data-scroll-target="#spatial-regression">Spatial Regression</a></li>
   </ul></li>
   <li><a href="#implementation-in-r" id="toc-implementation-in-r" class="nav-link" data-scroll-target="#implementation-in-r"><strong>Implementation in R</strong></a></li>
   </ul>
@@ -636,7 +641,7 @@ R^2 = \frac{\mathbf y^\mathsf{T}\mathbf{Py}}{\mathbf y^\mathsf{T}\mathbf y}
 R^2 = \frac{SSE}{SST} = \frac{SST - SSR}{SST} = 1 - \frac{SSR}{SST} = 1 - \frac{\sum \hat u_i^2}{\sum(y_i - \bar y)^2}
 \]</span></p>
 <p>R-Squared (<span class="math inline">\(R^2\)</span>) measures the proportion of variation in <span class="math inline">\(y\)</span> that is explained by our explanatory variables. R-Squared is always between 0 and 1 (0%-100%). Higher values indicate our model better explains the variation in <span class="math inline">\(y\)</span>.</p>
-<p>There are a few other fit metrics, based around the idea of maximum likelihood estimation (explained in the next chapter). These metrics include <strong>Akaike Information Criterion (AIC)</strong> and <strong>Bayesian Information Criterion (BIC)</strong>. Lower values indiciate a better model. However, unlike <span class="math inline">\(R^2\)</span>, neither has a nice substantive interpretation.</p>
+<p>There are a few other fit metrics, based around the idea of <a href="./quant3.html#maximum-likelihood-estimator">maximum likelihood estimation</a> (explained in the next chapter). These metrics include <strong>Akaike Information Criterion (AIC)</strong> and <strong>Bayesian Information Criterion (BIC)</strong>. Lower values indiciate a better model. However, unlike <span class="math inline">\(R^2\)</span>, neither has a nice substantive interpretation.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -1033,9 +1038,9 @@ Logging a Skewed Variable
 <p>We have 3 types of logarithmic transformations:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 13%">
-<col style="width: 40%">
-<col style="width: 44%">
+<col style="width: 15%">
+<col style="width: 39%">
+<col style="width: 43%">
 </colgroup>
 <tbody>
 <tr class="odd">
@@ -1210,6 +1215,61 @@ y_{it} &amp; = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
 </ul>
 <p>For two-way fixed effects, we add a unique intercept term for every year and country, accounting for the average differences in <span class="math inline">\(y\)</span> between each country, and the average differences in <span class="math inline">\(y\)</span> between each year.</p>
 <p>Note: when conducting statistical inference with fixed-effects models, we must adjust our standard errors to clustered-standard errors. This is because observatios within a cluster are not independent of each other.</p>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="extension-spatial-data" class="level1">
+<h1><strong>Extension: Spatial Data</strong></h1>
+<section id="spatial-data-and-spatial-weights" class="level3">
+<h3 class="anchored" data-anchor-id="spatial-data-and-spatial-weights">Spatial Data and Spatial Weights</h3>
+<p>Spatial data is data that has some geographic-spatial component. If we have spatial data, a region’s neighbours may have some effect on a region’s own outcomes:</p>
+<ol type="1">
+<li><strong>Lag y</strong>: The <span class="math inline">\(y\)</span> of a region might be affected by a neighbouring region’s <span class="math inline">\(y\)</span> values. For example, one state having a high crime rate may affect another nearby state’s crime rate as criminals can move across the border.</li>
+<li><strong>Lag X</strong>: The <span class="math inline">\(y\)</span> of a region might be affected by a neighbour’s <span class="math inline">\(X\)</span> values. For example, one state’s low vaccination rate could affect the prevalence of a disease in a nearby state.</li>
+<li><strong>Spatial Autocorrelation</strong>: The residuals <span class="math inline">\(u\)</span> of a region might be affected by the residuals in a neigbouring region. For example, perhaps if we are studying how minimum wage affects unemployment rates, there could be some common factor with nearby states that affects unemployment rates (for example, prevalence of a certain industry) which is not included in our model.</li>
+</ol>
+<p>To include spatial considerations, we include a spatial weights matrix <span class="math inline">\(\mathbf W\)</span>. This defines what regions are “neighbours”. For example, imagine 3 regions A, B, C, with A on the left, B in the middle, and C on the right. The spatial weights matrix would be a matrix with rows <span class="math inline">\(i = A, B ,C\)</span> and columns <span class="math inline">\(j = A, B, C\)</span>.Element <span class="math inline">\(w_{ij}=1\)</span> if regions <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> border each other, and <span class="math inline">\(w_{ij} = 0\)</span> if regions <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> do not touch each other:</p>
+<p><span class="math display">\[
+\mathbf W_{3 \times 3} = \begin{pmatrix}
+0 &amp; 1 &amp; 0 \\
+1 &amp; 0 &amp; 1 \\
+0 &amp; 1 &amp; 0
+\end{pmatrix}
+\]</span></p>
+<p>We often “normalise/standardise” our weights matrix so that each row adds up to 1. Essentially, we divide an element by the number of 1’s in each row:</p>
+<p><span class="math display">\[
+\mathbf W_{3 \times 3} = \begin{pmatrix}
+0 &amp; 1 &amp; 0 \\
+0.5 &amp; 0 &amp; 0,5 \\
+0 &amp; 1 &amp; 0
+\end{pmatrix}
+\]</span></p>
+<p>There are other ways to define neighbours <span class="math inline">\(w_{ij} = 1\)</span>. For example, we could consider any region who’s centroid is within <span class="math inline">\(x\)</span> miles of another state’s centroid as a neighbour. This is up to the modelers discretion.</p>
+<p><br></p>
+</section>
+<section id="spatial-regression" class="level3">
+<h3 class="anchored" data-anchor-id="spatial-regression">Spatial Regression</h3>
+<p>We define neighbours with a weights matrix <span class="math inline">\(\mathbf W\)</span>. The largest spatial model is the <strong>Manski Model</strong>, which incorporates lag y, lag X, and spatial autocorrelation.</p>
+<p><span class="math display">\[
+\mathbf y = \underbrace{\rho\mathbf W\mathbf y}_{lag \ y} + \mathbf X\boldsymbol\beta + \underbrace{\mathbf{WX}\boldsymbol\theta}_{lag \ x} + \underbrace{\lambda \mathbf{Wu}}_{autocorr.} + \boldsymbol\varepsilon
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\rho\)</span> (scalar) is the lag <span class="math inline">\(y\)</span> coefficient, and measures how an average of neighbouring region’s <span class="math inline">\(y\)</span> values are associated with a region’s own <span class="math inline">\(y\)</span> values. For every one unit increase in the average value of <span class="math inline">\(y\)</span> in neighbouring regions, there is an expected <span class="math inline">\(\rho\)</span> unit change in <span class="math inline">\(y\)</span> in the region, holding all else constant.</li>
+<li><span class="math inline">\(\boldsymbol\beta\)</span> (vector) is our normal OLS coefficients <span class="math inline">\(\beta_0, \dots, \beta_k\)</span>, and would be interpreted in the same way.</li>
+<li><span class="math inline">\(\boldsymbol\theta\)</span> (vector) is the lag <span class="math inline">\(X\)</span> coefficients <span class="math inline">\(\theta_0, \dots, \theta_k\)</span>, and measures how an average of neighbouring region’s <span class="math inline">\(X\)</span> values are associated with a region’s own <span class="math inline">\(y\)</span> values. For every one unit increase in the average <span class="math inline">\(x_j\)</span> of neighbouring regions, there is an expected <span class="math inline">\(\theta_j\)</span> unit change in <span class="math inline">\(y\)</span> in the region, holding all else constant.</li>
+<li><span class="math inline">\(\lambda\)</span> (scalar) is spatial autocorrelation coefficient, and measures how an average of neighbouring regions’ error terms are associated with a region’s own error term. Unobserved factors shared by neighbouring regions contribute to a <span class="math inline">\(\lambda\)</span>-unit change in <span class="math inline">\(y\)</span>, holding all else constant.</li>
+</ul>
+<p>However, in reality, we often cannot estimate this entire model due to the large amount of parameters. Thus, multiple variations exist with only parts of the full model:</p>
+<ol type="1">
+<li>Keleijian-Prucha Model: <span class="math inline">\(\mathbf y = \rho \mathbf W \mathbf y + \mathbf X \boldsymbol\beta + \lambda \mathbf {Wu} + \boldsymbol\varepsilon\)</span>.</li>
+<li>Spatial Durbin Model: <span class="math inline">\(\mathbf y = \rho \mathbf{WY} + \mathbf X \boldsymbol\beta + \mathbf{WX}\boldsymbol\theta + \boldsymbol\varepsilon\)</span>.</li>
+<li>Spatially Lagged X Model: <span class="math inline">\(\mathbf y = \mathbf X \boldsymbol\beta + \mathbf {WX} \boldsymbol\theta + \boldsymbol\varepsilon\)</span>.</li>
+<li>Spatial Lag Model (Spatial Autoregressive): <span class="math inline">\(\mathbf y = \rho \mathbf{Wy} + \mathbf X \boldsymbol\beta + \boldsymbol\varepsilon\)</span>.</li>
+<li>Spatial Error Model: <span class="math inline">\(\mathbf y = \mathbf X\boldsymbol\beta + \lambda \mathbf{Wu} + \boldsymbol\varepsilon\)</span>.</li>
+</ol>
+<p>The models are estimated with <a href="./quant3.html#maximum-likelihood-estimator">Maximum Likelihood Estimation</a> (see next chapter), and model selection can be done with a combination of theory regarding the topic, eliminating insignificant portions, and AIC and BIC metrics.</p>
 <p><br></p>
 <p><br></p>
 <hr>

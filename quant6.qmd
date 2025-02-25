@@ -171,7 +171,7 @@ OLS is a natural approach for controlling for confounders $X$, since $\hat\beta_
 2.  **Linearity**: Potential outcomes are linear, and can be written as:
 
 $$
-Y_i(d) = \beta_0 + d\beta_1 + \mathbf X_i \gamma + \epsilon_i \quad \text{for} \quad d = 0, 1
+Y_i(d) = \beta_0 + d\beta_1 + \mathbf X_i \gamma + \varepsilon_i \quad \text{for} \quad d = 0, 1
 $$
 
 Why these conditions? Suppose we have the above linear potential outcomes. We can show:
@@ -179,9 +179,9 @@ Why these conditions? Suppose we have the above linear potential outcomes. We ca
 $$
 \begin{align}
 \tau_i & = Y_{1i} - Y_{0i} && (\text{definition of } \tau_i) \\
-& = (\beta_0 + (1)\beta_1 + \mathbf X_i \gamma + \epsilon_i) - (\beta_0 + (0)\beta_1 + \mathbf X_i \gamma + \epsilon_i) && (\text{plug in } Y_i(1), Y_i(0) \ )\\
-& = (\beta_0 + \beta_1 + \mathbf X_i \gamma + \epsilon_i) - (\beta_0 + \mathbf X_i \gamma + \epsilon_i) && (\text{multiply}) \\
-& = \beta_0 + \beta_1 + \mathbf X_i \gamma + \epsilon_i - \beta_0 - \mathbf X_i\gamma - \epsilon_i && (\text{distribute negative sign})\\
+& = (\beta_0 + (1)\beta_1 + \mathbf X_i \gamma + \varepsilon_i) - (\beta_0 + (0)\beta_1 + \mathbf X_i \gamma + \varepsilon_i) && (\text{plug in } Y_i(1), Y_i(0) \ )\\
+& = (\beta_0 + \beta_1 + \mathbf X_i \gamma + \varepsilon_i) - (\beta_0 + \mathbf X_i \gamma + \varepsilon_i) && (\text{multiply}) \\
+& = \beta_0 + \beta_1 + \mathbf X_i \gamma + \varepsilon_i - \beta_0 - \mathbf X_i\gamma - \varepsilon_i && (\text{distribute negative sign})\\
 & = \beta_1 && (\text{cancel out terms})
 \end{align}
 $$
@@ -260,7 +260,7 @@ The weights of $D_i(X_i = x)$ can also be seen as propensity scores of $\pi(x)(1
 The **Fully-Interacted Estimator**, a newly developed large-sample regression estimator (Lin 2013), solves the heterogeneity bias in the OLS estimator. The fully-interacted estimator takes the form:
 
 $$
-\widehat{Y_i} = \hat\alpha + D_i \widehat{\tau}_{int} + (\mathbf X_i - \mathbf {\bar X}) \hat\beta +D_i (\mathbf X_i - \mathbf{\bar X}) \hat\gamma
+Y_i = \hat\alpha + D_i \widehat{\tau}_{int} + (\mathbf X_i - \mathbf {\bar X}) \hat\beta +D_i (\mathbf X_i - \mathbf{\bar X}) \hat\gamma + \hat\varepsilon_i
 $$
 
 -   Where $X_i$ are covariate values sufficient to satisfy conditional independence.
@@ -631,7 +631,7 @@ A **placebo outcome test** utilities another alternative outcome variable $Y'$ t
 We can see that if $U$ does not exist, $D$ should have zero effect on the new outcome $Y'$. Thus, if $U$ is present, we should find a relationship between $D$ and $Y'$.
 
 $$
-Y'_i = \gamma + \delta D_i + u_i
+Y'_i = \gamma + \delta D_i + \varepsilon_i
 $$
 
 -   If we find that there is an effect of $D$ on the new outcome $Y'$ (non-zero $\delta$), that is **evidence** that $U$ exists, and is **evidence to reject** our conditional ignorability assumption (falsifies our design - red flag!).
@@ -650,7 +650,7 @@ A **placebo treatment test** involves some other treatment $D'$, that was assign
 We can see that if $U$ does not exist, the effect of $D'$ should have no effect on $Y$. If $U$ does exist, there should be some effect of $D'$ on $Y$.
 
 $$
-Y_i = \gamma + \delta D'_i + u_i
+Y_i = \gamma + \delta D'_i + \varepsilon_i
 $$
 
 -   If we find that there is an effect of $D'$ on $Y$ (non-zero $\delta$), that is **evidence** that $U$ exists, and is **evidence to reject** our conditional ignorability assumption (falsifies our design - red flag!).
