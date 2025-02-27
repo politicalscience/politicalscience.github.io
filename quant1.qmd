@@ -1,482 +1,230 @@
 ---
-title: "Introductory Statistics"
+title: "The Classical Linear Model"
 subtitle: "Chapter 1, Quantitative Methods (Causal Inference)"
 sidebar: side
 ---
 
-This chapter is about the very building blocks of statistics. We start off with a discussion over probability, random variables, and distributions. Then, we talk about the basics of statistical inference and hypothesis testing. We conclude by discussing correlations between variables and the basics of regression.
+Before we start with causal inference, we need to understand the classical linear model, its mechanics, and how we can achieve unbiased estimates of relationships. This chapter discusses the classical linear models, the properties of the ordinary least squares estimator, statistical inference in a regression setting, and model specification issues.
+
+Use the right sidebar for quick navigation. R-code is provided at the bottom.
 
 ------------------------------------------------------------------------
 
-# **Random Variables**
+# **The Linear Model**
 
-### Random Variables and Distributions
+### Model Specification
 
-Random variables are outcomes that have some randomness/uncertainty. There is a set of possible outcomes $\Omega$, called the sample space. Within the sample space there exists events $\omega \in \Omega$ (potential outcomes). We do not know which event will be observed, but we know each outcome $\omega$'s probability of realisation $\P(\omega \in \Omega)$.
+There is some random outcome variable $Y_i$, and several random explanatory variables $X_{i1}, X_{i2}, \dots, X_{ip}$. The population linear model is specified as:
 
-We can represent $\omega \in \Omega$, and the associated probabilities with each outcome $\P(\omega)$, in a **distribution**. On the horizontal axis is all $\omega \in \Omega$, and the vertical axis is $\P(\omega)$.
+$$
+Y_i = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i \ = \  \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} + \eps_i
+$$
 
-![](images/clipboard-713724518.png){fig-align="center" width="45%"}
+Where $\beta_0, \dots, \beta_p$ are population parameters to be estimated, and $\eps_i$ is the error term representing the variation in $Y_i$ that is not explained by the $p$ explanatory variables (either a missing variable in our model, or some random noise).
 
-**Continuous random variables** $\omega \in [a, b]$ can take any possible value within a range $a$ to $b$, including any decimal. **Discrete random variables** can only take a certain set of values $\omega \in \{a, b, \dots \}$, not any possible decimal. For example, a dice roll can only take the values of 1, 2, 3,..., and not 3.23478. A discrete random variable with only 2 potential outcomes $\omega \in \{0, 1 \}$ is a **binary random variable**.
+::: {.callout-note collapse="true" appearance="simple"}
+## Visualising Regression and $\eps_i$
 
-We will denote random variables with a capital letter (ex. $Z$, $X$). In later chapters, we will denote them with a subscript $Z_i, X_i$ to distinguish them from matrices. The realisation of a random variable (the outcome) is denoted with lower case letters (ex. $z, x$).
+Geometrically, the $\beta_0 + \beta_1X_{1i} + \beta_pX_{ip}$ part of the model creates a hyperplane (shown in yellow). The red dots are the actual $Y_i$ values. The black lines represent $\eps_i$, the variation in $Y_i$ not explained by the explanatory variables.
+
+![](images/clipboard-365376575.png){fig-align="center" width="45%"}
+:::
+
+The linear model implies for each observation/individual $i=1,\dots ,n$ in the population, with values $(y_i, x_{i1} \dots, x_{ip})$ has a regression equation:
+
+$$
+\begin{align}
+y_1 = & \ \beta_0 + \beta_1x_{11} + \dots + \beta_px_{1p} + \eps_1 \\
+y_2 = & \ \beta_0 + \beta_1x_{21} + \dots + \beta_px_{2p} + \eps_2 \\
+& \qquad \vdots \qquad \qquad \vdots \\
+y_n = & \ \beta_0 + \beta_1x_{n1} + \dots + \beta_px_{np} + \eps_n
+\end{align}
+$$
+
+We can write this system of regression equations in linear algebra form:
+
+$$
+y = X\beta + \eps \quad \iff \quad \begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}  =
+\begin{pmatrix}1 & x_{11} & \dots & x_{1p} \\1 & x_{21} & \dots & x_{2p} \\\vdots & \vdots & \vdots & \vdots \\1 & x_{n1} & \dots & x_{np}\end{pmatrix}
+\begin{pmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_p\end{pmatrix}
++ \begin{pmatrix}\eps_1 \\ \eps_2 \\ \vdots \\ \eps_n\end{pmatrix}
+$$
+
+The parameters in vector $\beta$ are population parameters that we do not know the value of. Our goal is to estimate our parameters to get our estimates $\hat\beta$, which allows us to create predicted fitted-values model $\hat y = X\hat\beta$.
 
 <br />
 
-### Probability Density Functions {#probability-density-functions}
+### Ordinary Least Squares Estimator
 
-We can describe these distributions mathematically. A **probability density function** is a function $\varphi$ that takes one potential outcome as an input, and spits out the probability of that outcome. For example, the probability density function of a dice $z \in \{ 1, 2, 3, 4, 5, 6\}$ is:
-
-$$
-\P(z) = \varphi(z) = 1/6
-$$
-
-We can see that if we want to see the probability of getting a 5 on our dice roll, we plug in $z=5$ to get $\varphi(5) = 1/6$, which is the probability of rolling a 5.
-
-For continuous random variables, it does not make sense to calculate the probability of one specific outcome $z$. For example, let us say your random variable is the time it will take you to get to school tomorrow. We really do not care about the probability of taking 13.4357 minutes to get to school. What we do care about is a range - lets say the probability of getting to school between 13 and 14 minutes.
-
-More mathematically, the probability density function of a continuous random variable gives you the probability of an outcome between $a$ and $b$:
+To [estimate](stats.qmd#estimators-and-sampling-distributions) the population parameters $\beta_0, \dots, \beta_p$, we use our sample data, and try to find the values $\hat\beta_0, \dots, \hat\beta_p$ that **minimise the square sum of residuals** (SSR). We will define the SSR as function $S$:
 
 $$
-\P(a<z<b) =\int\limits_a^b \varphi(z)dz
+\begin{align}
+S(\hat\beta) & = (y - \hat y)^\top (y - \hat y) \ = \ (y - \color{blue}{X\hat\beta}\color{black})^\top (y - \color{blue}{X\hat\beta}\color{black}) && (\because \color{blue}{\hat y = X\hat\beta} \color{black})
+\end{align}
 $$
-
-This integral is important - it tells us that the area under a distribution gives us the probability of an event.
-
-![](images/clipboard-1038590923.png){fig-align="center" width="45%"}
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Cumulative Density Functions
+## Visualising the Sum of Squared Residuals
 
-Cumulative density functions measure the cumulative probability below a certain point.
+The residuals are the difference from our predicted best-fit line result $\hat Y_i$, and the actual value of $Y_i$ in the data. Below highlighted in red are the residuals.
 
-For example, to get the probability of anything below $a$ occurring as an outcome, our cumulative density function is:
+![](images/clipboard-846785636.png){fig-align="center" width="60%"}
+
+After we have the residual values, we simply square each of them, then sum all of them together. That is the sum of squared residuals (SSR).
+:::
+
+This process of mimimising the SSR to estimate $\hat\beta$ is called the **ordinary least squares (OLS) estimator**:
 
 $$
-\P(z<a) = \int\limits_{-∞}^a \varphi(z)dz
+\begin{align}
+S(\hat\beta) &  = (y - \hat y)^\top (y - \hat y)\\
+& = (y - \color{blue}{X \hat\beta}\color{black} )^\top (y - \color{blue}{X \hat\beta}\color{black})  && (\because \color{blue}{\hat y = X \hat\beta}\color{black})\\
+& = y^\top y - \hat\beta^\top X^\top y - y^\top X \hat\beta +  \hat\beta^\top X^\top X \hat\beta && (\text{distribute out}) \\
+& = y^\top y \ \color{blue}{-  2 \hat\beta^\top X^\top y} \color{black}  +  \underbrace{\hat\beta^\top X^\top X \hat\beta}_{\text{quadratic}} && (\because \color{blue}{- \hat\beta^\top X^\top y - y^\top X \hat\beta = - 2 \hat\beta^\top X^\top y} \color{black})
+\end{align}
 $$
 
-This will be useful in some cases to calculate values for probability density functions.
+Now, let us take the gradient to find the first order condition:
+
+$$
+\frac{\partial S(\hat\beta)}{\partial \hat\beta} = -2 X^\top y + 2 X^\top X \hat\beta = 0
+$$
+
+When assuming $X^\top X$ is invertable (which is true if $X$ is full rank), we can isolate $\hat\beta$ to find the solution to OLS:
+
+$$
+\begin{align}
+-2 X^\top y + 2 X^\top X \hat\beta & = 0 \\
+2 X^\top X \hat\beta & = 2 X^\top y && ( + 2X^\top y \text{ to both sides}) \\
+\hat\beta & = (2X^\top X)^{-1} -2 X^\top y && (\times (2X^\top X)^{-1} \text{ to both sides}) \\
+\hat\beta & = (X^\top X)^{-1} X^\top y && (2^{-1}, 2 \text{ cancel out})
+\end{align}
+$$ {#eq-ols}
+
+Those are our coefficient solutions to OLS.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Alternative Derivation for Simple Linear Regression
+
+Currently, we are deriving the first order conditions for multiple linear regression using linear algebra.
+
+For simple linear regression (with one explanatory variable), we can use summation notation. Recall our sum of squared residuals in summation form:
+
+$$
+SSR = S(\hat\beta_0, \hat\beta_1)= \sum\limits_{i=1}^n(Y_i - \hat\beta_0 - \hat\beta_1X_i)^2
+$$
+
+We want to minimise the SSR in respect to both $\hat\beta_0$ and $\hat\beta_1$. We can do this by finding our first order conditions:
+
+$$
+\begin{align}
+\frac{\partial S(\hat\beta_0, \hat\beta_1)}{\partial \hat\beta_0} & = \sum\limits_{i=1}^n(Y_i - \hat\beta_0 - \hat\beta_1X_i) = 0 \\
+\frac{\partial S(\hat\beta_0, \hat\beta_1)}{\partial \hat\beta_1} & = \sum\limits_{i=1}^n X_i(Y_i - \hat\beta_0 - \hat\beta_1X_i) = 0 \\
+\end{align}
+$$
+
+These conditions create a system of equations, which you can solve for the OLS solutions of $\widehat{\beta_0}$ and $\widehat{\beta_1}$. I will not show it step by step, as it is tedious (and not that important). The OLS solutions are
+
+$$
+\begin{align}
+\hat\beta_0 & = \bar Y - \widehat{\beta_1} \bar X \\
+\hat\beta_1 & = \frac{\sum_{i=1}^n(X_i - \bar X)(Y_i - \bar Y)}{\sum_{i=1}^n(X_i - \bar X)^2} = \frac{Cov(X_i, Y_i)}{\V Y_i}
+\end{align}
+$$
 :::
 
 <br />
 
-### Expectation and Variance
+### Orthogonal Projection of OLS {#orthogonal-projection-of-ols}
 
-The **expectation**, also called the **mean** or **expected value**, is the "average" outcome value that you would expect to get from the distribution. It is essentially our "best guess" of what the random variable's outcome would be.
-
-Expectation for a discrete random variable $X$ is calculated as a weighted sum of all potential outcomes $x_i$ and their respective probabilities given by the probability density function $p(x_i)$:
+We can use the OLS solution from @eq-ols to get our fitted values $\hat{y}$ and residuals $\hat\eps$:
 
 $$
-\E Z  = \sum\limits_{i=1}^n(z_i \times \varphi(z_i))
+\begin{align}
+\hat y & = X\hat\beta = X \color{blue}{(X^\top X)^{-1}X^\top y} && \color{black}(\because \color{blue}{\hat\beta = (X^\top X)^{-1}X^\top y} \color{black}) \\
+& = \color{red}{P}\color{black}y && (\because \color{red}{P:= X(X^\top X)^{-1}X^\top}) \\
+\hat\eps & = y - \hat y  = y - \color{blue}{Py} && \color{black}( \because \color{blue}{\hat y = Py}\color{black}) \\
+& = (I-P)y && (\text{factor out y}) \\
+& = \color{purple}{M}\color{black}y && (\because \color{purple}{M:= I - P}\color{black})
+\end{align}
 $$
 
-For a continuous random variable $X$, the idea is the same but with an integral:
-
-$$
-\E Z = \int\limits_{-∞}^∞ (z \times \varphi(z))dz
-$$
-
-Expectations have a few unique algebraic properties:
-
-1.  The expectation of a constant is itself: $\E c = c$.
-2.  Expectations can be added: $\E(X+Y) = \E X + \E Y$.
-3.  Expectations multiplied with constants: $\E(cX) = c \cdot \E X$.
-4.  Law of iterated expectations: $\E(X) = \E[\E(X|Y)]$.
-
-**Variance** measures the spread of a distribution. It is essentially the average distance of each individual outcome from the expected value $\mu$ of the random variable:
-
-$$
-\V Z = \sigma^2= \E(z - \E Z)^2 
-$$
-
-The **standard deviation** $\sigma$ is simply the square root of variance.
-
-<br />
-
-### Conditional Distributions {#conditional-distributions}
-
-Let us say we have two random variables $X$ and $Y$, each with their own respective distributions.
-
-Often in statistics, we are interested in how two variables interact with each other. For example, we are interested in how democracy affects economic growth. Or how education affects income.
-
-Conditional distributions are a distribution of one random variable $X$, given we hold another variable $Y$ fixed at some value.
-
-For example, imagine $X$ is income and $Y$ is age. The conditional distribution of $X|Y$ is the distribution of income $X$ at every specific age $Y$. For example, $X|Y = 20$ is the distribution of income $X$ for 20 year olds. $X|Y=60$ would be the distribution of income $X$ for 60 year olds.
-
-Conditional distributions have all the same properties as normal distributions. The most important of these is the **conditional expectation**, which we denotate $\E(X|Y)$. In the context of above, $\E(X|Y=20)$ would be the **expected** income for a 20 year old.
-
-The reason conditional expectations are so important is because they illustrate how one variable affects another. If we see a pattern in going between $\E(X|Y=20)$, $\E(X|Y = 21)$, and $\E(X|Y = 24)$, we might be tempted to say that increasing age $Y$ has some effect on income $X$.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-# **Distributions**
-
-### The Normal Distribution
-
-The **normal distribution** is for continuous random variables, and takes a famous "bell shape" (hence why it is also called the bell curve). Every normal distribution and its [probability density function (PDF)](#probability-density-functions) can be defined by two parameters: the mean and the variance:
-
-$$
-Z \sim \mathcal N(\mu, \sigma^2), \quad \P(a<z<b) = \int\limits_a^b \frac{1}{\sqrt{2\pi\sigma^2}}e^{\left( -\frac{(z - \E Z)^2}{2 \sigma^2}\right)}dx
-$$
-
-Where $\mathcal N$ represents the normal distribution, $\mu$ represents the expected value $\E Z$ of the distribution, and $\sigma^2$ represents the variance. $Z$ is the variable we have assigned the normal distribution to. The figure below shows how normal distributions change when you alter $\mu$ and $\sigma^2$.
-
-![](images/clipboard-2268260367.png){fig-align="center" width="60%"}
-
-<br />
-
-### Properties of the Normal Distribution {#properties-of-the-normal-distribution}
-
-Normal Distributions have a unique property - within any standard deviations $\sigma$ from the mean, every single normal distribution contains the same amount of area under the curve (which is also the probability):
-
-![](images/clipboard-2691725554.png){fig-align="center" width="80%"}
-
-These properties don't just apply to 1, 2, or 3 standard deviations away from the mean. They apply to any amount of standard deviations (such as 1.23478 standard deviations), and there are online tables/calculators that can derive this. This means that we can find the probability between any two points of a normal distribution, just by knowing the mean $\mu$ and standard deviation $\sigma$.
-
-Another property of the normal distribution is that we can manipulate them as follows:
-
-1.  We can add a constant $c$ to every single outcome/value in a normal distribution. The resulting distribution will still be a normal distribution, just with its mean shifted by $c$. Or in other words: $Z \sim \mathcal N(\mu + c, \sigma^2)$.
-2.  We can multiply by constant $c$ to every single outcome/value in a normal distribution. The resulting distribution will still be a normal distribution, just with its mean multiplied by $c$, and its standard deviation multipled by $c^2$. Or in other words: $Z \sim \mathcal N(c \mu, (c \mu)^2)$.
-
-<br />
-
-### The Standard Normal Distribution {#the-standard-normal-distribution}
-
-The standard normal distribution (often called the $Z$-distribution) is a special version of the normal distribution, with a mean of 0 and a variance of 1:
-
-$$
-Z \sim\mathcal N(0, 1), \quad \P(a<z<b) = \int\limits_a^b \frac{e^{-\frac{z^2}{2}}}{\sqrt{2\pi}}dz = \int\limits_a^b\phi(z)dz
-$$
-
-Note: we denote the PDF of the standard normal as $\phi$, and the CDF of the standard normal as $\Phi$.
-
-![](images/img_standard_normal.svg){fig-align="center" width="70%"}
-
-The best part about the standard normal distribution is that we can transform any other normal distribution into a standard normal. Recall the properties of adding and multiplying constants to a normal distribution from above. That means we can apply a transformation to every value/unit in a normal distribution $X$ to get a standard normal distribution $Z$:
-
-$$
-\text{if } X \sim \mathcal N(\mu, \sigma^2), \quad Z = \frac{x - \E X}{\sigma} \sim \mathcal N(0,1)
-$$
-
-Or in other words, for every value of $x \in X$, subtract the mean, then divide by the standard deviation. If you do this for every value $x \in X$, you will get a standard normal.
-
-<br />
-
-### The T-Distribution
-
-The **T-distribution** looks very similar to that of the normal distribution, with the same bell curve shape. However, the t-distribution's tails are slightly fatter than the normal distribution, and the peak is slightly shorter.
-
-![](images/clipboard-1130923565.png){fig-align="center" width="45%"}
-
-The key difference between the t-distribution and the normal distribution is the parameters. Unlike the normal distribution, which has 2 parameters, the t-distribution has only one parameter: degrees of freedom.
-
-The t-distribution is always centered on 0. Higher degrees of freedom means less thick tails. As degrees of freedom get larger (past 30), it almost perfectly fits a normal distribution.
-
-The importance of the T-distribution is that it is often used for statistical inference when the normal distribution, for whatever reason, cannot be used. This is often because with the normal distribution, we need to know variance $\sigma^2$, but we do not need to know this to use the T-distribution.
-
-<br />
-
-### Bernoulli and Binomial Distribution
-
-A **bernoulli trial** is an experiment that has two possible outcomes: a success $z= 1$ and a failure $z = 0$. We denote the probability of a success as $p$, and the probability of a failure as $q = 1-p$. For example, a coin flip could be seen as a bernoulli trial, with $p = 0.5$.
-
-For example, below is a bernoulli distribution with $p = 0.15$:
-
-![](images/clipboard-2068255268.png){fig-align="center" width="50%"}
-
-The probability density function of a bernoulli distribution is:
-
-$$
-\varphi(z) = \begin{cases}
-p \quad \text{if } z = 1 \\
-1 - p \quad \text{if } z= 0 
-\end{cases}
-$$
-
-The expected value of the bernoulli trial is equal to the probability of a a success $p$.
-
-$$
-\E Z = \P (z = 1) = p
-$$
-
-The bernoulli distribution is a special case of the **Binomial distribution**, which is basically the question of how many success you will get with $n$ number of trials. When $n=1$ (just one coin flip), we get the bernoulli distribution.
-
-A bernoulli distribution is often employed in randomisation of treatment during experiments, as we will see later.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-# **Estimators and Statistical Inference**
-
-### Estimators and Sampling Distributions
-
-An **estimand** is the true value of some true parameter $\theta$ in the population we are trying to measure.
-
-We often do not have data on the population. We typically have a sample from the population, and use an **estimator** (procedure) to produce a sample **estimate** $\hat\theta$. Estimators and estimates are denoted with either a hat $\hat\theta$ or tilde $\tilde\theta$.
-
--   For example, if we wanted to find the average trust in institutions in the UK, we cannot possibly ask 70 million people. So, instead, we take a sample from the population, and produce a sample estimate.
-
-However, because of [sampling variability]{.underline} (not all random samples will be identical), each sample $n$ will have a different estimate $\hat\theta_n$.
-
-Imagine if we keep taking $N$ number of samples, we will have $N$ number of estimates $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$. Thus, any specific estimate $\theta_n$ from sample $n$ can be thought of as a random draw from the **sampling distribution** $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$.
+Matrix $\color{red}{P}$, called the **projection matrix**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{ y}$. Matrix $\color{purple}{M}$, called the **residual maker**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{\eps}$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Example of a Sampling Distribution
+## Matrix Properties of $P$ and $M$
 
-Let us say we want to find the mean salary of all individuals in the UK. The true value of the mean salary for every individual is $\theta$.
+Both $\color{red}{P}$ and $\color{purple}{M}$ are [symmetric matrices](math.qmd#types-of-matrices): $P^\top = P, \ M^\top = M$. They are also both [idempotent matrices](math.qmd#types-of-matrices): $PP = P, \ MM = M$. We can prove this second statement using the first (I will only do it for $P$, but the same applies for $M$:
 
-However, asking all 60 million people is nearly impossible. So, we take a randomly sample of 1000 individuals, and then find the sample mean. Our estimator is thus the sample mean estimator.
+$$
+\begin{align}
+PP & = X(X^\top X)^{-1} \underbrace{X^\top X(X^\top X)^{-1}}_{= I} X^\top \\
+& = X(X^\top X)^{-1} X^\top = P
+\end{align}
+$$
 
-Our first sample of 1000 individuals yields an estimate $\hat\theta_1$. If we take another sample, we will get slightly different people in this sample, and get another estimate $\hat\theta_2$. We keep taking samples, and get more and more estimates $\hat\theta_3, \hat\theta_4, \dots, \hat\theta_n$.
+$\color{red}{ P}$ and $\color{purple}{ M}$ are also [orthogonal](math.qmd#types-of-matrices) to each other - i.e. $P^\top M = 0$:
 
-We plot all of these samples into a distribution as follows:
-
-![](images/clipboard-2444367374.png){fig-align="center" width="45%"}
-
-This indicates the potential estimates we can get. If we were to conduct only one sample, we would essentially be selecting a random $\hat\theta_i$ value from this distribution.
-
-The sampling distribution of an estimator is the key property of estimators. The two parameters of interest from this sampling distribution are its **expectation** and **variance**.
+$$
+\begin{align}
+P^\top M & = \color{blue}{P}\color{black}M && (\because \color{blue}{P^\top = P}\color{black}) \\
+& = P(\color{blue}{I-P}\color{black}) && (\because \color{blue}{M:= I - P}\color{black}) \\
+& = P - PP && \text{(distribute out)} \\
+& = P - \color{blue}{P} && \color{black}(\because \color{blue}{PP = P}\color{black}) \\
+& = 0
+\end{align}
+$$
 :::
 
-We can describe sampling distributions with their expectation and variance.
+Fitted values $\hat{y}$ are a linear combination of our explanatory variables $X$. By the definition of [vector spaces](math.qmd#vector-spaces), that means our explanatory variable vectors $x_1, x_2, \dots, x_p$ span a space that includes our fitted values vector $\hat{y}$.
+
+So, what $\color{red}{ P}$ is doing is taking our original data vector $y$, and projecting it into the space spanned by our explanatory variables $X$ (called the **column space**). We can see in the figure below, our observed $y$ vector is being projected onto the blue plane spanned by $X$ to create our fitted values vector $\hat{y}$.
+
+![](images/clipboard-880030792.png){fig-align="center" width="50%"}
+
+Residual maker $\color{purple}{M}$ projects $y$ onto the space orthogonal to the column space of $X$ to get our residuals $\hat{\eps}$. We can see in the figure the residuals vector (notated $\mathbf e$ in the figure) is orthogonal/perpendicular to the space of $\mathbf X$.
 
 <br />
 
-### Finite Sample Properties of Estimators
+### Conditional Expectation Function {#conditional-expectation-function}
 
-An estimator of a parameter is **unbiased**, if its estimates $\hat\theta_n$ have an expectation equal to the true population value of the parameter: $\E \hat\theta_n = \theta$. Or in other words, if we repeatedly sample and use the estimator, on average, the estimates will be equal to the true population value (the sampling distribution will have an expectation of the true population value).
-
-We want an unbiased estimator, because if $\E \hat\theta_n = \theta$, that means our "best guess" of the estimator value is the true parameter value $\theta$. That means any one estimate $\hat\theta_n$ is on average, correct.
-
-Unbiasedness is not the only desirable property of estimators - we also care about the variance. After all, if we have two unbiased estimators, the one with less variance will be on average, closer to the true population value, for any one estimate $\hat\theta$.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Example of the Importance of Variance
-
-For example, let us say the true population parameter is $\theta = 0$. We will have two estimators: estimator $A$ and estimator $B$:
-
--   Estimator $A$, after two samples (for simplicity), produces estimates -1 and 1.
--   Estimator $B$, after two samples, produces estimates -100 and 100.
-
-Both estimators are unbiased $\E \hat\theta_n = 0$. However, clearly, estimator $A$ is, on average, closer to $\theta =0$ than estimator $B$. This is because while both estimators are unbiased, estimator $A$ has a smaller **variance** than estimator $B$ - that is on average, estimator $A$'s estimators are more closely "packed around" the expectation of the estimator.
-:::
-
-The **variance** of an estimator (and variance of the sampling distribution) can be quantified as:
+Previously, we wrote the linear regression model in respect to $Y_i$. However, we can also write the linear regression model as the best linear approximation of a [conditional expectation](stats.qmd#conditional-distributions) function (CEF) $\E(Y_i |X_i)$:
 
 $$
-\V \hat\theta_n = \E[(\hat\theta_n - \E \hat\theta_n)^2]
+\E(Y_i|X_i) = \beta_0 + \beta_1 X_{i1} + \dots + \beta_p X_{ip}
 $$
 
-An **efficient** estimator is one that, on average, has the closest estimated value $\hat\theta_n$ to the true population parameter. If two estimators are both unbiased, the one with lower variance is more efficient. Efficiency can be quantified as the estimator with the lowest **mean squared error**:
+Best-approximation is defined by the lowest mean-squared error (MSE). Let us prove OLS on $Y_i$ gets the same $\beta_0, \dots, \beta_p$ as the best linear approximation of $\E(Y_i|X_i)$. Take this very simple CEF and its MSE:
 
 $$
-\mathrm{MSE}(\hat\theta_n) = \E[(\hat\theta_n - \theta)^2] =\V \hat\theta_n + \underbrace{(\E \theta_n - \theta)}_{\mathrm{bias}}
+\begin{align}
+\E(Y_i|X_i) & = b_0 + b_1X_i \\
+MSE & = \E(Y_i - \E(Y_i|X_i))^2 \\
+& =  \E(Y_i - (\color{blue}{b_0 + b_1X_i}\color{black}))^2  && (\because \color{blue}{\E(Y_i|X_i) = b_0 + b_1X_i}\color{black})\\
+& = \E(Y_i - b_0 - b_1 X_i) && \text{(distribute negative sign)}
+\end{align}
 $$
 
-We generally want an efficient estimator, since gives us the closest guess to the true population parameter $\theta$.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Efficient but Biased
-
-Interestingly, it is possible for a biased estimator to be more efficient than an unbiased estimator.
-
-This is particularly the case when the biased estimator has a slight bias but small variance, while the unbiased estimator has a giant variance. In this case, the biased estimator is producing estimates $\hat\theta$ that on average, are closer to the true population parameter $\theta$.
-:::
-
-<br />
-
-### Asymptotic Properties of Estimators
-
-Asymptotic properties are properties of estimators as the sample size $n$ approaches infinity.
-
-An estimator is **asymptotically consistent**, if as we increase sample size towards infinity, the estimate will become more and more concentrated around the true population value $\theta$. At $n = ∞$, our sampling distribution collapses to just one value, the true population value $\theta$. Mathematically:
-
-$$
-\P(|\hat\theta_n - \theta|> \varepsilon) \rightarrow 0, \text { as } n \rightarrow ∞
-$$
-
-That means with a consistent estimator, increasing the sample size will get us more and more accurate results.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Biased but Consistent
-
-An estimator can be both biased, but consistent. In smaller sample sizes, the estimator might not be on average correct, but over a large enough sample size, it will become "unbiased".
-
-For example, in the figure below, we can see that this estimator is biased at small values of $n$, but as $n$ increases, it becomes more consistent, collapsing its distribution around the true $\theta$.
-
-![](images/clipboard-1215503621.png){fig-align="center" width="55%"}
-:::
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Law of Large Numbers and Consistency
-
-The law of large numbers states that the sample average of a random sample, is a consistent estimator of the population mean.
-
-For example, let us say we have a random variable $x$. We take a random sample of $n$ units, so our sample is $(x_1, \dots, x_n)$.
-
--   Let us define $\bar x_n$ as our sample average.
--   Let us define $\mu$ as the true population mean of variable $x$.
-
-The law of large numbers states that:
-
-$$
-plim( \bar x_n) = \mu
-$$
-
--   Where $plim$ states that as $n$ approaches infinity, the probability distribution of $\bar x_n$ collapses around $\mu$.
-
-Why is this the case? This sample mean estimator is calculated simply through the formula for mean:
-
-$$
-\bar x_n = \frac{1}{n}\sum\limits_{i=1}^n x_i
-$$
-
-Let us define the variance of our sample of $x_1, \dots, x_n$ as $Var(x_i) = \sigma^2$. We can now find the variance of our sampling distribution of estimator $\bar x_n$:
+The first order conditions are (using chain rule and partial derivatives):
 
 $$
 \begin{split}
-Var(\bar x_n) & = Var\left( \frac{1}{n}\sum\limits_{i=1}^n x_i \right) \\
-& = \frac{1}{n^2} Var \left(\sum\limits_{i=1}^n x_i\right) \\
-& = \frac{1}{n^2} \sum\limits_{i=1}^n Var(x_i) \\
-& = \frac{1}{n^2} \sigma^2 \\
-& = \frac{\sigma^2}{n}
+& \E(Y_i - b_0 - b_1X_i) = 0 \\
+& \E(X_i(Y_i - b_0 - b_1X_i) = 0
 \end{split}
 $$
 
-And as sample size $n$ increases to infinity, we get:
+Now, recall our OLS minimisation conditions (simple linear regression, presented in the extra info box above). Since by definition, average/expectation is $\E(x) = \frac{1}{n} \sum x_i$, we can rewrite as:
 
 $$
-\lim\limits_{n \rightarrow ∞} Var(\bar x_n) = \lim\limits_{n \rightarrow ∞} \frac{\sigma^2}{n} = 0
+\begin{split}
+& \sum\limits_{i=1}^n (Y_i - \hat{\beta}_0 - \hat{\beta}_1 X_i) = \ n \times \E(Y_i - \hat\beta_0 - \hat\beta_1X_i) = 0 \\
+& \sum\limits_{i=1}^n X_i (Y_i - \hat{\beta}_0 - \hat{\beta}_1 X_i) = \  n \times \E(X_i(Y_i - \hat\beta_0 - \hat\beta_1X_i)) = 0
+\end{split}
 $$
 
-Thus, the variance of our estimator $\bar x_n$ shrinks to zero, so as sample size increases to infinity $n$, the sampling distribution of estimator $\bar x_n$ collapses around the true population mean.
-:::
-
-Another asymptotic property of estimators, as sample size $n$ approaches infinity, is that the sampling distribution approaches a normal distribution. The **central limit theorem** establishes asymptotic normality of estimators. Let us say we have $N$ number of random variables $\hat\theta_1, \dots, \hat\theta_N$ (estimates are realisations of random variables). The central limit theorem states that:
-
-$$
-P(z_n < w) \rightarrow \Phi(z) \quad \text{as } n \rightarrow ∞
-$$
-
--   Where $z_n$ is a transformed version of the random variable $\hat\theta_n$, defined as $z_n = \frac{\bar\theta_n - \E \hat\theta_n}{\sigma / \sqrt{n}}$.
--   Where $\P(z_n < z)$ is the cumulative density function of the random variable $w_n$.
--   Where $\Phi(z)$ is the cumulative density function (cdf) of the standard normal distribution $\mathcal N(0, 1)$.
-
-The importance of CLM comes from the fact that as we increase sample size, our sampling distribution becomes more and more normally distributed. Recall that we know that the normal distribution has unique [properties of distribution](#properties-of-the-normal-distribution) that allow us to calculate the probability between standard deviations (and any point). Since CLM says that our sampling distribution is normally distributed, we can apply the same properties to learn about the probabilities of getting a certain sample estimates $\hat\theta_n$.
-
-<br />
-
-### Intuition of Hypothesis Testing
-
-We have status-quo theory, called the **null hypothesis** $H_0$. A status quo theory is the generally accepted value of the true population parameter $\theta$ in our field. However, you might want to prove this status-quo theory wrong, and have an **alternative hypothesis** $H_1$. You need some way to prove that the status-quo null hypothesis is wrong.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Example of Hypotheses
-
-Let us say we are interested in measuring the relationship between democracy and economic growth.
-
-The status-quo theory is that there is no relationship - since we need to prove there is a relationship. Thus, our null hypothesis is $H_0 : \theta = 0$ (0 representing 0 relationship).
-
-Our alternative hypothesis might be $H_1: \theta ≠ 0$ - i.e. there is a relationship between democracy and economic growth.
-
-To prove our alternative hypothesis, we need to disprove the null hypothesis.
-:::
-
-We cannot know if the null hypothesis is wrong. However, we can calculate the probability of getting a certain sample estimate $\hat\theta_n$ assuming the null hypothesis is true. If we assume an unbiased estimator, that means our hypothetical sampling distribution should have an expected value of our null hypothesis: $\E \hat\theta_n = H_0$.
-
-Then, we can gather a sample, and calculate some sample estimate $\hat\theta$. Using some math (we will see this later with regression), we can also estimate the variance of the sampling distribution.
-
-Thus, we now know the expectation of the sampling distribution $\E \hat\theta_n = H_0$ and the variance. We also know that the sampling distribution is normally distributed by the central limit theorem. Thus, using the properties of the normal distribution, we can calculate the probability of getting our sample estimate $\hat\theta$ or an estimate even further from the $H_0$ than our $\hat\theta$.
-
-![](images/clipboard-1533818238.png){fig-align="center" width="45%"}
-
-For example, above, our sample estimate $\hat\theta = -2.228$, and our null hypothesis is $\theta = 0$. The yellow parts highlighted are the probability of getting an sample estimate $\hat\theta_n$ as extreme or more extreme than our $\hat\theta = -2.228$.
-
-If this probability of getting our estimate $\hat\theta$ or more extreme is very small (less than 5% typically), we can believe either one of two things:
-
-1.  We got extremely lucky (less than 5% chance) and got a estimate very far from the null hypothesis.
-2.  Or, we [**typically**]{.underline} believe that we were not actually lucky, but instead, the null hypothesis value of $\theta$ is incorrect.
-
-Thus, conclusion 2 essentially means we reject the null hypothesis, and conclude our alternative hypothesis.
-
-<br />
-
-### Mechanics of Hypothesis Testing
-
-To start a hypothesis test, you will need to define a status-quo null hypothesis $H_0$ and an alternative hypothesis $H_1$.
-
-Then, you should take a sample from the population, and compute a sample estimate $\hat\theta$ with your estimator. You can then derive a **standard error** (square root of the variance of the sampling distribution $\V \hat\theta_n$). This standard error formula will differ depending on the statistical model, and we will introduce several of these for regression.
-
-Then, you can compute a test statistic. The name of the test-statistic will differ based on the statistical model, but the formula is always the same:
-
-$$
-\text{test statistic} = \frac{\hat\theta - H_0}{\text{standard error of } \hat\theta}
-$$
-
-This formula might look familiar - we are essentially turning our normal distribution of the estimator into the [standard normal distribution](#the-standard-normal-distribution). The test statistic is essentially measuring how many standard deviations away from the null hypothesis our sample estimate $\hat\theta$ is.
-
-![](images/img_standard_normal.svg){fig-align="center" width="50%"}
-
-Now, go onto the x-axis of our standard normal distribution, and start at the mean (at 0). Now, move in both directions by the distance specified by the test statistic. Mark these two points on either side of the mean. Highlight the are under the sampling distribution beyond these points. The figure below shows a test statistic of 2.228:
-
-![](images/clipboard-1533818238.png){fig-align="center" width="35%"}
-
-The highlighted area is the probability (**p-value**) of getting a sample estimate $\hat\theta$ equal or more extreme than the one we got, assuming the null hypothesis is true. If the p-value is below 0.05 (5%), we have sufficient evidence to reject the null hypothesis. If the p-value is above 0.05 (5%), we cannot reject the null hypothesis.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Note on Distributions
-
-Here, we have stated you use the standard normal distribution.
-
-However, with different tests, you might actually use some different distribution. Most often, you will use the t-distribution.
-
-The reason we use the t-distribution is because we often cannot actually calculate the variance of our sampling distribution. Instead, we estimate it with some uncertainty, so the t-distribution accounts for this uncertainty.
-:::
-
-<br />
-
-### Confidence Intervals
-
-Sometimes, we are not just interested in proving a null hypothesis wrong. We often are interested in the actual parameter value of $\theta$. As we know already, there is variation in our estimates $\hat\theta_n$ between samples.
-
-Thus to account for this uncertainty, we want to create some range around our sample estimate $\hat\theta$ that is likely to contain the true value of $\theta$. This is called a **confidence interval**.
-
-According the the central limit theorem, we know that any sample estimate $\hat\theta_n$ is 95% likely to be within 2 standard deviations of the true population value $\theta$.
-
-Thus, we can construct an interval of 2 standard errors (square deviations) on both sides of our sample estimate $\hat\theta_n$. This means that 95% of the time, our interval will include the true population value of $\theta$. Thus, our 95% confidence interval is:
-
-$$
-(\hat\theta - 1.96se(\hat\theta), \ \ \hat\theta+1.96se(\hat\theta)
-$$
-
--   Why 1.96? Because exactly 95% of a normal distribution is within 1.96 standard deviations of the mean.
-
-This interval means that under repeated sampling and estimating $\hat\theta_n$, 95% of the confidence intervals we construct will include the true population $\theta$ value.
-
-<br />
-
-### Nonparametric Bootstrap
-
-Most traditional statistical tests rely on asymptotic normality established by the central limit theorem. However, asymptotic normality can only be satisfied if we have a large enough sample size. When we are dealing with small samples, we cannot invoke central limit theorem.
-
-Nonparametric Bootstrap, instead of assuming some sampling distribution, is a method to simulate the sampling distribution. This is done by re-sampling from the sample with replacement. The procedure is as follows:
-
-1.  You take the sample you observe (with sample size $n$), and randomly re-sample $n$ observations from that sample with replacement (so allowing observations to repeat in our re-sample).
-2.  Continue to do this over and over again to get $B$ number of re-samples.
-3.  For each re-sample $b$, you should calculate the $\widehat{\theta_b}$. Plot all of the sample $\widehat{\theta_b}$ in a distribution.
-
-You can also estimate the standard error of $\hat\theta$ using the standard deviation of the distribution. However, do not use these standard errors for confidence intervals or tests unless you are confident the sampling distribution is approximately normal.
-
-Nonparametric Bootstrap is also used in some more complex estimators where it is very difficult to calculate or estimate the standard errors.
+And since anything multiplied to a zero turns into zero, we can ignore the $n$ in the first order condition. Thus, we can see, are the exact same minimisation conditions as the conditional expectation function. Thus, OLS is the best approximation of the CEF. This property is very useful for interpreting our regression results.
 
 <br />
 
@@ -484,102 +232,938 @@ Nonparametric Bootstrap is also used in some more complex estimators where it is
 
 ------------------------------------------------------------------------
 
-# **Correlations Between Variables**
+# **Interpreting the Model**
 
-### Correlated Variables
+### Regression Anatomy and Controlling {#regression-anatomy-and-controlling}
 
-In political science and most social sciences, our primary concern is relationships between variables. How does education correlate with voter turnout? Are less educated citizens more anti-immigrant? How do inflation levels correlate with incumbent popularity?
-
-We describe a relationship between two variables $X_i$ and $Y_i$ as a correlation (from now on, all random variables are denoted with a subscript).
-
--   If we are more likely to observe higher values of $Y_i$ when we also observe higher values of $X_i$, that means we have a positive correlation.
--   If we are more likely to observe lower values of $Y_i$ when we also observe higher values of $X_i$, that means we have a negative correlation.
--   If the value of $Y_i$ does not change no matter the value of $X$, then the two variables are uncorrelated.
-
-[Important Note: correlation is **not** causation!]{.underline} We can view correlations between variables graphically:
-
-![](images/clipboard-3489268418.png){fig-align="center" width="60%"}
-
-### Quantifying Correlations
-
-There are two primary ways to quantify correlations between variables. The first is called **covariance**:
+We can split up matrix $X$ into two matrices - $X_1$ containing the regressors we care about, and $X_2$ containing regressors we do not care about. Vector $\beta$ will be split in the same way. Our partitioned model is:
 
 $$
-cov(X_i,Y_i)  = \E((X_i - \E X_i)(Y_i - \E Y_i)) \\
+y = X_1 \beta_1 + X_2 \beta_2 + \eps
 $$
 
-If covariance is negative, that means we have a negative correlation. If covariance is positive, we have a positive correlation. If covariance is 0, we have no correlation.
-
-However, we cannot interpret the actual number of covariance, only the sign. This is because covariance is sensitive to measurement scale: if we change something measured in feet to inches, covariance increases.
-
-Obviously, we do not want a measure that is affected by measurement scale. We want some measure of correlation that can be compared across different scales. This is where the **correlation coefficient** comes in:
+Recall our "residual maker" matrix $M$. First, note a unique property: $\color{red}{MX = 0}$. Now, let us define the residual making matrix for the second part of the regression $M_2$:
 
 $$
-\rho = \frac{cov(X_i, Y_i)}{\sqrt{\V X \V Y}}
+M_2 = I - X_2 (X_2^\top X_2)^{-1}X_2^\top
 $$
 
-Essentially, we are "normalising" the covariance metric by dividing by the variances, which gets rid of the impact of scale.
+Now, let us multiply both sides of our above partitioned model by $M_2$:
 
-Correlation coefficients are always between -1 and 1. Values closer to -1 and 1 are stronger correlations, and values closer to 0 are weaker correlations.
+$$
+\begin{align}
+M_2 y & = M2(X_1\beta_1 + X_2\beta_2 + \eps) \\
+M_2 y & = M_2X_1 \beta_1 + M_2 X_2 \beta_2 + M_2 \eps && \text{(multiply out)} \\
+M_2 y & = M_2 X_1 \beta_1 + M_2 \eps && (\because M_2X_2 = 0, \ \because \color{red}{MX = 0}\color{black})
+\end{align}
+$$
 
-![](images/clipboard-3774741322.png){fig-align="center" width="80%"}
+Now, let us denote $\tilde{y} := M_2 y$, $\tilde{X}_1: = M_2 X_1$, and error $\tilde\eps := M_2 \eps$. Then we get the following regression equation and OLS coefficient estimates:
 
-We can see here that stronger correlations have points that fit closer to a straight line.
+$$
+\tilde y = \tilde X_1 \beta_1 + \tilde\eps
+$$
+
+$$
+\hat\beta_1 = (\tilde X_1^\top \tilde X_1)^{-1}\tilde X_1 ^\top \tilde y
+$$
+
+Remember that vector $\hat{\beta}_1$ is our coefficient estimates for $X_1$, the portion of $X$ we are interested in. This is equivalent to the coefficient estimates had we not partitioned the model.
+
+Notice how in the formula, we have $\tilde{X}_1$. What is $\tilde{X}_1 := M_2 X_1$? Well, we know that $M_2 X_2 = 0$. That tells us that any part of $X_1$ that was correlated to $X_2$ also became 0. [Thus, $\tilde{X}_1$ is the part of $X_1$ that is uncorrelated with $X_2$.]{.underline} Essentially, we are **partialling out** the effect of other variables. [This is why we can "control" for other variables when focusing on the coefficient of one (or a few) variables]{.underline}.
 
 <br />
 
-### Best-Fit Lines and Magnitude
+### Interpretation of Coefficients
 
-Correlation coefficients have a huge weakness: they measure the "strength" of correlation, but not the magnitude.
+Above, we showed OLS coefficients partial out (control) for the other control variables in the regression. Here, we formalise the interpretations. I define $\hat\beta_j \in \{\hat\beta_1, \dots, \hat\beta_p\}$, multiplied to $X_{ij} \in \{X_{i1}, \dots, X_{ip}\}$. $\hat\beta_0$ is the intercept.
 
-![](images/clipboard-1623227249.png){fig-align="center" width="50%"}
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|               | **Continuous** $X_{ij}$                                                                                                                             | **Binary** $X_{ij}$                                                                                                                                          |
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| $\hat\beta_j$ | For every one unit increase in $X_{ij}$, there is an expected $\hat\beta_j$ unit change in $Y_i$, holding all other explanatory variables constant. | There is a $\hat\beta_j$ unit difference in $Y_i$ between category $X_{ij} = 1$ and category $X_{ij} = 0$, holding all other explanatory variables constant. |
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| $\hat\beta_0$ | When all explanatory variables equal 0, the expected value of $Y_i$ is $\hat\beta_0$.                                                               | For category $X_{ij} = 0$, the expected value of $Y_i$ is $\hat\beta_0$ (when all other explanatory variables equal 0).                                      |
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-We can see above that these two relationships have the same strength of correlation. However, the slope of the left graph is much higher. Why is the slope important? Well, the slope is essentially how much $Y_i$ changes when $X_i$ increases by 1. It is the **magnitude** of our relationship.
+Note: these interpretations are not causal effects, just correlations. We also have not discussed if the actual estimates of $\hat\beta_j$ are reliable (which will be covered in the classical least squares theory below).
 
-Thus, we might wish to instead look at relationships with a best-fit straight line. Take this figure below:
+::: {.callout-note collapse="true" appearance="simple"}
+## Standardised Interpretations
 
-![](images/clipboard-3708176954.png){fig-align="center" width="45%"}
+Sometimes, unit change is not very useful - as it depends on how the variable is measured. For example, what does a 5 unit change in democracy mean? Is that big, small? It is hard to tell.
 
-We can express this line mathematically as $y = mx + b$, where $m$ is the slope - the amount $y$ change for every one unit increase in $x$. Thus, the slope $m$ is a measurement of the magnitude of correlation between $x$ and $y$.
+Instead, we can look at the change in standard deviations. For a one standard deviation $\sigma_X$ increase in $X_{ij}$, there is an expected $\frac{\beta_j\sigma_X}{\sigma_Y}$-standard deviation change in $Y_i$. The proof is provided below.
+
+**Proof**: For simplicity, let us use a simple linear regression $\E(Y_i|X_i) = \beta_0 + \beta_1 X_i$:
+
+$$
+\begin{align}
+& \E \left(\frac{Y_i}{\sigma_Y} | X_i = x + \sigma_X \right ) - \E \left(\frac{Y_i}{\sigma_Y} | X_i = x \right ) \\
+& = \frac{\E(Y_i|X_i = x+ \sigma_X)}{\sigma_Y} - \frac{\E(Y_i|X_i = x)}{\sigma_Y} &&\text{(property of expectation)} \\
+& = \frac{\E(Y_i|X_i = x+ \sigma_X) - \E(Y_i|X_i = x)}{\sigma_Y} && \text{(combine into 1 fraction)}\\
+& = \frac{\beta_0 + \beta_1(x+\sigma_X) - [\beta_0 + \beta_1(x)]}{\sigma_Y} && \text{(plug in regression models)}\\
+& = \frac{\beta_1\sigma_X}{\sigma_Y} && \text{(cancel and simplify)}
+\end{align}
+$$
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Categorical Explanatory Variables
+
+Take an explanatory variable $X_i$, which has $g$ number of categories $1, \dots, g$. To include $X_i$ in our regression, we would create $g-1$ dummy (binary) variables, to create the following regression model:
+
+$$
+\E(Y_i|X_i) = \beta_0 + \sum\limits_{j=1}^{g-1} \beta_j X_{ij}
+$$
+
+-   Categories $1, \dots, g-1$ get there own binary variable $X_{i1}, \dots, X_{ig-1}$.
+-   Category $g$ (the reference category) does not get its own variable. We can change which category we wish to be the reference.
+
+Interpretation is as follows (category $j$ is any one of category $1, \dots, g-1$).
+
+-   $\beta_j$ is the difference in expected $Y_i$ between category $j$ and the reference category $g$.
+-   $\beta_0$ is the expected $Y_i$ of the reference category $g$.
+-   Thus, category $j$ has an expected $Y_i$ of $\beta_0 + \beta_j$.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Binary $Y_i$: Linear Probability Model
+
+The standard linear model assumes a continuous $Y_i$ variable. However, we can adapt the linear model to fit binary $Y_i$ variables. When $Y_i$ is binary and only has values $Y_i \in \{0, 1\}$, our linear model is actually no longer a predictor of $Y_i$, since our regression will output values that are not 0 and 1.
+
+Instead, our linear model will now predict the **probability** of unit $i$ having $Y_i = 1$. The is due to the [conditional expectation interpretation of regression](#conditional-expectation-function), and the expectation of the [stats distribution](quant1.qmd#bernoulli-and-binomial-distribution):
+
+$$
+\begin{align}
+\E(Y_i|X_i) & = \underbrace{0 \times \P(Y_i = 0|X_i) \ + \ \P(Y_i = 1|X_i)}_{\text{a weighted avg. formula}} \\
+& = \P(Y_i=1|X_i)
+\end{align}
+$$
+
+Thus, we can rewrite our linear model with the primary outcome being $\P(Y_i = 1|X_i)$. This model is called the **linear probability model**:
+
+$$
+\P(Y_i = 1|X_i) = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i
+$$
+
+Our interpretations of coefficients also slightly change.
+
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                     | **Continuous** $X_{ij}$                                                                                                                                                                                                  | **Binary** $X_{ij}$                                                                                                                                                                                                              |
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| $\hat\beta_j$       | For every one unit increase in $X_{ij}$, there is an expected $\hat\beta_j \times 100$ percentage point change in the probability of a unit being in category $Y_i=1$, holding all other explanatory variables constant. | There is a $\hat\beta_j\times 100$ percentage point difference in the probability of a unit being in category $Y_i=1$ between category $X_{ij} = 1$ and category $X_{ij} = 0$, holding all other explanatory variables constant. |
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_0 \times 100$                                                                                         | For category $X_{ij} = 0$, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_j \times 100$ (when all other explanatory variables equal 0).                                                              |
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+:::
 
 <br />
 
-### Simple Linear Regression
+### Goodness of Fit with R-Squared {#goodness-of-fit-with-r-squared}
 
-Simple Linear Regression is a mathematical model of a best fit line. It takes the following form:
-
-$$
-Y_i = \beta_0 + \beta_1X_i + \eps_i
-$$
-
--   Where $X_i$ and $Y_i$ are random variables.
--   Where $\beta_1$ is the slope - the measurement of the relationship between $x$ and $y$. $\beta_0$ is the intercept (y-intercept).
--   $\eps_i$ is the error term: the vertical distance between the actual points and the best-fit line.
-
-We have some special terminology for the parts of the simple linear regression. The **independent variable**, also called the explanatory variable or the regressor, is labelled $X_i$. This is the variable multiplied to the slope parameter $\beta_1$. The **dependent variable**, also called the response or outcome variable, is labelled $Y_i$.
-
-We can also write regression as the [conditional expectation](#conditional-distributions) $\E(Y_i | X_i)$ of the conditional distribution.
+Recall our fitted values equation, shown [previously](#orthogonal-projection-of-ols), can be rewritten with the projection matrix $P$:
 
 $$
-\E(Y_i|X_i) = \beta_0 + \beta_1 X_i
+\begin{align}
+\hat y = X(X^\top X)^{-1} X^\top y \ = \ \color{blue}{P}\color{black}y && (\because \color{blue}{P := X(X^\top X)^{-1} X^\top})
+\end{align}
 $$
 
-Throughout this chapter, we have talked about statistical inference and estimators. This is no different in linear regression. The above equation is what we call our population model (also called the data generating process):
+One thing we might be interested in is how well our model $Py$ explains the actual $y$. One way we can do this is the scalar product: the scalar product $y^\top Py$ describes the shadow the actual $y$ casts on our projected model. However, this value will change based on the scale of our $y$ variable. Thus, we will divide it by $y^\top y$, which is the "maximum" shadow possible (perfect shadow). This ratio is called $R^2$.
 
 $$
-Y_i = \beta_0 + \beta_1X_i + \eps_i
+R^2 = \frac{y^\top Py}{y^\top y}
 $$
 
-However, once again, we cannot know the true population values of our intercept and slope. So, we will have a sample model of the following:
+We can also reason about $R^2$ in a another way. The total amount of variation in $y$ is called the total sum of squares (SST). The part of $y$ we cannot explain is the Sum of Squared Residuals (SSR) that we minimised for OLS esimtation. That implies that the remaining part SST-SSR is the variation in $y$ that our model explains, called the sum of explained squares (SSE). $R^2$ can be though of the ratio of explained variation in $y$ by our model to the total variation in $y$:
 
 $$
-Y_i = \hat\beta_0 + \hat\beta_1X_i + \hat\eps_i
+R^2 = \frac{SSE}{SST} = \frac{SST - SSR}{SST} = 1 - \frac{SSR}{SST} = 1 - \frac{\sum (Y_i - \hat Y_i)^2}{\sum(Y_i - \bar Y)^2}
 $$
 
-We will discuss the details of this estimation process of $\hat\beta_0, \hat\beta_1, \hat\eps_i$ in the next chapter, and how we can conduct statistical inference and tests. The points on our predicted best-fit line (so excluding error $\widehat{u_i}$) are called our **fitted values**:
+R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained by our explanatory variables. R-Squared is always between 0 and 1 (0%-100%). Higher values indicate our model better explains the variation in $y$.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Classical Least Squares Theory**
+
+### The Classical Assumptions {#the-classical-assumptions}
+
+The classical linear model makes several assumptions:
+
+1\) **Linearity in Parameters**. This means that the linear model must be able to be written in the form $y = X\beta + \eps$. This [does not mean the best-fit line must be linear]{.underline} (as we will explore later).
+
+2\) **Independent and Identically Distributed (i.i.d.)**. Essentially, this means any two observations $i$ and $j$ are sampled from the same random variable distribution with the same probabilities.
+
+3\) **No Perfect Multicolinearity**. This means that no explanatory variables $X_{i1}, \dots, X_{ip}$ can be written as an exact linear combination of other explanatory variables in the model. This is needed for the OLS formula.
+
+4\) **Zero Conditional Mean** $\E(\eps|X) = 0$. This can be broken down into two parts. First, $\E(\eps) = 0$: This is always met since if it is not 0, you can adjust $\beta_0$ until it is 0. More importantly, the assumption of **exogeneity** $\E(X^\top \eps) = 0$. This means that all regressors $X_{ij}$, and any combination of regressors, should be uncorrelated with the error term $\eps$.
+
+5\) **Spherical Errors**. This is an assumption made on the variance-covariance matrix of the error terms $\eps_i$:
 
 $$
-\hat Y_i = \hat\beta_0 + \hat\beta_1X_i
+\underbrace{\V(\eps|X)}_{\mathrm{cov. \ matrix}} = \begin{pmatrix}
+\V\eps_1 & cov(\eps_1, \eps_2) & cov(\eps_1, \eps_3) & \dots \\
+cov(\eps_2, \eps_1) & \V\eps_2 & cov(\eps_2, \eps_3) & \dots \\
+cov(\eps_3, \eps_1) & cov(\eps_3, \eps_2) & \V\eps_3 & \vdots \\
+\vdots & \vdots & \dots & \ddots
+\end{pmatrix} = \sigma^2 I_n = \begin{pmatrix}
+\sigma^2 & 0 & \dots & 0 \\
+0 & \sigma^2 & \dots & 0 \\
+\vdots & \vdots & \ddots & 0 \\
+0 & 0 & \dots & \sigma^2
+\end{pmatrix}
+$$ {#eq-homo}
+
+This assumption can also be broken into two parts. **No** **Autocorrelation** is the assumption that all error terms are uncorrelated $cov(\eps_i, \eps_j) = 0$, and is directly a result of the earlier i.d.d. assumption. The second part is **Homoscedasticity**, which says that all the variances of each error term $\V(\eps_i)$ is constant at some value $\sigma^2$, which implies $X$ has no impact on the variance of $\eps_i$.
+
+If homoscedasticity is violated but 'no autocorrleation' is still met, we have heteroscedasticity. We will discuss heteroscedasticity later below, and we will not worry too much about autocorrelation here.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Visualising Homoscedasticity
+
+An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all $\hat\eps_i$):
+
+![](images/clipboard-1713529842.png){fig-align="center" width="90%"}
+
+Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of $X_i$.
+
+The heteroscedasticity (when homoscedasticity is violated) residuals have a clear pattern - the up-down variance is smaller when $X_i$ is smaller, and the up-down variance is larger when $X_i$ is larger.
+
+Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.
+:::
+
+<br />
+
+### Unbiasedness of OLS {#ols-as-an-unbiased-estimator}
+
+OLS is an [unbiased estimator](stats.qmd#finite-sample-properties-of-estimators) of the relationship between any $X_{ij}$ and $Y_i$ under the first 4 [classical assumptions](#the-classical-assumptions): linearity, i.i.d., no perfect multicollinearity, and zero-conditional mean.
+
+Let us prove OLS is unbiased - i.e. $\E\hat\beta = \beta$ under the 4 classical assumptions. Let us manipulate our OLS solution:
+
+$$
+\begin{align}
+\hat\beta & = (X^\top X)^{-1} X^\top y \\
+& = (X^\top X)^{-1} X^\top(\color{blue}{X\beta + \eps}\color{black}) && (\because \color{blue}{y = X\beta + \eps}\color{black}) \\
+& = \underbrace{(X^\top X)^{-1} X^\top X}_{= \ I}\beta + (X^\top X)^{-1}X^\top \eps && \text{(multiply out)} \\
+& = \beta + (X^\top X)^{-1}X^\top \eps
+\end{align}
+$$ {#eq-simplify}
+
+Now, let us take the expectation of $\hat\beta$ conditional on $X$. Remember condition 4, $\E(\eps | X) = 0$:
+
+$$
+\E(\hat\beta | X) = \beta + (X^\top X)^{-1} \underbrace{\E(\eps | X)}_{= \ 0} \  = \ \beta
 $$
 
-The simple linear regression model is very simple. In the real world, rarely does only one thing cause another. For example, changes in income could be caused by age, but also education. Instead of just one explanatory variable $X_i$, we can create regression models with multiple explanatory variables $X_{i1}, X_{i2}, \dots, X_{ip}$. This is the multiple linear regression that we will introduce in the next chapter.
+Now, we can use the [law of iterated expectations (LIE)](stats.qmd#expectation-and-variance) to conclude this proof:
+
+$$
+\begin{align}
+\E \hat\beta & = \E(\E(\hat\beta|X)) && (\because \mathrm{LIE}) \\
+& = \E(\color{blue}{\beta}\color{black}) && (\because \color{blue}{\E(\hat\beta | X = \beta)}\color{black}) \\
+& = \beta && \text{(expectation of a constant)}
+\end{align}
+$$
+
+Thus, OLS is unbiased under the 4 conditions above. This is extremely desirable, as in causal inference (which is the purpose of this course), we will want unbiased estimators that can accurately find the causal effects of one variable on another. In fact, most of the methods we cover in later chpaters will be about trying to satisfy these conditions.
+
+<br />
+
+### Variance of the OLS Estimator
+
+We want to find the variance of our estimator's sampling distribution, $\V(\hat\beta | X)$, under all 5 of the [classical assumptions](#the-classical-assumptions). First, let us start off where we left off in @eq-simplify:
+
+$$
+\begin{align}
+& \hat\beta = \beta + (X^\top X)^{-1} X^\top \eps \\
+& \V(\hat\beta | X) = \V(\beta + (X^\top X)^{-1} X^\top \eps)
+\end{align}
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Lemma: Property of Variance
+
+**Lemma**: If $\eps$ is an $n$ dimensional vector of random variables, $c$ is an $m$ dimensional vector, and $B$ is an $n \times m$ dimensional matrix with fixed constants, then the following is true (I will not prove this lemma here, but it is provable):
+
+$$
+\V(c + B\eps) =  B \V(\eps) B^\top
+$$ {#eq-lemma}
+:::
+
+$\beta$ is a vector of fixed constants. $(X^\top X)^{-1} X^\top \eps$ can be imagined as a matrix of fixed constants, since we are conditioning the variance on $X$ (so for each $X$, it is fixed). With the Lemma above:
+
+$$
+\begin{align}
+\V (\hat\beta | X) & = (X^\top X)^{-1}X^\top \V(\eps|X) [(X^\top X)^{-1}X^\top]^{-1} && \text{(lemma)} \\
+& = (X^\top X)^{-1}X^\top \V(\eps|X) \color{blue}{X(X^\top X)^{-1}} && \color{black}(\because \color{blue}{[(X^\top X)^{-1}X^\top]^{-1} = X(X^\top X)^{-1}} \color{black})
+\end{align}
+$$ {#eq-var}
+
+Now, assuming spherical errors in @eq-homo, we can conclude the derivation.
+
+$$
+\begin{align}
+\V (\hat\beta | X) & = (X^\top X)^{-1}X^\top \color{blue}{\sigma^2I_n}\color{black}{X} (X^\top X)^{-1} && (\because \color{blue}{\V(\eps|X) = \sigma^2 I_n}\color{black}) \\
+& = \color{blue}{\sigma^2}\color{black}{\underbrace{(X^\top X)^{-1}X^\top X}_{= \ I}(X^\top X)^{-1}} && \text{(rearrange and simplify)} \\
+& = \sigma^2 (X^\top X)^{-1}
+\end{align}
+$$
+
+This is the variance of the sampling distribution of $\hat\beta$. We will use this for the Gauss-Markov theorem (below), and also statistical inference later.
+
+<br />
+
+### Gauss-Markov Theorem
+
+The Gauss-Markov Theorem states that if all 5 [classical assumptions](#the-classical-assumptions) are met, the OLS estimator is the **best linear unbiased estimator** (BLUE) - the unbiased linear estimator with the lowest variance. Any linear estimator takes the form $\tilde{\beta} = Cy$, including OLS. For any linear estimator $\tilde{\beta} = Cy$ to be unbiased, we need to assume $\color{red}{CX = I}$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Proof $CX = I$ For a Unbiased Linear Estimator
+
+For any linear estimator $\tilde{\beta} = Cy$ to be unbiased, we need to assume $\color{red}{CX = I}$. The proof of this is as follows:
+
+$$
+\begin{align}
+\tilde\beta =  C & (\color{blue}{C\beta + \eps}\color{black}) && (\because \color{blue}{y = X\beta + \eps}\color{black}) \\
+=  C & X\beta + C\eps && \text{(multiply out)} \\
+\E(\tilde\beta | X) & = \E(C X\beta + C\eps) \\
+& = CX\beta + C \underbrace{\E(\eps | X)}_{= \ 0} && \text{(take constants out of exp.)} \\
+& = CX\beta \\
+& = \color{red}{I}\color{black}\beta = \beta && (\because \color{red}{CX = I}\color{black}) \\
+\E \tilde\beta & = \E( \E(\tilde\beta|X)) && \text{(law of iterated expect.)} \\
+& = \E(\color{blue}{\beta}\color{black}) && (\because \color{blue}{\E(\tilde\beta|X) = \beta}\color{black}) \\
+& = \beta && \text{(expect. of a constant)}
+\end{align}
+$$
+
+Thus, we have shown $\color{red}{CX = I}$ is a necessary condition for any linear estimator $\tilde{\beta} = Cy$ to be unbiased.
+:::
+
+Now, let us calculate the variance of $\tilde{\beta}$, taking into consideration the lemma (@eq-lemma) used in the OLS variance:
+
+$$
+\begin{align}
+\V(\tilde\beta | X) & = \V(Cy|X) \\
+& = \V(C(\color{blue}{X\beta + \eps}\color{black})|X) && (\because \color{blue}{y = X\beta + \eps}\color{black}) \\
+& = \V(\underbrace{CX}_{= I}\beta + C\eps | X) && \text{(multiply out)} \\
+& = \V(\beta + C\eps | X) \\
+& = C \V(\eps | X) C^\top && \text{(using lemma)} \\
+& = C \color{blue}{\sigma^2 I_n} \color{black} C^\top && (\mathrm{homoscedasticity} \ \color{blue}{\V(\eps|X) = \sigma^2 I_n}\color{black}) \\
+& = \sigma^2 CC^\top && \text{(rearrange and simplify)}
+\end{align}
+$$
+
+Now, we want to show that the variance of the OLS estimator $\hat{\beta}$ (under homoscedasticity) is smaller than any linear estimator $\tilde{\beta}$. Let us find the difference between the variances of estimator $\tilde{\beta}$ and $\hat{\beta}$. Note: since $\color{red}{CX = I}$, the following is also true: $\color{red}{ X^\top C^\top = (CX)^\top = I}$.
+
+$$
+\begin{align}
+\V(\tilde\beta | X)  - \V(\hat\beta|X) & = \sigma^2 CC^\top - \sigma^2 (X^\top X)^{-1} \\
+& = \sigma^2(CC^\top - (X^\top X)^{-1}) && (\text{factor out }\sigma^2) \\
+& = \sigma^2(CC^\top - \color{red}{CX}\color{black}(X^\top X)^{-1} \color{red}{X^\top C^\top}\color{black}) && (\because \color{red}{X^\top C^\top = CX = I}\color{black}) \\
+& = \sigma^2 C(I - X(X^\top X)^{-1} X^\top) C^\top && (\text{factor out }C, C^\top) \\
+& = \sigma^2 C \color{blue}{M}\color{black}C^\top && (\text{residual maker matrix } \color{blue}{M}\color{black})
+\end{align}
+$$
+
+Since $\sigma^2 CM C^\top$ is positive semi-definite (I will not prove this, but it is provable with the properties of $M$ introduced earlier), we know that $V(\tilde{\beta}| X) > V(\hat{\beta}| X)$. Thus, OLS is BLUE under the Gauss-Markov Theorem.
+
+<br />
+
+### Asymptotic Consistency of OLS
+
+We know OLS is unbiased under the first 4 [classical assumptions](#the-classical-assumptions): linearity, i.i.d., no perfect multiocllinearity, and zero-conditional mean. OLS is also an [asymptotically consistent estimator](stats.qmd#asymptotic-properties-of-estimators) of $\beta_j$ under the first 3 classical assumptions, and one weakened version of the zero-conditional mean.
+
+For asymptotic consistency, we replace zero-conditional mean with **zero-mean and exogeneity**: $\E(\eps_i) = 0$, and $Cov(x_i, \eps_i) = 0$, which implies $E(X_i \eps_i) = 0$. This means that no regressor should be correlated with $\eps$. This is weaker than Zero-Conditional mean, since it means a function of regressors can be correlated with $\eps_i$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Lemma: Vector Notation
+
+The following statements are true (with $x_i$ being a vector and $\eps_i$ being a scalar):
+
+$$
+\begin{split}
+& X^\top X = \sum\limits_{i=1}^n x_i x_i^\top\\
+&  X^\top \mathbf \eps = \sum\limits_{i=1}^n x_i \eps_i
+\end{split}
+$$
+:::
+
+Let us start of where we left of from @eq-simplify. Using vector notation, [law of large numbers](stats.qmd#asymptotically-consistent-estimators), and zero-mean and exogeneity condition:
+
+$$
+\begin{align}
+\hat\beta & = \beta + (X^\top X)^{-1} X^\top \eps \\
+& = \beta \left( \sum\limits_{i=1}^n x_i x_i^\top \right)^{-1} \left( \sum\limits_{i=1}^n x_i \eps_i \right) && \text{(vector notation)} \\
+& = \beta + \left( \frac{1}{n}\sum\limits_{i=1}^n x_i x_i^\top \right)^{-1} \left( \frac{1}{n} \sum\limits_{i=1}^n x_i \eps_i \right) && (\left(\frac{1}{n}\right)^{-1}, \frac{1}{n} \text{ cancel out})
+\end{align}
+$$
+
+$$
+\begin{align}
+\mathrm{plim}\hat\beta & = \beta + \left( \mathrm{plim} \frac{1}{n}\sum\limits_{i=1}^n x_i x_i^\top \right)^{-1} \left( \mathrm{plim}\frac{1}{n} \sum\limits_{i=1}^n x_i \eps_i \right) \\
+& = \beta + (\E(x_i x_i^\top))^{-1} \underbrace{\E(x_i \eps_i)}_{= 0} = \beta && \text{(law of large numbers)}
+\end{align}
+$$
+
+Thus, OLS is asymptotically consistent under the 4 conditions above. Note that it is possible for OLS to be consistent but biased (if we only meet the weakened zero-mean and exogeneity condition, and not the full zero-conditional mean condition). However, asymptotic consistency is still valuable if we have large sample sizes.
+
+<br />
+
+### Implications of Heteroscedasticity
+
+So far, we have assumed that the [classical assumptions](#the-classical-assumptions) are met. However, this is often not the case, especially with the final assumption: spherical errors (homoscedasticity + no autocorrelation).
+
+**Heteroscedasticity** is when homoscedasticity is violated - which implies each $i$ (based on its $X$ values) has its own error: $\V(\eps_i|X) = \sigma_i^2$. We still assume no autocorrelation.
+
+$$
+\V(\eps| X) = \Omega = \begin{pmatrix}
+\sigma^2_1 & 0 & \dots & 0 \\
+0 & \sigma^2_2 & \dots & 0 \\
+\vdots & \vdots & \ddots & 0 \\
+0 & 0 & \dots & \sigma^2_n
+\end{pmatrix}
+$$
+
+What are the implications of heteroscedasticity? First, heteroscedasticity [**does not** bias OLS]{.underline}, as the unbiasedness proof only relies on the first 4 classical assumptions. Second, heteroscedasticity means OLS is [no longer BLUE]{.underline} - i.e. there exists are more efficient unbiased linear estimator (the generalised least squares estimator).
+
+Third, and most relevant to us, is that the OLS variance formula (and standard errors) are no longer valid. Instead, we have to use the Huber-White Standard Errors (also called **robust standard errors**). This is because if we recall from @eq-var, we originally simplified this equation using the homoscedasticity assumption. Instead, for robust standard errors, we start from @eq-var, and plug in our error covariance matrix $\Omega$ from above:
+
+$$
+\V(\hat{\beta}| X)  = (X^\top X)^{-1} X^\top \color{blue}{\begin{pmatrix}
+\sigma^2_1 & 0 & \dots & 0 \\
+0 & \sigma^2_2 & \dots & 0 \\
+\vdots & \vdots & \ddots & 0 \\
+0 & 0 & \dots & \sigma^2_n
+\end{pmatrix}}\color{black} X ( X^\top X)^{-1}
+$$
+
+We will not discuss what happens when autocorrelation is violated in much detail, as this is not a huge concern in many causal inference designs (as we will see, most causal designs invoke some form of "as-if" randomisation). There are special standard errors for autocorrelation as well.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Statistical Inference**
+
+### Normality and Standard Errors
+
+We need to know the form of the $\hat\beta$ sampling distribution. We have two options here:
+
+1.  If our sample size is sufficiently large, we can invoke the central limit theorem, which says that the sampling distribution of $\hat\beta$ is approximately normal if our sample size $n$ is large enough.
+2.  Or, we can impose a condition of normality of the error terms: $\eps | X \sim \mathcal N(0, \sigma^2 I)$. This will ensure the sampling distribution of $\hat\beta$ is normally distributed. (Note, the mean 0 and variance $\sigma^2 I$ come from the [classical assumptions](#the-classical-assumptions) of zero-conditional mean and spherical errors).
+
+Now, we will need the standard error of the sampling distribution. We know the standard error is the square root of the variance of the sampling distribution, which we derived (assuming the classical assumptions are met) as:
+
+$$
+\V(\hat\beta | X) = \sigma^2 (X^\top X)^{-1}
+$$
+
+We do not know the value of $\sigma^2$ as it is a population parameter. So, we estimate it with an unbiased estimator $s^2$:
+
+$$
+\sigma^2 \approx s^2 = \frac{\hat{\eps}^\top \hat{\eps}}{n-k-1}
+$$
+
+While this estimator is unbiased, the estimator $s^2$ has variance. The implication of this is that we can no longer use the standard normal distribution for our sampling distribution, and instead, use the t-distribution, which has fatter tails and a lower peak to account for this variance in $s^2$.
+
+If we believe **heteroscedasticity is violated** (which we assume by default), we should use the heteroscedasticity variance of OLS:
+
+$$
+\V(\hat{\beta}| X)  = (X^\top X)^{-1} X^\top \Omega\color{black} X ( X^\top X)^{-1}
+$$
+
+The $\sigma^2_i$ in the $\Omega$ matrix can be estimated with $s_i^2 = \hat\eps_i^2$. The robust standard errors can be derived by taking the square root. [We typically use robust-standard errors in causal inference by default, unless we can prove homoscedasticity.]{.underline}
+
+<br />
+
+### Hypothesis Testing
+
+With our (robust) standard errors, we can run [hypothesis tests](stats.qmd#intuition-of-hypothesis-testing) on our coefficients to see if we have a relationship between two variables $X_{ij}$ and $Y_i$. Our typical hypotheses are:
+
+-   $H_0 : \beta_j = 0$ (i.e. there is no relationship between $X_{ij}$ and $Y_i$).
+-   $H_1:\beta_j ≠ 0$ (i.e. there is a relationship between $X_{ij}$ and $Y_i$).
+
+First, we calculate the t-test statistic, where $H_0$ is the value set in the null hypothesis (typically 0):
+
+$$
+t = \frac{\hat\beta_j - H_0}{\widehat{se}(\hat\beta_j)}
+$$
+
+Now, we consult a t-distribution of $n-k-1$ degrees of freedom. We find points $t$ and $-t$ on our t-distribution, and highlight the areas under the curve further away from the 0 at these two points. In the figure below, $t = 2.228$:
+
+![](images/clipboard-1533818238.png){fig-align="center" width="45%"}
+
+The area highlighted, divided by the entire area under the curve, is the p-value. The p-value we get is the probability of getting a test statistic equally or more extreme than the one we got, given the null hypothesis is true.
+
+-   If $p<0.05$, we believe the probability of a null hypothesis is low enough, such that we reject the null hypothesis (that there is no relationship between $X_{ij}$ and $Y_i$), and conclude our alternate hypothesis (that there is a relationship between $X_{ij}$ and $Y_i$).
+-   If $p > 0.05$, we cannot reject the null hypothesis, and cannot reject there is no relationship between $X_{ij}$ and $Y_i$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Confidence Intervals
+
+The 95% [confidence intervals](stats.qmd#confidence-intervals) of coefficients have the following bounds:
+
+$$
+(\hat\beta_j - 1.96 \widehat{se}(\hat\beta_j), \ \ \hat\beta_j + 1.96 \widehat{se}(\hat\beta_j))
+$$
+
+-   The 1.96 is an approximation assuming a normal distribution. The actual confidence intervals (calculated by computers) will use a t-distribution of $n-k-1$, which will result in a slightly different multiplicative factor.
+
+The confidence interval means that under repeated sampling and estimating $\hat\beta_j$, 95% of the confidence intervals that we construct will include the true $\beta_j$ value in the population.
+
+If the confidence interval contains 0, we cannot conclude a relationship between $X_{ij}$ and $Y_i$, as 0 is a plausible value of $\beta_j$. These results will always match those of the t-test.
+:::
+
+<br />
+
+### F-Tests {#f-tests}
+
+F-tests are used to test more than one coefficient at a time. For example, you might want to test if two variables or coefficients are jointly significant. The utility of this will become more clear when we talk about categorical explanatory variables and polynomial transformations. Our hypotheses in a F-test will be:
+
+-   $M_0 : Y_i = \beta_0 + \sum\limits_{j=1}^g \beta_{j} X_{ij} + \eps_i$ (the smaller null model with $g$ variables).
+-   $M_a : Y_i = \beta_0 + \sum\limits_{j=1}^g \beta_{j} X_{ij} + \sum\limits_{j=g+1}^p \beta_{j} X_{ij} + \eps_i$ (the bigger model with the original $g$ variables + additional variables up to $p$).
+
+F-tests compare the [R-squared](#goodness-of-fit-with-r-squared) of the two models through the F-statistic:
+
+$$
+F = \frac{(SSR_0 - SSR_a) / (k_a - k_0)}{SSR_a /(n - k_a - 1)}
+$$
+
+We then consult a F-distribution with $k_a - k_0$ and $n-k_a - 1$ degrees of freedom, obtaining a p-value (in the same way as the t-test). The p-value we get is the probability of getting a test statistic equally or more extreme than the one we got, given the null hypothesis is true.
+
+-   If $p<0.05$, the we believe the probability of the null hypothesis is low enough, such that we reject the null hypothesis (that $M_0$ is the better model), and conclude our alternate hypothesis (that $M_a$ is a better model). This also means the extra coefficients in $M_a$ are jointly statistically significant.
+-   If $p > 0.05$, we cannot reject the null hypothesis, and cannot reject that $M_0$ is a better model. Thus, the extra coefficients in $M_a$ are jointly not statistically significant.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Model Specification Issues**
+
+### Omitted Variable Bias
+
+From the [regression anatomy theorem](#regression-anatomy-and-controlling), we know that $\hat\beta_j$ is the relationship of $Y_i$ and the part of $X_{ij}$ that is uncorrelated with all the other explanatory variables. That implies that if we omit a variable that is correlated with both $X_{ij}$ and $Y_i$, that we will get a different (biased) coefficient estimate. This is called **omitted variable bias**.
+
+Suppose there is some variable $Z_i$ that we have not included in a "short" regression. The actual, "true" regression of the population, would include this confounder $Z_i$
+
+$$
+\underbrace{y = X\beta + \eps}_{\text{short regression}}
+ \qquad \underbrace{y = X\beta + z\delta + \eps}_{\text{true regression with z} }
+$$
+
+The [OLS estimate](#ordinary-least-squares-estimator) of the "short regression" excluding confounder $Z_i$ is:
+
+$$
+\begin{align}
+\hat\beta & = (X^\top X)^{-1}X^\top y \\
+& = (X^\top X)^{-1}X^\top(\color{blue}{X\beta + z\delta + \eps}\color{black}) && (\because \color{blue}{y = X\beta + z\delta + \eps}\color{black}) \\
+& = \underbrace{(X^\top X)^{-1}X^\top X}_{= \ I}\beta + (X^\top X)^{-1}X^\top z\delta + (X^\top X)^{-1} X^\top \eps && \text{(multiply out)} \\
+& = \beta + (X^\top X)^{-1}X^\top z\delta + (X^\top X)^{-1} X^\top \eps
+\end{align}
+$$
+
+Now, let us find the expected value of $\hat\beta$, which is conditional on $X, z$, and simplify (using [zero conditional mean](#the-classical-assumptions)):
+
+$$
+\begin{align}
+\E(\hat\beta | X, z) & = \beta + (X^\top X)^{-1}X^\top z \delta + (X^\top X)^{-1} X^\top \underbrace{\E(\eps | X, z)}_{= 0} \\
+& = \beta + (X^\top X)^{-1}X^\top z \delta
+\end{align}
+$$
+
+Now, what if we had a regression of outcome variable being the confounder $z$, on the explanatory variables $X$, such that $z = X\eta + u$. Our OLS estimate would have the solution:
+
+$$
+\hat\eta = (X^\top X)^{-1} X^\top z
+$$
+
+Now, we can plug $\hat\eta$ into our expected value of $\hat\beta$. Assume our estimator $\hat{\eta}$ is unbiased:
+
+$$
+\begin{align}
+\E(\hat\beta | X, z) & = \beta + (X^\top X)^{-1}X^\top z \delta\\
+& = \beta + \color{blue}{\hat\eta}\color{black}\delta && (\because \color{blue}{\hat\eta = (X^\top X)^{-1} X^\top z }\color{black}) \\
+\E\hat\beta & = \E(\E(\hat\beta|X, z)) && \text{(law of iterated expect.)} \\
+& = E(\color{blue}{\beta + \hat\eta \delta}\color{black}) && (\because \color{blue}{\E(\hat\beta|X, z) = \beta + \hat\eta\delta} \color{black}) \\
+& = \beta + \E\hat\eta \ \delta && \text{(take out constants from exp.)} \\
+& = \beta + \eta\delta && (\text{unbiased estimator } \E\hat\eta = \eta)
+\end{align}
+$$
+
+Thus, we can see by not including confounder $z$ in our "short regression", the estimator is now biased by $\hat\eta \delta$. In the next chapter when we start discussing causality, we will see omitted confounders as a huge issue in our estimation.
+
+<br />
+
+### Heterogeneity and Interactions
+
+Hetergeneity is when we believe the magnitude of the relationship between $X_{i1}$ and $Y_i$ in the population is affected by another variable $X_{i2}$, called the **moderating** variable. If we believe this to be true in the population, we must model it in our regression to ensure our model is correctly specified (and our estimates of $\hat\beta$ are accurate):
+
+An interaction between $X_{i1}$ and the moderating variable $X_{i2}$ means they are multiplied in the regression equation:
+
+$$
+Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \underbrace{\beta_3 X_{i1} X_{i2}}_{\text{interaction}}
+$$
+
+In an interaction, $\hat\beta_0$ is still the expected $Y_i$ when all explanatory variables equal 0. The other coefficient's interpretations are:
+
++-------------------------+---------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------+
+|                         | **Binary** $X_{i2}$                                                                                                             | **Continuous** $X_{i2}$                                                                                              |
++-------------------------+---------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------+
+| **Binary** $X_{i1}$     | When $X_{i2} = 0$, the effect of $X_{i1}$ (going from 0 to 1) on $Y_i$ is $\hat\beta_1$.                                        | The effect of $X_{i1}$ (going from 0 to 1) on $Y_i$ is $\hat\beta_1 + \hat\beta_3 X_{i2}$.                           |
+|                         |                                                                                                                                 |                                                                                                                      |
+|                         | When $X_{i2} = 1$, the effect of $X_{i1}$ (going from 0 to 1) on $Y_i$ is $\hat\beta_1 + \hat\beta_3$.                          |                                                                                                                      |
++-------------------------+---------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------+
+| **Continuous** $X_{i1}$ | When $X_{i2} = 0$, for every increase in one unit of $X_{i1}$, there is an expected $\widehat{\beta_1}$ unit change in $Y_i$.   | For every increase of one unit in $X_{i1}$, there is an expected $\hat\beta_1 + \hat\beta_3 X_{i2}$ change in $Y_i$. |
+|                         |                                                                                                                                 |                                                                                                                      |
+|                         | When $X_{i2} = 1$, for every increase in one unit of $X_{i1}$, there is an expected $\hat\beta_1+ \hat\beta_3$ change in $Y_i$. |                                                                                                                      |
++-------------------------+---------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------+
+
+The hypothesis test for $\hat\beta_3$ tests the null hypothesis that there is no interaction in the population between $X_{i1}$ and $X_{i2}$. If our coefficient $\hat\beta_3$ is statistically significant, we can conclude that this null is wrong, and there indeed is an interaction. If $\hat\beta_3$ is insignificant, we fail to reject the null, and can drop the interaction effect from our regression.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Proof of Interpretations of Interactions
+
+We can solve for the change of $X_{i1}$ on $Y_i$ using a partial derivative of $Y_i$ in respect to $X_{i1}$:
+
+$$
+\begin{split}
+\frac{\partial \hat Y_i}{\partial X_{i1}} & = \frac{\partial}{\partial X_{i1}} \left[ \widehat{\beta_0} + \widehat{\beta_1}X_{i1} + \widehat{\beta_2}X_{i2} + \widehat{\beta_3}X_{i1}X_{i2}\right] \\
+\frac{\partial \hat Y_i}{\partial X_{i1}} & = \hat\beta_1 + \hat\beta_3X_{i2}
+\end{split}
+$$
+
+This gives us the effect of $X_{i1}$ on $Y_i$.
+:::
+
+<br />
+
+### Functional Form and Polynomials
+
+Sometimes the relationship between two variables in the population is not a straight lienar line. Thus, to accurately model our process and get accurate $\hat\beta$ estimates, we should aim to correctly specify the nature of the non-linear relationship between $X_i$ and $Y_i$.
+
+The most common form of polynomial transformation is the quadratic transformation:
+
+$$
+Y_i = \beta_0 + \beta_1X_i + \beta_2 X_i^2 + \eps_i
+$$
+
+Note that while $X_i$ is non-linear, the actual regression is still linear in [parameters]{.underline}. We can see this because it can still be written as $y = X\beta + \eps$ when you consider $X_i$ and $X_i^2$ to be two different explanatory variables.
+
+Our estimated $\hat\beta_0$ remains the expected value of $Y_i$ when all explanatory variables equal 0. Unfortunately, the $\hat\beta_1$ and $\hat\beta_2$ coefficients are not directly interpretable.
+
+-   $\hat\beta_2$'s sign can tell us if the best-fit parabola opens upward or downward.
+-   The significance of $\hat\beta_2$ also indicates if the quadratic term is statistically significant. If it is not, we can remove the transformation.
+
+We can interpret two things about the quadratic transformation:
+
+-   For every one unit increase in $X_i$, there is an expected $\hat\beta_1 + 2 \hat\beta_2X_i$ unit increase in $Y_i$.
+-   The minimum/maximum point in the best-fit parabola occurs at $X_i = - \hat\beta_1/2 \hat\beta_2$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Proof of Polynomial Interpretations
+
+We can derive the change in $Y_i$ given a one unit increase in $X_i$ by finding the partial derivative of $Y_i$ in respect to $X_i$:
+
+$$
+\begin{split}
+\frac{\partial \hat Y_i}{\partial X_i} & = \frac{\partial}{\partial X_i} \left[ \hat\beta_0 + \hat\beta_1X_i + \hat\beta_2X_i^2 \right] \\
+\frac{\partial \hat Y_i}{\partial X_i} & = \hat\beta_1 + 2 \hat\beta_2X_i
+\end{split}
+$$
+
+We can also solve for the $X_i$ that results in the minimum/maximum of the best-fit parabola by setting the partial derivative equal to 0:
+
+$$
+\begin{split}
+0 & = \hat\beta_1 + 2 \hat\beta_2X_i \\
+X_i & = - \hat\beta_1/2 \hat\beta_2
+\end{split}
+$$
+:::
+
+We can go beyond quadratic to $j$-degree polynomials, as long as we always include lower degree terms in our model:
+
+$$
+Y_i = \beta_0 + \sum\limits_{j=1}^n\beta_{ij}X_i^j + \eps_i
+$$
+
+<br />
+
+### Logarithmic Transformations
+
+Logarithmic transformations are often used to change skewed variables into normally distributed variables. The reason you might want to do this is because of the [classical assumption](#the-classical-assumptions) of homoscedasticity. Often, skewed variables will violate this assumption, which means the [Gauss-Markov theorem](#gauss-markov-theorem) of OLS being BLUE no longer applies. By applying a logarithmic transformation, you can meet homoscedasticity and retain the BLUE properties of OLS.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Logging a Skewed Variable
+
+Many monetary variables are heavily skewed. Natural logging these variables can turn them into normal distributions. For example, take this variable called *expenses* with a significant right skew:
+
+![](images/clipboard-4184932163.png){fig-align="center" width="50%"}
+
+If we take the log of this variable, we get the following distribution that is almost normal:
+
+![](images/clipboard-296612325.png){fig-align="center" width="50%"}
+:::
+
+We have 3 types of logarithmic transformations:
+
+-   Linear-Log model: $Y_i = \beta_0 + \beta_1 \log X_i + \eps_i$.
+-   Log-Linear model: $\log Y_i = \beta_0 + \beta_1 X_i + \eps_i$.
+-   Log-Log model: $\log Y_i = \beta_0 + \beta_1 \log X_i + \eps_i$.
+
+The coefficient interpretations become a little more complex with logarithms:
+
++--------------+----------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
+|              | $X_i$                                                                                        | $\log (X_i)$                                                                              |
++--------------+----------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
+| $Y_i$        | Linear Model:                                                                                | Linear-Log Model:                                                                         |
+|              |                                                                                              |                                                                                           |
+|              | When $X_i$ increases by one unit, there is an expected $\hat\beta_1$ unit change in $Y_i$.   | When $x$ increases by 10%, there is an expected $0.096 \hat\beta_1$ unit change in $Y_i$. |
++--------------+----------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
+| $\log (Y_i)$ | Log-Linear Model:                                                                            | Log-Log Model:                                                                            |
+|              |                                                                                              |                                                                                           |
+|              | For every one unit increase in $X_i$, the expected $Y_i$ is multiplied by $e^{\hat\beta_1}$. | Multiplying $X_i$ by $e$ will multiply the expected value of $Y_i$ by $e^{\hat\beta_1}$.  |
++--------------+----------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Proof of Interpretations for Log Transformations
+
+Proof of Linear-Log Model:
+
+$$
+\begin{split}
+& \E(Y_i|X_i = x) = \beta_0 + \beta_1 \log x \\
+& \E(Y_i | X_i = e^A x) = \beta_0 + \beta_1 \log(e^A x) \\
+& = \beta_0 + \beta_1 (\log(e^A) + \log x) \\
+& = \beta_0 + \beta_1 (A + \log x) \\
+& = \beta_0 + \beta_1A + \beta_1 \log x
+\end{split}
+$$
+
+$$
+\begin{split}
+\E(Y_i|X_i = \alpha x) - \E(Y_i|X_i = x) & = \beta_0 + \beta_1 A + \beta_1 \log (x) - (\beta_0 + \beta_1 \log x) \\
+& = \beta_1 A
+\end{split}
+$$
+
+-   When $A = 0.095$, then $e^A = 1.1$. Thus, a 1.1 times increase of $X_i$ results in a $0.095 \widehat{\beta_1}$ change in $Y_i$.
+
+<br />
+
+Proof of Log-Linear Model:
+
+$$
+\begin{split}
+\E(\log Y_i | X_i = x) =  \log Y_i & = \beta_0 + \beta_1 x \\
+Y_i & = e^{\beta_0 + \beta_1 x} \\
+Y_i & = e^{\beta_0}e^{\beta_1 x} \\
+\E(\log Y_i|X_i = x+1) = \log Y_i & = \beta_0 + \beta_1(x+1) \\
+Y_i & = e^{\beta_0 + \beta_1 + \beta_1 x} \\
+Y_i & = e^{\beta_0}e^{\beta_1}e^{\beta_1x}
+\end{split}
+$$
+
+$$
+\begin{split}
+\frac{\E(\log Y_i|X_i = x+1)}{\E(\log Y_i | X_i = x)} & = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1x}}{e^{\beta_0}e^{\beta_1x}} \\
+& = e^{\beta_1}
+\end{split}
+$$
+
+-   Thus, when $X_i$ increases by one, there is a multiplicative increase of $e^{\beta_1}$ for $Y_i$.
+
+<br />
+
+Proof of Log-Log model:
+
+$$
+\begin{split}
+\E(\log Y_i | X_i = x) =  \log Y_i & = \beta_0 + \beta_1 \log x \\
+Y_i & = e^{\beta_0 + \beta_1 \log x} \\
+Y_i & = e^{\beta_0}e^{\beta_1 \log x} \\
+\E(\log Y_i|X_i = ex) = \log Y_i & = \beta_0 + \beta_1 \log (ex) \\
+Y_i & = e^{\beta_0 + \beta_1 \log e + \beta_1 \log x} \\
+Y_i & = e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}
+\end{split}
+$$
+
+$$
+\begin{split}
+\frac{\E(\log Y_i|X_i = ex)}{\E(\log Y_i | X_i = x)} & = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}}{e^{\beta_0}e^{\beta_1 \log x}} \\
+& = e^{\beta_1}
+\end{split}
+$$
+
+-   Thus, when $X_i$ is multiplied by $e$, there is a multiplicative increase of $e^{\beta_1}$ in $Y_i$.
+:::
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Implementation in R**
+
+You will need package *fixest* and *estimatr*.
+
+```{r, eval = FALSE}
+library(fixest)
+library(estimatr)
+```
+
+Regression with normal standard errors can be done with the *lm()* function:
+
+```{r, eval = FALSE}
+model <- lm(y ~ x1 + x2 + x3, data = mydata)
+summary(model)
+```
+
+Regression with robust standard errors can be done with the *feols()* function or *lm_robust()* function:
+
+```{r, eval = FALSE}
+# feols
+model <- feols(y ~ x1 + x2 + x3, data = mydata, se = "hetero")
+summary(model)
+
+# lm robust
+model <- lm_robust(y ~ x1 + x2 + x3, data = mydata)
+```
+
+Output will include coefficients, standard errors, p-values, and more.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Binary and Categorical Variables
+
+You can include binary and categorical variables by using the *as.factor()* function:
+
+```{r, eval = FALSE}
+feols(y ~ x1 + as.factor(x2) + x3, data = mydata, se = "hetero")
+```
+
+You can do the same for $y$ or $x$. Just remember, $y$ cannot be a categorical variable (use multinomial logsitic regression instead).
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Fixed Effects
+
+You can include one-way fixed effects by adding a \| after your regression formula in *feols()*:
+
+```{r, eval = FALSE}
+model <- feols(y ~ x1 + x2 + x3 | cluster,
+               data = mydata, se = "hetero")
+summary(model)
+```
+
+You can add two-way fixed effects as follows:
+
+```{r, eval = FALSE}
+model <- feols(y ~ x1 + x2 + x3 | unit + year,
+               data = mydata, se = "hetero")
+summary(model)
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Interaction Effects
+
+Two interact two variables, use \* between them. This will automatically include both the interaction term, and the two variables by themselves.
+
+```{r, eval = FALSE}
+feols(y ~ x1 + x2*x3, data = mydata, se = "hetero")
+```
+
+If for some reason, you only want the interaction term, but not the variables by themselves, you can use a colon : between the two variables:
+
+```{r, eval = FALSE}
+feols(y ~ x1 + x2:x3, data = mydata, se = "hetero")
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Polynomial Transformations
+
+To conduct a polynomial transformation, you can use the *I()* function. The second argument is the degree of the polynomial:
+
+```{r, eval = FALSE}
+feols(y ~ x1 + I(x2, 3), data = mydata, se = "hetero") #cubic for x2
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Logarithmic Transformations
+
+The best way to do a logarithmic transformation is to create a new variable that is the log of the variable you want to transform using the *log()* function, before you even start the regression:
+
+```{r, eval = FALSE}
+mydata$x1_log <- log(mydata$x1)
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Confidence Intervals
+
+To find the confidence intervals for coefficients, first estimate the model with *lm()* or *feols()* as shown previously, then use the *confint()* command:
+
+```{r, eval = FALSE}
+confint(model)
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## F-Tests
+
+To run a f-test, use the *anova()* command, and input your two different models, with the null model going first.
+
+```{r, eval = FALSE}
+anova(model1, model2)
+```
+
+Note: F-tests only work with models that are run with homoscedastic standard errors. Robust standard errors will not work.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## LaTeX Regression Tables
+
+You can use the *texreg* package to make nice regression tables automatically.
+
+```{r, eval = FALSE}
+library(texreg)
+```
+
+The syntax for *texreg()* is as follows:
+
+```{r, eval = FALSE}
+texreg(l = list(model1, model2, model3),
+       custom.model.names = c("model 1", "model 2", "model 3"),
+       custom.coef.names = c("intercept", "x1", "x2"),
+       digits = 3)
+```
+
+You can replace *texreg()* with *screenreg()* if you want a nicer regression table in the R-console.
+
+Note: you must have the same amount of model names as total models in your texreg, and you must have the same amount of coeficient names as the total amount of coefficients in all of your models.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Prediction
+
+We can use the *predict()* function to generate fitted value predictions in R:
+
+```{r, eval = FALSE}
+my_predictions <- predict(model, newdata = my_new_data)
+```
+
+*my_new_data* is a dataframe with a bunch of explanatory variable values (for every explanatory variable) for a collection of observations, that you wish to predict $\hat y$ for.
+:::
