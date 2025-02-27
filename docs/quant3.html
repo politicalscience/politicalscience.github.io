@@ -333,30 +333,30 @@ window.Quarto = {
 <h1><strong>Ordinary Least Squares Estimator</strong></h1>
 <section id="deriving-the-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="deriving-the-estimator">Deriving the Estimator</h3>
-<p>Our <a href="./quant2.html">linear regression</a> model, and the fitted values <span class="math inline">\(\hat{\mathbf{y}}\)</span>, take the following form:</p>
+<p>Our <a href="./quant2.html">linear regression</a> model, and the fitted values <span class="math inline">\(\hat y\)</span>, take the following form:</p>
 <p><span class="math display">\[
-\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u, \qquad \hat{\mathbf y} = \mathbf X \hat{\boldsymbol\beta}
+y = X\beta + \eps, \quad \hat y = X\hat\beta
 \]</span></p>
 <p>OLS minimises the <a href="./quant2.html#estimation-process">sum of squared residuals</a> <span class="math inline">\(S(\hat{\boldsymbol\beta})\)</span> - the differences between the actual <span class="math inline">\(\mathbf y\)</span> and our predicted <span class="math inline">\(\hat{\mathbf y}\)</span>:</p>
 <p><span class="math display">\[
 \begin{align}
-S(\hat{\boldsymbol\beta}) &amp; = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mathbf y - \hat{\mathbf y})\\
-&amp; = (\mathbf y - \color{blue}{\mathbf X \hat{\boldsymbol\beta}}\color{black})^\mathsf{T} (\mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}}\color{black}) &amp;&amp; (\text{plug in } \color{blue}{\hat{\mathbf y}  = \mathbf X \hat{\boldsymbol\beta}}\color{black}) \\
-&amp; = \mathbf y^\mathsf{T} \mathbf y - \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X}\boldsymbol\beta &amp;&amp; (\text{distribute out)} \\
-&amp; = \mathbf y^\mathsf{T} \mathbf y - \color{blue}{2\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y}\color{black} + \underbrace{\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta}}_{\text{quadratic}} &amp;&amp;(\text{combine } \color{blue}{- \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta}}\color{black})
+S(\hat\beta) &amp;  = (y - \hat y)^\top (y - \hat y)\\
+&amp; = (y - \color{blue}{X \hat\beta}\color{black} )^\top (y - \color{blue}{X \hat\beta}\color{black})  &amp;&amp; (\because \color{blue}{\hat y = X \hat\beta}\color{black})\\
+&amp; = y^\top y - \hat\beta^\top X^\top y - y^\top X \hat\beta +  \hat\beta^\top X^\top X \hat\beta &amp;&amp; (\text{distribute out}) \\
+&amp; = y^\top y \ \color{blue}{-  2 \hat\beta^\top X^\top y} \color{black}  +  \underbrace{\hat\beta^\top X^\top X \hat\beta}_{\text{quadratic}} &amp;&amp; (\because \color{blue}{- \hat\beta^\top X^\top y - y^\top X \hat\beta = - 2 \hat\beta^\top X^\top y} \color{black})
 \end{align}
 \]</span></p>
-<p>Now, let us find the first order condition:</p>
+<p>Now, let us take the gradient to find the first order condition:</p>
 <p><span class="math display">\[
-\frac{\partial S(\hat{\boldsymbol\beta})}{\partial \hat{\boldsymbol\beta}} = -2\mathbf X^\mathsf{T} \mathbf y + 2 \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta} = 0
+\frac{\partial S(\hat\beta)}{\partial \hat\beta} = -2 X^\top y + 2 X^\top X \hat\beta = 0
 \]</span></p>
-<p>When assuming <span class="math inline">\(\mathbf X^\mathsf{T} \mathbf X\)</span> is invertable (which is true if <span class="math inline">\(\mathbf X\)</span> is full rank), we can isolate <span class="math inline">\(\hat{\beta}\)</span> to find the solution to OLS:</p>
+<p>When assuming <span class="math inline">\(X^\top X\)</span> is invertable (which is true if <span class="math inline">\(X\)</span> is full rank), we can isolate <span class="math inline">\(\hat\beta\)</span> to find the solution to OLS:</p>
 <p><span id="eq-ols"><span class="math display">\[
 \begin{align}
--2\mathbf X^T\mathbf y + 2 \mathbf X^\mathsf{T} \mathbf X \boldsymbol{\hat{\beta}} &amp; = 0 \\
-2 \mathbf X^\mathsf{T} \mathbf X \boldsymbol{\hat\beta} &amp; = 2\mathbf X^\mathsf{T} \mathbf y &amp;&amp; (+ 2\mathbf X^\mathsf{T} \mathbf y \text{ to both sides}) \\
-\boldsymbol{\hat\beta} &amp; = (2\mathbf X^\mathsf{T} \mathbf X)^{-1} 2 \mathbf X^\mathsf{T} \mathbf y &amp;&amp; (\times (2\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ to both sides})\\
-\boldsymbol{\hat\beta} &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y &amp;&amp;(\text{cancel out } 2^{-1}\times 2)
+-2 X^\top y + 2 X^\top X \hat\beta &amp; = 0 \\
+2 X^\top X \hat\beta &amp; = 2 X^\top y &amp;&amp; ( + 2X^\top y \text{ to both sides}) \\
+\hat\beta &amp; = (2X^\top X)^{-1} -2 X^\top y &amp;&amp; (\times (2X^\top X)^{-1} \text{ to both sides}) \\
+\hat\beta &amp; = (X^\top X)^{-1} X^\top y &amp;&amp; (2^{-1}, 2 \text{ cancel out})
 \end{align}
 \tag{1}\]</span></span></p>
 <p>Those are our coefficient solutions to OLS.</p>
@@ -375,20 +375,20 @@ Alternative Derivation for Simple Linear Regression
 <p>Currently, we are deriving the first order conditions for multiple linear regression using linear algebra.</p>
 <p>For simple linear regression (with one explanatory variable), we can use summation notation. Recall our sum of squared residuals in summation form:</p>
 <p><span class="math display">\[
-SSR = S(\widehat{\beta_0}, \widehat{\beta_1})= \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_i)^2
+SSR = S(\hat\beta_0, \hat\beta_1)= \sum\limits_{i=1}^n(Y_i - \hat\beta_0 - \hat\beta_1X_i)^2
 \]</span></p>
-<p>We want to minimise the SSR in respect to both <span class="math inline">\(\widehat{\beta_0}\)</span> and <span class="math inline">\(\widehat{\beta_1}\)</span>. We can do this by taking the partial derivative in respect to both, and setting them equal to 0. We can find the partial derivative with chain rule and sum rule:</p>
+<p>We want to minimise the SSR in respect to both <span class="math inline">\(\hat\beta_0\)</span> and <span class="math inline">\(\hat\beta_1\)</span>. We can do this by finding our first order conditions:</p>
 <p><span class="math display">\[
 \begin{align}
-\frac{\partial S(\widehat{\beta_0}, \widehat{\beta_1})}{\partial \widehat{\beta_0}} &amp; = \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_i) = 0 \\
-\frac{\partial S(\widehat{\beta_0}, \widehat{\beta_1})}{\partial \widehat{\beta_1}} &amp; = \sum\limits_{i=1}^nx_i(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_i) = 0
+\frac{\partial S(\hat\beta_0, \hat\beta_1)}{\partial \hat\beta_0} &amp; = \sum\limits_{i=1}^n(Y_i - \hat\beta_0 - \hat\beta_1X_i) = 0 \\
+\frac{\partial S(\hat\beta_0, \hat\beta_1)}{\partial \hat\beta_1} &amp; = \sum\limits_{i=1}^n X_i(Y_i - \hat\beta_0 - \hat\beta_1X_i) = 0 \\
 \end{align}
 \]</span></p>
 <p>These conditions create a system of equations, which you can solve for the OLS solutions of <span class="math inline">\(\widehat{\beta_0}\)</span> and <span class="math inline">\(\widehat{\beta_1}\)</span>. I will not show it step by step, as it is tedious (and not that important). The OLS solutions are</p>
 <p><span class="math display">\[
 \begin{align}
-\widehat{\beta_0} &amp; = \bar y - \widehat{\beta_1} \bar x \\
-\widehat{\beta_1} &amp; = \frac{\sum_{i=1}^n(x_i - \bar x)(y_i - \bar y)}{\sum_{i=1}^n(x_i - \bar x)^2} = \frac{Cov(x, y)}{V(y)}
+\hat\beta_0 &amp; = \bar Y - \widehat{\beta_1} \bar X \\
+\hat\beta_1 &amp; = \frac{\sum_{i=1}^n(X_i - \bar X)(Y_i - \bar Y)}{\sum_{i=1}^n(X_i - \bar X)^2} = \frac{Cov(X_i, Y_i)}{\V Y_i}
 \end{align}
 \]</span></p>
 </div>
@@ -398,81 +398,78 @@ SSR = S(\widehat{\beta_0}, \widehat{\beta_1})= \sum\limits_{i=1}^n(y_i - \wideha
 </section>
 <section id="projection-and-residual-maker" class="level3">
 <h3 class="anchored" data-anchor-id="projection-and-residual-maker">Projection and Residual Maker</h3>
-<p>We can use the OLS solution from <a href="#eq-ols" class="quarto-xref">Equation&nbsp;1</a> to get our fitted values <span class="math inline">\(\hat{\mathbf y}\)</span>:</p>
+<p>We can use the OLS solution from <a href="#eq-ols" class="quarto-xref">Equation&nbsp;1</a> to get our fitted values <span class="math inline">\(\hat{y}\)</span>:</p>
 <p><span id="eq-projection"><span class="math display">\[
 \begin{align}
-\hat{\mathbf y} &amp; = \mathbf X \hat{\boldsymbol\beta} \\
-&amp; = \mathbf X \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y} &amp;&amp; \color{black}(\text{plug in OLS solution } \color{blue}{\hat{\boldsymbol\beta} = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y}) \\
-&amp; = \color{red}{\mathbf P}\color{black}{\mathbf y} &amp;&amp; \text{(where } \color{red}{\mathbf P :=\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}})
+\hat y &amp; = X\hat\beta \\
+&amp; = X \color{blue}{(X^\top X)^{-1}X^\top y} &amp;&amp; \color{black}(\because \color{blue}{\hat\beta = (X^\top X)^{-1}X^\top y} \color{black}) \\
+&amp; = \color{red}{P}\color{black}y &amp;&amp; (\because \color{red}{P:= X(X^\top X)^{-1}X^\top})
 \end{align}
 \tag{2}\]</span></span></p>
-<p>Matrix <span class="math inline">\(\color{red}{\mathbf P}\)</span>, called the <strong>projection matrix</strong>, is a matrix operator that performs the <a href="./math.html#linear-mappings-and-combinations">linear mapping</a> <span class="math inline">\(\mathbf y \rightarrow \hat{\mathbf y}\)</span>.</p>
-<p>We can also use the OLS solution from <a href="#eq-ols" class="quarto-xref">Equation&nbsp;1</a> to get our residuals <span class="math inline">\(\hat{\mathbf u}\)</span>:</p>
+<p>Matrix <span class="math inline">\(\color{red}{P}\)</span>, called the <strong>projection matrix</strong>, is a matrix operator that performs the <a href="./math.html#linear-mappings-and-combinations">linear mapping</a> <span class="math inline">\(y \rightarrow \hat{ y}\)</span>.</p>
+<p>We can also use the OLS solution from <a href="#eq-ols" class="quarto-xref">Equation&nbsp;1</a> to get our residuals <span class="math inline">\(\hat{\eps}\)</span> (note <span class="math inline">\(I\)</span> is the identity matrix):</p>
 <p><span class="math display">\[
 \begin{align}
-\hat{\mathbf u} &amp; = \mathbf y - \hat{\mathbf y} \\
-&amp; = \mathbf y - \color{blue}{\mathbf P\mathbf y} &amp;&amp; \color{black}(\text{from equation (2) } \color{blue}{\hat{\mathbf y} = \mathbf P \mathbf y} \color{black}) \\
-&amp; = (\mathbf I - \mathbf P)\mathbf y &amp;&amp; (\text{factor out } \mathbf y) \\
-&amp; = \color{purple}{\mathbf M} \color{black}{\mathbf y} &amp;&amp; (\text{where } \color{purple}{\mathbf M = \mathbf I - \mathbf P} \color{black})
+\hat\eps &amp; = y - \hat y  \\
+&amp; = y - \color{blue}{Py} &amp;&amp; \color{black}( \because \color{blue}{\hat y = Py}\color{black}) \\
+&amp; = (I-P)y &amp;&amp; (\text{factor out y}) \\
+&amp; = \color{purple}{M}\color{black}y &amp;&amp; (\because \color{purple}{M:= I - P}\color{black})
 \end{align}
 \]</span></p>
-<p>Matrix <span class="math inline">\(\color{purple}{\mathbf M}\)</span>, called the <strong>residual maker</strong>, is a matrix operator that performs the <a href="./math.html#linear-mappings-and-combinations">linear mapping</a> <span class="math inline">\(\mathbf y \rightarrow \hat{\mathbf u}\)</span>.</p>
-<p>Both <span class="math inline">\(\color{red}{\mathbf P}\)</span> and <span class="math inline">\(\color{purple}{\mathbf M}\)</span> are <a href="./math.html#types-of-matrices">symmetric matrices</a>: <span class="math inline">\(\mathbf P^\mathsf{T} = \mathbf P\)</span>. They are also both <a href="./math.html#types-of-matrices">idempotent matrices</a>: <span class="math inline">\(\mathbf {PP} = \mathbf P\)</span>. We can prove this second statement using the first (I will only do it for <span class="math inline">\(\mathbf P\)</span>, but the same applies for <span class="math inline">\(\mathbf M\)</span>:</p>
+<p>Matrix <span class="math inline">\(\color{purple}{M}\)</span>, called the <strong>residual maker</strong>, is a matrix operator that performs the <a href="./math.html#linear-mappings-and-combinations">linear mapping</a> <span class="math inline">\(y \rightarrow \hat{\eps}\)</span>.</p>
+<p>Both <span class="math inline">\(\color{red}{P}\)</span> and <span class="math inline">\(\color{purple}{M}\)</span> are <a href="./math.html#types-of-matrices">symmetric matrices</a>: <span class="math inline">\(P^\top = P, \ M^\top = M\)</span>. They are also both <a href="./math.html#types-of-matrices">idempotent matrices</a>: <span class="math inline">\(PP = P, \ MM = M\)</span>. We can prove this second statement using the first (I will only do it for <span class="math inline">\(P\)</span>, but the same applies for <span class="math inline">\(M\)</span>:</p>
 <p><span id="eq-pp"><span class="math display">\[
 \begin{align}
-\mathbf{PP} &amp; = \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \underbrace{\mathbf X^\mathsf{T} \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}}_{= \ \mathbf I} \mathbf X^\mathsf{T} \\
-&amp; = \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \\
-&amp; = \mathbf P
+PP &amp; = X(X^\top X)^{-1} \underbrace{X^\top X(X^\top X)^{-1}}_{= I} X^\top \\
+&amp; = X(X^\top X)^{-1} X^\top = P
 \end{align}
 \tag{3}\]</span></span></p>
-<p><span class="math inline">\(\color{red}{\mathbf P}\)</span> and <span class="math inline">\(\color{purple}{\mathbf M}\)</span> are also <a href="./math.html#types-of-matrices">orthogonal</a> to each other - i.e.&nbsp;<span class="math inline">\(\mathbf P^\mathsf{T} \mathbf M = 0\)</span>:</p>
+<p><span class="math inline">\(\color{red}{ P}\)</span> and <span class="math inline">\(\color{purple}{ M}\)</span> are also <a href="./math.html#types-of-matrices">orthogonal</a> to each other - i.e.&nbsp;<span class="math inline">\(P^\top M = 0\)</span>:</p>
 <p><span class="math display">\[
 \begin{align}
-\mathbf P^\mathsf{T}\mathbf M &amp; = \mathbf {PM} &amp;&amp; (\because \mathbf P^\mathsf{T} = \mathbf P) \\
-&amp; = \mathbf P(\color{blue}{\mathbf I-\mathbf P}\color{black}) &amp;&amp; (\because \color{blue}{\mathbf M = \mathbf I - \mathbf P}\color{black}) \\
-&amp; = \mathbf P - \mathbf{PP} &amp;&amp; (\text{distribute out}) \\
-&amp; = \mathbf P - \color{blue}{\mathbf P} &amp;&amp; (\because \text{equation (3)}) \\
+P^\top M &amp; = \color{blue}{P}\color{black}M &amp;&amp; (\because \color{blue}{P^\top = P}\color{black}) \\
+&amp; = P(\color{blue}{I-P}\color{black}) &amp;&amp; (\because \color{blue}{M:= I - P}\color{black}) \\
+&amp; = P - PP &amp;&amp; \text{(distribute out)} \\
+&amp; = P - \color{blue}{P} &amp;&amp; \color{black}(\because \color{blue}{PP = P}\color{black}) \\
 &amp; = 0
 \end{align}
 \]</span></p>
-<p>These two matrices will become very important throughout OLS theory.</p>
 <p><br></p>
 </section>
 <section id="orthogonal-projection-of-ols" class="level3">
 <h3 class="anchored" data-anchor-id="orthogonal-projection-of-ols">Orthogonal Projection of OLS</h3>
-<p>We know that our fitted values <span class="math inline">\(\hat{\mathbf y}\)</span> are created as a linear combination of our explanatory variables <span class="math inline">\(\mathbf X\)</span>:</p>
+<p>We know that our fitted values <span class="math inline">\(\hat{y}\)</span> are created as a linear combination of our explanatory variables <span class="math inline">\(X\)</span>:</p>
 <p><span class="math display">\[
-\widehat{y_i} = \beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki}
+\hat Y_i = \hat\beta_0 + \hat\beta_1X_{i1} + \dots + \hat\beta_pX_{ip}
 \]</span></p>
-<p>That means, by the definition of <a href="./math.html#vector-spaces">vector spaces</a>, that our explanatory variable vectors <span class="math inline">\(\mathbf x_j\)</span> span a space that includes our fitted values vector <span class="math inline">\(\hat{\mathbf y}\)</span>.</p>
-<p>So, what the matrix operator <span class="math inline">\(\color{red}{\mathbf P}\)</span> is doing is essentially taking our original data <span class="math inline">\(\mathbf y\)</span> values, and projecting it into the space spanned by our explanatory variables <span class="math inline">\(\mathbf X\)</span> (called the <strong>column space</strong>).</p>
-<p>We can see in the figure below, our observed <span class="math inline">\(\mathbf y\)</span> vector is being projected onto the blue plane spanned by <span class="math inline">\(\mathbf X\)</span> to create our fitted values vector <span class="math inline">\(\hat{\mathbf y}\)</span>.</p>
+<p>That means, by the definition of <a href="./math.html#vector-spaces">vector spaces</a>, that our explanatory variable vectors <span class="math inline">\(x_1, x_2, \dots, x_p\)</span> span a space that includes our fitted values vector <span class="math inline">\(\hat{y}\)</span>. So, what <span class="math inline">\(\color{red}{ P}\)</span> is doing is taking our original data vector <span class="math inline">\(y\)</span>, and projecting it into the space spanned by our explanatory variables <span class="math inline">\(X\)</span> (called the <strong>column space</strong>).</p>
+<p>We can see in the figure below, our observed <span class="math inline">\(y\)</span> vector is being projected onto the blue plane spanned by <span class="math inline">\(X\)</span> to create our fitted values vector <span class="math inline">\(\hat{y}\)</span>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-880030792.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
 </figure>
 </div>
-<p>Residual maker matrix <span class="math inline">\(\color{purple}{\mathbf M}\)</span> projects <span class="math inline">\(\mathbf y\)</span> onto the space orthogonal to the column space of <span class="math inline">\(\mathbf X\)</span> to get our residuals <span class="math inline">\(\hat{\mathbf u}\)</span>. We can see this in the figure above, where the residuals vector (notated <span class="math inline">\(\mathbf e\)</span> in the figure) is orthogonal/perpendicular to the space of <span class="math inline">\(\mathbf X\)</span>.</p>
+<p>Residual maker matrix <span class="math inline">\(\color{purple}{M}\)</span> projects <span class="math inline">\(y\)</span> onto the space orthogonal to the column space of <span class="math inline">\(X\)</span> to get our residuals <span class="math inline">\(\hat{\eps}\)</span>. We can see this in the figure above, where the residuals vector (notated <span class="math inline">\(\mathbf e\)</span> in the figure) is orthogonal/perpendicular to the space of <span class="math inline">\(\mathbf X\)</span>.</p>
 <p><br></p>
 </section>
 <section id="error-covariance-matrix" class="level3">
 <h3 class="anchored" data-anchor-id="error-covariance-matrix">Error Covariance Matrix</h3>
-<p>Aside from the population parameters <span class="math inline">\(\boldsymbol\beta\)</span>, there is another part of the linear model that needs to be estimated: the population <strong>covariance matrix</strong> of error terms <span class="math inline">\(u_1, \dots u_n\)</span>:</p>
+<p>Aside from the population parameters <span class="math inline">\(\beta\)</span>, there is another part of the linear model that needs to be estimated: the population <strong>covariance matrix</strong> of error terms <span class="math inline">\(\eps_1, \dots, \eps_n\)</span>:</p>
 <p><span class="math display">\[
-\underbrace{V(\mathbf u|\mathbf X)}_{\text{cov. matrix}} = \begin{pmatrix}
-Var(u_1) &amp; Cov(u_1, u_2) &amp; Cov(u_1, u_3) &amp; \dots \\
-Cov(u_2, u_1) &amp; Var(u_2) &amp; Cov(u_2, u_3) &amp; \dots \\
-Cov(u_3, u_1) &amp; Cov(u_3, u_2) &amp; Var(u_3) &amp; \vdots \\
+\underbrace{\V(\eps|X)}_{\mathrm{cov. \ matrix}} = \begin{pmatrix}
+\V\eps_1 &amp; cov(\eps_1, \eps_2) &amp; cov(\eps_1, \eps_3) &amp; \dots \\
+cov(\eps_2, \eps_1) &amp; \V\eps_2 &amp; cov(\eps_2, \eps_3) &amp; \dots \\
+cov(\eps_3, \eps_1) &amp; cov(\eps_3, u_2) &amp; \V\eps_3 &amp; \vdots \\
 \vdots &amp; \vdots &amp; \dots &amp; \ddots
 \end{pmatrix}
 \]</span></p>
-<p>Under the assumption of <strong>independence of observations</strong> (a key assumption of the linear model), the covariance elements should all equal 0. This assumption is also called <strong>no autocorrelation</strong>.</p>
+<p>Under the assumption of <strong>independence of observations</strong> (a key assumption of the linear model), the covariance elements should all equal 0, i.e.&nbsp;<span class="math inline">\(cov(\eps_i, \eps_k) = 0, \ \forall \ i, k\)</span>. This assumption is also called <strong>no autocorrelation</strong>.</p>
 <p>Thus, under this assumption, we have a diagonal matrix.</p>
 <p><span class="math display">\[
-\underbrace{V(\mathbf u|\mathbf X)}_{\text{cov. matrix}} = \begin{pmatrix}
-Var(u_1) &amp; 0 &amp; 0 &amp; \dots \\
-0 &amp; Var(u_2) &amp; 0 &amp; \dots \\
-0 &amp; 0 &amp; Var(u_3) &amp; \vdots \\
+\underbrace{\V(\eps| X)}_{\mathrm{cov. \ matrix}} = \begin{pmatrix}
+\V\eps_1 &amp; 0 &amp; 0 &amp; \dots \\
+0 &amp; \V\eps_2 &amp; 0 &amp; \dots \\
+0 &amp; 0 &amp; \V \eps_3 &amp; \vdots \\
 \vdots &amp; \vdots &amp; \dots &amp; \ddots
 \end{pmatrix}
 \]</span></p>
@@ -481,9 +478,9 @@ Var(u_1) &amp; 0 &amp; 0 &amp; \dots \\
 </section>
 <section id="homoscedasticity-and-heteroscedasticity" class="level3">
 <h3 class="anchored" data-anchor-id="homoscedasticity-and-heteroscedasticity">Homoscedasticity and Heteroscedasticity</h3>
-<p>Now, there are two possible forms of our covariance matrix of errors. <strong>Homoscedasticity</strong> assumes that every single unit <span class="math inline">\(i\)</span> has the same variance in error <span class="math inline">\(\sigma_i^2\)</span>. Or in other words, the error of <span class="math inline">\(u_i\)</span> does not depend on unit <span class="math inline">\(i\)</span>’s <span class="math inline">\(\mathbf X\)</span> values:</p>
+<p>Now, there are two possible forms of our covariance matrix of errors. <strong>Homoscedasticity</strong> assumes that every single unit <span class="math inline">\(i\)</span> has the same variance in error <span class="math inline">\(\V \eps_i = \sigma^2\)</span>. Or in other words, the error of <span class="math inline">\(\eps_i\)</span> does is independent of which unit <span class="math inline">\(i\)</span> (which also means <span class="math inline">\(\eps_i \perp\!\!\!\perp X\)</span>). This assumption (with no autocorrelation) is also called <strong>Spherical Errors</strong>.</p>
 <p><span id="eq-homo"><span class="math display">\[
-V(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n = \begin{pmatrix}
+\V(\eps | X) = \sigma^2 I_n = \begin{pmatrix}
 \sigma^2 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \sigma^2 &amp; \dots &amp; 0 \\
 \vdots &amp; \vdots &amp; \ddots &amp; 0 \\
@@ -511,17 +508,17 @@ Visualisation of <span class="math inline">\(\sigma^2\)</span>
 </div>
 </div>
 </div>
-<p><span class="math inline">\(\sigma^2\)</span> is a population parameter. We can estimate it with the following unbiased estimator <span class="math inline">\(s^2 = \frac{\hat{\mathbf u}^\mathsf{T} \hat{\mathbf u}}{n-k-1}\)</span>. This is the reason we use a t-distribution in hypotheses tests - to account for the uncertainty of this estimator. We will show this later when deriving variance.</p>
-<p><strong>Heteroscedasticity</strong> is when we do not believe the assumption of a constant variance for all units. Instead, we assume each unit <span class="math inline">\(i = 1, \dots, n\)</span> has their own variance <span class="math inline">\(\sigma^2_1, \dots, \sigma^2_n\)</span>:</p>
+<p><span class="math inline">\(\sigma^2\)</span> is a population parameter. We can estimate it with the following unbiased estimator <span class="math inline">\(s^2 = \frac{\hat{\eps}^\top \hat{\eps}}{n-k-1}\)</span>. This is the reason we use a t-distribution in hypotheses tests - to account for the uncertainty of this estimator. We will show this later when deriving variance.</p>
+<p><strong>Heteroscedasticity</strong> is when we do not believe the assumption of a constant variance for all units. Instead, we assume each unit <span class="math inline">\(i = 1, \dots, n\)</span> has their own variance <span class="math inline">\(\sigma^2_1, \dots, \sigma^2_n\)</span>, which also implies that <span class="math inline">\(\eps_i\)</span> is dependent on <span class="math inline">\(X\)</span> values for unit <span class="math inline">\(i\)</span>.</p>
 <p><span id="eq-hetero"><span class="math display">\[
-V(\mathbf u | \mathbf X) = \begin{pmatrix}
+\V(\eps| X) = \begin{pmatrix}
 \sigma^2_1 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \sigma^2_2 &amp; \dots &amp; 0 \\
 \vdots &amp; \vdots &amp; \ddots &amp; 0 \\
 0 &amp; 0 &amp; \dots &amp; \sigma^2_n
 \end{pmatrix}
 \tag{5}\]</span></span></p>
-<p>We can estimate each individual population parameter <span class="math inline">\(\sigma^2_i\)</span> with <span class="math inline">\(s^2_i = \hat{u_i}^2\)</span>.</p>
+<p>We can estimate each individual population parameter <span class="math inline">\(\sigma^2_i\)</span> with <span class="math inline">\(s^2_i = \hat\eps_i^2\)</span>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -534,14 +531,14 @@ Visualisation of Homoscedasticity
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all <span class="math inline">\(\widehat{u_i}\)</span>):</p>
+<p>An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all <span class="math inline">\(\hat\eps_i\)</span>):</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-1713529842.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
-<p>Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of <span class="math inline">\(x\)</span>.</p>
-<p>The heteroscedasticity residuals have a clear pattern - the up-down variance is smaller when <span class="math inline">\(x\)</span> is smaller, and the up-down variance is larger when <span class="math inline">\(x\)</span> is larger.</p>
+<p>Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of <span class="math inline">\(X_i\)</span>.</p>
+<p>The heteroscedasticity residuals have a clear pattern - the up-down variance is smaller when <span class="math inline">\(X_i\)</span> is smaller, and the up-down variance is larger when <span class="math inline">\(X_i\)</span> is larger.</p>
 <p>Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.</p>
 </div>
 </div>
@@ -555,36 +552,32 @@ Visualisation of Homoscedasticity
 <h1><strong>Sample Properties of OLS</strong></h1>
 <section id="ols-as-an-unbiased-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="ols-as-an-unbiased-estimator">OLS as an Unbiased Estimator</h3>
-<p>OLS is an <a href="./quant1.html#finite-sample-properties-of-estimators">unbiased estimator</a> of the relationship between any <span class="math inline">\(x_j\)</span> and <span class="math inline">\(y\)</span> under 4 conditions:</p>
+<p>OLS is an <a href="./quant1.html#finite-sample-properties-of-estimators">unbiased estimator</a> of the relationship between any <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span> under 4 conditions:</p>
 <ol type="1">
-<li><strong>Linearity</strong> in parameters: the model of the population (data generating process) can be modelled as <span class="math inline">\(\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u\)</span>.</li>
-<li><strong>Random Sampling</strong>: the observations in our sample are randomly sampled.</li>
-<li><strong>No Perfect Multicolinearity</strong>: There is no exact linear relationships between the regressors. This ensures that <span class="math inline">\(\mathbf X^\mathsf{T} \mathbf X\)</span> is invertible, which is required for the derivation of OLS.</li>
-<li><strong>Zero Conditional Mean</strong>: <span class="math inline">\(E(\mathbf u|\mathbf X) = 0\)</span>. This implies that no <span class="math inline">\(x_j\)</span> is correlated with <span class="math inline">\(\mathbf u\)</span> (exogeneity), and no function of multiple regressors is correlated with <span class="math inline">\(\mathbf u\)</span>.</li>
+<li><strong>Linearity</strong> in parameters: the population model can be modelled as <span class="math inline">\(y = X\beta + \eps\)</span>.</li>
+<li><strong>Random Sampling</strong>: our sample is randomly sampled (implying independence of observations).</li>
+<li><strong>No Perfect Multicolinearity</strong>: There is no exact linear relationships between the regressors. This ensures that <span class="math inline">\(X^\top X\)</span> is invertible, which is required for the derivation of OLS.</li>
+<li><strong>Zero Conditional Mean</strong>: <span class="math inline">\(\E(\eps| X) = 0\)</span>. This implies that no <span class="math inline">\(X_{ij}\)</span> is correlated with <span class="math inline">\(\eps\)</span> (exogeneity), and no function of multiple regressors is correlated with <span class="math inline">\(\eps\)</span>.</li>
 </ol>
-<p>Let us prove OLS is unbiased - i.e.&nbsp;<span class="math inline">\(E(\hat{\boldsymbol\beta}) = \boldsymbol\beta\)</span>. Let us manipulate our OLS solution:</p>
+<p>Let us prove OLS is unbiased - i.e.&nbsp;<span class="math inline">\(\E\hat\beta = \beta\)</span>. Let us manipulate our OLS solution:</p>
 <p><span id="eq-simplify"><span class="math display">\[
 \begin{align}
-\boldsymbol{\hat\beta} &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y \\
-&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}\color{blue}{(\mathbf X \boldsymbol\beta + \mathbf u)} &amp;&amp; \color{black}(\text{plug in } \color{blue}{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}\color{black}) \\
-&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp;(\text{multiply out})\\
-&amp; = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp;( \ \color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
-&amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp; (\text{identity property of } \mathbf I)
+\hat\beta &amp; = (X^\top X)^{-1} X^\top y \\
+&amp; = (X^\top X)^{-1} X^\top(\color{blue}{X\beta + \eps}\color{black}) &amp;&amp; (\because \color{blue}{y = X\beta + \eps}\color{black}) \\
+&amp; = \underbrace{(X^\top X)^{-1} X^\top X}_{= \ I}\beta + (X^\top X)^{-1}X^\top \eps &amp;&amp; \text{(multiply out)} \\
+&amp; = \beta + (X^\top X)^{-1}X^\top \eps
 \end{align}
 \tag{6}\]</span></span></p>
-<p>Now, let us take the expectation of <span class="math inline">\(\boldsymbol{\hat\beta}\)</span> conditional on <span class="math inline">\(\mathbf X\)</span>. Remember condition 4, <span class="math inline">\(E(\mathbf u | \mathbf X) = 0\)</span>:</p>
+<p>Now, let us take the expectation of <span class="math inline">\(\hat\beta\)</span> conditional on <span class="math inline">\(X\)</span>. Remember condition 4, <span class="math inline">\(\E(\eps | X) = 0\)</span>:</p>
 <p><span class="math display">\[
-\begin{align}
-E(\boldsymbol{\hat\beta}|\mathbf X) &amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} E(\mathbf u | \mathbf X) &amp;&amp;(\mathbf u \text{ conditional on value of } \mathbf X) \\
-E(\boldsymbol{\hat\beta}|\mathbf X) &amp; = \boldsymbol\beta &amp;&amp;(E(\mathbf u | \mathbf X) = 0)
-\end{align}
+\E(\hat\beta | X) = \beta + (X^\top X)^{-1} \underbrace{\E(\eps | X)}_{= \ 0} \  = \ \beta
 \]</span></p>
 <p>Now, we can use the <a href="./quant1.html#expectation-and-variance">law of iterated expectations (LIE)</a> to conclude this proof:</p>
 <p><span class="math display">\[
 \begin{align}
-E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X)) &amp;&amp; (\text{LIE: E(X) = E(E(X|Y))})\\
-&amp; = E(\color{blue}{\boldsymbol\beta}) &amp;&amp; (\text{from above, plug in } \color{blue}{E(\boldsymbol{\hat\beta}|\mathbf X)  = \boldsymbol\beta}\color{black})\\
-&amp; = \boldsymbol\beta &amp;&amp; (\text{expecation of a constant})
+\E \hat\beta &amp; = \E(\E(\hat\beta|X)) &amp;&amp; (\because \mathrm{LIE}) \\
+&amp; = \E(\color{blue}{\beta}\color{black}) &amp;&amp; (\because \color{blue}{\E(\hat\beta | X = \beta)}\color{black}) \\
+&amp; = \beta &amp;&amp; \text{(expectation of a constant)}
 \end{align}
 \]</span></p>
 <p>Thus, OLS is unbiased under the 4 conditions above.</p>
@@ -592,11 +585,11 @@ E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X)) &amp;&a
 </section>
 <section id="deriving-variance" class="level3">
 <h3 class="anchored" data-anchor-id="deriving-variance">Deriving Variance</h3>
-<p>We want to find the variance of our estimator, <span class="math inline">\(Var(\boldsymbol{\hat\beta} | \mathbf X)\)</span>. First, let us start off where we left off in <a href="#eq-simplify" class="quarto-xref">Equation&nbsp;6</a> .</p>
+<p>We want to find the variance of our estimator, <span class="math inline">\(\V(\hat\beta | X)\)</span>. First, let us start off where we left off in <a href="#eq-simplify" class="quarto-xref">Equation&nbsp;6</a> .</p>
 <p><span class="math display">\[
 \begin{align}
-\boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u  \\
-V(\boldsymbol{\hat\beta} | \mathbf X) &amp; = V(\boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u \ | \ \mathbf X)
+&amp; \hat\beta = \beta + (X^\top X)^{-1} X^\top \eps \\
+&amp; \V(\hat\beta | X) = \V(\beta + (X^\top X)^{-1} X^\top \eps)
 \end{align}
 \]</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
@@ -611,38 +604,37 @@ Lemma: Variance
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>If <span class="math inline">\(\mathbf u\)</span> is an <span class="math inline">\(n\)</span> dimensional vector of random variables, <span class="math inline">\(\mathbf c\)</span> is an <span class="math inline">\(m\)</span> dimensional vector, and <span class="math inline">\(\mathbf B\)</span> is an <span class="math inline">\(n \times m\)</span> dimensional matrix with fixed constants, then the following is true:</p>
+<p>If <span class="math inline">\(\eps\)</span> is an <span class="math inline">\(n\)</span> dimensional vector of random variables, <span class="math inline">\(c\)</span> is an <span class="math inline">\(m\)</span> dimensional vector, and <span class="math inline">\(B\)</span> is an <span class="math inline">\(n \times m\)</span> dimensional matrix with fixed constants, then the following is true:</p>
 <p><span id="eq-lemma"><span class="math display">\[
-V(\mathbf c + \mathbf{Bu}) = \mathbf B V(\mathbf u)\mathbf B^T
+\V(c + B\eps) =  B \V(\eps) B^\top
 \tag{7}\]</span></span></p>
 <p>I will not prove this lemma here, but it is provable.</p>
 </div>
 </div>
 </div>
-<p><span class="math inline">\(\boldsymbol\beta\)</span> is a vector of fixed constants. <span class="math inline">\((\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u\)</span> can be imagined as a matrix of fixed constants, since we are conditioning the above variance on <span class="math inline">\(\mathbf X\)</span> (so for each <span class="math inline">\(\mathbf X\)</span>, the statement is fixed). With the Lemma above, we can simplify:</p>
+<p><span class="math inline">\(\beta\)</span> is a vector of fixed constants. <span class="math inline">\((X^\top X)^{-1} X^\top \eps\)</span> can be imagined as a matrix of fixed constants, since we are conditioning the variance on <span class="math inline">\(X\)</span> (so for each <span class="math inline">\(X\)</span>, it is fixed). With the Lemma above:</p>
 <p><span class="math display">\[
 \begin{align}
-V(\boldsymbol{\hat\beta} | \mathbf X) &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} V(\mathbf u | \mathbf X) [(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} &amp;&amp; (\text{lemma})\\
-&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} V(\mathbf u | \mathbf X) \color{blue}{\mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1}} &amp;&amp; \color{black}( \ \color{blue}{[(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}]^{-1} = \mathbf X(\mathbf X^\mathsf{T} \mathbf X)^{-1}}\color{black})\\
+\V (\hat\beta | X) &amp; = (X^\top X)^{-1}X^\top \V(\eps|X) [(X^\top X)^{-1}X^\top]^{-1} &amp;&amp; \text{(lemma)} \\
+&amp; = (X^\top X)^{-1}X^\top \V(\eps|X) \color{blue}{X(X^\top X)^{-1}} &amp;&amp; \color{black}(\because \color{blue}{[(X^\top X)^{-1}X^\top]^{-1} = X(X^\top X)^{-1}} \color{black})
 \end{align}
 \]</span></p>
 <p>From here on, <a href="#homoscedasticity-and-heteroscedasticity">homoscedasticity and heteroscedasticity</a> matter. Let us first start by deriving variance with homoscedasticity, using the definition given by <a href="#eq-homo" class="quarto-xref">Equation&nbsp;4</a> :</p>
 <p><span class="math display">\[
 \begin{align}
-V(\hat{\boldsymbol\beta}|\mathbf X)&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\sigma^2 \mathbf I_n}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\color{blue}{V(\mathbf u | \mathbf X) = \sigma^2 \mathbf I_n}\color{black}) \\
-&amp; =  \color{red}{\sigma^2} \color{black} (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf I_n \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{move scalar } \color{red}{\sigma^2}\color{black})\\
-&amp; =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{identity property of } \mathbf I_n)\\
-&amp; =  \sigma^2 (\mathbf X^\mathsf{T} \mathbf X)^{-1} &amp;&amp; (\text{inverses } \mathbf X^\mathsf{T}  \mathbf X (\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ cancel})
+\V (\hat\beta | X) &amp; = (X^\top X)^{-1}X^\top \color{blue}{\sigma^2I_n}\color{black}{X} (X^\top X)^{-1} &amp;&amp; (\because \color{blue}{\V(\eps|X) = \sigma^2 I_n}\color{black}) \\
+&amp; = \color{blue}{\sigma^2}\color{black}{\underbrace{(X^\top X)^{-1}X^\top X}_{= \ I}(X^\top X)^{-1}} &amp;&amp; \text{(rearrange and simplify)} \\
+&amp; = \sigma^2 (X^\top X)^{-1}
 \end{align}
 \]</span></p>
 <p>Now, let us calculate the variance for when heteroscedasticity is present, as defined by <a href="#eq-hetero" class="quarto-xref">Equation&nbsp;5</a> :</p>
 <p><span class="math display">\[
-V(\hat{\boldsymbol\beta}|\mathbf X)  = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \color{blue}{\begin{pmatrix}
+\V(\hat{\beta}| X)  = (X^\top X)^{-1} X^\top \color{blue}{\begin{pmatrix}
 \sigma^2_1 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \sigma^2_2 &amp; \dots &amp; 0 \\
 \vdots &amp; \vdots &amp; \ddots &amp; 0 \\
 0 &amp; 0 &amp; \dots &amp; \sigma^2_n
-\end{pmatrix}}\color{black}{ \mathbf X} (\mathbf X^\mathsf{T} \mathbf X)^{-1}
+\end{pmatrix}}\color{black} X ( X^\top X)^{-1}
 \]</span></p>
 <p>To calculate both sets of standard errors (normal and robust), we estimate <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\sigma_i^2\)</span> as discussed <a href="#error-variance-and-homoscedasticity">previously</a>. The standard errors are then the square root of our estimated variances.</p>
 <p><br></p>
@@ -650,66 +642,60 @@ V(\hat{\boldsymbol\beta}|\mathbf X)  = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \ma
 <section id="gauss-markov-theorem" class="level3">
 <h3 class="anchored" data-anchor-id="gauss-markov-theorem">Gauss-Markov Theorem</h3>
 <p>The Gauss-Markov Theorem states that the OLS estimator is the <strong>best linear unbiased estimator</strong> (BLUE) - the unbiased linear estimator with the lowest variance, under 5 conditions: linearity, random sampling, no perfect multicollinearity, zero-conditional mean, and <a href="#homoscedasticity-and-heteroscedasticity">homoscedasticity</a>.</p>
-<p>Any linear estimator takes the form <span class="math inline">\(\tilde{\boldsymbol\beta} = \mathbf{Cy}\)</span>. For example, the OLS estimator is of the form <span class="math inline">\(\boldsymbol{\hat\beta} = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y\)</span>, which is the same as form as <span class="math inline">\(\mathbf{Cy}\)</span> if you define <span class="math inline">\(\mathbf C:= (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}\)</span>. For any linear estimator <span class="math inline">\(\tilde{\boldsymbol\beta} = \mathbf{Cy}\)</span> to be unbiased, we need to assume <span class="math inline">\(\color{red}{\mathbf {CX} = \mathbf I}\)</span>.</p>
+<p>Any linear estimator takes the form <span class="math inline">\(\tilde{\beta} = Cy\)</span>. For example, the OLS estimator is of the form <span class="math inline">\(\hat\beta = (X^\top X)^{-1} X^\top y\)</span>, which is the same as form as <span class="math inline">\(Cy\)</span> if you define <span class="math inline">\(C:= ( X^\top X)^{-1} X^\top\)</span>. For any linear estimator <span class="math inline">\(\tilde{\beta} = Cy\)</span> to be unbiased, we need to assume <span class="math inline">\(\color{red}{CX = I}\)</span>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Proof <span class="math inline">\(\mathbf{CX} = \mathbf I\)</span> For a Unbiased Linear Estimator
+Proof <span class="math inline">\(CX = I\)</span> For a Unbiased Linear Estimator
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>For any linear estimator <span class="math inline">\(\tilde{\boldsymbol\beta} = \mathbf{Cy}\)</span> to be unbiased, we need to assume <span class="math inline">\(\color{red}{\mathbf {CX} = \mathbf I}\)</span>. The proof of this is as follows:</p>
-<p>The proof of this is as follows:</p>
+<p>For any linear estimator <span class="math inline">\(\tilde{\beta} = Cy\)</span> to be unbiased, we need to assume <span class="math inline">\(\color{red}{CX = I}\)</span>. The proof of this is as follows:</p>
 <p><span class="math display">\[
 \begin{align}
-\tilde{\boldsymbol\beta} &amp; = \mathbf C(\color{blue}{\mathbf X\boldsymbol\beta + \mathbf u} \color{black}) &amp;&amp; \text{plug in } \color{blue}{\mathbf y =\mathbf X\boldsymbol\beta + \mathbf u} \\
-&amp; = \mathbf{CX} \boldsymbol\beta + \mathbf{Cu} &amp;&amp; \text{multiply out} \\
-E(\tilde{\boldsymbol\beta}|\mathbf X)&amp; = E(\mathbf{CX} \boldsymbol\beta + \mathbf{Cu}) &amp;&amp; \text{take expectation} \\
-&amp; = \mathbf{CX} \boldsymbol\beta + \mathbf C E(\mathbf u|\mathbf X) &amp;&amp; \text{take constants out of expectation} \\
-&amp; = \mathbf{CX} \boldsymbol\beta &amp;&amp; \text{Zero-conditional mean}   \\
-&amp; = \color{red}{\mathbf I}\color{black}{\boldsymbol\beta}  = \boldsymbol\beta &amp;&amp; \because \color{red}{\mathbf{CX} = \mathbf I} \\
-E(\tilde{\boldsymbol\beta} &amp; = E(E(\tilde{\boldsymbol\beta}|\mathbf X)) &amp;&amp; \text{LIE: E(X) = E(E(X|Y)} \\
-&amp; = E(\color{blue}{\boldsymbol\beta}) &amp;&amp; \because \color{blue}{E(\tilde{\boldsymbol\beta}|\mathbf X) = \boldsymbol\beta}\\
-&amp; = \boldsymbol\beta &amp;&amp; \text{expectation of a constant}
+\tilde\beta =  C &amp; (\color{blue}{C\beta + \eps}\color{black}) &amp;&amp; (\because \color{blue}{y = X\beta + \eps}\color{black}) \\
+=  C &amp; X\beta + C\eps &amp;&amp; \text{(multiply out)} \\
+\E(\tilde\beta | X) &amp; = \E(C X\beta + C\eps) \\
+&amp; = CX\beta + C \underbrace{\E(\eps | X)}_{= \ 0} &amp;&amp; \text{(take constants out of exp.)} \\
+&amp; = CX\beta \\
+&amp; = \color{red}{I}\color{black}\beta = \beta &amp;&amp; (\because \color{red}{CX = I}\color{black}) \\
+\E \tilde\beta &amp; = \E( \E(\tilde\beta|X)) &amp;&amp; \text{(law of iterated expect.)} \\
+&amp; = \E(\color{blue}{\beta}\color{black}) &amp;&amp; (\because \color{blue}{\E(\tilde\beta|X) = \beta}\color{black}) \\
+&amp; = \beta &amp;&amp; \text{(expect. of a constant)}
 \end{align}
 \]</span></p>
-<p>Thus, we have shown <span class="math inline">\(\color{red}{\mathbf {CX} = \mathbf I}\)</span> is a necessary condition for any linear estimator <span class="math inline">\(\tilde{\boldsymbol\beta} = \mathbf{Cy}\)</span> to be unbiased.</p>
+<p>Thus, we have shown <span class="math inline">\(\color{red}{CX = I}\)</span> is a necessary condition for any linear estimator <span class="math inline">\(\tilde{\beta} = Cy\)</span> to be unbiased.</p>
 </div>
 </div>
 </div>
-<p>Now, let us calculate the variance of estimator <span class="math inline">\(\tilde{\boldsymbol\beta}\)</span>:</p>
+<p>Now, let us calculate the variance of <span class="math inline">\(\tilde{\beta}\)</span>, taking into consideration the lemma (<a href="#eq-lemma" class="quarto-xref">Equation&nbsp;7</a>) used in the OLS variance:</p>
 <p><span class="math display">\[
 \begin{align}
-V(\tilde{\boldsymbol\beta}|\mathbf X) &amp; = V(\mathbf {Cy} | \mathbf X)\\
-&amp; = V(\mathbf C(\color{blue}{\mathbf X\boldsymbol\beta + \mathbf u} \color{black})| \mathbf X) &amp;&amp; (\text{plug in } \color{blue}{\mathbf y =\mathbf X\boldsymbol\beta + \mathbf u} \color{black}) \\
-&amp; = V(\mathbf{CX} \boldsymbol\beta + \mathbf{Cu}| \mathbf X) &amp;&amp; (\text{multiply out)} \\
-&amp; = V(\boldsymbol\beta + \mathbf{Cu} | \mathbf X) &amp;&amp; (\text{because }\color{red}{\mathbf {CX} = \mathbf I} \color{black})
+\V(\tilde\beta | X) &amp; = \V(Cy|X) \\
+&amp; = \V(C(\color{blue}{X\beta + \eps}\color{black})|X) &amp;&amp; (\because \color{blue}{y = X\beta + \eps}\color{black}) \\
+&amp; = \V(\underbrace{CX}_{= I}\beta + C\eps | X) &amp;&amp; \text{(multiply out)} \\
+&amp; = \V(\beta + C\eps | X) \\
+&amp; = C \V(\eps | X) C^\top &amp;&amp; \text{(using lemma)} \\
+&amp; = C \color{blue}{\sigma^2 I_n} \color{black} C^\top &amp;&amp; (\mathrm{homoscedasticity} \ \color{blue}{\V(\eps|X) = \sigma^2 I_n}\color{black}) \\
+&amp; = \sigma^2 CC^\top &amp;&amp; \text{(rearrange and simplify)}
 \end{align}
 \]</span></p>
-<p>Using the above lemma in <a href="#eq-lemma" class="quarto-xref">Equation&nbsp;7</a> that we used for OLS variance, we get:</p>
+<p>Now, we want to show that the variance of the OLS estimator <span class="math inline">\(\hat{\beta}\)</span> (under homoscedasticity) is smaller than any linear estimator <span class="math inline">\(\tilde{\beta}\)</span>. Let us find the difference between the variances of estimator <span class="math inline">\(\tilde{\beta}\)</span> and <span class="math inline">\(\hat{\beta}\)</span>. Note: since <span class="math inline">\(\color{red}{CX = I}\)</span>, the following is also true: <span class="math inline">\(\color{red}{ X^\top C^\top = (CX)^\top = I}\)</span>.</p>
 <p><span class="math display">\[
 \begin{align}
-V(\tilde{\boldsymbol\beta}|\mathbf X) &amp; = \mathbf CVar(\mathbf u|\mathbf X)\mathbf C^\mathsf{T} &amp;&amp; (\text{using lemma}) \\
-&amp; = \mathbf C \color{blue}{\sigma^2\mathbf I} \color{black}{\mathbf C^\mathsf{T}} &amp;&amp; (\text{homoscedasticity } \color{blue}{Var(\mathbf u|\mathbf X) = \sigma^2 \mathbf I}) \\
-&amp; = \sigma^2 \mathbf {CC}^\mathsf{T} &amp;&amp; (\text{identity property + rearrange})
+\V(\tilde\beta | X)  - \V(\hat\beta|X) &amp; = \sigma^2 CC^\top - \sigma^2 (X^\top X)^{-1} \\
+&amp; = \sigma^2(CC^\top - (X^\top X)^{-1}) &amp;&amp; (\text{factor out }\sigma^2) \\
+&amp; = \sigma^2(CC^\top - \color{red}{CX}\color{black}(X^\top X)^{-1} \color{red}{X^\top C^\top}\color{black}) &amp;&amp; (\because \color{red}{X^\top C^\top = CX = I}\color{black}) \\
+&amp; = \sigma^2 C(I - X(X^\top X)^{-1} X^\top) C^\top &amp;&amp; (\text{factor out }C, C^\top) \\
+&amp; = \sigma^2 C \color{blue}{M}\color{black}C^\top &amp;&amp; (\text{residual maker matrix } \color{blue}{M}\color{black})
 \end{align}
 \]</span></p>
-<p>Now, we want to show that the variance of the OLS estimator <span class="math inline">\(\hat{\boldsymbol\beta}\)</span> (under homoscedasticity) is smaller than any linear estimator <span class="math inline">\(\tilde{\boldsymbol\beta}\)</span>. Let us find the difference between the variances of estimator <span class="math inline">\(\tilde{\boldsymbol\beta}\)</span> and <span class="math inline">\(\hat{\boldsymbol\beta}\)</span>. Note: since <span class="math inline">\(\color{red}{\mathbf{CX} = \mathbf I}\)</span>, the following is also true: <span class="math inline">\(\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T} = (\mathbf{CX})^\mathsf{T} = \mathbf I}\)</span>.</p>
-<p><span class="math display">\[
-\begin{align}
-V(\tilde{\boldsymbol\beta}|\mathbf X) - V(\hat{\boldsymbol\beta} |\mathbf X) &amp; = \sigma^2\mathbf{CC}^\mathsf{T} - \sigma^2(\mathbf X^\mathsf{T}\mathbf X)^{-1} \\
-&amp; = \sigma^2(\mathbf{CC}^\mathsf{T} - (\mathbf X^\mathsf{T}\mathbf X)^{-1}) &amp;&amp; (\text{factor out }\sigma^2) \\
-&amp; = \sigma^2(\mathbf{CC}^\mathsf{T} - \color{red}{\mathbf{CX}}\color{black}(\mathbf X^\mathsf{T}\mathbf X)^{-1}\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T}}\color{black}) &amp;&amp; (\text{since }\color{red}{\mathbf X^\mathsf{T} \mathbf C^\mathsf{T} = \mathbf{CX} = \mathbf I} \color{black}) \\
-&amp; = \sigma^2 \mathbf C (\mathbf I - \mathbf X(\mathbf X^\mathsf{T}\mathbf X)^{-1}\mathbf X^\mathsf{T})\mathbf C^\mathsf{T} &amp;&amp; (\text{factor out } \mathbf C, \mathbf C^\mathsf{T}) \\
-&amp; = \sigma^2 \mathbf C\color{blue}{\mathbf M} \color{black}{\mathbf C}^\mathsf{T} &amp;&amp; \text{(residual maker matrix M)}
-\end{align}
-\]</span></p>
-<p>Since <span class="math inline">\(\sigma^2 \mathbf {CM}\mathbf C^\mathsf{T}\)</span> is positive semi-definite (I will not prove this, but it is provable), we know that <span class="math inline">\(V(\tilde{\boldsymbol\beta}|\mathbf X) &gt; V(\hat{\boldsymbol\beta}|\mathbf X)\)</span>. Thus, OLS is BLUE under the Gauss-Markov Theorem.</p>
+<p>Since <span class="math inline">\(\sigma^2 CM C^\top\)</span> is positive semi-definite (I will not prove this, but it is provable with the properties of <span class="math inline">\(M\)</span> introduced earlier), we know that <span class="math inline">\(V(\tilde{\beta}| X) &gt; V(\hat{\beta}| X)\)</span>. Thus, OLS is BLUE under the Gauss-Markov Theorem.</p>
 <p><br></p>
 </section>
 <section id="asymptotic-consistency-of-ols" class="level3">
@@ -719,7 +705,7 @@ V(\tilde{\boldsymbol\beta}|\mathbf X) - V(\hat{\boldsymbol\beta} |\mathbf X) &am
 <li><strong>Linearity</strong> (see unbiasedness)</li>
 <li><strong>Random Sampling</strong> (…)</li>
 <li><strong>No Perfect Multicolinearity</strong> (…)</li>
-<li><strong>Zero Mean and Exogeneity</strong>: <span class="math inline">\(E(u_i) = 0\)</span>, and <span class="math inline">\(Cov(x_i, u_i) = 0\)</span>, which implies <span class="math inline">\(E(\mathbf x_i u_i) = 0\)</span>. This means that no regressor should be correlated with <span class="math inline">\(\mathbf u\)</span>. This is weaker than Zero-Conditional mean, since it means a function of regressors can be correlated with <span class="math inline">\(\mathbf u\)</span>.</li>
+<li><strong>Zero Mean and Exogeneity</strong>: <span class="math inline">\(E(\eps_i) = 0\)</span>, and <span class="math inline">\(Cov(x_i, \eps_i) = 0\)</span>, which implies <span class="math inline">\(E(X_i \eps_i) = 0\)</span>. This means that no regressor should be correlated with <span class="math inline">\(\mathbf u\)</span>. This is weaker than Zero-Conditional mean, since it means a function of regressors can be correlated with <span class="math inline">\(\eps_i\)</span>.</li>
 </ol>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
@@ -733,11 +719,11 @@ Lemma: Vector Notation
 </div>
 <div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The following statements are true:</p>
+<p>The following statements are true (with <span class="math inline">\(x_i\)</span> being a vector and <span class="math inline">\(\eps_i\)</span> being a scalar):</p>
 <p><span class="math display">\[
 \begin{split}
-&amp; \mathbf X^\mathsf{T} \mathbf X = \sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^\mathsf{T} \\
-&amp; \mathbf X^\mathsf{T} \mathbf  u = \sum\limits_{i=1}^n \mathbf x_i u_i
+&amp; X^\top X = \sum\limits_{i=1}^n x_i x_i^\top\\
+&amp;  X^\top \mathbf \eps = \sum\limits_{i=1}^n x_i \eps_i
 \end{split}
 \]</span></p>
 </div>
@@ -746,12 +732,15 @@ Lemma: Vector Notation
 <p>Let us start of where we left of from <a href="#eq-simplify" class="quarto-xref">Equation&nbsp;6</a>. Using vector notation, <a href="./quant1.html#asymptotically-consistent-estimators">law of large numbers</a>, and zero-mean and exogeneity condition:</p>
 <p><span class="math display">\[
 \begin{align}
-\boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u  \\
-\boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^\mathsf{T} \right)^{-1} \left( \sum\limits_{i=1}^n \mathbf x_i \mathbf u \right) &amp;&amp; (\text{vector notation})\\
-\boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + \left( \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^\mathsf{T} \right)^{-1} \left( \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf u \right) &amp;&amp; ( \ \left(\frac{1}{n} \right)^{-1} \text{and } \frac{1}{n} \text{ cancel out}) \\
-\text{plim} \boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + \left( \text{plim} \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i \mathbf x_i^\mathsf{T} \right)^{-1} \left( \text{plim} \frac{1}{n}\sum\limits_{i=1}^n \mathbf x_i u_i \right) &amp;&amp; (\text{apply plim}) \\
-\text{plim} \boldsymbol{\hat\beta} &amp; = \boldsymbol\beta + (E(\mathbf x_i \mathbf x_i^\mathsf{T}))^{-1}E(\mathbf x_i  u_i) &amp;&amp; (\text{law of large numbers})\\
-\text{plim} \boldsymbol{\hat\beta} &amp; = \boldsymbol\beta &amp;&amp; (E(\mathbf x_i u_i) = 0)
+\hat\beta &amp; = \beta + (X^\top X)^{-1} X^\top \eps \\
+&amp; = \beta \left( \sum\limits_{i=1}^n x_i x_i^\top \right)^{-1} \left( \sum\limits_{i=1}^n x_i \eps_i \right) &amp;&amp; \text{(vector notation)} \\
+&amp; = \beta + \left( \frac{1}{n}\sum\limits_{i=1}^n x_i x_i^\top \right)^{-1} \left( \frac{1}{n} \sum\limits_{i=1}^n x_i \eps_i \right) &amp;&amp; (\left(\frac{1}{n}\right)^{-1}, \frac{1}{n} \text{ cancel out})
+\end{align}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align}
+\mathrm{plim}\hat\beta &amp; = \beta + \left( \mathrm{plim} \frac{1}{n}\sum\limits_{i=1}^n x_i x_i^\top \right)^{-1} \left( \mathrm{plim}\frac{1}{n} \sum\limits_{i=1}^n x_i \eps_i \right) \\
+&amp; = \beta + (\E(x_i x_i^\top))^{-1} \underbrace{\E(x_i \eps_i)}_{= 0} = \beta &amp;&amp; \text{(law of large numbers)}
 \end{align}
 \]</span></p>
 <p>Thus, OLS is asymptotically consistent under the 4 conditions above.</p>
@@ -764,74 +753,74 @@ Lemma: Vector Notation
 <h1><strong>Regression Anatomy and Specification</strong></h1>
 <section id="partitioned-regression-model" class="level3">
 <h3 class="anchored" data-anchor-id="partitioned-regression-model">Partitioned Regression Model</h3>
-<p>We can split up matrix <span class="math inline">\(\mathbf X\)</span> into two matrices - <span class="math inline">\(\mathbf X_1\)</span> containing the regressors we care about, and <span class="math inline">\(\mathbf X_2\)</span> containing regressors we do not care about. <span class="math inline">\(\boldsymbol\beta\)</span> will be split in the same way. Our partitioned model is:</p>
+<p>We can split up matrix <span class="math inline">\(X\)</span> into two matrices - <span class="math inline">\(X_1\)</span> containing the regressors we care about, and <span class="math inline">\(X_2\)</span> containing regressors we do not care about. Vector <span class="math inline">\(\beta\)</span> will be split in the same way. Our partitioned model is:</p>
 <p><span class="math display">\[
-\mathbf y = \mathbf X_1 \boldsymbol\beta_1 + \mathbf X_2 \boldsymbol\beta_2 + \mathbf u
+y = X_1 \beta_1 + X_2 \beta_2 + \eps
 \]</span></p>
-<p>Recall our “residual maker” matrix <span class="math inline">\(\mathbf M\)</span>. First, note a unique property: <span class="math inline">\(\color{red}{\mathbf {MX} = 0}\)</span>. Now, let us define the residual making matrix for the second part of the regression <span class="math inline">\(\mathbf M_2\)</span>:</p>
+<p>Recall our “residual maker” matrix <span class="math inline">\(M\)</span>. First, note a unique property: <span class="math inline">\(\color{red}{MX = 0}\)</span>. Now, let us define the residual making matrix for the second part of the regression <span class="math inline">\(M_2\)</span>:</p>
 <p><span class="math display">\[
-\mathbf M_2 = \mathbf I - \mathbf X_2 (\mathbf X_2^\mathsf{T} \mathbf X_2) \mathbf X_2^\mathsf{T}
+M_2 = I - X_2 (X_2^\top X_2)^{-1}X_2^\top
 \]</span></p>
-<p>Now, let us multiply both sides of our above partitioned model by <span class="math inline">\(\mathbf M_2\)</span>:</p>
+<p>Now, let us multiply both sides of our above partitioned model by <span class="math inline">\(M_2\)</span>:</p>
 <p><span class="math display">\[
 \begin{align}
-\mathbf M_2 \mathbf y &amp; = \mathbf M_2(\mathbf X_1 \boldsymbol\beta_1 + \mathbf X_2 \boldsymbol\beta_2 + \mathbf u) \\
-\mathbf M_2 \mathbf y &amp; = \mathbf M_2 \mathbf X_1 \boldsymbol\beta_1 + \mathbf M_2 \mathbf X_2 \boldsymbol\beta_2 + \mathbf M_2 \mathbf u &amp;&amp; (\text{multiply out}) \\
-\mathbf M_2 \mathbf y &amp; = \mathbf M_2 \mathbf X_1 \boldsymbol\beta_1  + \mathbf M_2 \mathbf u &amp;&amp; ( \because \mathbf M_2 \mathbf X_2 =0, \because \color{red}{\mathbf {MX} = 0})
+M_2 y &amp; = M2(X_1\beta_1 + X_2\beta_2 + \eps) \\
+M_2 y &amp; = M_2X_1 \beta_1 + M_2 X_2 \beta_2 + M_2 \eps &amp;&amp; \text{(multiply out)} \\
+M_2 y &amp; = M_2 X_1 \beta_1 + M_2 \eps &amp;&amp; (\because M_2X_2 = 0, \ \because \color{red}{MX = 0}\color{black})
 \end{align}
 \]</span></p>
-<p>Now, let us denote <span class="math inline">\(\tilde{\mathbf y} := \mathbf M_2 \mathbf y\)</span>, <span class="math inline">\(\tilde{\mathbf X}_1: = \mathbf M_2 \mathbf X_1\)</span>, and error <span class="math inline">\(\mathbf e := \mathbf M_2 \mathbf u\)</span>. Then we get the following regression equation and OLS coefficient estimates:</p>
+<p>Now, let us denote <span class="math inline">\(\tilde{y} := M_2 y\)</span>, <span class="math inline">\(\tilde{X}_1: = M_2 X_1\)</span>, and error <span class="math inline">\(\tilde\eps := M_2 \eps\)</span>. Then we get the following regression equation and OLS coefficient estimates:</p>
 <p><span class="math display">\[
-\tilde{\mathbf y} = \tilde{\mathbf X}_1\boldsymbol\beta_1 + \mathbf e
+\tilde y = \tilde X_1 \beta_1 + \tilde\eps
 \]</span></p>
 <p><span class="math display">\[
-\hat{\boldsymbol\beta}_1 = (\tilde{\mathbf X}_1^\mathsf{T} \tilde{\mathbf X}_1)^{-1}\tilde{\mathbf X}_1^\mathsf{T} \tilde{\mathbf y}
+\hat\beta_1 = (\tilde X_1^\top \tilde X_1)^{-1}\tilde X_1 ^\top \tilde y
 \]</span></p>
-<p>Remember that <span class="math inline">\(\hat{\boldsymbol\beta}_1\)</span> is our coefficient estimates for <span class="math inline">\(\mathbf X_1\)</span>, the portion of <span class="math inline">\(\mathbf X\)</span> we are interested in. This is equivalent to the coefficient estimates had we not partitioned the model.</p>
-<p>Notice how in the formula, we have <span class="math inline">\(\tilde{\mathbf X}_1\)</span>. What is <span class="math inline">\(\tilde{\mathbf X}_1 := \mathbf M_2 \mathbf X_1\)</span>? Well, we know that <span class="math inline">\(\mathbf M_2 \mathbf X_2 = 0\)</span>. That tells us that any part of <span class="math inline">\(\mathbf X_1\)</span> that was correlated to <span class="math inline">\(\mathbf X_2\)</span> also became 0. <u>Thus, <span class="math inline">\(\tilde{\mathbf X}_1\)</span> is the part of <span class="math inline">\(\mathbf X_1\)</span> that is uncorrelated with <span class="math inline">\(\mathbf X_2\)</span>.</u></p>
-<p>What this essentially means is that the coefficient estimates of OLS <span class="math inline">\(\hat\beta_j\)</span> actually measure the effect on <span class="math inline">\(y\)</span> of the part of <span class="math inline">\(x_j\)</span> uncorrelated with the other explanatory variables <span class="math inline">\(x_1, \dots, x_k\)</span>. Essentially, we are <strong>partialling out</strong> the effect of other variables. <u>This is why we can “control” for other variables when focusing on the coefficient of one (or a few) variables</u>.</p>
+<p>Remember that vector <span class="math inline">\(\hat{\beta}_1\)</span> is our coefficient estimates for <span class="math inline">\(X_1\)</span>, the portion of <span class="math inline">\(X\)</span> we are interested in. This is equivalent to the coefficient estimates had we not partitioned the model.</p>
+<p>Notice how in the formula, we have <span class="math inline">\(\tilde{X}_1\)</span>. What is <span class="math inline">\(\tilde{X}_1 := M_2 X_1\)</span>? Well, we know that $ M_2 X_2 = 0$. That tells us that any part of <span class="math inline">\(X_1\)</span> that was correlated to <span class="math inline">\(X_2\)</span> also became 0. <u>Thus, <span class="math inline">\(\tilde{X}_1\)</span> is the part of <span class="math inline">\(X_1\)</span> that is uncorrelated with <span class="math inline">\(X_2\)</span>.</u></p>
+<p>Generalised, What this essentially means is that the coefficient estimates of OLS <span class="math inline">\(\hat\beta_j\)</span> actually measure the effect on <span class="math inline">\(Y_i\)</span> of the part of <span class="math inline">\(X_{ij}\)</span> uncorrelated with the other explanatory variables <span class="math inline">\(X_{i1}, \dots, x_{ip}\)</span>. Essentially, we are <strong>partialling out</strong> the effect of other variables. <u>This is why we can “control” for other variables when focusing on the coefficient of one (or a few) variables</u>.</p>
 <p><br></p>
 </section>
 <section id="omitted-variable-bias" class="level3">
 <h3 class="anchored" data-anchor-id="omitted-variable-bias">Omitted Variable Bias</h3>
-<p>From the regression anatomy theorem, we know that <span class="math inline">\(\hat\beta_j\)</span> is the relationship of <span class="math inline">\(y\)</span> and the part of <span class="math inline">\(x_j\)</span> that is uncorrelated with all the other explanatory variables. That implies that if we omit a variable that is correlated with both <span class="math inline">\(x_j\)</span> and <span class="math inline">\(y\)</span>, that we will get a different (biased) coefficient estimate. This is called <strong>omitted variable bias</strong>.</p>
-<p>Suppose there is some variable <span class="math inline">\(z\)</span> that we have not included in a “short” regression. The actual, “true” regression of the population, would include this confounder <span class="math inline">\(z\)</span></p>
+<p>From the regression anatomy theorem, we know that <span class="math inline">\(\hat\beta_j\)</span> is the relationship of <span class="math inline">\(Y_i\)</span> and the part of <span class="math inline">\(X_{ij}\)</span> that is uncorrelated with all the other explanatory variables. That implies that if we omit a variable that is correlated with both <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span>, that we will get a different (biased) coefficient estimate. This is called <strong>omitted variable bias</strong>.</p>
+<p>Suppose there is some variable <span class="math inline">\(Z_i\)</span> that we have not included in a “short” regression. The actual, “true” regression of the population, would include this confounder <span class="math inline">\(Z_i\)</span></p>
 <p><span class="math display">\[
-\underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u}_{\text{short regression}}
-\qquad \underbrace{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}_{\text{true regression with z} }
+\underbrace{y = X\beta + \eps}_{\text{short regression}}
+\qquad \underbrace{y = X\beta + z\delta + \eps}_{\text{true regression with z} }
 \]</span></p>
-<p>The <a href="#deriving-the-estimator">OLS estimate</a> of the “short regression” excluding confounder <span class="math inline">\(z\)</span> is:</p>
-<p><span class="math display">\[
-\begin{align}
-\boldsymbol{\hat\beta} &amp; = (\mathbf X^T \mathbf X)^{-1} \mathbf X^T \mathbf y \\
-&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} (\color{blue}{\mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}\color{black}) &amp;&amp; (\text{plug in } \color{blue}{\mathbf y = \mathbf X \boldsymbol\beta + \mathbf z\boldsymbol\delta + \mathbf u}\color{black} )\\
-&amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp; (\text{multiply out})\\
-&amp; = \color{blue}{\mathbf I}\color{black}{\boldsymbol\beta} + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp; (\text{inverses } (\color{blue}{\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf X = \mathbf I}\color{black})\\
-&amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf u &amp;&amp; (\text{identity property of } \mathbf I)
-\end{align}
-\]</span></p>
-<p>Now, let us find the expected value of <span class="math inline">\(\boldsymbol{\hat\beta}\)</span>, which is conditional on <span class="math inline">\(\mathbf X, \mathbf z\)</span>, and simplify (using <a href="#ols-as-an-unbiased-estimator">zero conditional mean</a>):</p>
+<p>The <a href="#deriving-the-estimator">OLS estimate</a> of the “short regression” excluding confounder <span class="math inline">\(Z_i\)</span> is:</p>
 <p><span class="math display">\[
 \begin{align}
-E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z) &amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} E(\mathbf u | \mathbf X, \mathbf z) \\
-&amp; = \boldsymbol\beta + (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf z\boldsymbol\delta &amp;&amp;(\because E(\mathbf u | \mathbf X, \mathbf z) = 0)
+\hat\beta &amp; = (X^\top X)^{-1}X^\top y \\
+&amp; = (X^\top X)^{-1}X^\top(\color{blue}{X\beta + z\delta + \eps}\color{black}) &amp;&amp; (\because \color{blue}{y = X\beta + z\delta + \eps}\color{black}) \\
+&amp; = \underbrace{(X^\top X)^{-1}X^\top X}_{= \ I}\beta + (X^\top X)^{-1}X^\top z\delta + (X^\top X)^{-1} X^\top \eps &amp;&amp; \text{(multiply out)} \\
+&amp; = \beta + (X^\top X)^{-1}X^\top z\delta + (X^\top X)^{-1} X^\top \eps
 \end{align}
 \]</span></p>
-<p>Now, what if we had a regression of outcome variable being the confounder <span class="math inline">\(z\)</span>, on the explanatory variables <span class="math inline">\(\mathbf X\)</span>, such that <span class="math inline">\(\mathbf z = \mathbf X \boldsymbol\pi + \mathbf v\)</span>. Our OLS estimate would have the solution:</p>
-<p><span class="math display">\[
-\boldsymbol{\hat\pi} = (\mathbf X^\mathsf{T}\mathbf X)^{-1}\mathbf X^\mathsf{T} \mathbf z
-\]</span></p>
-<p>Now, we can plug <span class="math inline">\(\boldsymbol{\hat\pi}\)</span> into our expected value of <span class="math inline">\(\boldsymbol{\hat\beta}\)</span>. Assume our estimator <span class="math inline">\(\hat{\boldsymbol\pi}\)</span> is unbiased:</p>
+<p>Now, let us find the expected value of <span class="math inline">\(\hat\beta\)</span>, which is conditional on <span class="math inline">\(X, z\)</span>, and simplify (using <a href="#ols-as-an-unbiased-estimator">zero conditional mean</a>):</p>
 <p><span class="math display">\[
 \begin{align}
-E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)  &amp; = \boldsymbol\beta + \boldsymbol{\hat\pi \delta} \\
-E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z)) &amp;&amp; (\text{LIE: } E(X) = E(E(X|Y))\\
-&amp; = E(\color{blue}{\boldsymbol\beta + \boldsymbol{\hat\pi \delta}}\color{black})  &amp;&amp; (\text{from the 1st line } \color{blue}{E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf z) = \boldsymbol\beta + \boldsymbol{\hat\pi \delta}} \color{black}) \\
-&amp; = \boldsymbol\beta + E(\boldsymbol{\hat\pi}) \boldsymbol \delta &amp;&amp; (\boldsymbol\beta, \boldsymbol\delta\text{ are constants})\\
-&amp; = \boldsymbol\beta + \boldsymbol{\pi \delta} &amp;&amp; (\text{unbiased estimator } E(\boldsymbol{\hat\pi}) = \boldsymbol\pi)
+\E(\hat\beta | X, z) &amp; = \beta + (X^\top X)^{-1}X^\top z \delta + (X^\top X)^{-1} X^\top \underbrace{\E(\eps | X, z)}_{= 0} \\
+&amp; = \beta + (X^\top X)^{-1}X^\top z \delta
 \end{align}
 \]</span></p>
-<p>Thus, we can see by not including confounder <span class="math inline">\(z\)</span> in our “short regression”, the estimator is now biased by <span class="math inline">\(\boldsymbol{\hat\pi \delta}\)</span>. In the next chapter when we start discussing causality, we will see omitted confounders as a huge issue in our estimation.</p>
+<p>Now, what if we had a regression of outcome variable being the confounder <span class="math inline">\(z\)</span>, on the explanatory variables <span class="math inline">\(X\)</span>, such that <span class="math inline">\(z = X\eta + u\)</span>. Our OLS estimate would have the solution:</p>
+<p><span class="math display">\[
+\hat\eta = (X^\top X)^{-1} X^\top z
+\]</span></p>
+<p>Now, we can plug <span class="math inline">\(\hat\eta\)</span> into our expected value of <span class="math inline">\(\hat\beta\)</span>. Assume our estimator <span class="math inline">\(\hat{\eta}\)</span> is unbiased:</p>
+<p><span class="math display">\[
+\begin{align}
+\E(\hat\beta | X, z) &amp; = \beta + (X^\top X)^{-1}X^\top z \delta\\
+&amp; = \beta + \color{blue}{\hat\eta}\color{black}\delta &amp;&amp; (\because \color{blue}{\hat\eta = (X^\top X)^{-1} X^\top z }\color{black}) \\
+\E\hat\beta &amp; = \E(\E(\hat\beta|X, z)) &amp;&amp; \text{(law of iterated expect.)} \\
+&amp; = E(\color{blue}{\beta + \hat\eta \delta}\color{black}) &amp;&amp; (\because \color{blue}{\E(\hat\beta|X, z) = \beta + \hat\eta\delta} \color{black}) \\
+&amp; = \beta + \E\hat\eta \ \delta &amp;&amp; \text{(take out constants from exp.)} \\
+&amp; = \beta + \eta\delta &amp;&amp; (\text{unbiased estimator } \E\hat\eta = \eta)
+\end{align}
+\]</span></p>
+<p>Thus, we can see by not including confounder <span class="math inline">\(z\)</span> in our “short regression”, the estimator is now biased by <span class="math inline">\(\hat\eta \delta\)</span>. In the next chapter when we start discussing causality, we will see omitted confounders as a huge issue in our estimation.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -843,40 +832,39 @@ E(\boldsymbol{\hat\beta}) &amp; = E(E(\boldsymbol{\hat\beta}|\mathbf X, \mathbf 
 <h3 class="anchored" data-anchor-id="method-of-moments">Method of Moments</h3>
 <p>The Method of Moments Estimator is another estimator of the true value of populations in the parameter. The estimator defines key population <strong>moments</strong> of interest - which are the population parameters written in terms of expected value functions set equal to 0.</p>
 <p>Then, the Method of Moments uses the sample equivalents of the population moments to estimate the population parameter. For example, to estimate the population mean, the Method of Moments uses the sample mean.</p>
-<p>In order to define a method of moments for a set of parameters <span class="math inline">\(\theta_1, \dots, \theta_k\)</span>, we need to specify at least one population moment per parameter. Or in other words, we must have more than <span class="math inline">\(k\)</span> population moments.</p>
-<p>Our population moments can be defined as the expected value of some function <span class="math inline">\(m(\theta; y)\)</span> that consists of both the variable <span class="math inline">\(y\)</span> and our unknown parameter <span class="math inline">\(\theta\)</span>. The expectation of the function <span class="math inline">\(m(\theta; y)\)</span> should equal 0.</p>
+<p>In order to define a method of moments for a set of parameters <span class="math inline">\(\theta_1, \dots, \theta_p\)</span>, we need to specify at least one population moment per parameter. Or in other words, we must have more than <span class="math inline">\(p\)</span> population moments.</p>
+<p>Our population moments can be defined as the expected value of some function <span class="math inline">\(m(\theta; Y_i)\)</span> that consists of both the variable <span class="math inline">\(Y_i\)</span> and our unknown parameter <span class="math inline">\(\theta\)</span>. The expectation of the function <span class="math inline">\(m(\theta; Y_i)\)</span> should equal 0.</p>
 <p><span class="math display">\[
-E(m(\theta; y)) = 0
+\E(m(\theta; Y_i)) = 0
 \]</span></p>
-<p>Our sample moments will be the sample analogues of <span class="math inline">\(\theta\)</span> and <span class="math inline">\(y\)</span>, which are <span class="math inline">\(\hat\theta\)</span> and <span class="math inline">\(y_i\)</span>:</p>
+<p>Our sample moments will be the sample analogues of <span class="math inline">\(\theta\)</span> and <span class="math inline">\(Y_i\)</span>, which are <span class="math inline">\(\hat\theta\)</span> and <span class="math inline">\(Y_i\)</span>:</p>
 <p><span class="math display">\[
-\frac{1}{n}\sum\limits_{i=1}^n m(\hat\theta; y_i) = 0
+\frac{1}{n}\sum\limits_{i=1}^n m(\hat\theta; Y_i) = 0
 \]</span></p>
 <p>Method of moments estimators are <a href="./quant1.html#asymptotic-properties-of-estimators">asymp</a><a href="quant1.html#asymptotic-properties-of-estimators">totically consistent</a>, because of the law of large numbers.</p>
 <p><br></p>
 </section>
 <section id="population-mean-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="population-mean-estimator">Population Mean Estimator</h3>
-<p>Let us say that we have some random variable <span class="math inline">\(y\)</span>, with a true population mean <span class="math inline">\(\mu\)</span>. We want to estimate <span class="math inline">\(\mu\)</span>, but we only have a sample of the population.</p>
-<p>How can we define <span class="math inline">\(\mu\)</span> in a moment of the form: <span class="math inline">\(E(m(\mu, y)) = 0\)</span>? Well, we know <span class="math inline">\(\mu\)</span> is the expectation of <span class="math inline">\(y\)</span>, so <span class="math inline">\(\mu = E(y)\)</span>. Since they are equal, <span class="math inline">\(\mu - E(y) = 0\)</span>. Thus, we can define the mean as a moment of the following condition:</p>
+<p>Let us say that we have some random variable <span class="math inline">\(y\)</span>, with a true population mean <span class="math inline">\(\mu\)</span>. We want to estimate <span class="math inline">\(\mu\)</span>, but we only have a sample of the population. How can we define <span class="math inline">\(\mu\)</span> in a moment of the form: <span class="math inline">\(\E(m(\mu, y)) = 0\)</span>? Well, we know <span class="math inline">\(\mu\)</span> is the expectation of <span class="math inline">\(Y_i\)</span>, so <span class="math inline">\(\mu = \E(Y_i)\)</span>. Since they are equal, <span class="math inline">\(\mu - E(y) = 0\)</span>. Thus, we can define the mean as a moment of the following condition:</p>
 <p><span class="math display">\[
-E(y - \mu) = 0
+\E(Y_i - \mu) = 0
 \]</span></p>
 <p>The method of moments estimator uses the sample equivalent of the population moment. The sample equivalent of <span class="math inline">\(\mu\)</span>, is the sample mean <span class="math inline">\(\bar y\)</span>:</p>
 <p><span class="math display">\[
-E(y_i - \hat\mu) = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \hat\mu) = 0
+\E(Y_i - \hat\mu) = \frac{1}{n}\sum\limits_{i=1}^n (Y_i - \hat\mu) = 0
 \]</span></p>
 <p>With this equation, we can then solve for <span class="math inline">\(\hat\mu\)</span>:</p>
 <p><span class="math display">\[
 \begin{align}
-0 &amp; = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \hat\mu) \\
-0 &amp; = \frac{1}{n}\sum\limits_{i=1}^ny_i - \frac{1}{n}\sum\limits_{i=1}^n \hat\mu  &amp;&amp; (\text{multiply out})\\
-0 &amp; = \frac{1}{n}\sum\limits_{i=1}^ny_i - \frac{1}{n} n \hat\mu &amp;&amp;(\text{summation property of constant } \hat\mu)\\
-0 &amp; = \bar y - \hat \mu &amp;&amp; (\text{definition of mean }\frac{1}{n}\sum\limits_{i=1}^ny_i = \bar y)\\
-\hat\mu &amp; = \bar y &amp;&amp; (+\hat\mu\text{ to both sides})
+0 &amp; = \frac{1}{n}\sum\limits_{i=1}^n (Y_i - \hat\mu) \\
+0 &amp; = \frac{1}{n}\sum\limits_{i=1}^nY_i - \frac{1}{n}\sum\limits_{i=1}^n \hat\mu  &amp;&amp; (\text{multiply out})\\
+0 &amp; = \frac{1}{n}\sum\limits_{i=1}^nY_i - \frac{1}{n} n \hat\mu &amp;&amp;(\text{summation property of constant } \hat\mu)\\
+0 &amp; = \bar Y - \hat \mu &amp;&amp; (\text{definition of mean }\frac{1}{n}\sum\limits_{i=1}^nY_i = \bar Y)\\
+\hat\mu &amp; = \bar Y &amp;&amp; (+\hat\mu\text{ to both sides})
 \end{align}
 \]</span></p>
-<p>So, we see the method of moments estimates our true population mean <span class="math inline">\(\mu\)</span>, with the sample mean <span class="math inline">\(\bar y\)</span>. As a method of moments estimator, it is also asymptotically consistent.</p>
+<p>So, we see the method of moments estimates our true population mean <span class="math inline">\(\mu\)</span>, with the sample mean <span class="math inline">\(\bar Y\)</span>. As a method of moments estimator, it is also asymptotically consistent.</p>
 <p><br></p>
 </section>
 <section id="ols-as-a-method-of-moments" class="level3">
@@ -884,39 +872,26 @@ E(y_i - \hat\mu) = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \hat\mu) = 0
 <p>OLS is a special case of the Method of Moments Estimator. Consider the bivariate regression model. The OLS estimator can be derived as a method of moments estimator, with 2 moments (expectation functions set equal to 0), one for each parameter (<span class="math inline">\(\beta_0, \beta_1\)</span>):</p>
 <p><span class="math display">\[
 \begin{split}
-&amp; E(y-\beta_0 -\beta_1x) = E(u) = 0 \\
-&amp; E(x(y - \beta_0 - \beta_1 x)) = E(xu) = 0
+&amp; \E(Y_i-\beta_0 -\beta_1X_i) = E(\eps_i) = 0 \\
+&amp; \E(X_i(Y_i - \beta_0 - \beta_1 X_i)) = E(x_i \eps_i) = 0
 \end{split}
 \]</span></p>
 <p>The estimates of these moments would use the sample equivalents: <span class="math inline">\(\hat\beta_0\)</span> and <span class="math inline">\(\hat\beta_1\)</span>.</p>
 <p><span class="math display">\[
 \begin{split}
-&amp; E(y-\hat\beta_0 -\hat\beta_1x) = 0 \\
-&amp; E(x(y - \hat\beta_0 - \hat\beta_1 x)) = 0
+&amp; \E(Y_i-\hat\beta_0 -\hat\beta_1X_i) = 0 \\
+&amp; \E(X_i(Y_i - \hat\beta_0 - \hat\beta_1 X_i)) = 0
 \end{split}
 \]</span></p>
-<p>Remember our OLS minimisation conditions:</p>
+<p>Now, recall our OLS minimisation conditions (simple linear regression, presented in the extra info box above). Since by definition, average/expectation is <span class="math inline">\(\E(x) = \frac{1}{n} \sum x_i\)</span>, we can rewrite as:</p>
 <p><span class="math display">\[
 \begin{split}
-&amp; \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0 \\
-&amp; \sum\limits_{i=1}^n x_i (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = 0
+&amp; \sum\limits_{i=1}^n (Y_i - \hat{\beta}_0 - \hat{\beta}_1 X_i) = \ n \times \E(Y_i - \hat\beta_0 - \hat\beta_1X_i) = 0 \\
+&amp; \sum\limits_{i=1}^n X_i (Y_i - \hat{\beta}_0 - \hat{\beta}_1 X_i) = \  n \times \E(X_i(Y_i - \hat\beta_0 - \hat\beta_1X_i)) = 0
 \end{split}
 \]</span></p>
-<p>Since by definition, average/expectation is <span class="math inline">\(E(x) = \frac{1}{n} \sum x_i\)</span>, we can rewrite the OLS minimisation conditions as:</p>
-<p><span class="math display">\[
-\begin{split}
-&amp; n \times E(y_i - \hat\beta_0 - \hat\beta_1x_i) = 0 \\
-&amp; n \times E(x_i(y_i - \hat\beta_0 - \hat\beta_1x_i)) = 0
-\end{split}
-\]</span></p>
-<p>And since anything multiplied to a zero turns into zero, we can ignore the <span class="math inline">\(n\)</span> in the first order condition, and only focus on the expected value part. Thus, our conditions are:</p>
-<p><span class="math display">\[
-\begin{split}
-&amp; E(y_i - \hat\beta_0 - \hat\beta_1x_i) = 0 \\
-&amp; E(x_i(y_i - \hat\beta_0 - \hat\beta_1x_i)) = 0
-\end{split}
-\]</span></p>
-<p>Which as we can see, are the exact same minimisation conditions as the method of moments estimator. Thus, the OLS estimator is a special case of the Method of Moments estimator, and they produce the same coefficients. This is an important property for the instrumental variables method that will be covered later.</p>
+<p>And since anything multiplied to a zero turns into zero, we can ignore the <span class="math inline">\(n\)</span> in the first order condition. Which as we can see, are the exact same minimisation conditions as the method of moments estimator.</p>
+<p>Thus, the OLS estimator is a special case of the Method of Moments estimator, and they produce the same coefficients. This is an important property for the instrumental variables method that will be covered later.</p>
 <p><br></p>
 <p><br></p>
 <hr>

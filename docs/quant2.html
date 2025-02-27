@@ -318,7 +318,6 @@ window.Quarto = {
   <li><a href="#t-tests" id="toc-t-tests" class="nav-link" data-scroll-target="#t-tests">T-Tests</a></li>
   <li><a href="#confidence-intervals" id="toc-confidence-intervals" class="nav-link" data-scroll-target="#confidence-intervals">Confidence Intervals</a></li>
   <li><a href="#f-tests" id="toc-f-tests" class="nav-link" data-scroll-target="#f-tests">F-Tests</a></li>
-  <li><a href="#predictive-inference" id="toc-predictive-inference" class="nav-link" data-scroll-target="#predictive-inference">Predictive Inference</a></li>
   </ul></li>
   <li><a href="#extension-different-variables" id="toc-extension-different-variables" class="nav-link" data-scroll-target="#extension-different-variables"><strong>Extension: Different Variables</strong></a>
   <ul class="collapse">
@@ -372,56 +371,33 @@ window.Quarto = {
 <h1><strong>Basics of the Model</strong></h1>
 <section id="model-specification" class="level3">
 <h3 class="anchored" data-anchor-id="model-specification">Model Specification</h3>
-<p>Let us say we have some outcome variable <span class="math inline">\(y\)</span>, and several explanatory variables <span class="math inline">\(x_1, x_2, \dots, x_k\)</span>. We have data on <span class="math inline">\(n\)</span> number of observations <span class="math inline">\(i = 1, \dots n\)</span>. We assume these observations <span class="math inline">\(i = 1, \dots, n\)</span> are independent of each other. The linear model can be specified for any specific outcome value <span class="math inline">\(y_i\)</span> for unit <span class="math inline">\(i\)</span>:</p>
+<p>There is some random outcome variable <span class="math inline">\(Y_i\)</span>, and several random explanatory variables <span class="math inline">\(X_{i1}, X_{i2}, \dots, X_{ip}\)</span>. There are <span class="math inline">\(n\)</span> number of observations <span class="math inline">\(i = 1, \dots n\)</span>. The population linear model is specified as:</p>
 <p><span class="math display">\[
-y_i = \beta_0 + \beta_1 x_{1i} + \dots + \beta_kx_{ki} + u_i
+Y_i = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i \ = \  \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} + \eps_i
 \]</span></p>
+<p>Where <span class="math inline">\(\beta_0, \dots, \beta_p\)</span> are population parameters to be estimated, and <span class="math inline">\(\eps_i\)</span> is the error term.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-More Info on the Error Term <span class="math inline">\(u_i\)</span>
+More Info on the Error Term <span class="math inline">\(\varepsilon_i\)</span>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The <span class="math inline">\(u_i\)</span> is called the error term. This indicates that not every value of <span class="math inline">\(y_i\)</span> in our data will be exactly on the linear best-fit line.</p>
-<p>Graphically, it is the highlighted part:</p>
+<p>The <span class="math inline">\(\varepsilon_i\)</span> is called the error term. This indicates that not every value of <span class="math inline">\(Y_i\)</span> in our data will be exactly on the linear best-fit line. Graphically, it is the highlighted part:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-1210742477.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:65.0%"></p>
+<p><img src="images/clipboard-1210742477.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
 </figure>
 </div>
-<p>In social science terms, the <span class="math inline">\(u_i\)</span> is the effect of any other variable not included in our model on <span class="math inline">\(y\)</span>.</p>
-<p>For example, if <span class="math inline">\(x\)</span> is age, and <span class="math inline">\(y\)</span> is income, we will have the following relationship:</p>
-<p><span class="math display">\[
-\text{income}_i = \beta_0 + \beta_1 \text{age}_i + u_i
-\]</span></p>
-<p>However, not every individual lies perfectly on this linear line. This is because there are other factors outside of age that affect <span class="math inline">\(y\)</span> (income), and these other factors are bundled into the error term.</p>
+<p>In social science terms, the <span class="math inline">\(\eps_i\)</span> is the effect of any other explanatory variable not included in our model.</p>
 </div>
 </div>
 </div>
-<p>We can condense this above with the use of vectors:</p>
-<p><span class="math display">\[
-y_i = \mathbf x_i^\mathsf{T}\boldsymbol\beta + u_i, \quad \text{where } \mathbf x_i = \begin{pmatrix} 1 \\ x_{i1} \\ \vdots \\ x_{ki} \end{pmatrix}, \quad \boldsymbol\beta = \begin{pmatrix} \beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{pmatrix}
-\]</span></p>
-<p>We can specify all observations <span class="math inline">\(y_1, \dots, y_n\)</span> in a vector:</p>
-<p><span class="math display">\[
-\begin{align}
-\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} &amp; = \begin{pmatrix} \mathbf x_1^\mathsf{T}\boldsymbol\beta + u_1 \\ \mathbf x_2^\mathsf{T}\boldsymbol\beta + u_2 \\ \vdots \\ \mathbf x_n^\mathsf{T}\boldsymbol\beta + u_n\end{pmatrix}\\
-\begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} &amp; =
-\begin{pmatrix}1 &amp; x_{11} &amp; \dots &amp; x_{k1} \\1 &amp; x_{12} &amp; \dots &amp; x_{k2} \\\vdots &amp; \vdots &amp; \vdots &amp; \vdots \\1 &amp; x_{1n} &amp; \dots &amp; x_{kn}\end{pmatrix}
-\begin{pmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\end{pmatrix}
-+ \begin{pmatrix}u_1 \\ u_2 \\ \vdots \\ u_n\end{pmatrix}
-\end{align}
-\]</span></p>
-<p>We typically denote the above model as:</p>
-<p><span class="math display">\[
-\mathbf y = \mathbf X \boldsymbol\beta + \mathbf u
-\]</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -437,73 +413,65 @@ Visualising the Geometry of Regression
 <p>Our linear model is essentially a hyperplane space <span class="math inline">\(\mathbb R^k\)</span>. The figure below shows this:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-365376575.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+<p><img src="images/clipboard-365376575.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
+<p>This implies for each observation <span class="math inline">\(i=1,\dots ,n\)</span> with values <span class="math inline">\((y_1, x_{11} \dots, x_{1p})\)</span> has a regression equation:</p>
+<p><span class="math display">\[
+\begin{align}
+y_1 = &amp; \ \beta_0 + \beta_1x_{11} + \dots + \beta_px_{1p} + \eps_1 \\
+y_2 = &amp; \ \beta_0 + \beta_1x_{21} + \dots + \beta_px_{2p} + \eps_2 \\
+&amp; \qquad \vdots \qquad \qquad \vdots \\
+y_n = &amp; \ \beta_0 + \beta_1x_{n1} + \dots + \beta_px_{np} + \eps_n
+\end{align}
+\]</span></p>
+<p>We can write this system of regression equations in linear algebra form:</p>
+<p><span class="math display">\[
+y = X\beta + \eps \quad \iff \quad \begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}  =
+\begin{pmatrix}1 &amp; x_{11} &amp; \dots &amp; x_{1p} \\1 &amp; x_{21} &amp; \dots &amp; x_{2p} \\\vdots &amp; \vdots &amp; \vdots &amp; \vdots \\1 &amp; x_{n1} &amp; \dots &amp; x_{np}\end{pmatrix}
+\begin{pmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_p\end{pmatrix}
++ \begin{pmatrix}\eps_1 \\ \eps_2 \\ \vdots \\ \eps_n\end{pmatrix}
+\]</span></p>
+<p>Notation note: I generally indicate vectors with a lowercase letter (ex. <span class="math inline">\(y\)</span>), and matrices with an uppercase vector (ex. <span class="math inline">\(X\)</span>). Random variables will typically have subscript <span class="math inline">\(i\)</span>, (ex. <span class="math inline">\(Y_i, X_i\)</span>), while realisations of random variables (and also scalars) will be lowercase (ex. <span class="math inline">\(y_1, x_1\)</span>).</p>
 <p><br></p>
 </section>
 <section id="estimation-process" class="level3">
 <h3 class="anchored" data-anchor-id="estimation-process">Estimation Process</h3>
-<p>To estimate the population parameters <span class="math inline">\(\beta_0, \dots, \beta_k\)</span>, we use our sample data, and try to find the values <span class="math inline">\(\widehat{\beta_0}, \dots, \widehat{\beta_k}\)</span> that <strong>minimise the square sum of residuals</strong> (SSR):</p>
-<p><span class="math display">\[
-\begin{align}
-SSR = S(\widehat{\beta_0}, \dots, \widehat{\beta_k})&amp; = \sum\limits_{i=1}^n(y_i - \hat y_i)^2 \\
-&amp; = \sum\limits_{i=1}^n(y_i - \color{blue}{(\widehat{\beta_0} + \widehat{\beta_1}x_{1i} + \dots + \widehat{\beta_k}x_{ki})}\color{black})^2 &amp;&amp; (\text{plug in } \color{blue}{\hat y = \widehat{\beta_0} + \widehat{\beta_1}x_{1i} + \dots }\color{black}) \\
-&amp; = \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_{1i} - \dots - \widehat{\beta_k}x_{ki})^2 &amp;&amp;(\text{distribute negative sign})
-\end{align}
-\]</span></p>
-<p>In the linear algebra representation (where <span class="math inline">\(\mathbf b\)</span> is the vector of estimated parameters <span class="math inline">\(\widehat{\beta_0}, \dots, \widehat{\beta_k}\)</span>):</p>
-<p><span class="math display">\[
-\begin{align}
-SSR = S(\hat{\boldsymbol\beta}) &amp; = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mathbf y - \hat{\mathbf y})\\
-&amp; = (\mathbf y - \color{blue}{\mathbf X \hat{\boldsymbol\beta}}\color{black})^\mathsf{T} (\mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}}\color{black}) &amp;&amp; (\text{plug in } \color{blue}{\hat{\mathbf y}  = \mathbf X \hat{\boldsymbol\beta}}\color{black}) \\
-\end{align}
-\]</span></p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Intuitive Visualisation of SSR
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The residuals are the difference from our predicted best-fit line result <span class="math inline">\(\widehat{y_i}\)</span>, and the actual value of <span class="math inline">\(y_i\)</span> in the data. Below highlighted in red are the residuals.</p>
+<p>To <a href="./quant1.html#estimators-and-sampling-distributions">estimate</a> the population parameters <span class="math inline">\(\beta_0, \dots, \beta_p\)</span>, we use our sample data, and try to find the values <span class="math inline">\(\hat\beta_0, \dots, \hat\beta_p\)</span> that <strong>minimise the square sum of residuals</strong> (SSR). The residuals are the difference from our predicted best-fit line result <span class="math inline">\(\hat Y_i\)</span>, and the actual value of <span class="math inline">\(Y_i\)</span> in the data. Below highlighted in red are the residuals.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-846785636.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+<p><img src="images/clipboard-846785636.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
 </figure>
 </div>
-<p>After we have the residual values, we simply square each of them, then sum all of them together. That is the sum of squared residuals.</p>
-</div>
-</div>
-</div>
+<p>After we have the residual values, we simply square each of them, then sum all of them together. That is the sum of squared residuals (SSR). We will define the SSR as function <span class="math inline">\(S\)</span>. In the linear algebra representation (where <span class="math inline">\(\hat\beta\)</span> is the vector of estimated parameters <span class="math inline">\(\hat\beta_0, \dots, \hat\beta_p\)</span>):</p>
+<p><span id="eq-ssr"><span class="math display">\[
+\begin{align}
+S(\hat\beta) &amp; = (y - \hat y)^\top (y - \hat y) \\
+&amp; = (y - \color{blue}{X\hat\beta}\color{black})^\top (y - \color{blue}{X\hat\beta}\color{black}) &amp;&amp; (\because \color{blue}{\hat y = X\hat\beta} \color{black})
+\end{align}
+\tag{1}\]</span></span></p>
 <p>This estimation is called the <strong>ordinary least squares (OLS) estimator</strong>. The solutions to the OLS estimator can be derived mathematically.</p>
 <p><br></p>
 </section>
 <section id="deriving-ols-estimates" class="level3">
 <h3 class="anchored" data-anchor-id="deriving-ols-estimates">Deriving OLS Estimates</h3>
-<p>OLS wants to minimise the sum of squared residuals <span class="math inline">\(S(\hat{\boldsymbol\beta})\)</span> - the differences between the actual <span class="math inline">\(\mathbf y\)</span> and our predicted <span class="math inline">\(\hat{\mathbf y}\)</span>:</p>
+<p>OLS wants to minimise the sum of squared residuals <span class="math inline">\(S(\hat{\boldsymbol\beta})\)</span> shown in <a href="#eq-ssr" class="quarto-xref">Equation&nbsp;1</a>.</p>
 <p><span class="math display">\[
 \begin{align}
-S(\hat{\boldsymbol\beta}) &amp; = (\mathbf y - \hat{\mathbf y})^\mathsf{T} (\mathbf y - \hat{\mathbf y})\\
-&amp; = (\mathbf y - \color{blue}{\mathbf X \hat{\boldsymbol\beta}}\color{black})^\mathsf{T} (\mathbf y - \color{blue}{\mathbf{X} \hat{\boldsymbol\beta}}\color{black}) &amp;&amp; (\text{plug in } \color{blue}{\hat{\mathbf y}  = \mathbf X \hat{\boldsymbol\beta}}\color{black}) \\
-&amp; = \mathbf y^\mathsf{T} \mathbf y - \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta} + \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X}\boldsymbol\beta &amp;&amp; (\text{distribute out)} \\
-&amp; = \mathbf y^\mathsf{T} \mathbf y - \color{blue}{2\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y}\color{black} + \underbrace{\hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta}}_{\text{quadratic}} &amp;&amp;(\text{combine } \color{blue}{- \hat{\boldsymbol\beta}^\mathsf{T} \mathbf X^\mathsf{T} \mathbf y - \mathbf y^\mathsf{T} \mathbf{X}\hat{\boldsymbol\beta}}\color{black})
+S(\hat\beta) &amp;  = (y - X \hat\beta )^\top (y - X \hat \beta) \\
+&amp; = y^\top y - \hat\beta^\top X^\top y - y^\top X \hat\beta +  \hat\beta^\top X^\top X \hat\beta &amp;&amp; (\text{distribute out}) \\
+&amp; = y^\top y \ \color{blue}{-  2 \hat\beta^\top X^\top y} \color{black}  +  \underbrace{\hat\beta^\top X^\top X \hat\beta}_{\text{quadratic}} &amp;&amp; (\because \color{blue}{- \hat\beta^\top X^\top y - y^\top X \hat\beta = - 2 \hat\beta^\top X^\top y} \color{black})
 \end{align}
 \]</span></p>
-<p>Now, let us find the first order condition:</p>
+<p>Now, let us take the gradient to find the first order condition:</p>
 <p><span class="math display">\[
-\frac{\partial S(\hat{\boldsymbol\beta})}{\partial \hat{\boldsymbol\beta}} = -2\mathbf X^\mathsf{T} \mathbf y + 2 \mathbf X^\mathsf{T} \mathbf{X} \hat{\boldsymbol\beta} = 0
+\frac{\partial S(\hat\beta)}{\partial \hat\beta} = -2 X^\top y + 2 X^\top X \hat\beta = 0
 \]</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -512,68 +480,74 @@ First Order Conditions for Simple Linear Regression
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Currently, we are deriving the first order conditions for multiple linear regression using linear algebra.</p>
-<p>For simple linear regression (with one explanatory variable), we can use summation notation. Recall our sum of squared residuals in summation form:</p>
+<p>Currently, we are deriving the first order conditions for multiple linear regression using linear algebra. For simple linear regression (with one explanatory variable), we can use summation notation. Our sum of squared residuals in summation form is:</p>
 <p><span class="math display">\[
-SSR = S(\widehat{\beta_0}, \widehat{\beta_1})= \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_i)^2
+SSR = S(\hat\beta_0, \hat\beta_1)= \sum\limits_{i=1}^n(Y_i - \hat\beta_0 - \hat\beta_1X_i)^2
 \]</span></p>
-<p>We want to minimise the SSR in respect to both <span class="math inline">\(\widehat{\beta_0}\)</span> and <span class="math inline">\(\widehat{\beta_1}\)</span>. We can do this by taking the partial derivative in respect to both, and setting them equal to 0. We can find the partial derivative with chain rule and sum rule:</p>
-<p><span class="math display">\[
+<p>We want to minimise the SSR in respect to both <span class="math inline">\(\hat\beta_0\)</span> and <span class="math inline">\(\hat\beta_1\)</span>. We can do this by finding our first order conditions:</p>
+<p><span id="eq-firstordersimple"><span class="math display">\[
 \begin{align}
-\frac{\partial S(\widehat{\beta_0}, \widehat{\beta_1})}{\partial \widehat{\beta_0}} &amp; = \sum\limits_{i=1}^n(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_i) = 0 \\
-\frac{\partial S(\widehat{\beta_0}, \widehat{\beta_1})}{\partial \widehat{\beta_1}} &amp; = \sum\limits_{i=1}^nx_i(y_i - \widehat{\beta_0} - \widehat{\beta_1}x_i) = 0
+\frac{\partial S(\hat\beta_0, \hat\beta_1)}{\partial \hat\beta_0} &amp; = \sum\limits_{i=1}^n(Y_i - \hat\beta_0 - \hat\beta_1X_i) = 0 \\
+\frac{\partial S(\hat\beta_0, \hat\beta_1)}{\partial \hat\beta_1} &amp; = \sum\limits_{i=1}^n X_i(Y_i - \hat\beta_0 - \hat\beta_1X_i) = 0 \\
 \end{align}
-\]</span></p>
-<p>These conditions create a system of equations, which you can solve for the OLS solutions of <span class="math inline">\(\widehat{\beta_0}\)</span> and <span class="math inline">\(\widehat{\beta_1}\)</span>. I will not do that here, since this method is more tedious than the linear algebra method, and can only apply to simple linear regression.</p>
+\tag{2}\]</span></span></p>
+<p>These conditions create a system of equations, which you can solve for the OLS solutions of <span class="math inline">\(\hat\beta_0\)</span> and <span class="math inline">\(\hat\beta_1\)</span>. I will not do that here, since this method is more tedious than the linear algebra method, and can only apply to simple linear regression.</p>
 <p>However, while we are not going to solve for our OLS solutions with summations, it is still useful to know these first order conditions, since we will use them in many proofs that show other estimators are the same as OLS because they have the same first order conditions.</p>
 </div>
 </div>
 </div>
-<p>When assuming <span class="math inline">\(\mathbf X^\mathsf{T} \mathbf X\)</span> is invertable (which is true if <span class="math inline">\(\mathbf X\)</span> is full rank), we can isolate <span class="math inline">\(\hat{\beta}\)</span> to find the solution to OLS:</p>
+<p>When assuming <span class="math inline">\(X^\top X\)</span> is invertable (which is true if <span class="math inline">\(X\)</span> is full rank), we can isolate <span class="math inline">\(\hat\beta\)</span> to find the solution to OLS:</p>
 <p><span class="math display">\[
 \begin{align}
--2\mathbf X^T\mathbf y + 2 \mathbf X^\mathsf{T} \mathbf X \boldsymbol{\hat{\beta}} &amp; = 0 \\
-2 \mathbf X^\mathsf{T} \mathbf X \boldsymbol{\hat\beta} &amp; = 2\mathbf X^\mathsf{T} \mathbf y &amp;&amp; (+ 2\mathbf X^\mathsf{T} \mathbf y \text{ to both sides}) \\
-\boldsymbol{\hat\beta} &amp; = (2\mathbf X^\mathsf{T} \mathbf X)^{-1} 2 \mathbf X^\mathsf{T} \mathbf y &amp;&amp; (\times (2\mathbf X^\mathsf{T} \mathbf X)^{-1} \text{ to both sides})\\
-\boldsymbol{\hat\beta} &amp; = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y &amp;&amp;(\text{cancel out } 2^{-1}\times 2)
+-2 X^\top y + 2 X^\top X \hat\beta &amp; = 0 \\
+2 X^\top X \hat\beta &amp; = 2 X^\top y &amp;&amp; ( + 2X^\top y \text{ to both sides}) \\
+\hat\beta &amp; = (2X^\top X)^{-1} -2 X^\top y &amp;&amp; (\times (2X^\top X)^{-1} \text{ to both sides}) \\
+\hat\beta &amp; = (X^\top X)^{-1} X^\top y &amp;&amp; (2^{-1}, 2 \text{ cancel out})
 \end{align}
 \]</span></p>
-<p>Those are our coefficient solutions to OLS. With the estimated parameters <span class="math inline">\(\widehat{\beta_0}, \dots, \widehat{\beta_k}\)</span>, we now have a best-fit line, called the <strong>fitted values</strong>.</p>
+<p>Those are our coefficient solutions to OLS. With the estimated parameters <span class="math inline">\(\hat\beta_0, \dots, \hat\beta_p\)</span>, we now have a best-fit line/plane, called the <strong>fitted values</strong> <span class="math inline">\(\hat y\)</span>. We can also determine our OLS residuals <span class="math inline">\(\hat\eps\)</span>:</p>
+<p><span id="eq-fit"><span class="math display">\[
+\begin{align}
+\hat y &amp; = X \hat\beta = X(X^\top X)^{-1}X^\top y \\
+y &amp; = X \hat\beta + \hat\eps
+\end{align}
+\tag{3}\]</span></span></p>
 <p>We will discuss the OLS estimator in far more detail in the <a href="./quant3.html">next chapter</a>, discussing its properties, and its strengths/weaknesses.</p>
 <p><br></p>
 </section>
 <section id="conditional-expectation-function" class="level3">
 <h3 class="anchored" data-anchor-id="conditional-expectation-function">Conditional Expectation Function</h3>
-<p>Previously, we wrote the linear regression model in respect to <span class="math inline">\(y_i\)</span>. However, we can also write the linear regression model as the best linear approximation of a <a href="./quant1.html#conditional-distributions">conditional expectation</a> <span class="math inline">\(E(y_i |x_i)\)</span>:</p>
+<p>Previously, we wrote the linear regression model in respect to <span class="math inline">\(Y_i\)</span>. However, we can also write the linear regression model as the best linear approximation of a <a href="./quant1.html#conditional-distributions">conditional expectation</a> function (CEF) <span class="math inline">\(\E(Y_i |X_i)\)</span>:</p>
 <p><span class="math display">\[
-E(y_i|x_i) = \beta_0 + \beta_1 x_1 + \dots + \beta_k x_k
+\E(Y_i|X_i) = \beta_0 + \beta_1 X_{i1} + \dots + \beta_p X_{ip}
 \]</span></p>
-<p>Best-approximation is defined by the lowest mean-squared error (MSE). Let us prove OLS on <span class="math inline">\(y_i\)</span> gets the same <span class="math inline">\(\beta_0, \dots, \beta_k\)</span> as the best linear approximation of <span class="math inline">\(E(y_i|x_i)\)</span>. Take this very simple CEF and its MSE:</p>
+<p>Best-approximation is defined by the lowest mean-squared error (MSE). Let us prove OLS on <span class="math inline">\(Y_i\)</span> gets the same <span class="math inline">\(\beta_0, \dots, \beta_p\)</span> as the best linear approximation of <span class="math inline">\(\E(Y_i|X_i)\)</span>. Take this very simple CEF and its MSE:</p>
 <p><span class="math display">\[
 \begin{align}
-E(y_i|x_i) &amp; = b_0 + b_1x_i \\
-MSE &amp; = E(y_i - E(y_i|x_i))^2 \\
-&amp; =  E(y_i - b_0 - b_1x_i)^2
+\E(Y_i|X_i) &amp; = b_0 + b_1X_i \\
+MSE &amp; = \E(Y_i - \E(Y_i|X_i))^2 \\
+&amp; =  \E(Y_i - (\color{blue}{b_0 + b_1X_i}\color{black}))^2  &amp;&amp; (\because \color{blue}{\E(Y_i|X_i) = b_0 + b_1X_i}\color{black})\\
+&amp; = \E(Y_i - b_0 - b_1 X_i) &amp;&amp; \text{(distribute negative sign)}
 \end{align}
 \]</span></p>
 <p>The first order conditions are (using chain rule and partial derivatives):</p>
 <p><span class="math display">\[
 \begin{split}
-&amp; E(y_i - b_0 - b_1x_i) = 0 \\
-&amp; E(x_i(y_i - b_0 - b_1x_i) = 0
+&amp; \E(Y_i - b_0 - b_1X_i) = 0 \\
+&amp; \E(X_i(Y_i - b_0 - b_1X_i) = 0
 \end{split}
 \]</span></p>
-<p>Now, recall our OLS minimisation conditions (simple linear regression, presented in the extra info box above). Since by definition, average/expectation is <span class="math inline">\(E(x) = \frac{1}{n} \sum x_i\)</span>, we can rewrite as:</p>
+<p>Now, recall our OLS minimisation conditions (simple linear regression, presented in the extra info box above). Since by definition, average/expectation is <span class="math inline">\(\E(x) = \frac{1}{n} \sum x_i\)</span>, we can rewrite as:</p>
 <p><span class="math display">\[
 \begin{split}
-&amp; \sum\limits_{i=1}^n (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = \ n \times E(y_i - \hat\beta_0 - \hat\beta_1x_i) = 0 \\
-&amp; \sum\limits_{i=1}^n x_i (y_i - \hat{\beta}_0 - \hat{\beta}_1 x_i) = \  n \times E(x_i(y_i - \hat\beta_0 - \hat\beta_1x_i)) = 0
+&amp; \sum\limits_{i=1}^n (Y_i - \hat{\beta}_0 - \hat{\beta}_1 X_i) = \ n \times \E(Y_i - \hat\beta_0 - \hat\beta_1X_i) = 0 \\
+&amp; \sum\limits_{i=1}^n X_i (Y_i - \hat{\beta}_0 - \hat{\beta}_1 X_i) = \  n \times \E(X_i(Y_i - \hat\beta_0 - \hat\beta_1X_i)) = 0
 \end{split}
 \]</span></p>
 <p>And since anything multiplied to a zero turns into zero, we can ignore the <span class="math inline">\(n\)</span> in the first order condition. Thus, we can see, are the exact same minimisation conditions as the conditional expectation function. <u>Thus, OLS is the best approximation of the conditional expectation function</u>.</p>
-<p>This property is very useful for interpreting our regression results. You will hear “expected changes in <span class="math inline">\(y\)</span> given an increase in <span class="math inline">\(x\)</span>” very frequently when it comes to regression and its applications.</p>
+<p>This property is very useful for interpreting our regression results. You will hear “expected changes in <span class="math inline">\(Y_i\)</span> given an increase in <span class="math inline">\(X_i\)</span>” very frequently when it comes to regression and its applications.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -583,62 +557,60 @@ MSE &amp; = E(y_i - E(y_i|x_i))^2 \\
 <h1><strong>Interpretation</strong></h1>
 <section id="interpretation-of-parameters" class="level3">
 <h3 class="anchored" data-anchor-id="interpretation-of-parameters">Interpretation of Parameters</h3>
-<p>I define <span class="math inline">\(\widehat{\beta_j} \in \{\widehat{\beta_1}, \dots, \widehat{\beta_k}\}\)</span>, multiplied to <span class="math inline">\(x_j \in \{x_1, \dots, x_k\}\)</span>. <span class="math inline">\(\widehat{\beta_0}\)</span> is the intercept. We assume a continuous <span class="math inline">\(y\)</span> variable - for a binary <span class="math inline">\(y\)</span>, see the below section on the <a href="#linear-probability-model">linear probability model</a>.</p>
+<p>I define <span class="math inline">\(\hat\beta_j \in \{\hat\beta_1, \dots, \hat\beta_p\}\)</span>, multiplied to <span class="math inline">\(X_{ij} \in \{X_{i1}, \dots, X_{ip}\}\)</span>. <span class="math inline">\(\hat\beta_0\)</span> is the intercept. We assume a continuous <span class="math inline">\(Y_i\)</span> variable - for a binary <span class="math inline">\(Y_i\)</span>, see the below section on the <a href="#linear-probability-model">linear probability model</a>.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 6%">
-<col style="width: 45%">
-<col style="width: 47%">
+<col style="width: 4%">
+<col style="width: 46%">
+<col style="width: 48%">
 </colgroup>
 <tbody>
 <tr class="odd">
 <td></td>
-<td><strong>Continuous</strong> <span class="math inline">\(x_j\)</span></td>
-<td><strong>Binary</strong> <span class="math inline">\(x_j\)</span></td>
+<td><strong>Continuous</strong> <span class="math inline">\(X_{ij}\)</span></td>
+<td><strong>Binary</strong> <span class="math inline">\(X_{ij}\)</span></td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(\widehat{\beta_j}\)</span></td>
-<td>For every one unit increase in <span class="math inline">\(x_j\)</span>, there is an expected <span class="math inline">\(\widehat{\beta_j}\)</span> unit change in <span class="math inline">\(y\)</span>, holding all other explanatory variables constant.</td>
-<td>There is a <span class="math inline">\(\widehat{\beta_j}\)</span> unit difference in <span class="math inline">\(y\)</span> between category <span class="math inline">\(x_j = 1\)</span> and category <span class="math inline">\(x_j = 0\)</span>, holding all other explanatory variables constant.</td>
+<td><span class="math inline">\(\hat\beta_j\)</span></td>
+<td>For every one unit increase in <span class="math inline">\(X_{ij}\)</span>, there is an expected <span class="math inline">\(\hat\beta_j\)</span> unit change in <span class="math inline">\(Y_i\)</span>, holding all other explanatory variables constant.</td>
+<td>There is a <span class="math inline">\(\hat\beta_j\)</span> unit difference in <span class="math inline">\(Y_i\)</span> between category <span class="math inline">\(X_{ij} = 1\)</span> and category <span class="math inline">\(X_{ij} = 0\)</span>, holding all other explanatory variables constant.</td>
 </tr>
 <tr class="odd">
-<td><span class="math inline">\(\widehat{\beta_0}\)</span></td>
-<td>When all explanatory variables equal 0, the expected value of <span class="math inline">\(y\)</span> is <span class="math inline">\(\widehat{\beta_0}\)</span>.</td>
-<td>For category <span class="math inline">\(x_j = 0\)</span>, the expected value of <span class="math inline">\(y\)</span> is <span class="math inline">\(\widehat{\beta_0}\)</span> (when all other explanatory variables equal 0).</td>
+<td><span class="math inline">\(\hat\beta_0\)</span></td>
+<td>When all explanatory variables equal 0, the expected value of <span class="math inline">\(Y_i\)</span> is <span class="math inline">\(\hat\beta_0\)</span>.</td>
+<td>For category <span class="math inline">\(X_{ij} = 0\)</span>, the expected value of <span class="math inline">\(Y_i\)</span> is <span class="math inline">\(\hat\beta_0\)</span> (when all other explanatory variables equal 0).</td>
 </tr>
 </tbody>
 </table>
-<p>Sometimes, these interpretations don’t make much sense. For example, if <span class="math inline">\(y\)</span> is <em>democracy</em>, what does a 5 unit increase in democracy actually mean? Instead, w can express the change of <span class="math inline">\(y\)</span> and <span class="math inline">\(x\)</span> in terms of standard deviations. Or in other words, we want to find the change in <span class="math inline">\(\frac{\hat y_i}{\sigma_y}\)</span> for every one standard deviation <span class="math inline">\(\sigma_x\)</span> increase in <span class="math inline">\(x\)</span>. For simplicity, let us use a simple linear regression <span class="math inline">\(E(y_i|x_i) = \beta_0 + \beta_1 x_i\)</span>:</p>
+<p>Sometimes, these interpretations are not useful. For example, if <span class="math inline">\(Y_i\)</span> is <em>democracy</em>, what does a 5 unit increase in democracy actually mean? Instead, w can express the change of <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(X_i\)</span> in terms of standard deviations. Or in other words, we want to find the change in <span class="math inline">\(\frac{\hat Y_i}{\sigma_Y}\)</span> for every one standard deviation <span class="math inline">\(\sigma_X\)</span> increase in <span class="math inline">\(X_i\)</span>. For simplicity, let us use a simple linear regression <span class="math inline">\(\E(Y_i|X_i) = \beta_0 + \beta_1 X_i\)</span>:</p>
 <p><span class="math display">\[
 \begin{align}
-&amp; E \left(\frac{y_i}{\sigma_y} | x_i = x + \sigma_x \right ) - E \left(\frac{y_i}{\sigma_y} | x_i = x \right ) \\
-&amp; = \frac{E(y_i|x_i = x+ \sigma_x)}{\sigma_y} - \frac{E(y_i|x_i = x)}{\sigma_y} &amp;&amp;(\text{property of expectation}) \\
-&amp; = \frac{E(y_i|x_i = x+ \sigma_x) - E(y_i|x_i = x)}{\sigma_y} &amp;&amp; (\text{combine into 1 fraction})\\
-&amp; = \frac{\beta_0 + \beta_1(x+\sigma_x) - [\beta_0 + \beta_1(x)]}{\sigma_y} &amp;&amp; (\text{plug in regression models})\\
-&amp; = \frac{\beta_1\sigma_x}{\sigma_y} &amp;&amp; (\text{cancel and simplify})
+&amp; \E \left(\frac{Y_i}{\sigma_Y} | X_i = x + \sigma_X \right ) - \E \left(\frac{Y_i}{\sigma_Y} | X_i = x \right ) \\
+&amp; = \frac{\E(Y_i|X_i = x+ \sigma_X)}{\sigma_Y} - \frac{\E(Y_i|X_i = x)}{\sigma_Y} &amp;&amp;(\text{property of expectation}) \\
+&amp; = \frac{\E(Y_i|X_i = x+ \sigma_X) - \E(Y_i|X_i = x)}{\sigma_Y} &amp;&amp; (\text{combine into 1 fraction})\\
+&amp; = \frac{\beta_0 + \beta_1(x+\sigma_X) - [\beta_0 + \beta_1(x)]}{\sigma_Y} &amp;&amp; (\text{plug in regression models})\\
+&amp; = \frac{\beta_1\sigma_X}{\sigma_Y} &amp;&amp; (\text{cancel and simplify})
 \end{align}
 \]</span></p>
-<p>Thus, for a one standard deviation <span class="math inline">\(\sigma_x\)</span> increase in <span class="math inline">\(x_j\)</span>, there is an expected <span class="math inline">\(\frac{\beta_j\sigma_x}{\sigma_y}\)</span>-standard deviation change in <span class="math inline">\(y\)</span>.</p>
+<p>Thus, for a one standard deviation <span class="math inline">\(\sigma_X\)</span> increase in <span class="math inline">\(X_{ij}\)</span>, there is an expected <span class="math inline">\(\frac{\beta_j\sigma_X}{\sigma_Y}\)</span>-standard deviation change in <span class="math inline">\(Y_i\)</span>.</p>
 <p><br></p>
 </section>
 <section id="r-squared-and-other-fit-metrics" class="level3">
 <h3 class="anchored" data-anchor-id="r-squared-and-other-fit-metrics">R-Squared and Other Fit Metrics</h3>
-<p>Our fitted values equation takes the following form:</p>
+<p>Our fitted values equation, shown in <a href="#eq-fit" class="quarto-xref">Equation&nbsp;3</a>, can be rewritten as:</p>
 <p><span class="math display">\[
 \begin{align}
-\hat{\mathbf y} &amp; = \mathbf X \hat{\boldsymbol\beta}  \\
-\hat{\mathbf y} &amp; = \mathbf X\color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y} &amp;&amp; \color{black}(\text{plug in } \color{blue}{\boldsymbol{\hat\beta} = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y}\color{black}) \\
-\hat{\mathbf y} &amp;= \color{blue}{\mathbf P}\color{black}{\mathbf y}  &amp;&amp; (\text{plug in } \color{blue}{\mathbf P : = \mathbf X(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T}} \color{black})
+\hat y = X(X^\top X)^{-1} X^\top y \ = \ \color{blue}{P}\color{black}y &amp;&amp; (\because \color{blue}{P := X(X^\top X)^{-1} X^\top})
 \end{align}
 \]</span></p>
-<p>We can see that <span class="math inline">\(\mathbf P\)</span> is a matrix that turns <span class="math inline">\(\mathbf y \rightarrow \hat{\mathbf y}\)</span>. Matrix <span class="math inline">\(\mathbf P\)</span> is our linear model that projects the true values <span class="math inline">\(\mathbf y\)</span> into a space of our regressors <span class="math inline">\(\mathbf X\)</span>. We will not go too into depth here on this, but see the <a href="./quant3.html#ols-orthogonal-projection">next chapter</a> for more details.</p>
-<p>One thing we might be interested in is how well our model <span class="math inline">\(\mathbf{Py}\)</span> explains the actual <span class="math inline">\(\mathbf y\)</span>. One way we can do this is the scalar product: the scalar product <span class="math inline">\(\mathbf y^\mathsf{T}\mathbf{Py}\)</span> describes the shadow the actual <span class="math inline">\(y\)</span> casts on our projected model. However, this value will change based on the scale of our <span class="math inline">\(y\)</span> variable. Thus, we will divide it by <span class="math inline">\(\mathbf y^\mathsf{T}\mathbf y\)</span>, which is the “maximum” shadow possible (perfect shadow). This ratio is called <span class="math inline">\(R^2\)</span>.</p>
+<p>We can see that <span class="math inline">\(P\)</span> is a matrix that turns <span class="math inline">\(y \rightarrow \hat y\)</span>. Matrix <span class="math inline">\(P\)</span> is our linear model that projects the true values <span class="math inline">\(y\)</span> into a space of our regressors <span class="math inline">\(X\)</span>. We will not go too into depth here on this, but see the <a href="./quant3.html#ols-orthogonal-projection">next chapter</a> for more details.</p>
+<p>One thing we might be interested in is how well our model <span class="math inline">\(Py\)</span> explains the actual <span class="math inline">\(y\)</span>. One way we can do this is the scalar product: the scalar product <span class="math inline">\(y^\top Py\)</span> describes the shadow the actual <span class="math inline">\(y\)</span> casts on our projected model. However, this value will change based on the scale of our <span class="math inline">\(y\)</span> variable. Thus, we will divide it by <span class="math inline">\(y^\top y\)</span>, which is the “maximum” shadow possible (perfect shadow). This ratio is called <span class="math inline">\(R^2\)</span>.</p>
 <p><span class="math display">\[
-R^2 = \frac{\mathbf y^\mathsf{T}\mathbf{Py}}{\mathbf y^\mathsf{T}\mathbf y}
+R^2 = \frac{y^\top Py}{y^\top y}
 \]</span></p>
 <p>We can also reason about <span class="math inline">\(R^2\)</span> in a another way. The total amount of variation in <span class="math inline">\(y\)</span> is called the total sum of squares (SST). The part of <span class="math inline">\(y\)</span> we cannot explain is the Sum of Squared Residuals (SSR) that we minimised for OLS esimtation. That implies that the remaining part SST-SSR is the variation in <span class="math inline">\(y\)</span> that our model explains, called the sum of explained squares (SSE). <span class="math inline">\(R^2\)</span> can be though of the ratio of explained variation in <span class="math inline">\(y\)</span> by our model to the total variation in <span class="math inline">\(y\)</span>:</p>
 <p><span class="math display">\[
-R^2 = \frac{SSE}{SST} = \frac{SST - SSR}{SST} = 1 - \frac{SSR}{SST} = 1 - \frac{\sum \hat u_i^2}{\sum(y_i - \bar y)^2}
+R^2 = \frac{SSE}{SST} = \frac{SST - SSR}{SST} = 1 - \frac{SSR}{SST} = 1 - \frac{\sum (Y_i - \hat Y_i)^2}{\sum(Y_i - \bar Y)^2}
 \]</span></p>
 <p>R-Squared (<span class="math inline">\(R^2\)</span>) measures the proportion of variation in <span class="math inline">\(y\)</span> that is explained by our explanatory variables. R-Squared is always between 0 and 1 (0%-100%). Higher values indicate our model better explains the variation in <span class="math inline">\(y\)</span>.</p>
 <p>There are a few other fit metrics, based around the idea of <a href="./quant3.html#maximum-likelihood-estimator">maximum likelihood estimation</a> (explained in the next chapter). These metrics include <strong>Akaike Information Criterion (AIC)</strong> and <strong>Bayesian Information Criterion (BIC)</strong>. Lower values indiciate a better model. However, unlike <span class="math inline">\(R^2\)</span>, neither has a nice substantive interpretation.</p>
@@ -653,15 +625,12 @@ R^2 = \frac{SSE}{SST} = \frac{SST - SSR}{SST} = 1 - \frac{SSR}{SST} = 1 - \frac{
 <h3 class="anchored" data-anchor-id="t-tests">T-Tests</h3>
 <p>In the last chapter, we discussed the <a href="./quant1.html#intuition-of-hypothesis-testing">basics of hypothesis testing</a>. In regression, our typical hypotheses are:</p>
 <ul>
-<li><span class="math inline">\(H_0 : \beta_j = 0\)</span> (i.e.&nbsp;there is no relationship between <span class="math inline">\(x_j\)</span> and <span class="math inline">\(y\)</span>).</li>
-<li><span class="math inline">\(H_1:\beta_j ≠ 0\)</span> (i.e.&nbsp;there is a relationship between <span class="math inline">\(x_j\)</span> and <span class="math inline">\(y\)</span>).</li>
+<li><span class="math inline">\(H_0 : \beta_j = 0\)</span> (i.e.&nbsp;there is no relationship between <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span>).</li>
+<li><span class="math inline">\(H_1:\beta_j ≠ 0\)</span> (i.e.&nbsp;there is a relationship between <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span>).</li>
 </ul>
-<p>Using the robust standard errors, we calculate the <span class="math inline">\(t\)</span>-statistic, and using the <span class="math inline">\(t\)</span>-statistic and a <a href="./quant1.html#the-t-distribution">t-distribution</a>, we calculate a p-value.</p>
-<ul>
-<li>Why a t-distribution and not a standard normal distribution? The reason will be explained in the next chapter, but has to deal with the fact we cannot observe the variance of the error term <span class="math inline">\(u_i\)</span>, so we have to estimate it.</li>
-</ul>
+<p>Using the robust standard errors, we calculate the <span class="math inline">\(t\)</span>-statistic, and using the <span class="math inline">\(t\)</span>-statistic and a <a href="./quant1.html#the-t-distribution">t-distribution</a>, we calculate a p-value. Why a t-distribution and not a standard normal distribution? The reason will be explained in the next chapter, but has to deal with the fact we cannot observe the variance of the error term <span class="math inline">\(\eps_i\)</span>, so we have to estimate it (with some uncertainty).</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -670,11 +639,11 @@ Details of Running a Hypothesis Test
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>First, we calculate the t-test statistic:</p>
 <p><span class="math display">\[
-t = \frac{\widehat{\beta_1} - H_0}{\widehat{se}(\widehat{\beta_1})}
+t = \frac{\hat\beta_j - H_0}{\widehat{se}(\hat\beta_j)}
 \]</span></p>
 <ul>
 <li>Where <span class="math inline">\(H_0\)</span> is typically 0, but if you do decide to alter the null hypothesis, you would plug it in.</li>
@@ -695,7 +664,7 @@ t = \frac{\widehat{\beta_1} - H_0}{\widehat{se}(\widehat{\beta_1})}
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -704,16 +673,16 @@ Robust Standard Errors
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>In modern econometrics, we tend to use <strong>robust</strong> standard errors, not normal standard errors. To understand why, we need to look at homoscedasticity.</p>
-<p><u>Homoscedasticity</u> is the idea that no matter the values of any explanatory variable, the error term variance is <strong>constant</strong>. If this is false, then we have <u>heteroscedasticity</u>. An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all <span class="math inline">\(\widehat{u_i}\)</span>):</p>
+<p><u>Homoscedasticity</u> is the idea that no matter the values of any explanatory variable, the error term variance is <strong>constant</strong>. If this is false, then we have <u>heteroscedasticity</u>. An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all <span class="math inline">\(\widehat{\eps_i}\)</span>):</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-1713529842.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
 </figure>
 </div>
-<p>Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of <span class="math inline">\(x\)</span>. The heteroscedasticity residuals have a clear pattern - the up-down variance is smaller when <span class="math inline">\(x\)</span> is smaller, and the up-down variance is larger when <span class="math inline">\(x\)</span> is larger.</p>
+<p>Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of <span class="math inline">\(X_i\)</span>. The heteroscedasticity residuals have a clear pattern - the up-down variance is smaller when <span class="math inline">\(X_i\)</span> is smaller, and the up-down variance is larger when <span class="math inline">\(X_i\)</span> is larger.</p>
 <p>Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.</p>
 <p>If you have homoscedasticity, you should use normal OLS standard errors. However, it is often hard to prove your data is homoscedastic. Thus, <u>we generally default to heteroscedasticity-robust standard errors</u>, unless we can prove we have homoscedasticity.</p>
 <p>We will discuss homoscedasticity and heteroscedasticity in more detail in the <a href="./quant3.html">next chapter</a>, as well as derive the standard errors.</p>
@@ -722,8 +691,8 @@ Robust Standard Errors
 </div>
 <p>The p-value we get is the probability of getting a test statistic equally or more extreme than the one we got, given the null hypothesis is true.</p>
 <ul>
-<li><p>If <span class="math inline">\(p&lt;0.05\)</span>, we believe the probability of a null hypothesis is low enough, such that we reject the null hypothesis (that there is no relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>), and conclude our alternate hypothesis (that there is a relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>).</p></li>
-<li><p>If <span class="math inline">\(p &gt; 0.05\)</span>, we cannot reject the null hypothesis, and cannot reject there is no relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p></li>
+<li><p>If <span class="math inline">\(p&lt;0.05\)</span>, we believe the probability of a null hypothesis is low enough, such that we reject the null hypothesis (that there is no relationship between <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span>), and conclude our alternate hypothesis (that there is a relationship between <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span>).</p></li>
+<li><p>If <span class="math inline">\(p &gt; 0.05\)</span>, we cannot reject the null hypothesis, and cannot reject there is no relationship between <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span>.</p></li>
 </ul>
 <p>NOTE: this is not causality - we are only looking at the relationship. Causality needs to be established with an adequate research design, which we will explore in later chapters.</p>
 <p><br></p>
@@ -732,13 +701,13 @@ Robust Standard Errors
 <h3 class="anchored" data-anchor-id="confidence-intervals">Confidence Intervals</h3>
 <p>In the last chapter, we discussed the idea of <a href="./quant1.html#confidence-intervals">confidence intervals</a>. The 95% confidence intervals of coefficients have the following bounds:</p>
 <p><span class="math display">\[
-\widehat{\beta_j} - 1.96 \widehat{se}(\widehat{\beta_j}), \ \ \widehat{\beta_j} + 1.96 \widehat{se}(\widehat{\beta_j})
+(\hat\beta_j - 1.96 \widehat{se}(\hat\beta_j), \ \ \hat\beta_j + 1.96 \widehat{se}(\hat\beta_j))
 \]</span></p>
 <ul>
 <li>The 1.96 is an approximation assuming a normal distribution. The actual confidence intervals (calculated by computers) will use a t-distribution of <span class="math inline">\(n-k-1\)</span>, which will result in a slightly different multiplicative factor.</li>
 </ul>
-<p>The confidence interval means that under repeated sampling and estimating <span class="math inline">\(\widehat{\beta_j}\)</span>, 95% of the confidence intervals that we construct will include the true <span class="math inline">\(\beta_j\)</span> value in the population.</p>
-<p>If the confidence interval contains 0, we cannot conclude a relationship between <span class="math inline">\(x_j\)</span> and <span class="math inline">\(y\)</span>, as 0 is a plausible value of <span class="math inline">\(\beta_j\)</span>. These results will always match those of the t-test.</p>
+<p>The confidence interval means that under repeated sampling and estimating <span class="math inline">\(\hat\beta_j\)</span>, 95% of the confidence intervals that we construct will include the true <span class="math inline">\(\beta_j\)</span> value in the population.</p>
+<p>If the confidence interval contains 0, we cannot conclude a relationship between <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span>, as 0 is a plausible value of <span class="math inline">\(\beta_j\)</span>. These results will always match those of the t-test.</p>
 <p><br></p>
 </section>
 <section id="f-tests" class="level3">
@@ -746,11 +715,11 @@ Robust Standard Errors
 <p>F-tests are used to test more than one coefficient at a time. For example, you might want to test if two variables or coefficients are jointly significant (this will become more clear in the extensions of regression).</p>
 <p>Our hypotheses will be:</p>
 <ul>
-<li><span class="math inline">\(M_0 : y = \beta_0 + \beta_1 x_1 + \dots + \beta_g x_g + u_i\)</span> (the smaller null model).</li>
-<li><span class="math inline">\(M_a : y = \beta_0 + \beta_1x_1 + \dots + \beta_g x_g + \dots + \beta_kx_k + u_i\)</span> (the bigger model with additional variables).</li>
+<li><span class="math inline">\(M_0 : Y_i = \beta_0 + \sum\limits_{j=1}^g \beta_{j} X_{ij} + \eps_i\)</span> (the smaller null model with <span class="math inline">\(g\)</span> variables).</li>
+<li><span class="math inline">\(M_a : Y_i = \beta_0 + \sum\limits_{j=1}^g \beta_{j} X_{ij} + \sum\limits_{j=g+1}^p \beta_{j} X_{ij} + \eps_i\)</span> (the bigger model with the original <span class="math inline">\(g\)</span> variables + additional variables up to <span class="math inline">\(p\)</span>).</li>
 </ul>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -759,7 +728,7 @@ Details of the F-test
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>F-tests compare the <span class="math inline">\(R^2\)</span> of the two models through the F-statistic:</p>
 <p><span class="math display">\[
@@ -775,23 +744,6 @@ F = \frac{(SSR_0 - SSR_a) / (k_a - k_0)}{SSR_a /(n - k_a - 1)}
 <li>If <span class="math inline">\(p &gt; 0.05\)</span>, we cannot reject the null hypothesis, and cannot reject that <span class="math inline">\(M_0\)</span> is a better model. Thus, the extra coefficients in <span class="math inline">\(M_a\)</span> are jointly not statistically significant.</li>
 </ul>
 <p><br></p>
-</section>
-<section id="predictive-inference" class="level3">
-<h3 class="anchored" data-anchor-id="predictive-inference">Predictive Inference</h3>
-<p>In political science, we are mostly concerned with the relationship between variables.</p>
-<p>But sometimes, prediction is also a useful tool. We can predict using the linear regression by plugging in explanatory variable values, and finding the predicted <span class="math inline">\(\widehat{y_i}\)</span>.</p>
-<p><span class="math display">\[
-\begin{align}
-\hat{\mathbf y} &amp; = \mathbf X \hat{\boldsymbol\beta}  \\
-\hat{\mathbf y} &amp; = \mathbf X\color{blue}{(\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y} &amp;&amp; \color{black}(\text{plug in } \color{blue}{\boldsymbol{\hat\beta} = (\mathbf X^\mathsf{T} \mathbf X)^{-1} \mathbf X^\mathsf{T} \mathbf y}\color{black}) \\
-\end{align}
-\]</span></p>
-<p>We also have confidence intervals for every predicted <span class="math inline">\(\widehat{y_i}\)</span>. These intervals are calculated with the residual standard deviation (covered in the <a href="./quant3.html">next chapter</a>):</p>
-<p><span class="math display">\[
-\widehat{y_i} - 1.96 \hat\sigma, \ \widehat{y_i} + 1.96 \hat\sigma
-\]</span></p>
-<p>Note: It is pretty rare to just use linear regression for predictions, since most relationships are not linear. In the <em>further statistical models</em> part of this collection, there are some more accurate predictive methods.</p>
-<p><br></p>
 <p><br></p>
 <hr>
 </section>
@@ -800,64 +752,64 @@ F = \frac{(SSR_0 - SSR_a) / (k_a - k_0)}{SSR_a /(n - k_a - 1)}
 <h1><strong>Extension: Different Variables</strong></h1>
 <section id="linear-probability-model" class="level3">
 <h3 class="anchored" data-anchor-id="linear-probability-model">Linear Probability Model</h3>
-<p>The standard linear model assumes a continuous <span class="math inline">\(y\)</span> variable. However, we can adapt the linear model to fit binary <span class="math inline">\(y\)</span> variables. When <span class="math inline">\(y\)</span> is binary (i.e.&nbsp;only has values <span class="math inline">\(y_i \in \{0, 1\}\)</span>, our linear model is actually no longer a predictor of <span class="math inline">\(y_i\)</span>, since our regression will output values that are not 0 and 1.</p>
-<p>Instead, our linear model will now predict the probability of unit <span class="math inline">\(i\)</span> having <span class="math inline">\(y_i = 1\)</span>. The is due to the <a href="#conditional-expectation-function">conditional expectation interpretation of regression</a>, and the expectation of the <a href="./quant1.html#bernoulli-and-binomial-distribution">bernoulli distribution</a>:</p>
+<p>The standard linear model assumes a continuous <span class="math inline">\(Y_i\)</span> variable. However, we can adapt the linear model to fit binary <span class="math inline">\(Y_i\)</span> variables. When <span class="math inline">\(Y_i\)</span> is binary and only has values <span class="math inline">\(Y_i \in \{0, 1\}\)</span>, our linear model is actually no longer a predictor of <span class="math inline">\(Y_i\)</span>, since our regression will output values that are not 0 and 1.</p>
+<p>Instead, our linear model will now predict the <strong>probability</strong> of unit <span class="math inline">\(i\)</span> having <span class="math inline">\(Y_i = 1\)</span>. The is due to the <a href="#conditional-expectation-function">conditional expectation interpretation of regression</a>, and the expectation of the <a href="./quant1.html#bernoulli-and-binomial-distribution">bernoulli distribution</a>:</p>
 <p><span class="math display">\[
 \begin{align}
-E(y_i|x_i) &amp; = \underbrace{0 \times P(y_i = 0|x_i) \ + \ \times P(y_i = 1|x_i)}_{\text{a weighted avg. formula}} \\
-&amp; = P(y_i=1|x_i)
+\E(Y_i|X_i) &amp; = \underbrace{0 \times \P(Y_i = 0|X_i) \ + \ \P(Y_i = 1|X_i)}_{\text{a weighted avg. formula}} \\
+&amp; = \P(Y_i=1|X_i)
 \end{align}
 \]</span></p>
-<p>Thus, we can rewrite our linear model with the primary outcome being <span class="math inline">\(Pr(y_i = 1|x_i)\)</span>. This model is called the <strong>linear probability model</strong>:</p>
+<p>Thus, we can rewrite our linear model with the primary outcome being <span class="math inline">\(\P(Y_i = 1|X_i)\)</span>. This model is called the <strong>linear probability model</strong>:</p>
 <p><span class="math display">\[
-P(y_i = 1|x_i) = \beta_0 + \beta_1x_{1i} + \dots + \beta_kx_{ki} + u_i
+\P(Y_i = 1|X_i) = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i
 \]</span></p>
 <p>Our interpretations of coefficients also slightly change.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 4%">
-<col style="width: 47%">
+<col style="width: 46%">
 <col style="width: 48%">
 </colgroup>
 <tbody>
 <tr class="odd">
 <td></td>
-<td><strong>Continuous</strong> <span class="math inline">\(x_j\)</span></td>
-<td><strong>Binary</strong> <span class="math inline">\(x_j\)</span></td>
+<td><strong>Continuous</strong> <span class="math inline">\(X_{ij}\)</span></td>
+<td><strong>Binary</strong> <span class="math inline">\(X_{ij}\)</span></td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(\widehat{\beta_j}\)</span></td>
-<td>For every one unit increase in <span class="math inline">\(x_j\)</span>, there is an expected <span class="math inline">\(\widehat{\beta_j} \times 100\)</span> percentage point change in the probability of a unit being in category <span class="math inline">\(y=1\)</span>, holding all other explanatory variables constant.</td>
-<td>There is a <span class="math inline">\(\widehat{\beta_j}\times 100\)</span> percentage point difference in the probability of a unit being in category <span class="math inline">\(y=1\)</span> between category <span class="math inline">\(x_j = 1\)</span> and category <span class="math inline">\(x_j = 0\)</span>, holding all other explanatory variables constant.</td>
+<td><span class="math inline">\(\hat\beta_j\)</span></td>
+<td>For every one unit increase in <span class="math inline">\(X_{ij}\)</span>, there is an expected <span class="math inline">\(\hat\beta_j \times 100\)</span> percentage point change in the probability of a unit being in category <span class="math inline">\(Y_i=1\)</span>, holding all other explanatory variables constant.</td>
+<td>There is a <span class="math inline">\(\hat\beta_j\times 100\)</span> percentage point difference in the probability of a unit being in category <span class="math inline">\(Y_i=1\)</span> between category <span class="math inline">\(X_{ij} = 1\)</span> and category <span class="math inline">\(X_{ij} = 0\)</span>, holding all other explanatory variables constant.</td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\(\widehat{\beta_0}\)</span></td>
-<td>When all explanatory variables equal 0, the expected probability of a unit being in category <span class="math inline">\(y=1\)</span> is <span class="math inline">\(\widehat{\beta_0} \times 100\)</span></td>
-<td>For category <span class="math inline">\(x_j = 0\)</span>, the expected probability of a unit being in category <span class="math inline">\(y=1\)</span> is <span class="math inline">\(\widehat{\beta_0} \times 100\)</span> (when all other explanatory variables equal 0).</td>
+<td>When all explanatory variables equal 0, the expected probability of a unit being in category <span class="math inline">\(Y_i=1\)</span> is <span class="math inline">\(\hat\beta_0 \times 100\)</span></td>
+<td>For category <span class="math inline">\(X_{ij} = 0\)</span>, the expected probability of a unit being in category <span class="math inline">\(Y_i=1\)</span> is <span class="math inline">\(\hat\beta_j \times 100\)</span> (when all other explanatory variables equal 0).</td>
 </tr>
 </tbody>
 </table>
-<p>Note: we cannot do linear regression with a categorical (more than 2 categories and undordered) <span class="math inline">\(y\)</span>. We will need to use a multinomial logistic regression. We can do a linear regression with an ordinal <span class="math inline">\(y\)</span> (more than 2 categories with an order) by pretending that the ordinal <span class="math inline">\(y\)</span> is continuous. We can also is a ordinal logistic regression for that.</p>
+<p>Note: we cannot do linear regression with a categorical (more than 2 categories and undordered) <span class="math inline">\(Y_i\)</span>. We will need to use a multinomial logistic regression. We can do a linear regression with an ordinal <span class="math inline">\(Y_i\)</span> (more than 2 categories with an order) by pretending that the ordinal <span class="math inline">\(Y_i\)</span> is continuous. We can also is a ordinal logistic regression for that.</p>
 <p><br></p>
 </section>
 <section id="categorical-explanatory-variables" class="level3">
 <h3 class="anchored" data-anchor-id="categorical-explanatory-variables">Categorical Explanatory Variables</h3>
-<p>Take an explanatory variable <span class="math inline">\(x\)</span>, which has <span class="math inline">\(n\)</span> number of categories <span class="math inline">\(1, \dots, n\)</span>. To include <span class="math inline">\(x\)</span> in our regression, we would create <span class="math inline">\(n-1\)</span> dummy (binary) variables, to create the following regression model:</p>
+<p>Take an explanatory variable <span class="math inline">\(X_i\)</span>, which has <span class="math inline">\(g\)</span> number of categories <span class="math inline">\(1, \dots, g\)</span>. To include <span class="math inline">\(X_i\)</span> in our regression, we would create <span class="math inline">\(g-1\)</span> dummy (binary) variables, to create the following regression model:</p>
 <p><span class="math display">\[
-E(y_i|x_i) = \beta_0 + \beta_1x_{1i} + \dots + \beta_k x_{n-1 \ i}
+\E(Y_i|X_i) = \beta_0 + \sum\limits_{j=1}^{g-1} \beta_j X_{ij}
 \]</span></p>
 <ul>
-<li>Categories <span class="math inline">\(1, \dots, n-1\)</span> get there own binary variable <span class="math inline">\(x_1, \dots, x_{n-1}\)</span>.</li>
-<li>Category <span class="math inline">\(n\)</span> (the reference category) does not get its own variable. We can change which category we wish to be the reference.</li>
+<li>Categories <span class="math inline">\(1, \dots, g-1\)</span> get there own binary variable <span class="math inline">\(X_{i1}, \dots, X_{ig-1}\)</span>.</li>
+<li>Category <span class="math inline">\(g\)</span> (the reference category) does not get its own variable. We can change which category we wish to be the reference.</li>
 </ul>
-<p>Interpretation is as follows (category <span class="math inline">\(j\)</span> is any one of category <span class="math inline">\(1, \dots, n-1\)</span>).</p>
+<p>Interpretation is as follows (category <span class="math inline">\(j\)</span> is any one of category <span class="math inline">\(1, \dots, g-1\)</span>).</p>
 <ul>
-<li><span class="math inline">\(\beta_j\)</span> is the difference in expected <span class="math inline">\(y\)</span> between category <span class="math inline">\(j\)</span> and the reference category.</li>
-<li><span class="math inline">\(\beta_0\)</span> is the expected <span class="math inline">\(y\)</span> of the reference category.</li>
-<li>Thus, category <span class="math inline">\(j\)</span> has an expected <span class="math inline">\(y\)</span> of <span class="math inline">\(\beta_0 + \beta_j\)</span>.</li>
+<li><span class="math inline">\(\beta_j\)</span> is the difference in expected <span class="math inline">\(Y_i\)</span> between category <span class="math inline">\(j\)</span> and the reference category <span class="math inline">\(g\)</span>.</li>
+<li><span class="math inline">\(\beta_0\)</span> is the expected <span class="math inline">\(Y_i\)</span> of the reference category <span class="math inline">\(g\)</span>.</li>
+<li>Thus, category <span class="math inline">\(j\)</span> has an expected <span class="math inline">\(Y_i\)</span> of <span class="math inline">\(\beta_0 + \beta_j\)</span>.</li>
 </ul>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -866,12 +818,12 @@ Example of a Categorical Explanatory Variable
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Let us say that <span class="math inline">\(x\)</span> is the variable <em>development level of a country</em>, with 3 categories: low (L), medium (M), and high (H). <span class="math inline">\(y\)</span> will be the crime rate of the country.</p>
+<p>Let us say that <span class="math inline">\(X_i\)</span> is the variable <em>development level of a country</em>, with 3 categories: low (L), medium (M), and high (H). <span class="math inline">\(Y_i\)</span> will be the crime rate of the country.</p>
 <p>Let us set <em>low development (L)</em> as our reference category. Our regression will be:</p>
 <p><span class="math display">\[
-E(y|x) = \beta_0 + \beta_1x_M + \beta_2 x_H
+E(Y_i|X_i) = \beta_0 + \beta_1X_{iM} + \beta_2 X_{iH}
 \]</span></p>
 <p>Now let us interpret the coefficients:</p>
 <ul>
@@ -879,7 +831,7 @@ E(y|x) = \beta_0 + \beta_1x_M + \beta_2 x_H
 <li><span class="math inline">\(\beta_1\)</span> is the difference in expected crime rate between a <em>medium (M)</em> developed country and a <em>low (L) developed country</em> (since low is the reference category).</li>
 <li><span class="math inline">\(\beta_2\)</span> is the difference in expected crime rate between a <em>high (H)</em> developed country and a <em>low (L) developed country</em> (since low is the reference category).</li>
 </ul>
-<p>The expected/predicted <span class="math inline">\(y\)</span> (crime rate) for each category is:</p>
+<p>The expected/predicted <span class="math inline">\(Y_i\)</span> (crime rate) for each category is:</p>
 <ul>
 <li>Low (L): <span class="math inline">\(\beta_0\)</span></li>
 <li>Medium (M): <span class="math inline">\(\beta_0 + \beta_1\)</span></li>
@@ -888,44 +840,44 @@ E(y|x) = \beta_0 + \beta_1x_M + \beta_2 x_H
 </div>
 </div>
 </div>
-<p>Each coefficient <span class="math inline">\(\beta_j\)</span>’s statistical significance is a difference-in-means significance test, not the significance of the categorical variable as a whole. To find if the entire categorical variable is significant, you should use a <a href="#f-tests">F-test</a>.</p>
+<p>Each coefficient <span class="math inline">\(\hat\beta_j\)</span>’s statistical significance is a difference-in-means significance test, not the significance of the categorical variable as a whole. To find if the entire categorical variable is significant, you should use a <a href="#f-tests">F-test</a>.</p>
 <p><br></p>
 </section>
 <section id="interaction-effects" class="level3">
 <h3 class="anchored" data-anchor-id="interaction-effects">Interaction Effects</h3>
 <p>An interaction between two variables means they are multiplied in the regression equation:</p>
 <p><span class="math display">\[
-y_i = \beta_0 + \beta_1x_{1i} + \beta_2x_{2i} + \beta_3 x_{1i} x_{2i}
+Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \color{red}{\beta_3 X_{i1} X_{i2}}
 \]</span></p>
-<p>Interpretation of the relationship between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(y\)</span> is as follows:</p>
+<p>The red is the interaction term. Interpretation of the relationship between <span class="math inline">\(X_{i1}\)</span> and <span class="math inline">\(Y_i\)</span> is:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 8%">
+<col style="width: 9%">
 <col style="width: 47%">
 <col style="width: 43%">
 </colgroup>
 <tbody>
 <tr class="odd">
 <td></td>
-<td><strong>Binary</strong> <span class="math inline">\(x_2\)</span></td>
-<td><strong>Continuous</strong> <span class="math inline">\(x_2\)</span></td>
+<td><strong>Binary</strong> <span class="math inline">\(X_{i2}\)</span></td>
+<td><strong>Continuous</strong> <span class="math inline">\(X_{i2}\)</span></td>
 </tr>
 <tr class="even">
-<td><strong>Binary</strong> <span class="math inline">\(x_1\)</span></td>
-<td><p>When <span class="math inline">\(x_2 = 0\)</span>, the effect of <span class="math inline">\(x_1\)</span> (going from 0 to 1) on <span class="math inline">\(y\)</span> is <span class="math inline">\(\widehat{\beta_1}\)</span>.</p>
-<p>When <span class="math inline">\(x_2 = 1\)</span>, the effect of <span class="math inline">\(x_1\)</span> (going from 0 to 1) on <span class="math inline">\(y\)</span> is <span class="math inline">\(\widehat{\beta_1} + \widehat{ \beta_3}\)</span>.</p></td>
-<td>The effect of <span class="math inline">\(x_1\)</span> (going from 0 to 1) on <span class="math inline">\(y\)</span> is <span class="math inline">\(\widehat{\beta_1} + \widehat{\beta_3} x_2\)</span>.</td>
+<td><strong>Binary</strong> <span class="math inline">\(X_{i1}\)</span></td>
+<td><p>When <span class="math inline">\(X_{i2} = 0\)</span>, the effect of <span class="math inline">\(X_{i1}\)</span> (going from 0 to 1) on <span class="math inline">\(Y_i\)</span> is <span class="math inline">\(\hat\beta_1\)</span>.</p>
+<p>When <span class="math inline">\(X_{i2} = 1\)</span>, the effect of <span class="math inline">\(X_{i1}\)</span> (going from 0 to 1) on <span class="math inline">\(Y_i\)</span> is <span class="math inline">\(\hat\beta_1 + \hat\beta_3\)</span>.</p></td>
+<td>The effect of <span class="math inline">\(X_{i1}\)</span> (going from 0 to 1) on <span class="math inline">\(Y_i\)</span> is <span class="math inline">\(\hat\beta_1 + \hat\beta_3 X_{i2}\)</span>.</td>
 </tr>
 <tr class="odd">
-<td><strong>Continuous</strong> <span class="math inline">\(x_1\)</span></td>
-<td><p>When <span class="math inline">\(x_2 = 0\)</span>, for every increase in one unit of <span class="math inline">\(x_1\)</span>, there is an expected <span class="math inline">\(\widehat{\beta_1}\)</span> unit change in <span class="math inline">\(y\)</span>.</p>
-<p>When <span class="math inline">\(x_2 = 1\)</span>, for every increase in one unit of <span class="math inline">\(x_1\)</span>, there is an expected <span class="math inline">\(\widehat{\beta_1}+ \widehat{\beta_3}\)</span> change in <span class="math inline">\(y\)</span>.</p></td>
-<td>For every increase of one unit in <span class="math inline">\(x_1\)</span>, there is an expected <span class="math inline">\(\widehat{\beta_1} + \widehat{\beta_3} x_2\)</span> change in <span class="math inline">\(y\)</span>.</td>
+<td><strong>Continuous</strong> <span class="math inline">\(X_{i1}\)</span></td>
+<td><p>When <span class="math inline">\(X_{i2} = 0\)</span>, for every increase in one unit of <span class="math inline">\(X_{i1}\)</span>, there is an expected <span class="math inline">\(\widehat{\beta_1}\)</span> unit change in <span class="math inline">\(Y_i\)</span>.</p>
+<p>When <span class="math inline">\(X_{i2} = 1\)</span>, for every increase in one unit of <span class="math inline">\(X_{i1}\)</span>, there is an expected <span class="math inline">\(\hat\beta_1+ \hat\beta_3\)</span> change in <span class="math inline">\(Y_i\)</span>.</p></td>
+<td>For every increase of one unit in <span class="math inline">\(X_{i1}\)</span>, there is an expected <span class="math inline">\(\hat\beta_1 + \hat\beta_3 X_{i2}\)</span> change in <span class="math inline">\(Y_i\)</span>.</td>
 </tr>
 </tbody>
 </table>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -934,42 +886,42 @@ Proof of Interpretations of Interactions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>We can solve for the change of <span class="math inline">\(x_1\)</span> on <span class="math inline">\(y\)</span> using a partial derivative of <span class="math inline">\(y\)</span> in respect to <span class="math inline">\(x_1\)</span>:</p>
+<p>We can solve for the change of <span class="math inline">\(X_{i1}\)</span> on <span class="math inline">\(Y_i\)</span> using a partial derivative of <span class="math inline">\(Y_i\)</span> in respect to <span class="math inline">\(X_{i1}\)</span>:</p>
 <p><span class="math display">\[
 \begin{split}
-\frac{\partial \widehat{y_i}}{\partial x_{1i}} &amp; = \frac{\partial}{\partial x_{1i}} \left[ \widehat{\beta_0} + \widehat{\beta_1}x_{1i} + \widehat{\beta_2}x_{2i} + \widehat{\beta_3}x_{1i}x_{2i}\right] \\
-\frac{\partial \widehat{y_i}}{\partial x_{1i}} &amp; = \widehat{\beta_1} + \widehat{\beta_3}x_2
+\frac{\partial \hat Y_i}{\partial X_{i1}} &amp; = \frac{\partial}{\partial X_{i1}} \left[ \widehat{\beta_0} + \widehat{\beta_1}X_{i1} + \widehat{\beta_2}X_{i2} + \widehat{\beta_3}X_{i1}X_{i2}\right] \\
+\frac{\partial \hat Y_i}{\partial X_{i1}} &amp; = \hat\beta_1 + \hat\beta_3X_{i2}
 \end{split}
 \]</span></p>
-<p>This gives us the effect of <span class="math inline">\(x_1\)</span> on <span class="math inline">\(y\)</span>.</p>
+<p>This gives us the effect of <span class="math inline">\(X_{i1}\)</span> on <span class="math inline">\(Y_i\)</span>.</p>
 </div>
 </div>
 </div>
-<p><span class="math inline">\(\widehat{\beta_0}\)</span> is still the expected <span class="math inline">\(y\)</span> when all explanatory variables equal 0.</p>
-<p>The coefficient of the interaction <span class="math inline">\(\widehat{\beta_3}\)</span>, when statistically significant, indicates a statistically significant interaction effect. If it is not statistically significant, then the interaction effect is not statistically significant (and can be dropped).</p>
+<p><span class="math inline">\(\hat\beta_0\)</span> is still the expected <span class="math inline">\(Y_i\)</span> when all explanatory variables equal 0.</p>
+<p>The coefficient of the interaction <span class="math inline">\(\hat\beta_3\)</span>, when statistically significant, indicates a statistically significant interaction effect. If it is not statistically significant, then the interaction effect is not statistically significant (and can be dropped).</p>
 <p><br></p>
 </section>
 <section id="polynomial-transformations" class="level3">
 <h3 class="anchored" data-anchor-id="polynomial-transformations">Polynomial Transformations</h3>
 <p>Sometimes the relationship between two variables is not a straight line - we can add more flexibility with polynomials. The most common form of polynomial transformation is the quadratic transformation:</p>
 <p><span class="math display">\[
-y_i = \beta_0 + \beta_1x_{i} + \beta_2 x_{i}^2 + u_i
+Y_i = \beta_0 + \beta_1X_i + \beta_2 X_i^2 + \eps_i
 \]</span></p>
-<p>Our estimated <span class="math inline">\(\widehat{\beta_0}\)</span> remains the expected value of <span class="math inline">\(y\)</span> when all explanatory variables equal 0.</p>
-<p>Unfortunately, the <span class="math inline">\(\widehat{\beta_1}\)</span> and <span class="math inline">\(\widehat{\beta_2}\)</span> coefficients are not directly interpretable.</p>
+<p>Our estimated <span class="math inline">\(\hat\beta_0\)</span> remains the expected value of <span class="math inline">\(Y_i\)</span> when all explanatory variables equal 0.</p>
+<p>Unfortunately, the <span class="math inline">\(\hat\beta_1\)</span> and <span class="math inline">\(\hat\beta_2\)</span> coefficients are not directly interpretable.</p>
 <ul>
-<li><span class="math inline">\(\widehat{\beta_2}\)</span>’s sign can tell us if the best-fit parabola opens upward or downward.</li>
-<li>The significance of <span class="math inline">\(\widehat{\beta_2}\)</span> also indicates if the quadratic term is statistically significant. If it is not, we can remove the transformation.</li>
+<li><span class="math inline">\(\hat\beta_2\)</span>’s sign can tell us if the best-fit parabola opens upward or downward.</li>
+<li>The significance of <span class="math inline">\(\hat\beta_2\)</span> also indicates if the quadratic term is statistically significant. If it is not, we can remove the transformation.</li>
 </ul>
 <p>We can interpret two things about the quadratic transformation:</p>
 <ul>
-<li>For every one unit increase in <span class="math inline">\(x\)</span>, there is an expected <span class="math inline">\(\widehat{\beta_1} + 2 \widehat{\beta_2}x\)</span> unit increase in <span class="math inline">\(y\)</span>.</li>
-<li>The minimum/maximum point in the best-fit parabola occurs at <span class="math inline">\(x_i = - \widehat{\beta_1}/2 \widehat{\beta_2}\)</span></li>
+<li>For every one unit increase in <span class="math inline">\(X_i\)</span>, there is an expected <span class="math inline">\(\hat\beta_1 + 2 \hat\beta_2X_i\)</span> unit increase in <span class="math inline">\(Y_i\)</span>.</li>
+<li>The minimum/maximum point in the best-fit parabola occurs at <span class="math inline">\(X_i = - \hat\beta_1/2 \hat\beta_2\)</span></li>
 </ul>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -978,37 +930,33 @@ Proof of Polynomial Interpretations
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>We can derive the change in <span class="math inline">\(y\)</span> given a one unit increase in <span class="math inline">\(x\)</span> by finding the partial derivative of <span class="math inline">\(y\)</span> in respect to <span class="math inline">\(x\)</span>:</p>
+<p>We can derive the change in <span class="math inline">\(Y_i\)</span> given a one unit increase in <span class="math inline">\(X_i\)</span> by finding the partial derivative of <span class="math inline">\(Y_i\)</span> in respect to <span class="math inline">\(X_i\)</span>:</p>
 <p><span class="math display">\[
 \begin{split}
-\frac{\partial \widehat{y_i}}{\partial x} &amp; = \frac{\partial}{\partial x} \left[ \widehat{\beta_0} + \widehat{\beta_1}x_i + \widehat{\beta_2}x_i^2 \right] \\
-\frac{\partial \widehat{y_i}}{\partial x} &amp; = \widehat{\beta_1} + 2 \widehat{\beta_2}x_i
+\frac{\partial \hat Y_i}{\partial X_i} &amp; = \frac{\partial}{\partial X_i} \left[ \hat\beta_0 + \hat\beta_1X_i + \hat\beta_2X_i^2 \right] \\
+\frac{\partial \hat Y_i}{\partial X_i} &amp; = \hat\beta_1 + 2 \hat\beta_2X_i
 \end{split}
 \]</span></p>
-<p>We can also solve for the <span class="math inline">\(x_i\)</span> that results in the minimum/maximum of the best-fit parabola by setting the partial derivative equal to 0:</p>
+<p>We can also solve for the <span class="math inline">\(X_i\)</span> that results in the minimum/maximum of the best-fit parabola by setting the partial derivative equal to 0:</p>
 <p><span class="math display">\[
 \begin{split}
-0 &amp; = \widehat{\beta_1} + 2 \widehat{\beta_2}x_i \\
-x_i &amp; = -\widehat{\beta_1}/2 \widehat{\beta_2}
+0 &amp; = \hat\beta_1 + 2 \hat\beta_2X_i \\
+X_i &amp; = - \hat\beta_1/2 \hat\beta_2
 \end{split}
 \]</span></p>
 </div>
 </div>
 </div>
-<p>We can go beyond quadratic - as long as we always include lower degree terms in our model:</p>
-<ul>
-<li>Cubic: <span class="math inline">\(y_i = \beta_0 + \beta_1x_{i} + \beta_2 x_{i}^2 + \beta_3 x_i^3 + u_i\)</span></li>
-<li>Quartic: <span class="math inline">\(y_i = \beta_0 + \beta_1x_{i} + \beta_2 x_{i}^2 + \beta_3 x_i^3 + \beta_4 x_i^4 + u_i\)</span></li>
-</ul>
+<p>We can go beyond quadratic - as long as we always include lower degree terms in our model.</p>
 <p><br></p>
 </section>
 <section id="logarithmic-transformations" class="level3">
 <h3 class="anchored" data-anchor-id="logarithmic-transformations">Logarithmic Transformations</h3>
 <p>Logarithmic transformations are often used to change skewed variables into normally distributed variables. These are not as common in political science as compared to economics, but can be useful in certain situations.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1017,19 +965,19 @@ Logging a Skewed Variable
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Many monetary variables are heavily skewed. Natural logging these variables can turn them into normal distributions. This is useful, since skewed variables tend to have heteroscedasticity, and by making them normal, we can use the smaller normal standard errors.</p>
 <p>For example, take this variable called <em>expenses</em> with a significant right skew:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-4184932163.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+<p><img src="images/clipboard-4184932163.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
 </figure>
 </div>
 <p>If we take the log of this variable, we get the following distribution that is almost normal:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-296612325.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+<p><img src="images/clipboard-296612325.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
 </figure>
 </div>
 </div>
@@ -1040,27 +988,27 @@ Logging a Skewed Variable
 <colgroup>
 <col style="width: 13%">
 <col style="width: 40%">
-<col style="width: 44%">
+<col style="width: 45%">
 </colgroup>
 <tbody>
 <tr class="odd">
 <td></td>
-<td><span class="math inline">\(x\)</span></td>
-<td><span class="math inline">\(\log (x)\)</span></td>
+<td><span class="math inline">\(X_i\)</span></td>
+<td><span class="math inline">\(\log (X_i)\)</span></td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(y\)</span></td>
+<td><span class="math inline">\(Y_i\)</span></td>
 <td><p>Linear Model:</p>
-<p><span class="math inline">\(y = \beta_0 + \beta_1 x + u\)</span></p></td>
+<p><span class="math inline">\(Y_i = \beta_0 + \beta_1 X_i + \eps_i\)</span></p></td>
 <td><p>Linear-Log Model:</p>
-<p><span class="math inline">\(y = \beta_0 + \beta_1 \log x + u\)</span></p></td>
+<p><span class="math inline">\(Y_i = \beta_0 + \beta_1 \log X_i + \eps_i\)</span></p></td>
 </tr>
 <tr class="odd">
-<td><span class="math inline">\(\log (y)\)</span></td>
+<td><span class="math inline">\(\log (Y_i)\)</span></td>
 <td><p>Log-Linear Model:</p>
-<p><span class="math inline">\(\log(y) = \beta_0 + \beta_1 x + u\)</span></p></td>
+<p><span class="math inline">\(\log Y_i = \beta_0 + \beta_1 X_i + \eps_i\)</span></p></td>
 <td><p>Log-Log Model:</p>
-<p><span class="math inline">\(\log y = \beta_0 + \beta_1 \log x + u\)</span></p></td>
+<p><span class="math inline">\(\log Y_i = \beta_0 + \beta_1 \log X_i + \eps_i\)</span></p></td>
 </tr>
 </tbody>
 </table>
@@ -1068,34 +1016,34 @@ Logging a Skewed Variable
 <p>Interpreting the models:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 6%">
+<col style="width: 7%">
 <col style="width: 46%">
-<col style="width: 46%">
+<col style="width: 45%">
 </colgroup>
 <tbody>
 <tr class="odd">
 <td></td>
-<td><span class="math inline">\(x\)</span></td>
-<td><span class="math inline">\(\log (x)\)</span></td>
+<td><span class="math inline">\(X_i\)</span></td>
+<td><span class="math inline">\(\log (X_i)\)</span></td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(y\)</span></td>
+<td><span class="math inline">\(Y_i\)</span></td>
 <td><p>Linear Model:</p>
-<p>When <span class="math inline">\(x\)</span> increases by one unit, there is an expected <span class="math inline">\(\widehat{\beta_1}\)</span> unit change in <span class="math inline">\(y\)</span>.</p></td>
+<p>When <span class="math inline">\(X_i\)</span> increases by one unit, there is an expected <span class="math inline">\(\hat\beta_1\)</span> unit change in <span class="math inline">\(Y_i\)</span>.</p></td>
 <td><p>Linear-Log Model:</p>
-<p>When <span class="math inline">\(x\)</span> increases by 10%, there is an expected <span class="math inline">\(0.096 \widehat{\beta_1}\)</span> unit change in <span class="math inline">\(y\)</span>.</p></td>
+<p>When <span class="math inline">\(x\)</span> increases by 10%, there is an expected <span class="math inline">\(0.096 \hat\beta_1\)</span> unit change in <span class="math inline">\(Y_i\)</span>.</p></td>
 </tr>
 <tr class="odd">
-<td><span class="math inline">\(\log (y)\)</span></td>
+<td><span class="math inline">\(\log (Y_i)\)</span></td>
 <td><p>Log-Linear Model:</p>
-<p>For every one unit increase in <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span> is multiplied by <span class="math inline">\(e^{\widehat{\beta_1}}\)</span>.</p></td>
+<p>For every one unit increase in <span class="math inline">\(X_i\)</span>, the expected <span class="math inline">\(Y_i\)</span> is multiplied by <span class="math inline">\(e^{\hat\beta_1}\)</span>.</p></td>
 <td><p>Log-Log Model:</p>
-<p>Multiplying <span class="math inline">\(x\)</span> by <span class="math inline">\(e\)</span> will multiply the expected value of <span class="math inline">\(y\)</span> by <span class="math inline">\(e^{\widehat{\beta_1}}\)</span>.</p></td>
+<p>Multiplying <span class="math inline">\(X_i\)</span> by <span class="math inline">\(e\)</span> will multiply the expected value of <span class="math inline">\(Y_i\)</span> by <span class="math inline">\(e^{\hat\beta_1}\)</span>.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1104,13 +1052,13 @@ Proof of Interpretations for Log Transformations
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Proof of Linear-Log Model:</p>
 <p><span class="math display">\[
 \begin{split}
-&amp; E(y_i|x_i = x) = \beta_0 + \beta_1 \log x \\
-&amp; E(y_i | x_i = e^A x) = \beta_0 + \beta_1 \log(e^A x) \\
+&amp; \E(Y_i|X_i = x) = \beta_0 + \beta_1 \log x \\
+&amp; \E(Y_i | X_i = e^A x) = \beta_0 + \beta_1 \log(e^A x) \\
 &amp; = \beta_0 + \beta_1 (\log(e^A) + \log x) \\
 &amp; = \beta_0 + \beta_1 (A + \log x) \\
 &amp; = \beta_0 + \beta_1A + \beta_1 \log x
@@ -1118,54 +1066,54 @@ Proof of Interpretations for Log Transformations
 \]</span></p>
 <p><span class="math display">\[
 \begin{split}
-E(y_i|x_i = \alpha x) - E(y_i|x_i = x) &amp; = \beta_0 + \beta_1 A + \beta_1 \log (x) - (\beta_0 + \beta_1 \log x) \\
+\E(Y_i|X_i = \alpha x) - \E(Y_i|X_i = x) &amp; = \beta_0 + \beta_1 A + \beta_1 \log (x) - (\beta_0 + \beta_1 \log x) \\
 &amp; = \beta_1 A
 \end{split}
 \]</span></p>
 <ul>
-<li>When <span class="math inline">\(A = 0.095\)</span>, then <span class="math inline">\(e^A = 1.1\)</span>. Thus, a 1.1 times increase of <span class="math inline">\(x\)</span> results in a <span class="math inline">\(0.095 \widehat{\beta_1}\)</span> change in <span class="math inline">\(y\)</span>.</li>
+<li>When <span class="math inline">\(A = 0.095\)</span>, then <span class="math inline">\(e^A = 1.1\)</span>. Thus, a 1.1 times increase of <span class="math inline">\(X_i\)</span> results in a <span class="math inline">\(0.095 \widehat{\beta_1}\)</span> change in <span class="math inline">\(Y_i\)</span>.</li>
 </ul>
 <p><br></p>
 <p>Proof of Log-Linear Model:</p>
 <p><span class="math display">\[
 \begin{split}
-E(\log y_i | x_i = x) =  \log y_i &amp; = \beta_0 + \beta_1 x \\
-y_i &amp; = e^{\beta_0 + \beta_1 x} \\
-y_i &amp; = e^{\beta_0}e^{\beta_1 x} \\
-E(\log y_i|x_i = x+1) = \log y_i &amp; = \beta_0 + \beta_1(x+1) \\
-y_i &amp; = e^{\beta_0 + \beta_1 + \beta_1 x} \\
-y_i &amp; = e^{\beta_0}e^{\beta_1}e^{\beta_1x}
+\E(\log Y_i | X_i = x) =  \log Y_i &amp; = \beta_0 + \beta_1 x \\
+Y_i &amp; = e^{\beta_0 + \beta_1 x} \\
+Y_i &amp; = e^{\beta_0}e^{\beta_1 x} \\
+\E(\log Y_i|X_i = x+1) = \log Y_i &amp; = \beta_0 + \beta_1(x+1) \\
+Y_i &amp; = e^{\beta_0 + \beta_1 + \beta_1 x} \\
+Y_i &amp; = e^{\beta_0}e^{\beta_1}e^{\beta_1x}
 \end{split}
 \]</span></p>
 <p><span class="math display">\[
 \begin{split}
-\frac{E(\log y_i|x_i = x+1)}{E(\log y_i | x_i = x)} &amp; = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1x}}{e^{\beta_0}e^{\beta_1x}} \\
+\frac{\E(\log Y_i|X_i = x+1)}{\E(\log Y_i | X_i = x)} &amp; = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1x}}{e^{\beta_0}e^{\beta_1x}} \\
 &amp; = e^{\beta_1}
 \end{split}
 \]</span></p>
 <ul>
-<li>Thus, when <span class="math inline">\(x\)</span> increases by one, there is a multiplicative increase of <span class="math inline">\(e^{\beta_1}\)</span>.</li>
+<li>Thus, when <span class="math inline">\(X_i\)</span> increases by one, there is a multiplicative increase of <span class="math inline">\(e^{\beta_1}\)</span> for <span class="math inline">\(Y_i\)</span>.</li>
 </ul>
 <p><br></p>
 <p>Proof of Log-Log model:</p>
 <p><span class="math display">\[
 \begin{split}
-E(\log y_i | x_i = x) =  \log y_i &amp; = \beta_0 + \beta_1 \log x \\
-y_i &amp; = e^{\beta_0 + \beta_1 \log x} \\
-y_i &amp; = e^{\beta_0}e^{\beta_1 \log x} \\
-E(\log y_i|x_i = ex) = \log y_i &amp; = \beta_0 + \beta_1 \log (ex) \\
-y_i &amp; = e^{\beta_0 + \beta_1 \log e + \beta_1 \log x} \\
-y_i &amp; = e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}
+\E(\log Y_i | X_i = x) =  \log Y_i &amp; = \beta_0 + \beta_1 \log x \\
+Y_i &amp; = e^{\beta_0 + \beta_1 \log x} \\
+Y_i &amp; = e^{\beta_0}e^{\beta_1 \log x} \\
+\E(\log Y_i|X_i = ex) = \log Y_i &amp; = \beta_0 + \beta_1 \log (ex) \\
+Y_i &amp; = e^{\beta_0 + \beta_1 \log e + \beta_1 \log x} \\
+Y_i &amp; = e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}
 \end{split}
 \]</span></p>
 <p><span class="math display">\[
 \begin{split}
-\frac{E(\log y_i|x_i = ex)}{E(\log y_i | x_i = x)} &amp; = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}}{e^{\beta_0}e^{\beta_1 \log x}} \\
+\frac{\E(\log Y_i|X_i = ex)}{\E(\log Y_i | X_i = x)} &amp; = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}}{e^{\beta_0}e^{\beta_1 \log x}} \\
 &amp; = e^{\beta_1}
 \end{split}
 \]</span></p>
 <ul>
-<li>Thus, when <span class="math inline">\(x\)</span> is multiplied by <span class="math inline">\(e\)</span>, there is a multiplicative increase of <span class="math inline">\(e^{\beta_1}\)</span>.</li>
+<li>Thus, when <span class="math inline">\(X_i\)</span> is multiplied by <span class="math inline">\(e\)</span>, there is a multiplicative increase of <span class="math inline">\(e^{\beta_1}\)</span> in <span class="math inline">\(Y_i\)</span>.</li>
 </ul>
 </div>
 </div>
@@ -1193,27 +1141,27 @@ y_i &amp; = e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}
 <p>When we have hierarchical or panel data, we need to control for differences between clusters. We essentially include the cluster variable as a categorical variable in our regression. Let us say we have <span class="math inline">\(m\)</span> number of clusters <span class="math inline">\(i = 1, \dots, m\)</span>. Within each cluster, we will have units <span class="math inline">\(t = 1, \dots, n\)</span>. Our model takes the form:</p>
 <p><span class="math display">\[
 \begin{split}
-y_{it} &amp; = \alpha_i + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
+Y_{it} &amp; = \alpha_i + \sum\limits_{j=1}^p\beta_jX_{itj} + \eps_{it} \\
 &amp; \text{where } \alpha_i = \beta_{00} + \underbrace{\beta_{02}D_{i2} + \beta_{03}D_{i3} + \dots + \beta_{0m}D_{im}}_{\text{unique intercepts for each cluster}}
 \end{split}
 \]</span></p>
 <ul>
-<li>Where <span class="math inline">\(y_{it}\)</span> is the <span class="math inline">\(y\)</span> value for the <span class="math inline">\(i\)</span>th observation within the <span class="math inline">\(t\)</span>th cluster.</li>
+<li>Where <span class="math inline">\(Y_{it}\)</span> is the value for the <span class="math inline">\(i\)</span>th observation within the <span class="math inline">\(t\)</span>th cluster.</li>
 <li>Where <span class="math inline">\(D_{i2}, D_{i3}, \dots, D_{im}\)</span> are dummy variables for clusters <span class="math inline">\(2, \dots, m\)</span>. Cluster 1 is the reference category.</li>
 </ul>
-<p>We essentially add a unique intercept term for every cluster, accounting for the average differences in <span class="math inline">\(y\)</span> between each category. <span class="math inline">\(\beta_{00}\)</span> is the intercept for the reference category 1. <span class="math inline">\(\beta_{00} + \beta_{0i}\)</span> is the intercept for the <span class="math inline">\(i\)</span>th category.</p>
+<p>We essentially add a unique intercept term for every cluster, accounting for the average differences in <span class="math inline">\(Y_{it}\)</span> between each category. <span class="math inline">\(\beta_{00}\)</span> is the intercept for the reference category 1. <span class="math inline">\(\beta_{00} + \beta_{0i}\)</span> is the intercept for the <span class="math inline">\(i\)</span>th category.</p>
 <p>For panel data, we use <strong>two-way fixed effects</strong>, which is basically just two fixed effects for different clustering. Let us say we have <span class="math inline">\(i = 1, \dots, m\)</span> units with <span class="math inline">\(t = 1, \dots, n\)</span> different numbers of time periods. Our two way fixed effects model takes the form:</p>
 <p><span class="math display">\[
 \begin{split}
-y_{it} &amp; = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
+Y_{it} &amp; = \alpha_i + \gamma_t + \sum\limits_{j=1}^p\beta_jX_{itj} + \eps_{it} \\
 &amp; \text{where } \alpha_i =  \alpha_{00} + \underbrace{\alpha_{02}D_{2t} + \alpha_{03}D_{3t} + \dots + \alpha_{0m}D_{mt}}_{\text{unique intercepts for each unit}}, \quad \gamma_t =  \gamma_{00} + \underbrace{\gamma_{02}T_{i2} + \dots + \gamma_{0n}T_{in}}_{\text{unique intercepts for each time}} \\
 \end{split}
 \]</span></p>
 <ul>
-<li>Where <span class="math inline">\(y_{it}\)</span> is the <span class="math inline">\(y\)</span> value of the <span class="math inline">\(i\)</span>th unit at time period <span class="math inline">\(t\)</span>.</li>
+<li>Where <span class="math inline">\(Y_{it}\)</span> is the value of the <span class="math inline">\(i\)</span>th unit at time period <span class="math inline">\(t\)</span>.</li>
 <li>Where <span class="math inline">\(D_{i2}, D_{i3}, \dots, D_{im}\)</span> are dummy variables for units <span class="math inline">\(2, \dots, m\)</span>., and <span class="math inline">\(T_{i2}, T_{i3}, \dots, T_{in}\)</span> are dummy variables for time periods <span class="math inline">\(2, \dots, n\)</span>.</li>
 </ul>
-<p>For two-way fixed effects, we add a unique intercept term for every year and country, accounting for the average differences in <span class="math inline">\(y\)</span> between each country, and the average differences in <span class="math inline">\(y\)</span> between each year.</p>
+<p>For two-way fixed effects, we add a unique intercept term for every year and country, accounting for the average differences in <span class="math inline">\(Y_{it}\)</span> between each country, and the average differences in <span class="math inline">\(Y_{it}\)</span> between each year.</p>
 <p>Note: when conducting statistical inference with fixed-effects models, we must adjust our standard errors to clustered-standard errors. This is because observatios within a cluster are not independent of each other.</p>
 <p><br></p>
 <p><br></p>
@@ -1226,13 +1174,13 @@ y_{it} &amp; = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
 <h3 class="anchored" data-anchor-id="spatial-data-and-spatial-weights">Spatial Data and Spatial Weights</h3>
 <p>Spatial data is data that has some geographic-spatial component. If we have spatial data, a region’s neighbours may have some effect on a region’s own outcomes:</p>
 <ol type="1">
-<li><strong>Lag y</strong>: The <span class="math inline">\(y\)</span> of a region might be affected by a neighbouring region’s <span class="math inline">\(y\)</span> values. For example, one state having a high crime rate may affect another nearby state’s crime rate as criminals can move across the border.</li>
-<li><strong>Lag X</strong>: The <span class="math inline">\(y\)</span> of a region might be affected by a neighbour’s <span class="math inline">\(X\)</span> values. For example, one state’s low vaccination rate could affect the prevalence of a disease in a nearby state.</li>
-<li><strong>Spatial Autocorrelation</strong>: The residuals <span class="math inline">\(u\)</span> of a region might be affected by the residuals in a neigbouring region. For example, perhaps if we are studying how minimum wage affects unemployment rates, there could be some common factor with nearby states that affects unemployment rates (for example, prevalence of a certain industry) which is not included in our model.</li>
+<li><strong>Lag y</strong>: The <span class="math inline">\(Y_i\)</span> of a region might be affected by a neighbouring region’s <span class="math inline">\(Y_i\)</span> values. For example, one state having a high crime rate may affect another nearby state’s crime rate as criminals can move across the border.</li>
+<li><strong>Lag X</strong>: The <span class="math inline">\(Y_i\)</span> of a region might be affected by a neighbour’s <span class="math inline">\(X_i\)</span> values. For example, one state’s low vaccination rate could affect the prevalence of a disease in a nearby state.</li>
+<li><strong>Spatial Autocorrelation</strong>: The residuals <span class="math inline">\(\eps_i\)</span> of a region might be affected by the residuals in a neigbouring region. For example, perhaps if we are studying how minimum wage affects unemployment rates, there could be some common factor with nearby states that affects unemployment rates (for example, prevalence of a certain industry) which is not included in our model.</li>
 </ol>
 <p>To include spatial considerations, we include a spatial weights matrix <span class="math inline">\(\mathbf W\)</span>. This defines what regions are “neighbours”. For example, imagine 3 regions A, B, C, with A on the left, B in the middle, and C on the right. The spatial weights matrix would be a matrix with rows <span class="math inline">\(i = A, B ,C\)</span> and columns <span class="math inline">\(j = A, B, C\)</span>.Element <span class="math inline">\(w_{ij}=1\)</span> if regions <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> border each other, and <span class="math inline">\(w_{ij} = 0\)</span> if regions <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> do not touch each other:</p>
 <p><span class="math display">\[
-\mathbf W_{3 \times 3} = \begin{pmatrix}
+W_{3 \times 3} = \begin{pmatrix}
 0 &amp; 1 &amp; 0 \\
 1 &amp; 0 &amp; 1 \\
 0 &amp; 1 &amp; 0
@@ -1240,7 +1188,7 @@ y_{it} &amp; = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
 \]</span></p>
 <p>We often “normalise/standardise” our weights matrix so that each row adds up to 1. Essentially, we divide an element by the number of 1’s in each row:</p>
 <p><span class="math display">\[
-\mathbf W_{3 \times 3} = \begin{pmatrix}
+W_{3 \times 3} = \begin{pmatrix}
 0 &amp; 1 &amp; 0 \\
 0.5 &amp; 0 &amp; 0,5 \\
 0 &amp; 1 &amp; 0
@@ -1253,21 +1201,21 @@ y_{it} &amp; = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
 <h3 class="anchored" data-anchor-id="spatial-regression">Spatial Regression</h3>
 <p>We define neighbours with a weights matrix <span class="math inline">\(\mathbf W\)</span>. The largest spatial model is the <strong>Manski Model</strong>, which incorporates lag y, lag X, and spatial autocorrelation.</p>
 <p><span class="math display">\[
-\mathbf y = \underbrace{\rho\mathbf W\mathbf y}_{lag \ y} + \mathbf X\boldsymbol\beta + \underbrace{\mathbf{WX}\boldsymbol\theta}_{lag \ x} + \underbrace{\lambda \mathbf{Wu}}_{autocorr.} + \boldsymbol\varepsilon
+y = \underbrace{\rho Wy}_{\mathrm{lag \ y}} + X\beta + \underbrace{WX\theta}_{\mathrm{lag \ x}} + \underbrace{\lambda Wu}_{\mathrm{autocor.}} + \epsilon
 \]</span></p>
 <ul>
-<li><span class="math inline">\(\rho\)</span> (scalar) is the lag <span class="math inline">\(y\)</span> coefficient, and measures how an average of neighbouring region’s <span class="math inline">\(y\)</span> values are associated with a region’s own <span class="math inline">\(y\)</span> values. For every one unit increase in the average value of <span class="math inline">\(y\)</span> in neighbouring regions, there is an expected <span class="math inline">\(\rho\)</span> unit change in <span class="math inline">\(y\)</span> in the region, holding all else constant.</li>
-<li><span class="math inline">\(\boldsymbol\beta\)</span> (vector) is our normal OLS coefficients <span class="math inline">\(\beta_0, \dots, \beta_k\)</span>, and would be interpreted in the same way.</li>
-<li><span class="math inline">\(\boldsymbol\theta\)</span> (vector) is the lag <span class="math inline">\(X\)</span> coefficients <span class="math inline">\(\theta_0, \dots, \theta_k\)</span>, and measures how an average of neighbouring region’s <span class="math inline">\(X\)</span> values are associated with a region’s own <span class="math inline">\(y\)</span> values. For every one unit increase in the average <span class="math inline">\(x_j\)</span> of neighbouring regions, there is an expected <span class="math inline">\(\theta_j\)</span> unit change in <span class="math inline">\(y\)</span> in the region, holding all else constant.</li>
-<li><span class="math inline">\(\lambda\)</span> (scalar) is spatial autocorrelation coefficient, and measures how an average of neighbouring regions’ error terms are associated with a region’s own error term. Unobserved factors shared by neighbouring regions contribute to a <span class="math inline">\(\lambda\)</span>-unit change in <span class="math inline">\(y\)</span>, holding all else constant.</li>
+<li><span class="math inline">\(\rho\)</span> (scalar) is the lag y coefficient, and measures how an average of neighbouring region’s <span class="math inline">\(Y_i\)</span> values are associated with a region’s own <span class="math inline">\(Y_i\)</span> values. For every one unit increase in the average value of <span class="math inline">\(Y_i\)</span> in neighbouring regions, there is an expected <span class="math inline">\(\rho\)</span> unit change in <span class="math inline">\(Y_i\)</span> in the region, holding all else constant.</li>
+<li><span class="math inline">\(\beta\)</span> (vector) is our normal OLS coefficients <span class="math inline">\(\beta_0, \dots, \beta_p\)</span>, and would be interpreted in the same way.</li>
+<li><span class="math inline">\(\theta\)</span> (vector) is the lag X coefficients <span class="math inline">\(\theta_0, \dots, \theta_p\)</span>, and measures how an average of neighbouring region’s <span class="math inline">\(X_i\)</span> values are associated with a region’s own <span class="math inline">\(Y_i\)</span> values. For every one unit increase in the average <span class="math inline">\(X_{ij}\)</span> of neighbouring regions, there is an expected <span class="math inline">\(\theta_j\)</span> unit change in <span class="math inline">\(Y_i\)</span> in the region, holding all else constant.</li>
+<li><span class="math inline">\(\lambda\)</span> (scalar) is spatial autocorrelation coefficient, and measures how an average of neighbouring regions’ error terms are associated with a region’s own error term. Unobserved factors shared by neighbouring regions contribute to a <span class="math inline">\(\lambda\)</span>-unit change in <span class="math inline">\(Y_i\)</span>, holding all else constant.</li>
 </ul>
 <p>However, in reality, we often cannot estimate this entire model due to the large amount of parameters. Thus, multiple variations exist with only parts of the full model:</p>
 <ol type="1">
-<li>Keleijian-Prucha Model: <span class="math inline">\(\mathbf y = \rho \mathbf W \mathbf y + \mathbf X \boldsymbol\beta + \lambda \mathbf {Wu} + \boldsymbol\varepsilon\)</span>.</li>
-<li>Spatial Durbin Model: <span class="math inline">\(\mathbf y = \rho \mathbf{WY} + \mathbf X \boldsymbol\beta + \mathbf{WX}\boldsymbol\theta + \boldsymbol\varepsilon\)</span>.</li>
-<li>Spatially Lagged X Model: <span class="math inline">\(\mathbf y = \mathbf X \boldsymbol\beta + \mathbf {WX} \boldsymbol\theta + \boldsymbol\varepsilon\)</span>.</li>
-<li>Spatial Lag Model (Spatial Autoregressive): <span class="math inline">\(\mathbf y = \rho \mathbf{Wy} + \mathbf X \boldsymbol\beta + \boldsymbol\varepsilon\)</span>.</li>
-<li>Spatial Error Model: <span class="math inline">\(\mathbf y = \mathbf X\boldsymbol\beta + \lambda \mathbf{Wu} + \boldsymbol\varepsilon\)</span>.</li>
+<li>Keleijian-Prucha Model: <span class="math inline">\(y = \rho W y + X\beta + \lambda W u + \epsilon\)</span>.</li>
+<li>Spatial Durbin Model: <span class="math inline">\(y = \rho W y + X\beta + WX\theta + \epsilon\)</span>.</li>
+<li>Spatially Lagged X Model: <span class="math inline">\(y = X\beta + WX\theta + \epsilon\)</span>.</li>
+<li>Spatial Lag Model (Spatial Autoregressive): <span class="math inline">\(y = \rho W y + X\beta + \epsilon\)</span>.</li>
+<li>Spatial Error Model: <span class="math inline">\(y = X\beta + \lambda W u + \epsilon\)</span>.</li>
 </ol>
 <p>The models are estimated with <a href="./quant3.html#maximum-likelihood-estimator">Maximum Likelihood Estimation</a> (see next chapter), and model selection can be done with a combination of theory regarding the topic, eliminating insignificant portions, and AIC and BIC metrics.</p>
 <p><br></p>
@@ -1298,7 +1246,7 @@ y_{it} &amp; = \alpha_i + \gamma_t + \beta_1x_1 + \dots + \beta_kx_k + u_{it} \\
 </div>
 <p>Output will include coefficients, standard errors, p-values, and more.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1307,7 +1255,7 @@ Binary and Categorical Variables
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can include binary and categorical variables by using the <em>as.factor()</em> function:</p>
 <div class="cell">
@@ -1318,7 +1266,7 @@ Binary and Categorical Variables
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1327,7 +1275,7 @@ Fixed Effects
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can include one-way fixed effects by adding a | after your regression formula in <em>feols()</em>:</p>
 <div class="cell">
@@ -1345,7 +1293,7 @@ Fixed Effects
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1354,7 +1302,7 @@ Interaction Effects
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Two interact two variables, use * between them. This will automatically include both the interaction term, and the two variables by themselves.</p>
 <div class="cell">
@@ -1368,7 +1316,7 @@ Interaction Effects
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1377,11 +1325,30 @@ Polynomial Transformations
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>To conduct a polynomial transformation, you can use the <em>I()</em> function. The second argument is the degree of the polynomial:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">feols</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> <span class="fu">I</span>(x2, <span class="dv">3</span>), <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>) <span class="co">#cubic for x2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Logarithmic Transformations
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The best way to do a logarithmic transformation is to create a new variable that is the log of the variable you want to transform using the <em>log()</em> function, before you even start the regression:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mydata<span class="sc">$</span>x1_log <span class="ot">&lt;-</span> <span class="fu">log</span>(mydata<span class="sc">$</span>x1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1392,15 +1359,15 @@ Polynomial Transformations
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Logarithmic Transformations
+Confidence Intervals
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The best way to do a logarithmic transformation is to create a new variable that is the log of the variable you want to transform using the <em>log()</em> function, before you even start the regression:</p>
+<p>To find the confidence intervals for coefficients, first estimate the model with <em>lm()</em> or <em>feols()</em> as shown previously, then use the <em>confint()</em> command:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mydata<span class="sc">$</span>x1_log <span class="ot">&lt;-</span> <span class="fu">log</span>(mydata<span class="sc">$</span>x1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1411,30 +1378,11 @@ Logarithmic Transformations
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Confidence Intervals
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>To find the confidence intervals for coefficients, first estimate the model with <em>lm()</em> or <em>feols()</em> as shown previously, then use the <em>confint()</em> command:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
 F-Tests
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>To run a f-test, use the <em>anova()</em> command, and input your two different models, with the null model going first.</p>
 <div class="cell">
@@ -1445,7 +1393,7 @@ F-Tests
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1454,7 +1402,7 @@ LaTeX Regression Tables
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can use the <em>texreg</em> package to make nice regression tables automatically.</p>
 <div class="cell">
@@ -1473,7 +1421,7 @@ LaTeX Regression Tables
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1482,7 +1430,7 @@ Prediction
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>We can use the <em>predict()</em> function to generate fitted value predictions in R:</p>
 <div class="cell">

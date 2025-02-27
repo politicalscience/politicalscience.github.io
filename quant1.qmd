@@ -12,32 +12,34 @@ This chapter is about the very building blocks of statistics. We start off with 
 
 ### Random Variables and Distributions
 
-In statistics, we will talk a lot about random variables. Random variables are outcomes that have some randomness/uncertainty. There is a set of possible outcomes $\Omega$, called the sample space. Within the sample space there exists events $\omega$ (potential outcomes). We do not know which event will be observed, but we know each outcome $\omega$'s probability of realisation $Pr(\omega \in \Omega)$.
+Random variables are outcomes that have some randomness/uncertainty. There is a set of possible outcomes $\Omega$, called the sample space. Within the sample space there exists events $\omega \in \Omega$ (potential outcomes). We do not know which event will be observed, but we know each outcome $\omega$'s probability of realisation $\P(\omega \in \Omega)$.
 
-We can represent the potential outcomes of random variables, and the associated probabilities with each outcome, in a **distribution**. On the horizontal axis is all $\omega$, and the vertical axis is $P(\omega)$, the probability event (possible outcome) $\omega$ is realised:
+We can represent $\omega \in \Omega$, and the associated probabilities with each outcome $\P(\omega)$, in a **distribution**. On the horizontal axis is all $\omega \in \Omega$, and the vertical axis is $\P(\omega)$.
 
 ![](images/clipboard-713724518.png){fig-align="center" width="45%"}
 
-**Continuous random variables** $\omega \in [a, b]$ can take any possible value within a range, including any decimal. **Discrete random variables** can only take a certain set of values $\omega \in \{a, b, \dots \}$, not any possible decimal. For example, a dice roll can only take the values of 1, 2, 3,..., and not 3.23478. A discrete random variable with only 2 potential outcomes $\omega \in \{0, 1 \}$ is a **binary random variable**.
+**Continuous random variables** $\omega \in [a, b]$ can take any possible value within a range $a$ to $b$, including any decimal. **Discrete random variables** can only take a certain set of values $\omega \in \{a, b, \dots \}$, not any possible decimal. For example, a dice roll can only take the values of 1, 2, 3,..., and not 3.23478. A discrete random variable with only 2 potential outcomes $\omega \in \{0, 1 \}$ is a **binary random variable**.
+
+We will denote random variables with a capital letter (ex. $Z$, $X$). In later chapters, we will denote them with a subscript $Z_i, X_i$ to distinguish them from matrices. The realisation of a random variable (the outcome) is denoted with lower case letters (ex. $z, x$).
 
 <br />
 
 ### Probability Density Functions {#probability-density-functions}
 
-We can describe these distributions mathematically. A **probability density function** is a function $\varphi$ that takes one potential outcome as an input, and spits out the probability of that outcome. For example, the probability density function of a dice is:
+We can describe these distributions mathematically. A **probability density function** is a function $\varphi$ that takes one potential outcome as an input, and spits out the probability of that outcome. For example, the probability density function of a dice $z \in \{ 1, 2, 3, 4, 5, 6\}$ is:
 
 $$
-\varphi(x) = 1/6
+\P(z) = \varphi(z) = 1/6
 $$
 
-We can see that if we want to see the probability of getting a 5 on our dice roll, we plug in $x=5$ to get $\varphi(5) = 1/6$, which is the probability of rolling a 5.
+We can see that if we want to see the probability of getting a 5 on our dice roll, we plug in $z=5$ to get $\varphi(5) = 1/6$, which is the probability of rolling a 5.
 
-For continuous random variables, things become slightly more complex. This is because it does not make sense to calculate the probability of one specific outcome. For example, let us say your random variable is the time it will take you to get to school tomorrow. We really do not care about the probability of taking 13.4357 minutes to get to school. What we do care about is a range - lets say the probability of getting to school between 13 and 14 minutes.
+For continuous random variables, it does not make sense to calculate the probability of one specific outcome $z$. For example, let us say your random variable is the time it will take you to get to school tomorrow. We really do not care about the probability of taking 13.4357 minutes to get to school. What we do care about is a range - lets say the probability of getting to school between 13 and 14 minutes.
 
 More mathematically, the probability density function of a continuous random variable gives you the probability of an outcome between $a$ and $b$:
 
 $$
-P(a<x<b) =\int\limits_a^b \varphi(x)dx
+\P(a<z<b) =\int\limits_a^b \varphi(z)dz
 $$
 
 This integral is important - it tells us that the area under a distribution gives us the probability of an event.
@@ -52,7 +54,7 @@ Cumulative density functions measure the cumulative probability below a certain 
 For example, to get the probability of anything below $a$ occurring as an outcome, our cumulative density function is:
 
 $$
-P(x<a) = \int\limits_{-∞}^a \varphi(x)dx
+\P(z<a) = \int\limits_{-∞}^a \varphi(z)dz
 $$
 
 This will be useful in some cases to calculate values for probability density functions.
@@ -67,29 +69,29 @@ The **expectation**, also called the **mean** or **expected value**, is the "ave
 Expectation for a discrete random variable $X$ is calculated as a weighted sum of all potential outcomes $x_i$ and their respective probabilities given by the probability density function $p(x_i)$:
 
 $$
-E(X) = \mu_X = \sum\limits_{i=1}^n(x_i \times \varphi(x_i))
+\E Z  = \sum\limits_{i=1}^n(z_i \times \varphi(z_i))
 $$
 
 For a continuous random variable $X$, the idea is the same but with an integral:
 
 $$
-E(X) = \mu_X = \int\limits_{-∞}^∞ (x \times \varphi(x))
+\E Z = \int\limits_{-∞}^∞ (z \times \varphi(z))dz
 $$
 
 Expectations have a few unique algebraic properties:
 
-1.  The expectation of a constant is itself: $E(c) = c$.
-2.  Expectations can be added: $E(X+Y) = E(X) + E(Y)$.
-3.  Expectations multiplied with constants: $E(cX) = c \cdot E(X)$.
-4.  Law of iterated expectations: $E(X) = E[E(X|Y)]$.
+1.  The expectation of a constant is itself: $\E c = c$.
+2.  Expectations can be added: $\E(X+Y) = \E X + \E Y$.
+3.  Expectations multiplied with constants: $\E(cX) = c \cdot \E X$.
+4.  Law of iterated expectations: $\E(X) = \E[\E(X|Y)]$.
 
 **Variance** measures the spread of a distribution. It is essentially the average distance of each individual outcome from the expected value $\mu$ of the random variable:
 
 $$
-V(X) = \sigma^2= E(x - \mu)^2 = \sum\limits_{i=1}^n \varphi(x_i) \times (x_i - \mu_X)^2
+\V Z = \sigma^2= \E(z - \E Z)^2 
 $$
 
-The **standard deviation** is simply the square root of variance.
+The **standard deviation** $\sigma$ is simply the square root of variance.
 
 <br />
 
@@ -103,9 +105,9 @@ Conditional distributions are a distribution of one random variable $X$, given w
 
 For example, imagine $X$ is income and $Y$ is age. The conditional distribution of $X|Y$ is the distribution of income $X$ at every specific age $Y$. For example, $X|Y = 20$ is the distribution of income $X$ for 20 year olds. $X|Y=60$ would be the distribution of income $X$ for 60 year olds.
 
-Conditional distributions have all the same properties as normal distributions. The most important of these is the **conditional expectation**, which we denotate $E(X|Y)$. In the context of above, $E(X|Y=20)$ would be the **expected** income for a 20 year old.
+Conditional distributions have all the same properties as normal distributions. The most important of these is the **conditional expectation**, which we denotate $\E(X|Y)$. In the context of above, $\E(X|Y=20)$ would be the **expected** income for a 20 year old.
 
-The reason conditional expectations are so important is because they illustrate how one variable affects another. If we see a pattern in going between $E(X|Y=20)$, $E(X|Y = 21)$, and $E(X|Y = 24)$, we might be tempted to say that increasing age $Y$ has some effect on income $X$.
+The reason conditional expectations are so important is because they illustrate how one variable affects another. If we see a pattern in going between $\E(X|Y=20)$, $\E(X|Y = 21)$, and $\E(X|Y = 24)$, we might be tempted to say that increasing age $Y$ has some effect on income $X$.
 
 <br />
 
@@ -120,10 +122,10 @@ The reason conditional expectations are so important is because they illustrate 
 The **normal distribution** is for continuous random variables, and takes a famous "bell shape" (hence why it is also called the bell curve). Every normal distribution and its [probability density function (PDF)](#probability-density-functions) can be defined by two parameters: the mean and the variance:
 
 $$
-\sim \mathcal N(\mu, \sigma^2), \quad P(a<x<b) = \int\limits_a^b \frac{1}{\sqrt{2\pi\sigma^2}}e^{\left( -\frac{(x - \mu)^2}{2 \sigma^2}\right)}dx
+Z \sim \mathcal N(\mu, \sigma^2), \quad \P(a<z<b) = \int\limits_a^b \frac{1}{\sqrt{2\pi\sigma^2}}e^{\left( -\frac{(z - \E Z)^2}{2 \sigma^2}\right)}dx
 $$
 
-Where $\mathcal N$ represents the normal distribution, $\mu$ represents the expected value of the distribution, and $\sigma^2$ represents the variance. The figure below shows how normal distributions change when you alter $\mu$ and $\sigma^2$.
+Where $\mathcal N$ represents the normal distribution, $\mu$ represents the expected value $\E Z$ of the distribution, and $\sigma^2$ represents the variance. $Z$ is the variable we have assigned the normal distribution to. The figure below shows how normal distributions change when you alter $\mu$ and $\sigma^2$.
 
 ![](images/clipboard-2268260367.png){fig-align="center" width="60%"}
 
@@ -139,8 +141,8 @@ These properties don't just apply to 1, 2, or 3 standard deviations away from th
 
 Another property of the normal distribution is that we can manipulate them as follows:
 
-1.  We can add a constant $c$ to every single outcome/value in a normal distribution. The resulting distribution will still be a normal distribution, just with its mean shifted by $c$. Or in other words: $X \sim \mathcal N(\mu + c, \sigma^2)$.
-2.  We can multiply by constant $c$ to every single outcome/value in a normal distribution. The resulting distribution will still be a normal distribution, just with its mean multiplied by $c$, and its standard deviation multipled by $c^2$. Or in other words: $X \sim \mathcal N(c \mu, (c \mu)^2)$.
+1.  We can add a constant $c$ to every single outcome/value in a normal distribution. The resulting distribution will still be a normal distribution, just with its mean shifted by $c$. Or in other words: $Z \sim \mathcal N(\mu + c, \sigma^2)$.
+2.  We can multiply by constant $c$ to every single outcome/value in a normal distribution. The resulting distribution will still be a normal distribution, just with its mean multiplied by $c$, and its standard deviation multipled by $c^2$. Or in other words: $Z \sim \mathcal N(c \mu, (c \mu)^2)$.
 
 <br />
 
@@ -149,7 +151,7 @@ Another property of the normal distribution is that we can manipulate them as fo
 The standard normal distribution (often called the $Z$-distribution) is a special version of the normal distribution, with a mean of 0 and a variance of 1:
 
 $$
-Z \sim\mathcal N(0, 1), \quad Pr(a<z<b) = \int\limits_a^b \frac{e^{-\frac{z^2}{2}}}{\sqrt{2\pi}}dz = \int\limits_a^b\phi(z)dz
+Z \sim\mathcal N(0, 1), \quad \P(a<z<b) = \int\limits_a^b \frac{e^{-\frac{z^2}{2}}}{\sqrt{2\pi}}dz = \int\limits_a^b\phi(z)dz
 $$
 
 Note: we denote the PDF of the standard normal as $\phi$, and the CDF of the standard normal as $\Phi$.
@@ -159,7 +161,7 @@ Note: we denote the PDF of the standard normal as $\phi$, and the CDF of the sta
 The best part about the standard normal distribution is that we can transform any other normal distribution into a standard normal. Recall the properties of adding and multiplying constants to a normal distribution from above. That means we can apply a transformation to every value/unit in a normal distribution $X$ to get a standard normal distribution $Z$:
 
 $$
-Z = \frac{x - \mu}{\sigma} \sim \mathcal N(0,1)
+\text{if } X \sim \mathcal N(\mu, \sigma^2), \quad Z = \frac{x - \E X}{\sigma} \sim \mathcal N(0,1)
 $$
 
 Or in other words, for every value of $x \in X$, subtract the mean, then divide by the standard deviation. If you do this for every value $x \in X$, you will get a standard normal.
@@ -182,22 +184,28 @@ The importance of the T-distribution is that it is often used for statistical in
 
 ### Bernoulli and Binomial Distribution
 
-A **bernoulli trial** is an experiment that has two possible outcomes: a success $x= 1$ and a failure $x = 0$. We denote the probability of a success as $p$, and the probability of a failure as $q = 1-p$. For example, a coin flip could be seen as a bernoulli trial, with $p = 0.5$.
+A **bernoulli trial** is an experiment that has two possible outcomes: a success $z= 1$ and a failure $z = 0$. We denote the probability of a success as $p$, and the probability of a failure as $q = 1-p$. For example, a coin flip could be seen as a bernoulli trial, with $p = 0.5$.
 
 For example, below is a bernoulli distribution with $p = 0.15$:
 
 ![](images/clipboard-2068255268.png){fig-align="center" width="50%"}
 
-The bernoulli distribution is a special case of the **Binomial distribution**, which is basically the question of how many success you will get with $n$ number of trials. When $n=1$ (just one coin flip), we get the bernoulli distribution.
-
 The probability density function of a bernoulli distribution is:
 
 $$
-P(x) = \begin{cases}
-p \quad \text{if } x = 1 \\
-1 - p \quad \text{if } x= 0 
+\varphi(z) = \begin{cases}
+p \quad \text{if } z = 1 \\
+1 - p \quad \text{if } z= 0 
 \end{cases}
 $$
+
+The expected value of the bernoulli trial is equal to the probability of a a success $p$.
+
+$$
+\E Z = \P (z = 1) = p
+$$
+
+The bernoulli distribution is a special case of the **Binomial distribution**, which is basically the question of how many success you will get with $n$ number of trials. When $n=1$ (just one coin flip), we get the bernoulli distribution.
 
 A bernoulli distribution is often employed in randomisation of treatment during experiments, as we will see later.
 
@@ -213,7 +221,7 @@ A bernoulli distribution is often employed in randomisation of treatment during 
 
 An **estimand** is the true value of some true parameter $\theta$ in the population we are trying to measure.
 
-We often do not have data on the population. We typically have a sample from the population, and use an **estimator** (procedure) to produce a sample **estimate** $\hat\theta$.
+We often do not have data on the population. We typically have a sample from the population, and use an **estimator** (procedure) to produce a sample **estimate** $\hat\theta$. Estimators and estimates are denoted with either a hat $\hat\theta$ or tilde $\tilde\theta$.
 
 -   For example, if we wanted to find the average trust in institutions in the UK, we cannot possibly ask 70 million people. So, instead, we take a sample from the population, and produce a sample estimate.
 
@@ -245,9 +253,9 @@ We can describe sampling distributions with their expectation and variance.
 
 ### Finite Sample Properties of Estimators
 
-An estimator of a parameter is **unbiased**, if its estimates $\hat\theta_n$ have an expectation equal to the true population value of the parameter: $E(\hat\theta_n) = \theta$. Or in other words, if we repeatedly sample and use the estimator, on average, the estimates will be equal to the true population value (the sampling distribution will have an expectation of the true population value).
+An estimator of a parameter is **unbiased**, if its estimates $\hat\theta_n$ have an expectation equal to the true population value of the parameter: $\E \hat\theta_n = \theta$. Or in other words, if we repeatedly sample and use the estimator, on average, the estimates will be equal to the true population value (the sampling distribution will have an expectation of the true population value).
 
-We want an unbiased estimator, because if $E(\hat\theta_n) = \theta$, that means our "best guess" of the estimator value is the true parameter value $\theta$. That means any one estimate $\hat\theta_n$ is on average, correct.
+We want an unbiased estimator, because if $\E \hat\theta_n = \theta$, that means our "best guess" of the estimator value is the true parameter value $\theta$. That means any one estimate $\hat\theta_n$ is on average, correct.
 
 Unbiasedness is not the only desirable property of estimators - we also care about the variance. After all, if we have two unbiased estimators, the one with less variance will be on average, closer to the true population value, for any one estimate $\hat\theta$.
 
@@ -259,19 +267,19 @@ For example, let us say the true population parameter is $\theta = 0$. We will h
 -   Estimator $A$, after two samples (for simplicity), produces estimates -1 and 1.
 -   Estimator $B$, after two samples, produces estimates -100 and 100.
 
-Both estimators are unbiased $E(\hat\theta_n) = 0$. However, clearly, estimator $A$ is, on average, closer to $\theta =0$ than estimator $B$. This is because while both estimators are unbiased, estimator $A$ has a smaller **variance** than estimator $B$ - that is on average, estimator $A$'s estimators are more closely "packed around" the expectation of the estimator.
+Both estimators are unbiased $\E \hat\theta_n = 0$. However, clearly, estimator $A$ is, on average, closer to $\theta =0$ than estimator $B$. This is because while both estimators are unbiased, estimator $A$ has a smaller **variance** than estimator $B$ - that is on average, estimator $A$'s estimators are more closely "packed around" the expectation of the estimator.
 :::
 
 The **variance** of an estimator (and variance of the sampling distribution) can be quantified as:
 
 $$
-V(\hat\theta_n) = E[(\hat\theta_n - E(\hat\theta_n))^2]
+\V \hat\theta_n = \E[(\hat\theta_n - \E \hat\theta_n)^2]
 $$
 
 An **efficient** estimator is one that, on average, has the closest estimated value $\hat\theta_n$ to the true population parameter. If two estimators are both unbiased, the one with lower variance is more efficient. Efficiency can be quantified as the estimator with the lowest **mean squared error**:
 
 $$
-MSE(\hat\theta_n) = E[(\hat\theta_n - \theta)^2] =V(\hat\theta_n) + Bias(\hat\theta_n)^2
+\mathrm{MSE}(\hat\theta_n) = \E[(\hat\theta_n - \theta)^2] =\V \hat\theta_n + \underbrace{(\E \theta_n - \theta)}_{\mathrm{bias}}
 $$
 
 We generally want an efficient estimator, since gives us the closest guess to the true population parameter $\theta$.
@@ -293,7 +301,7 @@ Asymptotic properties are properties of estimators as the sample size $n$ approa
 An estimator is **asymptotically consistent**, if as we increase sample size towards infinity, the estimate will become more and more concentrated around the true population value $\theta$. At $n = ∞$, our sampling distribution collapses to just one value, the true population value $\theta$. Mathematically:
 
 $$
-P(|\hat\theta_n - \theta|> \varepsilon) \rightarrow 0, \text { as } n \rightarrow ∞
+\P(|\hat\theta_n - \theta|> \varepsilon) \rightarrow 0, \text { as } n \rightarrow ∞
 $$
 
 That means with a consistent estimator, increasing the sample size will get us more and more accurate results.
@@ -356,12 +364,12 @@ Thus, the variance of our estimator $\bar x_n$ shrinks to zero, so as sample siz
 Another asymptotic property of estimators, as sample size $n$ approaches infinity, is that the sampling distribution approaches a normal distribution. The **central limit theorem** establishes asymptotic normality of estimators. Let us say we have $N$ number of random variables $\hat\theta_1, \dots, \hat\theta_N$ (estimates are realisations of random variables). The central limit theorem states that:
 
 $$
-P(w_n < w) \rightarrow \Phi(w) \quad \text{as } n \rightarrow ∞
+P(z_n < w) \rightarrow \Phi(z) \quad \text{as } n \rightarrow ∞
 $$
 
--   Where $w_n$ is a transformed version of the random variable $\hat\theta_n$, defined as $w_n = \frac{\bar\theta_n - \mu}{\sigma / \sqrt{n}}$.
--   Where $P(w_n < w)$ is the cumulative density function of the random variable $w_n$.
--   Where $\Phi(w)$ is the cumulative density function (cdf) of the standard normal distribution $\mathcal N(0, 1)$.
+-   Where $z_n$ is a transformed version of the random variable $\hat\theta_n$, defined as $z_n = \frac{\bar\theta_n - \E \hat\theta_n}{\sigma / \sqrt{n}}$.
+-   Where $\P(z_n < z)$ is the cumulative density function of the random variable $w_n$.
+-   Where $\Phi(z)$ is the cumulative density function (cdf) of the standard normal distribution $\mathcal N(0, 1)$.
 
 The importance of CLM comes from the fact that as we increase sample size, our sampling distribution becomes more and more normally distributed. Recall that we know that the normal distribution has unique [properties of distribution](#properties-of-the-normal-distribution) that allow us to calculate the probability between standard deviations (and any point). Since CLM says that our sampling distribution is normally distributed, we can apply the same properties to learn about the probabilities of getting a certain sample estimates $\hat\theta_n$.
 
@@ -383,11 +391,11 @@ Our alternative hypothesis might be $H_1: \theta ≠ 0$ - i.e. there is a relati
 To prove our alternative hypothesis, we need to disprove the null hypothesis.
 :::
 
-We cannot know if the null hypothesis is wrong. However, we can calculate the probability of getting a certain sample estimate $\hat\theta_n$ assuming the null hypothesis is true. If we assume an unbiased estimator, that means our hypothetical sampling distribution should have an expected value of our null hypothesis: $E(\hat\theta_n) = H_0$.
+We cannot know if the null hypothesis is wrong. However, we can calculate the probability of getting a certain sample estimate $\hat\theta_n$ assuming the null hypothesis is true. If we assume an unbiased estimator, that means our hypothetical sampling distribution should have an expected value of our null hypothesis: $\E \hat\theta_n = H_0$.
 
 Then, we can gather a sample, and calculate some sample estimate $\hat\theta$. Using some math (we will see this later with regression), we can also estimate the variance of the sampling distribution.
 
-Thus, we now know the expectation of the sampling distribution $E(\hat\theta_n) = H_0$ and the variance. We also know that the sampling distribution is normally distributed by the central limit theorem. Thus, using the properties of the normal distribution, we can calculate the probability of getting our sample estimate $\hat\theta$ or an estimate even further from the $H_0$ than our $\hat\theta$.
+Thus, we now know the expectation of the sampling distribution $\E \hat\theta_n = H_0$ and the variance. We also know that the sampling distribution is normally distributed by the central limit theorem. Thus, using the properties of the normal distribution, we can calculate the probability of getting our sample estimate $\hat\theta$ or an estimate even further from the $H_0$ than our $\hat\theta$.
 
 ![](images/clipboard-1533818238.png){fig-align="center" width="45%"}
 
@@ -406,7 +414,7 @@ Thus, conclusion 2 essentially means we reject the null hypothesis, and conclude
 
 To start a hypothesis test, you will need to define a status-quo null hypothesis $H_0$ and an alternative hypothesis $H_1$.
 
-Then, you should take a sample from the population, and compute a sample estimate $\hat\theta$ with your estimator. You can then derive a **standard error** (square root of the variance of the sampling distribution). This standard error formula will differ depending on the statistical model, and we will introduce several of these for regression.
+Then, you should take a sample from the population, and compute a sample estimate $\hat\theta$ with your estimator. You can then derive a **standard error** (square root of the variance of the sampling distribution $\V \hat\theta_n$). This standard error formula will differ depending on the statistical model, and we will introduce several of these for regression.
 
 Then, you can compute a test statistic. The name of the test-statistic will differ based on the statistical model, but the formula is always the same:
 
@@ -482,31 +490,23 @@ Nonparametric Bootstrap is also used in some more complex estimators where it is
 
 In political science and most social sciences, our primary concern is relationships between variables. How does education correlate with voter turnout? Are less educated citizens more anti-immigrant? How do inflation levels correlate with incumbent popularity?
 
-We describe a relationship between two variables $X$ and $Y$ as a correlation.
+We describe a relationship between two variables $X_i$ and $Y_i$ as a correlation (from now on, all random variables are denoted with a subscript).
 
--   If we are more likely to observe higher values of $Y$ when we also observe higher values of $X$, that means we have a positive correlation.
--   If we are more likely to observe lower values of $Y$ when we also observe higher values of $X$, that means we have a negative correlation.
--   If the value of $Y$ does not change no matter the value of $X$, then the two variables are uncorrelated.
+-   If we are more likely to observe higher values of $Y_i$ when we also observe higher values of $X_i$, that means we have a positive correlation.
+-   If we are more likely to observe lower values of $Y_i$ when we also observe higher values of $X_i$, that means we have a negative correlation.
+-   If the value of $Y_i$ does not change no matter the value of $X$, then the two variables are uncorrelated.
 
-[Important Note: correlation is **not** causation!]{.underline}
-
-We can view correlations between variables graphically:
+[Important Note: correlation is **not** causation!]{.underline} We can view correlations between variables graphically:
 
 ![](images/clipboard-3489268418.png){fig-align="center" width="60%"}
 
 ### Quantifying Correlations
 
-Let us say we have some data with $n$ number of observations. Each observation $i$ has values $(X_i, Y_i)$. There are two primary ways to quantify correlations between variables. The first is called **covariance**:
+There are two primary ways to quantify correlations between variables. The first is called **covariance**:
 
 $$
-\begin{align}
-Cov(X,Y) & = E((X_i - \bar X)(Y_i - \bar Y) \\
-& = \frac{1}{n}\sum\limits_{i=1}^n\left[(X_i - \bar X)(Y_i - \bar Y) \right]
-\end{align}
+cov(X_i,Y_i)  = \E((X_i - \E X_i)(Y_i - \E Y_i)) \\
 $$
-
--   Where $(X_i, Y_i)$ is one data point for an observation $i$.
--   Where $\bar X$ and $\bar Y$ are the average $X$ and $Y$ values in the data.
 
 If covariance is negative, that means we have a negative correlation. If covariance is positive, we have a positive correlation. If covariance is 0, we have no correlation.
 
@@ -515,7 +515,7 @@ However, we cannot interpret the actual number of covariance, only the sign. Thi
 Obviously, we do not want a measure that is affected by measurement scale. We want some measure of correlation that can be compared across different scales. This is where the **correlation coefficient** comes in:
 
 $$
-Corr(X,Y) = r = \frac{Cov(X, Y)}{\sqrt{V(X) V(Y)}}
+\rho = \frac{cov(X_i, Y_i)}{\sqrt{\V X \V Y}}
 $$
 
 Essentially, we are "normalising" the covariance metric by dividing by the variances, which gets rid of the impact of scale.
@@ -534,7 +534,7 @@ Correlation coefficients have a huge weakness: they measure the "strength" of co
 
 ![](images/clipboard-1623227249.png){fig-align="center" width="50%"}
 
-We can see above that these two relationships have the same strength of correlation. However, the slope of the left graph is much higher. Why is the slope important? Well, the slope is essentially how much $Y$ changes when $X$ increases by 1. It is the **magnitude** of our relationship.
+We can see above that these two relationships have the same strength of correlation. However, the slope of the left graph is much higher. Why is the slope important? Well, the slope is essentially how much $Y_i$ changes when $X_i$ increases by 1. It is the **magnitude** of our relationship.
 
 Thus, we might wish to instead look at relationships with a best-fit straight line. Take this figure below:
 
@@ -549,35 +549,37 @@ We can express this line mathematically as $y = mx + b$, where $m$ is the slope 
 Simple Linear Regression is a mathematical model of a best fit line. It takes the following form:
 
 $$
-Y_i = \beta_0 + \beta_1X_i + u_i
+Y_i = \beta_0 + \beta_1X_i + \eps_i
 $$
 
-Where $(X_i , Y_i)$ are the values of one observation $i$. Where $\beta_1$ is the slope - the measurement of the relationship between $x$ and $y$. Where $\beta_0$ is the intercept (y-intercept), and $u$ is the error term: the vertical distance between the actual points and the best-fit line.
+-   Where $X_i$ and $Y_i$ are random variables.
+-   Where $\beta_1$ is the slope - the measurement of the relationship between $x$ and $y$. $\beta_0$ is the intercept (y-intercept).
+-   $\eps_i$ is the error term: the vertical distance between the actual points and the best-fit line.
 
-We have some special terminology for the parts of the simple linear regression. The **independent variable**, also called the explanatory variable or the regressor, is labelled $x$. This is the variable multiplied to the slope parameter $\beta_1$. The **dependent variable**, also called the response or outcome variable, is labelled $y$.
+We have some special terminology for the parts of the simple linear regression. The **independent variable**, also called the explanatory variable or the regressor, is labelled $X_i$. This is the variable multiplied to the slope parameter $\beta_1$. The **dependent variable**, also called the response or outcome variable, is labelled $Y_i$.
 
-We can also write regression as the [conditional expectation](#conditional-distributions) of the conditional distribution of $Y|X$:
+We can also write regression as the [conditional expectation](#conditional-distributions) $\E(Y_i | X_i)$ of the conditional distribution.
 
 $$
-E(Y_i|X_i) = \beta_0 + \beta_1 X_i
+\E(Y_i|X_i) = \beta_0 + \beta_1 X_i
 $$
 
 Throughout this chapter, we have talked about statistical inference and estimators. This is no different in linear regression. The above equation is what we call our population model (also called the data generating process):
 
 $$
-Y_i = \beta_0 + \beta_1X_i + u_i
+Y_i = \beta_0 + \beta_1X_i + \eps_i
 $$
 
 However, once again, we cannot know the true population values of our intercept and slope. So, we will have a sample model of the following:
 
 $$
-Y_i = \widehat{\beta_0} + \widehat{\beta_1}X_i + \widehat{u_i}
+Y_i = \hat\beta_0 + \hat\beta_1X_i + \hat\eps_i
 $$
 
-We will discuss the details of this estimation process of $\widehat{\beta_0}, \widehat{\beta_1}, \widehat{u_i}$ in the next chapter, and how we can conduct statistical inference and tests. The points on our predicted best-fit line (so excluding error $\widehat{u_i}$) are called our **fitted values**:
+We will discuss the details of this estimation process of $\hat\beta_0, \hat\beta_1, \hat\eps_i$ in the next chapter, and how we can conduct statistical inference and tests. The points on our predicted best-fit line (so excluding error $\widehat{u_i}$) are called our **fitted values**:
 
 $$
-\widehat{Y_i} = \widehat{\beta_0} + \widehat{\beta_1}X_i
+\hat Y_i = \hat\beta_0 + \hat\beta_1X_i
 $$
 
-The simple linear regression model is very simple. In the real world, rarely does only one thing cause another. For example, changes in income could be caused by age, but also education. Instead of just one explanatory variable $x$, we can create regression models with multiple explanatory variables $x_1, x_2, \dots, x_k$. This is the multiple linear regression that we will introduce in the next chapter.
+The simple linear regression model is very simple. In the real world, rarely does only one thing cause another. For example, changes in income could be caused by age, but also education. Instead of just one explanatory variable $X_i$, we can create regression models with multiple explanatory variables $X_{i1}, X_{i2}, \dots, X_{ip}$. This is the multiple linear regression that we will introduce in the next chapter.
