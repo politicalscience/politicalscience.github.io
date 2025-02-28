@@ -1,0 +1,287 @@
+---
+title: "The Generalised Linear Model"
+subtitle: "Chapter 1, Quantitative Methods"
+sidebar: side
+---
+
+In the last chapter, we discussed the classical linear model. However, the classical linear model has a few limitations, which are addressed by the generalised linear model (GLM). In this chapter, we explore the generalised linear model, including logistic and negative binomial regression, and the maximum likelihood estimator used to estimate GLMs.
+
+Use the right sidebar for quick navigation. R-code is provided at the bottom.
+
+------------------------------------------------------------------------
+
+# **Generalised Linear Model**
+
+### Limitations of the Classical Model
+
+Consider the [linear probability model](clm.qmd#linear-probability-model) introduced at the end of last chapter:
+
+$$
+\P(Y_i = 1|X_i)= \pi_i = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i
+$$
+
+There are two main issues with using the classical model for probabilities:
+
+1.  The classical assumptions assume homoscedasticity. However, probability of a binary event is given by the bernoulli distribution, for which $\V \pi_i = \pi_i(1-\pi_i)$, which is clearly a function of outcome $\pi_i$.
+2.  And more importantly, the linear model will predict probabilities $\P(Y_i = 1 | X_i)$ that are higher than 1 and less than 0, which, if we know the rules of probability, is nonsensical.
+
+Similar limitations apply to the classical model when applied to count data (counting the times something occurs) and rate data. This makes the classical linear model unsuited for accurate predictions.
+
+The generalised linear model aims to solve this by not requiring the response variable to just be $Y_i$ (or $\pi_i$ for probabilities). Instead, we can "transform" the response variable through a link function $g(\cdot)$ which will allow the linear model to be applied to other types of data and outcome variables.
+
+<br />
+
+### The Generalised Linear Model
+
+As noted above, the generalised linear model allows us to "transform" the outcome variable through a link function $g(\cdot)$, while maintaining the linear structure of the rest of the linear model. There are several of these generalised linear models that we will explore.
+
+Of course, we have the **Classical Linear Model**, which is considered a GLM that has no link function:
+
+$$
+Y_i = \beta_0 + \beta_1X_{i1} + \beta_p X_{ip} + \eps_i \ = \ x_i^\top\beta + \eps_i
+$$
+
+The **Logistic Regression Model** is a model that deals with probabilities $\pi_i$, just like the linear probability model. It solves the limitations of the linear probability model through a link function:
+
+$$
+\log \left( \frac{\pi_i}{1 - \pi_i} \right) = \beta_0 + \beta_1X_{i1} + \dots + \beta_p X_{ip} \ = \ x_i^\top\beta
+$$
+
+Where $\pi_i$ is the probabiltiy of success $p$ for a binomial distribution. The **Probit Model** is another model that deals with probabilities.
+
+$$
+\Phi^{-1}(\pi_i) = \beta_0 + \beta_1X_{i1} + \dots + \beta_p X_{ip} \ = \ x_i^\top\beta
+$$
+
+Where $\Phi$ is the cumulative density function of the standard normal distribution. We will not explore probit in detail, since it produces almost identical results as logistic regressions with worse interpretability.
+
+The **Negative Binomial Model** is a model that deals with count and rate data (only positive values):
+
+$$
+\log \lambda_i = \beta_0 + \beta_1X_{i1} + \dots + \beta_p X_{ip} \ = \ x_i^\top \beta
+$$
+
+Where $\lambda_i$ is the $\E Y_i$ for a negative binomial distribution. A specific version of this regression with a more restrictive distribution assumption is called the **Poisson model**.
+
+We will explore each of these models in more detail later.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Maximum Likelihood Estimator**
+
+### Likelihood Function
+
+All generalised linear models are estimated with an estimator called the maximum likelihood estimator (MLE). This estimator is probably the most widely used in statistics, applied to many methods beyond the generalised linear model.
+
+We have a set of population parameters in the vector $\theta$ we want to estimate. This set of parameters determines our population distribution of $Y_i$, which we can describe with some [probability density function](stats.qmd#probability-density-functions) $\varphi(y, \theta)$. For example, in linear regression, our population $y$ is determined by the population parameters $\beta_0, \dots, \beta_k$.
+
+When we are estimating parameters, we will have sample data with $n$ number of observations, with each observation $i$ having its own $Y_i$ value. Thus, our sample looks something like $(y_1, \dots, y_n)$.
+
+Based on the probability density function of the population $Y_i$, the probability of getting our observed $y_1$ in our sample from the population data is $\varphi(y_1, \theta)$, and the probability of getting observation $y_i$ is $\varphi(y_i, \theta)$.
+
+We know by the rules of probability, that the [probability of multiple independent events](math.qmd#basics-of-probability) is the product of their probabilities. Thus, the probability that we get a specific sample with $y$ values $(y_1, \dots ,y_n)$, based on the value of our population parameters $\boldsymbol\theta$ is given by the **likelihood function** $L$:
+
+$$
+\begin{align}
+L(\theta, y_1, \dots y_n) & = \varphi(y_1;\theta) \times \varphi(y_2;\theta) \times \dots \times \varphi(y_n;\theta) \\
+& = \prod\limits_{i=1}^n \varphi(y_i, \theta) \\
+\end{align}
+$$
+
+We want to find some values of $\boldsymbol\theta$ that make it the highest probability we observe our sample $y_1, \dots ,y_n$. This is done by maximising the likelihood function $L(\cdot)$. Those parameters $\theta$ that maximise $L$ will become our estimates for our statistical model.
+
+<br />
+
+### Log-Likelihood and Score Functions
+
+Maximising the likelihood function $L(\cdot)$ is very difficult, because of the product notation. Luckily, we can use the log of the likelihood function $\ell(\cdot)$, which retains the same maximum/minimum points as $L(\cdot)$. Using the properties of logarithms, we can also rewrite this log-likelihood function in terms of summation notation, making maximisation far easier.
+
+$$
+\begin{align}
+\log L(\boldsymbol\theta, y_1, \dots y_n) & = \log \left(\prod_{i=1}^n \varphi(y_i; \theta) \right) \\
+& = \log[\varphi(y_1, \boldsymbol\theta) \times \varphi(y_2, \boldsymbol\theta) \times \dots \times \varphi(y_n, \boldsymbol\theta)] && \text{(expand product notation)} \\
+& = \log[\varphi(y_1, \boldsymbol\theta)] + \log [\varphi(y_2, \boldsymbol\theta)] + \dots + \log[\varphi(y_n, \boldsymbol\theta)] && \text{(property of logs)} \\ 
+& = \sum\limits_{i=1}^n \log[\varphi(y_i, \boldsymbol\theta)] && \text{(condense into sum)}
+\end{align}
+$$
+
+Thus, our goal in MLE is to maximise the log-likelihood function (denoted $\ell$) to obtain our estimates $\hat\theta$:
+
+$$
+\hat\theta = \max\limits_{\theta} \ell(\theta; y_i) = \max\limits_\theta \sum\limits_{i=1}^n \log[\varphi(y_i \theta)]
+$$ {#eq-loglike}
+
+The vector of first derivatives of $\ell(\theta; y)$ with respect to vector $\theta$ is known as the **score function** $s(\theta, y)$:
+
+$$
+s(\theta;y) = \frac{\partial}{\partial \theta} \ell(\theta; y) = \sum\limits_{i=1}^n \log[\varphi(y_i \theta)]\frac{\partial}{\partial \theta}
+$$
+
+The $\hat\theta$ values of MLE are the $\theta$ that solve $s(\theta; y) = 0$. In many cases, the score is not computable, so we will need to rely on other computer techniques and algorithms, such as gradient descent, which we will cover below.
+
+<br />
+
+### Gradient Descent Algorithms
+
+In some more complex models, we cannot mathematically find the minimum of the log-likelihood function. So instead, we resort to a series of computer algorithms called gradient descent. The algorithm takes the following form:
+
+1.  We randomly choose values of $\boldsymbol\theta$ to start (let us notate the chosen as $\boldsymbol\theta^*$), and calculate the likelihood $L$ with those chosen at $\boldsymbol\theta^*$.
+2.  We then slightly shift the values of $\boldsymbol\theta^*$ upwards and downwards, calculating all the likelihoods. We see in which shift-direction does the likelihood $L$ increase the most.
+3.  Once we determine the direction that $L$ increases the most, we shift int hat direction to a new $\boldsymbol\theta'$ value. Once again, we slightly shift values of $\boldsymbol\theta'$ upwards and downwards, and see which shift-direction does the likelihood $L$ increase the most.
+4.  We keep repeating this process of moving in the direction that increases $L$ the most, shifting around in all directions at that point, and once again moving in the direction that increases $L$ the most.
+5.  We stop when we are at some point $\boldsymbol\theta^!$ where all directions of shits decrease $L$. We are "at the top of the mountain", and that becomes our estimate.
+
+This is a very simple gradient descent algorithm. You might point out that this algorithm only works if there is one global maximum, and no local maxima (since we would stop the algorithm at a local extrema if this were the case). This usually is not an issue since in common regression models (linear, logistic, poisson), their is only one global maximum. The figure below shows this:
+
+![](images/clipboard-3075379377.png){fig-align="center" width="50%"}
+
+A solution for this problem of local maxima (which becomes more an issue with machine learning models) is to basically do the estimation algorithm multiple times, each time starting at some random $\boldsymbol\theta^*$. Then, we find the time with the largest $L$. This will in theory help us determine which are local and global maxima.
+
+<br />
+
+### Properties of the MLE
+
+Let us find the variance of the score function $s(\theta_0, y)$, where $\theta_0$ is the value of the parameter $\theta$ when $s(\theta ; y_i) = 0$ is solved, and $y$ is the vector of our observed values of $Y_i$:
+
+$$
+\begin{align}
+\V s(\theta_0; y_i) & = \E [(s(\theta_0; y) - \E(s(\theta_0; y))^2 ] && (\because \V Z = \E[Z - \E Z]) \\
+& = \E[(s(\theta_0; y) - 0)^2] && (\because \E [s(\theta_0 ; y)] = 0) \\
+& = \E\left [\frac{\partial \ell (\theta_0; y)}{\partial \theta} \frac{\partial \ell (\theta_0; y)}{\partial \theta^\top} \right] && \text{(plug in and square } s(\theta_0, y)) \\
+& = \E\left[ -\frac{\partial^2 \ell (\theta_0; y)}{\partial\theta\partial \theta^\top}\right] \equiv \mathcal I(\theta_0)
+\end{align}
+$$
+
+Where $\mathcal I (\theta_0)$ is also known as the **expected fisher information matrix**. Through complex math that I will not do here, we can show that asymptotically as $n \rightarrow ∞$, the distribution of the MLE estimates $\hat\theta$ becomes:
+
+$$
+\hat\theta \sim \mathcal N(\theta_0, \mathcal I(\theta_0)^{-1})
+$$
+
+This tells us two things. First, maximum likelihood estimates are asymptotically consistent, since the asymptotic distribution has an expectation $\E \hat\theta = \theta_0$.
+
+Second, this tells us the asumptotic variance of the MLE. To calculate the variance, we can estimate it with the expected fisher information matrix of our estimate $\hat\theta$:
+
+$$
+\V \hat\theta = \mathcal I(\hat\theta)^{-1}
+$$
+
+It can also be proven with the Cramer-Rao lower bound that the MLE is the asymptotic consistent estimator with the lowest asymptotic variance. However, do note that the MLE is biased in finite-samples (but the bias becomes small in large-samples). This becomes an issue when we are dealing with some applications of causal inference, such as fixed effects.
+
+<br />
+
+### OLS as a Maximum Likelihood Estimator
+
+Earlier, we noted that all linear models are estimated with a Maximum Likelihood Estimator. This includes the classical linear model, as OLS is a MLE under classical conditions.
+
+We know in the classical model, $\mu = E(y|x) = x_i^\top \beta$. Let us plug that into the [probability density function of a normal distribution](quant1.qmd#the-normal-distribution) to get the PDF of $Y_i$ in a simple linear regression. By @eq-loglike, the log-likelihood function $\ell$ of our sample for linear regression is:
+
+$$
+\begin{align}
+\ell(\beta, \sigma^2; y_i)
+& = \sum\limits_{i=1}^n \log \left( \frac{1}{\sqrt{2\pi\sigma^2}} e^{\left( -\frac{1}{2 \sigma^2}(y_i - x_i^\top \beta)^2\right)} \right) \\
+& = \sum\limits_{i=1}^n \log (1) - \log (\sqrt{2\pi\sigma^2})   + \log\left( e^{\left( -\frac{1}{2 \sigma^2}(y_i - x_i^\top\beta )^2\right)}\right) && \text{(prop. of logs)} \\
+& = \sum\limits_{i=1}^n 0 - \frac{1}{2}\log ({2\pi\sigma^2})  + \left( -\frac{1}{2 \sigma^2}(y_i - x_i^\top\beta)^2\right) && \text{(prop. of logs)} \\
+& = -\frac{n}{2} \log (2\pi\sigma^2)  -\frac{1}{2 \sigma^2}\sum\limits_{i=1}^n(y_i - x_i^\top\beta)^2 && \text{(prop. of sums)}
+\end{align}
+$$
+
+Now, let us take the derivative in respect to vector $\beta$ to solve for our score function:
+
+$$
+\begin{align}
+\frac{\partial \ell}{\partial \beta} & = 0 + \frac{1}{\sigma^2}\sum\limits_{i=1}^n(y_i - x_i^\top\beta)x_i && \text{(by chain and power rule)} \\
+& = \frac{1}{\sigma^2} \left[ \sum\limits_{i=1}^n y_i x_i - \sum\limits_{i=1}^n x_i x_i^\top \beta\right] && \text{(multiply out, prop. of sums)}\\
+& = \frac{1}{\sigma^2} (X^\top y - (X^\top X)\beta) && \text{(vector to matrix notation)}
+\end{align}
+$$
+
+And now set the score function equal to 0 and solve for $\beta$. We can ignore the $1/\sigma^2$ out front since if the rest equals 0, the score function equals 0.
+
+$$
+\begin{align}
+0 & = X^\top y - (X^\top X)\beta \\
+(& X^\top X)\beta = X^\top y && (+(X^\top X)\beta \text{ to both sides}) \\
+\beta & = (X^\top X)^{-1} X^\top y && (\times (X^\top X)^{-1} \text{ to both sides})
+\end{align}
+$$
+
+And we can see, our MLE estimates are exactly the same form as the OLS estimates.
+
+<br />
+
+### Information Criterion Statistics
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Logistic Regression Model**
+
+### Model Specification
+
+Include definition of $\pi_i$., and odds $pi_i / (1- \pi_i)$.
+
+Include regression writeen in terms of $\pi_i$. (in in for box, show derivation).
+
+Show fitted values. plot.
+
+<br />
+
+### Interpretation and Odds Ratios
+
+<br />
+
+### Ordinal Logistic Regression
+
+<br />
+
+### Multinomial Logistic Regression
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Negative Binomial Regression**
+
+### Model Specification
+
+Talk about negative binomial distribution.
+
+Include model for rates, and fitted probabilities.
+
+<br />
+
+### Interpreting Coefficients
+
+<br />
+
+### Poisson Regression
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Statistical Inference**
+
+### Hypothesis Testing
+
+<br />
+
+### Confidence Intervals
+
+add odds ratios
+
+<br />
+
+### Likelihood Ratio Test

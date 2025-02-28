@@ -17,13 +17,18 @@ Use the right sidebar for quick navigation. R-code is provided at the bottom.
 There is some random outcome variable $Y_i$, and $p$ explanatory variables $X_{i1}, X_{i2}, \dots, X_{ip}$. The population linear model is specified as a [conditional expectation function](stats.qmd#conditional-distributions):
 
 $$
-\E(Y_i|X_i) = \beta_0 + \beta_1 X_{i1} + \dots + \beta_p X_{ip}
+\E(Y_i|X_i) = \beta_0 + \beta_1 X_{i1} + \dots + \beta_p X_{ip} \ = \ x_i^\top\beta
 $$
 
-Where $\beta_0, \dots, \beta_p$ are population parameters to be estimated. We can also specify linear regression not as the expected $Y$ as above, but for each observation of $Y_i$:
+Where $\beta_0, \dots, \beta_p$ are population parameters to be estimated, and vector $x_i^\top = (1, X_{i1}, \dots, X_{ip})$ and vector $\beta = (\beta_0, \dots \beta_p)$.
+
+We can also specify linear regression not as the expected $Y$ as above, but for each observation of $Y_i$:
 
 $$
-Y_i = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i \ = \  \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} + \eps_i
+\begin{align}
+Y_i & = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i \\
+& =   \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} + \eps_i \ = \ x_i^\top\beta + \eps_i
+\end{align}
 $$
 
 Where $\eps_i$ is the error term representing the variation in $Y_i$ that is not explained by the $p$ explanatory variables: either a missing variable in our model, or some random noise. This model implies for each observation/individual $i=1,\dots ,n$ in the population, with values $(y_i, x_{i1} \dots, x_{ip})$ has a regression equation:
@@ -250,11 +255,13 @@ Above, we showed OLS coefficients partial out (control) for the other control va
 
 I assume here that $Y_i$ is continuous. For interpretations for non-linear $Y_i$, see the [linear probability model](#linear-probability-model) section below. For categorical $X_{ij}$, see the [categorical explanatory variables](#categorical-explanatory-variables) section.
 
-|               |                                                                                                                                                     |                                                                                                                                                              |
-|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |               | **Continuous** $X_{ij}$                                                                                                                             | **Binary** $X_{ij}$                                                                                                                                          |
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_j$ | For every one unit increase in $X_{ij}$, there is an expected $\hat\beta_j$ unit change in $Y_i$, holding all other explanatory variables constant. | There is a $\hat\beta_j$ unit difference in $Y_i$ between category $X_{ij} = 1$ and category $X_{ij} = 0$, holding all other explanatory variables constant. |
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_0$ | When all explanatory variables equal 0, the expected value of $Y_i$ is $\hat\beta_0$.                                                               | For category $X_{ij} = 0$, the expected value of $Y_i$ is $\hat\beta_0$ (when all other explanatory variables equal 0).                                      |
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Note: these interpretations are not causal effects, just correlations. We also have not discussed if the actual estimates of $\hat\beta_j$ are reliable (which will be covered in the classical least squares theory below).
 
@@ -827,11 +834,13 @@ $$
 
 Our interpretations of coefficients also slightly change.
 
-|                     |                                                                                                                                                                                                                          |                                                                                                                                                                                                                                  |
-|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |                     | **Continuous** $X_{ij}$                                                                                                                                                                                                  | **Binary** $X_{ij}$                                                                                                                                                                                                              |
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_j$       | For every one unit increase in $X_{ij}$, there is an expected $\hat\beta_j \times 100$ percentage point change in the probability of a unit being in category $Y_i=1$, holding all other explanatory variables constant. | There is a $\hat\beta_j\times 100$ percentage point difference in the probability of a unit being in category $Y_i=1$ between category $X_{ij} = 1$ and category $X_{ij} = 0$, holding all other explanatory variables constant. |
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_0 \times 100$                                                                                         | For category $X_{ij} = 0$, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_j \times 100$ (when all other explanatory variables equal 0).                                                              |
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 The main downside to the linear probability model relates to prediction - i.e. $\P(Y-i = 1|X_i)$ as a probability should be restricted between 0 and 1, however, the linear model does not guarantee this restriction. We will introduce methods to deal with this in the next chapter.
 
