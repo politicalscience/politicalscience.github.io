@@ -250,6 +250,8 @@ Notice how in the formula, we have $\tilde{X}_1$. What is $\tilde{X}_1 := M_2 X_
 
 Above, we showed OLS coefficients partial out (control) for the other control variables in the regression. Here, we formalise the interpretations. I define $\hat\beta_j \in \{\hat\beta_1, \dots, \hat\beta_p\}$, multiplied to $X_{ij} \in \{X_{i1}, \dots, X_{ip}\}$. $\hat\beta_0$ is the intercept.
 
+I assume here that $Y_i$ is continuous. For interpretations for non-linear $Y_i$, see the [linear probability model](#linear-probability-model) section below. For categorical $X_{ij}$, see the [categorical explanatory variables](#categorical-explanatory-variables) section.
+
 +---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |               | **Continuous** $X_{ij}$                                                                                                                             | **Binary** $X_{ij}$                                                                                                                                          |
 +---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -281,53 +283,11 @@ $$
 :::
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Categorical Explanatory Variables
-
-Take an explanatory variable $X_i$, which has $g$ number of categories $1, \dots, g$. To include $X_i$ in our regression, we would create $g-1$ dummy (binary) variables, to create the following regression model:
-
-$$
-\E(Y_i|X_i) = \beta_0 + \sum\limits_{j=1}^{g-1} \beta_j X_{ij}
-$$
-
--   Categories $1, \dots, g-1$ get there own binary variable $X_{i1}, \dots, X_{ig-1}$.
--   Category $g$ (the reference category) does not get its own variable. We can change which category we wish to be the reference.
-
-Interpretation is as follows (category $j$ is any one of category $1, \dots, g-1$).
-
--   $\beta_j$ is the difference in expected $Y_i$ between category $j$ and the reference category $g$.
--   $\beta_0$ is the expected $Y_i$ of the reference category $g$.
--   Thus, category $j$ has an expected $Y_i$ of $\beta_0 + \beta_j$.
-:::
-
-::: {.callout-note collapse="true" appearance="simple"}
 ## Binary $Y_i$: Linear Probability Model
 
-The standard linear model assumes a continuous $Y_i$ variable. However, we can adapt the linear model to fit binary $Y_i$ variables. When $Y_i$ is binary and only has values $Y_i \in \{0, 1\}$, our linear model is actually no longer a predictor of $Y_i$, since our regression will output values that are not 0 and 1.
-
-Instead, our linear model will now predict the **probability** of unit $i$ having $Y_i = 1$. The is due to the [conditional expectation interpretation of regression](#conditional-expectation-function), and the expectation of the [binomial distribution](stats.qmd#bernoulli-and-binomial-distribution):
-
-$$
-\begin{align}
-\E(Y_i|X_i) & = \underbrace{0 \times \P(Y_i = 0|X_i) \ + \ \P(Y_i = 1|X_i)}_{\text{a weighted avg. formula}} \\
-& = \P(Y_i=1|X_i)
-\end{align}
-$$
-
-Thus, we can rewrite our linear model with the primary outcome being $\P(Y_i = 1|X_i)$. This model is called the **linear probability model**:
-
-$$
-\P(Y_i = 1|X_i) = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i
-$$
-
-Our interpretations of coefficients also slightly change.
-
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                     | **Continuous** $X_{ij}$                                                                                                                                                                                                  | **Binary** $X_{ij}$                                                                                                                                                                                                              |
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| $\hat\beta_j$       | For every one unit increase in $X_{ij}$, there is an expected $\hat\beta_j \times 100$ percentage point change in the probability of a unit being in category $Y_i=1$, holding all other explanatory variables constant. | There is a $\hat\beta_j\times 100$ percentage point difference in the probability of a unit being in category $Y_i=1$ between category $X_{ij} = 1$ and category $X_{ij} = 0$, holding all other explanatory variables constant. |
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_0 \times 100$                                                                                         | For category $X_{ij} = 0$, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_j \times 100$ (when all other explanatory variables equal 0).                                                              |
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++----------------------------+
+|                            |
++----------------------------+
 :::
 
 <br />
@@ -587,12 +547,6 @@ Thus, OLS is asymptotically consistent under the 4 conditions above. Note that i
 
 <br />
 
-<br />
-
-------------------------------------------------------------------------
-
-# **Generalised Least Squares**
-
 ### Robust Standard Errors {#weakening-spherical-errors}
 
 So far, we have assumed that the [classical assumptions](#the-classical-assumptions) are met. However, this is often not the case, especially with the final assumption: spherical errors (homoscedasticity + no autocorrelation).
@@ -622,64 +576,6 @@ $$
 $$
 
 The other assumption of spherical errors, autocorrelation, is a common problem in time-series and data that has spatial elements, and just like heteroscedasticity, this means that OLS is no longer BLUE (the generalised least squares will be BLUE), and that we will need special autocorrelation + heteroscedasticity (HAC) robust standard errors.
-
-<br />
-
-### Weighted Least Squares
-
-Let us say that the heteroscedastic variance of the errors takes the form $\V(\eps_i|X_i) = c \sigma^2_i$, where $c$ is some unknown constant, and $\sigma^2_i = h(X_i)$ is some known function of the regressors that determines the variance of the error. Using a lemma $\V(a(x) \eps | x) = a(x)^2 \V(\eps|x)$, we can determine that:
-
-$$
-\V \left( \frac{\eps_i}{\sqrt{\sigma^2_i}} | X_i \right) = \left( \frac{1}{\sqrt{\sigma^2_i}}\right)^2 \V (\eps_i|X_i ) =c
-$$
-
-So this tells us that if we create a new error term $\eps_i^* = \eps_i / \sqrt{\sigma_i^2}$, our variance of the new error term $\eps_i^*$ will be homoscedastic (constant at $c$ no matter the value of $X_i$). What this implies is that if we divide all terms of our regression by the heteroscedastic errors $\sqrt{\sigma_i^2} = \sigma_i$, we can get a new regression with homoscedasticity met. Let us define $\Omega^{-1/2}$ as the inverse of the square root of the heteroscedastic covariance matrix of errors.
-
-$$
-\Omega^{-1/2} = \begin{pmatrix}
-1/\sigma_1 & 0 & \dots & 0 \\
-0 & 1/\sigma_2 & \dots & 0 \\
-\vdots & \vdots & \ddots & \vdots  \\
-0 & 0 & \dots & 1/\sigma_n
-\end{pmatrix}
-$$ Using this formula, we can write the transformed regression equation as:
-
-$$
-\underbrace{\Omega^{-1/2}y}_{y^*}  = \underbrace{\Omega^{-1/2}X}_{X^*} \beta+ \underbrace{\Omega^{-1/2}\eps}_{\eps_i^*}
-$$
-
-And since this is a homoscedastic regression, we can use OLS on this new regression and have a BLUE estimator:
-
-$$
-\begin{align}
-\hat\beta & = (X^{*\top} X^*)^{-1}X^{*\top}y^* && \text{(OLS estimator solution)}  \\
-& = \left[ (\Omega^{-1/2}X)^\top (\Omega^{-1/2}X)\right]^{-1} (\Omega^{-1/2}X)^\top (\Omega^{-1/2}y) && (\text{plug in }X^*, y^*) \\
-& = [X^\top \Omega^{-1/2}\Omega^{-1/2}X]^{-1}X^\top\Omega^{-1/2}\Omega^{-1/2}y && \text{(matrix transposes)}\\
-& =(X^\top \Omega^{-1} X)^{-1}X^\top \Omega^{-1}y && (\because \Omega^{-1/2} \Omega^{-1/2} = \Omega^{-1})
-\end{align}
-$$
-
-This **weighted least squares estimator** is BLUE. This estimator, under the name of the generalised least squares (GLS) estimator, can also be applied to autocorrelated $\Omega$ and is BLUE in that case. Essentially, the estimator is weighting observations with lower $\sigma_i$ higher, and observations with higher $\sigma_i$ lower.
-
-<br />
-
-### Feasible Generalised Least Squares
-
-We saw that our weighted least squares estimator (and GLS estimator) requires us to know $\Omega^{-1/2}$, which implies we need to know the covariance-variance matrix of the error terms $\Omega$. If you already know the form $\Omega$ for whatever reason, the task becomes easy.
-
-However, if you do not know $\Omega$, you will need to estimate $\hat\Omega$. This also means our actual "feasible" estimator will not be BLUE. Feasible weighted least squares (with only heteroscedasticity) is generally still more efficient than OLS, however for autocorrelation GLS, this is not the case.
-
-We typically do a two stage approach of estimating $\hat\Omega$. First, you run a normal OLS regression (which remains unbiased). This OLS regression allows you to obtain $\hat\eps_i^2 \approx \sigma^2_i$, which you can square root to get our estimate of $\sigma_i$ for creating $1/\sigma_i$.
-
-Another alternative is to use $1/\sqrt{|\hat\eps_i|}$, as an correlated value to $1/\sigma_i$. The reason you might want to do this is that taking the original variance estimate involves squaring the OLS residuals $\hat\eps_i$, which can increase the power of outliers. Even though $\sqrt{|\hat\eps_i|} ≠ \sigma_i$, they are correlated and can get a similar result.
-
-When doing two stage estimation, you should check that your first stage OLS $\hat\beta$ and your second stage weighted least squares $\hat\beta$ are similar. If they are not, this could mean the presence of outliers/issues in your estimation of $\Omega$.
-
-The complicated nature of weighted least squares in practice makes it less popular than just using OLS with robust standard errors. However, if done correctly, feasible weighted least squares is unbiased and more efficient than OLS, even when taking into the uncertainty and efficiency loss due to $\hat\Omega$.
-
-For autocorrelation $\Omega$ and feasible GLS, things become less beneficial. There is little evidence to suggest that feasible GLS with autocorrelation is as efficient as OLS, due to difficulties in estimating $\hat\Omega$.
-
-While weighted least squares and GLS is not used super frequently, it is still a valuable method to understand, as we will return to weighted estimators in the causal inference section.
 
 <br />
 
@@ -840,18 +736,13 @@ Thus, we can see by not including confounder $z$ in our "short regression", the 
 
 <br />
 
-### Functional Form Specification
-
-There are several functional form decisions we have to make for our model: Interactions, polynomial transformations, and logarithmic transformations.
+### Heterogeneity and Interactions
 
 **Heterogeneity** is when we believe the magnitude of the relationship between $X_{i1}$ and $Y_i$ in the population is affected by another variable $X_{i2}$, called the **moderating** variable. An **interaction** between $X_{i1}$ and the moderating variable $X_{i2}$ means they are multiplied in the regression equation:
 
 $$
 Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \underbrace{\beta_3 X_{i1} X_{i2}}_{\text{interaction}}
 $$
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Interpreting Interaction Effects
 
 In an interaction, $\hat\beta_0$ is still the expected $Y_i$ when all explanatory variables equal 0. The other coefficient's interpretations are:
 
@@ -868,18 +759,18 @@ In an interaction, $\hat\beta_0$ is still the expected $Y_i$ when all explanator
 +-------------------------+---------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------+
 
 The hypothesis test for $\hat\beta_3$ tests the null hypothesis that there is no interaction in the population between $X_{i1}$ and $X_{i2}$. If our coefficient $\hat\beta_3$ is statistically significant, we can conclude that this null is wrong, and there indeed is an interaction. If $\hat\beta_3$ is insignificant, we fail to reject the null, and can drop the interaction effect from our regression.
-:::
 
-Sometimes the relationship between two variables in the population is not a straight linear line. The most common form of **polynomial transformation** is the quadratic transformation:
+<br />
+
+### Polynomial Transformations
+
+Sometimes the relationship between two variables in the population is not a straight linear line. We want to accurately reflect this non-linear relationship in our regression to mantain accurate $\hat\beta$ estimates. The most common form of **polynomial transformation** is the quadratic transformation:
 
 $$
 Y_i = \beta_0 + \beta_1X_i + \beta_2 X_i^2 + \eps_i
 $$
 
 Note that while $X_i$ is non-linear, the actual regression is still linear in [parameters]{.underline}. We can see this because it can still be written as $y = X\beta + \eps$ when you consider $X_i$ and $X_i^2$ to be two different explanatory variables.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Interpreting Polynomial Transformations
 
 Our estimated $\hat\beta_0$ remains the expected value of $Y_i$ when all explanatory variables equal 0. Unfortunately, the $\hat\beta_1$ and $\hat\beta_2$ coefficients are not directly interpretable.
 
@@ -889,17 +780,17 @@ Our estimated $\hat\beta_0$ remains the expected value of $Y_i$ when all explana
 We can interpret two things about the quadratic transformation:
 
 -   For every one unit increase in $X_i$, there is an expected $\hat\beta_1 + 2 \hat\beta_2X_i$ unit increase in $Y_i$.
--   The minimum/maximum point in the best-fit parabola occurs at $X_i = - \hat\beta_1/2 \hat\beta_2$
-:::
+-   The minimum/maximum point in the best-fit parabola occurs at $X_i = - \hat\beta_1/2 \hat\beta_2$.
+
+<br />
+
+### Logarithmic Transformations
 
 **Logarithmic** transformations are often used to change skewed variables into normally distributed variables. Often, skewed variables will violate homoscedasticity, which means the [Gauss-Markov theorem](#gauss-markov-theorem) of OLS being BLUE no longer applies. By applying a logarithmic transformation, you can meet homoscedasticity and retain the BLUE properties of OLS. We have 3 types of logarithmic transformations:
 
 -   Linear-Log model: $Y_i = \beta_0 + \beta_1 \log X_i + \eps_i$.
 -   Log-Linear model: $\log Y_i = \beta_0 + \beta_1 X_i + \eps_i$.
 -   Log-Log model: $\log Y_i = \beta_0 + \beta_1 \log X_i + \eps_i$.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Interpreting Logarithmic Transformations
 
 The coefficient interpretations become a little more complex with logarithms:
 
@@ -914,7 +805,62 @@ The coefficient interpretations become a little more complex with logarithms:
 |              |                                                                                              |                                                                                           |
 |              | For every one unit increase in $X_i$, the expected $Y_i$ is multiplied by $e^{\hat\beta_1}$. | Multiplying $X_i$ by $e$ will multiply the expected value of $Y_i$ by $e^{\hat\beta_1}$.x |
 +--------------+----------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
-:::
+
+<br />
+
+### Categorical Explanatory Variables
+
+Take an explanatory variable $X_i$, which has $g$ number of categories $1, \dots, g$. To include $X_i$ in our regression, we would create $g-1$ dummy (binary) variables, to create the following regression model:
+
+$$
+\E(Y_i|X_i) = \beta_0 + \sum\limits_{j=1}^{g-1} \beta_j X_{ij}
+$$
+
+-   Categories $1, \dots, g-1$ get there own binary variable $X_{i1}, \dots, X_{ig-1}$.
+-   Category $g$ (the reference category) does not get its own variable. We can change which category we wish to be the reference.
+
+Interpretation is as follows (category $j$ is any one of category $1, \dots, g-1$).
+
+-   $\beta_j$ is the difference in expected $Y_i$ between category $j$ and the reference category $g$.
+-   $\beta_0$ is the expected $Y_i$ of the reference category $g$.
+-   Thus, category $j$ has an expected $Y_i$ of $\beta_0 + \beta_j$.
+
+To test the categorical variable's statistical significance, we will need to test all the coefficients together. The most common way is to do it with a f-test of multiple coefficients.
+
+One type of categorical explanatory variable is a fixed effect. This is done in panel or clustered data, where your categorical variable is the cluster variable. We will explore this more near the end of the course on differences-in-differences.
+
+<br />
+
+### Linear Probability Model
+
+The standard linear model assumes a continuous $Y_i$ variable. However, we can adapt the linear model to fit binary $Y_i$ variables. When $Y_i$ is binary and only has values $Y_i \in \{0, 1\}$, our linear model is actually no longer a predictor of $Y_i$, since our regression will output values that are not 0 and 1.
+
+Instead, our linear model will now predict the **probability** of unit $i$ having $Y_i = 1$. The is due to the [conditional expectation interpretation of regression](#conditional-expectation-function), and the expectation of the [binomial distribution](stats.qmd#bernoulli-and-binomial-distribution):
+
+$$
+\begin{align}
+\E(Y_i|X_i) & = \underbrace{0 \times \P(Y_i = 0|X_i) \ + \ \P(Y_i = 1|X_i)}_{\text{a weighted avg. formula}} \\
+& = \P(Y_i=1|X_i)
+\end{align}
+$$
+
+Thus, we can rewrite our linear model with the primary outcome being $\P(Y_i = 1|X_i)$. This model is called the **linear probability model**:
+
+$$
+\P(Y_i = 1|X_i) = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i
+$$
+
+Our interpretations of coefficients also slightly change.
+
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                     | **Continuous** $X_{ij}$                                                                                                                                                                                                  | **Binary** $X_{ij}$                                                                                                                                                                                                              |
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| $\hat\beta_j$       | For every one unit increase in $X_{ij}$, there is an expected $\hat\beta_j \times 100$ percentage point change in the probability of a unit being in category $Y_i=1$, holding all other explanatory variables constant. | There is a $\hat\beta_j\times 100$ percentage point difference in the probability of a unit being in category $Y_i=1$ between category $X_{ij} = 1$ and category $X_{ij} = 0$, holding all other explanatory variables constant. |
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_0 \times 100$                                                                                         | For category $X_{ij} = 0$, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_j \times 100$ (when all other explanatory variables equal 0).                                                              |
++---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+The main downside to the lienar probability model relates to prediction - i.e. $\P(Y-i = 1|X_i)$ as a probability should be restricted between 0 and 1, however, the linear model does not guarantee this restriction. Further models such as the logistic or probit models deal with this issue.
 
 <br />
 
