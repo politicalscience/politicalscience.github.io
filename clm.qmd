@@ -1,10 +1,10 @@
 ---
 title: "The Classical Linear Model"
-subtitle: "Chapter 1, Quantitative Methods (Causal Inference)"
+subtitle: "Chapter 1, Quantitative Methods"
 sidebar: side
 ---
 
-Before we start with causal inference, we need to understand the classical linear model, its mechanics, and how we can achieve unbiased estimates of relationships. This chapter discusses the classical linear models, the properties of the ordinary least squares estimator, statistical inference in a regression setting, and model specification issues.
+Before we start with causal inference or prediction, we need to understand the classical linear model, its mechanics, and how we can achieve unbiased estimates of relationships. This chapter discusses the classical linear models, the properties of the ordinary least squares estimator, statistical inference in a regression setting, and model selection.
 
 Use the right sidebar for quick navigation. R-code is provided at the bottom.
 
@@ -80,7 +80,7 @@ $$
 \end{align}
 $$ {#eq-ols}
 
-Vector $\hat\beta$ is our coefficient estimates derived from OLS.
+Vector $\hat\beta$ is our coefficient estimates derived from OLS. With $\hat\beta$, we can calculate predictions of $y$ with $\hat y = X \hat\beta$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Alternative Derivation for Simple Linear Regression
@@ -447,7 +447,7 @@ Thus, OLS is unbiased under the 4 conditions above. This is extremely desirable,
 
 <br />
 
-### Variance of the OLS Estimator
+### Variance of the OLS Estimator {#variance-of-the-ols-estimator}
 
 We want to find the variance of our estimator's sampling distribution, $\V(\hat\beta | X)$, under all 5 of the [classical assumptions](#the-classical-assumptions). First, let us start off where we left off in @eq-simplify:
 
@@ -593,7 +593,7 @@ Thus, OLS is asymptotically consistent under the 4 conditions above. Note that i
 
 # **Generalised Least Squares**
 
-### Weakening Spherical Errors
+### Robust Standard Errors {#weakening-spherical-errors}
 
 So far, we have assumed that the [classical assumptions](#the-classical-assumptions) are met. However, this is often not the case, especially with the final assumption: spherical errors (homoscedasticity + no autocorrelation).
 
@@ -627,13 +627,13 @@ The other assumption of spherical errors, autocorrelation, is a common problem i
 
 ### Weighted Least Squares
 
-Let us say that the heteroscedastic variance of the errors takes the form $\V(\eps_i|X_i) = \sigma^2 h(X_i)$, where $\sigma^2$ is some unknown constant, and $h(X_i)$ is some known function of the regressors that determines the variance of the error. Using a lemma $\V(a(x) \eps | x) = a(x)^2 \V(\eps|x)$, we can determine that:
+Let us say that the heteroscedastic variance of the errors takes the form $\V(\eps_i|X_i) = c \sigma^2_i$, where $c$ is some unknown constant, and $\sigma^2_i = h(X_i)$ is some known function of the regressors that determines the variance of the error. Using a lemma $\V(a(x) \eps | x) = a(x)^2 \V(\eps|x)$, we can determine that:
 
 $$
-\V \left( \frac{\eps_i}{\sqrt{h(X_i)}} | X_i \right) = \left( \frac{1}{\sqrt{h(X_i)}}\right)^2 \V (\eps_i|X_i ) =\sigma^2
+\V \left( \frac{\eps_i}{\sqrt{\sigma^2_i}} | X_i \right) = \left( \frac{1}{\sqrt{\sigma^2_i}}\right)^2 \V (\eps_i|X_i ) =c
 $$
 
-So this tells us that if we create a new error term $\eps_i^* = \eps_i / \sqrt{h(X_i)}$, our variance of the new error term $\eps_i^*$ will be homoscedastic. What this implies is that if we divide all terms of our regression by the heteroscedastic errors $\sigma^2_i = \sigma^2 h(x_i)$, we can get a new regression with homoscedasticity met. Let us define $\Omega^{-1/2}$ as the inverse of the square root of the heteroscedastic covariance matrix of errors.
+So this tells us that if we create a new error term $\eps_i^* = \eps_i / \sqrt{\sigma_i^2}$, our variance of the new error term $\eps_i^*$ will be homoscedastic (constant at $c$ no matter the value of $X_i$). What this implies is that if we divide all terms of our regression by the heteroscedastic errors $\sqrt{\sigma_i^2} = \sigma_i$, we can get a new regression with homoscedasticity met. Let us define $\Omega^{-1/2}$ as the inverse of the square root of the heteroscedastic covariance matrix of errors.
 
 $$
 \Omega^{-1/2} = \begin{pmatrix}
@@ -648,7 +648,7 @@ $$
 \underbrace{\Omega^{-1/2}y}_{y^*}  = \underbrace{\Omega^{-1/2}X}_{X^*} \beta+ \underbrace{\Omega^{-1/2}\eps}_{\eps_i^*}
 $$
 
-And since this is a homoscedastic regression, we can use OLS and have a BLUE estimator:
+And since this is a homoscedastic regression, we can use OLS on this new regression and have a BLUE estimator:
 
 $$
 \begin{align}
@@ -659,7 +659,27 @@ $$
 \end{align}
 $$
 
-This **weighted least squares estimator** is BLUE. This estimator, under the name of the generalised least squares (GLS) estimator, can also be applied to autocorrelated $\Omega$ and is BLUE in that case. However, in most cases, we do not know the structure of $\Omega$, so we will need to estimate it by either assuming some $h(X_i)$, or using OLS estimation first to get OLS residuals to build a structure for $\Omega$. Despite this, weighted least squares is generally more efficient than OLS. However, for autocorrelation feasible GLS tends to be worse than OLS due to difficulties in estimating $\Omega$.
+This **weighted least squares estimator** is BLUE. This estimator, under the name of the generalised least squares (GLS) estimator, can also be applied to autocorrelated $\Omega$ and is BLUE in that case. Essentially, the estimator is weighting observations with lower $\sigma_i$ higher, and observations with higher $\sigma_i$ lower.
+
+<br />
+
+### Feasible Generalised Least Squares
+
+We saw that our weighted least squares estimator (and GLS estimator) requires us to know $\Omega^{-1/2}$, which implies we need to know the covariance-variance matrix of the error terms $\Omega$. If you already know the form $\Omega$ for whatever reason, the task becomes easy.
+
+However, if you do not know $\Omega$, you will need to estimate $\hat\Omega$. This also means our actual "feasible" estimator will not be BLUE. Feasible weighted least squares (with only heteroscedasticity) is generally still more efficient than OLS, however for autocorrelation GLS, this is not the case.
+
+We typically do a two stage approach of estimating $\hat\Omega$. First, you run a normal OLS regression (which remains unbiased). This OLS regression allows you to obtain $\hat\eps_i^2 \approx \sigma^2_i$, which you can square root to get our estimate of $\sigma_i$ for creating $1/\sigma_i$.
+
+Another alternative is to use $1/\sqrt{|\hat\eps_i|}$, as an correlated value to $1/\sigma_i$. The reason you might want to do this is that taking the original variance estimate involves squaring the OLS residuals $\hat\eps_i$, which can increase the power of outliers. Even though $\sqrt{|\hat\eps_i|} ≠ \sigma_i$, they are correlated and can get a similar result.
+
+When doing two stage estimation, you should check that your first stage OLS $\hat\beta$ and your second stage weighted least squares $\hat\beta$ are similar. If they are not, this could mean the presence of outliers/issues in your estimation of $\Omega$.
+
+The complicated nature of weighted least squares in practice makes it less popular than just using OLS with robust standard errors. However, if done correctly, feasible weighted least squares is unbiased and more efficient than OLS, even when taking into the uncertainty and efficiency loss due to $\hat\Omega$.
+
+For autocorrelation $\Omega$ and feasible GLS, things become less beneficial. There is little evidence to suggest that feasible GLS with autocorrelation is as efficient as OLS, due to difficulties in estimating $\hat\Omega$.
+
+While weighted least squares and GLS is not used super frequently, it is still a valuable method to understand, as we will return to weighted estimators in the causal inference section.
 
 <br />
 

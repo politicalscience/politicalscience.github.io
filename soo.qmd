@@ -1,6 +1,6 @@
 ---
 title: "Selection on Observables"
-subtitle: "Chapter 4, Quantitative Methods (Causal Inference)"
+subtitle: "Chapter 5, Quantitative Methods (Causal Inference)"
 sidebar: side
 ---
 
@@ -19,7 +19,7 @@ Use the right sidebar for quick navigation. R-code provided at the bottom.
 Without randomisation, we need some other way to account for pre-treatment covariates that may be confounding and causing selection bias. Controlling for a set of nodes/confounders $X$ can identify the causal effect of $D \rightarrow Y$, if the following conditions are met:
 
 1.  No node within set $X$ is a descendant of $D$ (no element within $X$ results from $D$).
-2.  The nodes within set $X$ [block all back-door paths](quant4.qmd#blocked-paths) from $D \rightarrow Y$.
+2.  The nodes within set $X$ [block all back-door paths](causal.qmd#blocked-paths) from $D \rightarrow Y$.
 
 ![](images/clipboard-378311705.png){fig-align="center" width="40%"}
 
@@ -62,15 +62,15 @@ This implies that for any given value of all confounders $X_i = x$, we know that
 
 $$
 \begin{split}
-E(Y_{1i}|X_i = x) = E(Y_{1i}|D_i = 1, X_i = x) = E(Y_{1i}|D_i = 0, X_i = x) \\
-E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 1, X_i = x) = E(Y_{0i}|D_i = 0, X_i = x)
+\E(Y_{1i}|X_i = x) = \E(Y_{1i}|D_i = 1, X_i = x) = \E(Y_{1i}|D_i = 0, X_i = x) \\
+\E(Y_{0i}|X_i = x) = \E(Y_{0i}|D_i = 1, X_i = x) = \E(Y_{0i}|D_i = 0, X_i = x)
 \end{split}
 $$ {#eq-independence}
 
 2.  **Common Support**: for any unit $i$ with value of $X_i$, there is a non-zero probability that they could be assigned to both control $D_i = 0$ or treatment $D_i = 1$.
 
 $$
-0 < P(D_i = 1 \ | X_i = x) < 1 \quad \forall \ x \in \mathcal X
+0 < \P(D_i = 1 \ | X_i = x) < 1 \quad \forall \ x \in \mathcal X
 $$
 
 ::: {.callout-note collapse="true" appearance="simple"}
@@ -87,14 +87,14 @@ That means our theory is that age $X$ affects selection into treatment $D$. Youn
 
 ### Identification of the ATE
 
-With our assumptions above, we can identify the ATE. We start with the [conditional average treatment effect](quant2.qmd#conditional-average-treatment-effect-cate), conditional on some value of confounders $X_i = x$. Note the properties shown in @eq-independence .
+With our assumptions above, we can identify the ATE. We start with the [conditional average treatment effect](causal.qmd#conditional-average-treatment-effect-cate), conditional on some value of confounders $X_i = x$. Note the properties shown in @eq-independence .
 
 $$
 \begin{align}
-\tau_{CATE}(x) & = E(Y_{1i} - Y_{0i} \ | \ X_i = x) \\
-& = E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x) && (\text{property of expectation}) \\
-& = E(Y_{1i}|D_i = 1, X_i = x) - E(Y_{0i}|D_i = 0X_i = x) &&( \because \text{equation (1)} \ ) \\
-& = \underbrace{E(Y_i|D_i = 1, X_i = x)}_{\because \text{ observable}} - \underbrace{E(Y_i|D_i = 0, X_i = x)}_{\because \text{ observable}}
+\tau_{CATE}(x) & = \E(Y_{1i} - Y_{0i} \ | \ X_i = x) \\
+& = \E(Y_{1i}|X_i = x) - \E(Y_{0i}|X_i = x) && (\text{property of expectation}) \\
+& = \E(Y_{1i}|D_i = 1, X_i = x) - \E(Y_{0i}|D_i = 0X_i = x) &&( \because \text{equation (1)} \ ) \\
+& = \underbrace{\E(Y_i|D_i = 1, X_i = x)}_{\because \text{ observable}} - \underbrace{\E(Y_i|D_i = 0, X_i = x)}_{\because \text{ observable}}
 \end{align}
 $$ {#eq-cate}
 
@@ -102,9 +102,9 @@ Now, let us discuss the ATE, and plug in the CATE from @eq-cate to identify it:
 
 $$
 \begin{align}
-\tau_{ATE} & = E(Y_{1i} - Y_{0i}) \\
-& = \int \underbrace{E(Y_{1i} - Y_{0i} \ | \ X_i = x)}_{\tau_{CATE}(x)} d \ \underbrace{P(X_i = x)}_{\text{weight}} && (\text{weighted average})\\
-& = \int(\underbrace{E(Y_i|D_i = 1, X_i) - E(Y_i|D_i = 0, X_i)}_{\because \text{ equation (2)}})d \ P(X_i = x)
+\tau_{ATE} & = \E(Y_{1i} - Y_{0i}) \\
+& = \int \underbrace{\E(Y_{1i} - Y_{0i} \ | \ X_i = x)}_{\tau_{CATE}(x)} d \ \underbrace{\P(X_i = x)}_{\text{weight}} && (\text{weighted average})\\
+& = \int(\underbrace{\E(Y_i|D_i = 1, X_i) - \E(Y_i|D_i = 0, X_i)}_{\because \text{ equation (2)}})d \ \P(X_i = x)
 \end{align}
 $$ {#eq-ate}
 
@@ -113,7 +113,7 @@ Thus $\tau_{ATE}$ is identified as the weighted average of all the CATEs, who th
 We assumed that the pre-treatment covariate $X$ is continuous. This is why we need an integral. However, we can simplify this if $X$ is discrete:
 
 $$
-\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) P(X_i = x) 
+\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( \E(Y_i|D_i = 1, X_i = x) - \E(Y_i|D_i = 0, X_i = x)) \P(X_i = x) 
 $$ {#eq-discreteate}
 
 <br />
@@ -123,17 +123,17 @@ $$ {#eq-discreteate}
 We can weaken conditional ignorability, and still identify the ATT. Only $Y_{0i}$ needs to be independent of $D_i$ for units with the same covariates $X_i$. Or in other words, $(Y_{0i}) \perp\!\!\!\perp D_i | X_i = x$. This implies:
 
 $$
-E(Y_{0i}|X_i = x) = E(Y_{0i}|D_i = 0, X_i = x) = E(Y_{0i}|D_i = 1, X_i = x)
+\E(Y_{0i}|X_i = x) = \E(Y_{0i}|D_i = 0, X_i = x) = \E(Y_{0i}|D_i = 1, X_i = x)
 $$ {#eq-weak}
 
 Start with the conditional ATT, using weakened conditional ignorability from @eq-weak :
 
 $$
 \begin{split}
-\tau_{CATT}(x) & = E(Y_{1i}-Y_{0i}|D_i = 1, X_i = x) \\
-& = E(Y_{1i}|D_i = 1, X_i = x) - E(Y_{0i}|D_i = 1, X_i = x) \\
-& = E(Y_{1i}|D_i = 1, X_i = x) - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ equation (5)}} \\
-& = \underbrace{E(Y_i|D_i=1, X_i = x)}_{\because \text{ observable}} - \underbrace{E(Y_1|D_i = 0, X_i x)}_{\because \text{ observable}}
+\tau_{CATT}(x) & = \E(Y_{1i}-Y_{0i}|D_i = 1, X_i = x) \\
+& = \E(Y_{1i}|D_i = 1, X_i = x) - \E(Y_{0i}|D_i = 1, X_i = x) \\
+& = \E(Y_{1i}|D_i = 1, X_i = x) - \underbrace{\E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ equation (5)}} \\
+& = \underbrace{\E(Y_i|D_i=1, X_i = x)}_{\because \text{ observable}} - \underbrace{\E(Y_1|D_i = 0, X_i x)}_{\because \text{ observable}}
 \end{split}
 $$ {#eq-catt}
 
@@ -141,19 +141,19 @@ Now, look at the ATT, and plug in CATT from @eq-catt to identify it.
 
 $$
 \begin{align}
-\tau_{ATT} & = E(Y_{1i} - Y_{0i}|D_i = 1) \\
-& = \int \underbrace{E(Y_{1i} - Y_{0i}|D_i = 1, X_i = x)}_{\tau_{CATT}(x)}d \ \underbrace{P(X_i = x|D_i = 1)}_{P(X_i = x) \text{ within treated}} \\
-& = \int (\underbrace{E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)}_{\because \text{ equation (6)}})d \ P(X_i = x|D_i = 1)
+\tau_{ATT} & = \E(Y_{1i} - Y_{0i}|D_i = 1) \\
+& = \int \underbrace{\E(Y_{1i} - Y_{0i}|D_i = 1, X_i = x)}_{\tau_{CATT}(x)}d \ \underbrace{\P(X_i = x|D_i = 1)}_{\P(X_i = x) \text{ within treated}} \\
+& = \int (\underbrace{\E(Y_i|D_i = 1, X_i = x) - \E(Y_i|D_i = 0, X_i = x)}_{\because \text{ equation (6)}})d \ \P(X_i = x|D_i = 1)
 \end{align}
 $$
 
 We can simplify this if $X$ is discrete:
 
 $$
-\tau_{ATT} = \sum\limits_{x \in \mathcal X} ( E(Y_i|D_i = 1, X_i = x) - E(Y_i|D_i = 0, X_i = x)) Pr(X_i = x | D_i = 1)
+\tau_{ATT} = \sum\limits_{x \in \mathcal X} ( \E(Y_i|D_i = 1, X_i = x) - \E(Y_i|D_i = 0, X_i = x)) \P(X_i = x | D_i = 1)
 $$
 
-Even when all assumptions are met for identification of the ATE, the $\tau_{ATE}$ can be different than the $\tau_{ATT}$. This is because the weights $Pr(X_i = x|D_i = 1)$ for the ATT are different than the ATE $Pr(X_i = x)$.
+Even when all assumptions are met for identification of the ATE, the $\tau_{ATE}$ can be different than the $\tau_{ATT}$. This is because the weights $\P(X_i = x|D_i = 1)$ for the ATT are different than the ATE $\P(X_i = x)$.
 
 <br />
 
@@ -165,7 +165,7 @@ Even when all assumptions are met for identification of the ATE, the $\tau_{ATE}
 
 ### Ordinary Least Squares Estimator
 
-OLS is a natural approach for controlling for confounders $X$, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](quant1.qmd##regression-anatomy-and-controlling). OLS is a good estimator of $\tau_{ATE}$ under 2 conditions:
+OLS is a natural approach for controlling for confounders $X$, since $\hat\beta_{OLS}$ estimates [partial out the effects of covariates](clm.qmd##regression-anatomy-and-controlling). OLS is a good estimator of $\tau_{ATE}$ under 2 conditions:
 
 1.  **Constant treatment effect**: $\tau_i = Y_{1i} - Y_{0i}$ for all units $i$.
 2.  **Linearity**: Potential outcomes are linear, and can be written as:
@@ -188,7 +188,7 @@ $$
 
 Thus, we see $\tau_i = \beta_1$. We also know that conditional ignorability implies [zero-conditional mean](#0). Thus OLS is an unbiased and asymptotically consistent estimator of both $\beta_1$ and the ATE.
 
-You should be cautious using OLS when assumption 2, **linearity**, is violated. We know the OLS is the [best linear predictor of the conditional expectation function](quant1.qmd#conditional-expectation-function) in terms of mean squared error. Thus, $\beta_1$ will provide the best linear approximation to the population regression function.
+You should be cautious using OLS when assumption 2, **linearity**, is violated. We know the OLS is the [best linear predictor of the conditional expectation function](clm.qmd) in terms of mean squared error. Thus, $\beta_1$ will provide the best linear approximation to the population regression function.
 
 This does not mean it is good - just the best linear approximation. How far your actual data is away from linearity will determine how good OLS is here.
 
@@ -201,13 +201,13 @@ You **should not use** OLS if you believe assumption 1, heterogeneity, is violat
 What if there are **heterogenous** treatment effects (where $\tau_i$ is different between units)? Standard OLS in this case is [**no longer** an unbiased estimator]{.underline} of the ATE. Recall the discrete identification of the ATE (in equation @eq-discreteate ) is a weighted average of CATEs:
 
 $$
-\hat\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{P(X_i = x)}_{\text{weight}} \\
+\hat\tau_{ATE} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{\P(X_i = x)}_{\text{weight}} \\
 $$
 
 OLS, when there are non constant treatment effects, can also be rewritten as a weighted average of CATEs:
 
 $$
-\hat\beta_{OLS} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{ \frac{Var(D_i|X_i = X)P(X_i = x)}{\sum Var(D_i | X_i = x')P(X_i = x')} }_{\text{weight}} \\
+\hat\beta_{OLS} = \sum\limits_{x \in \mathcal X} ( \hat\tau_{CATE}(x)) \underbrace{ \frac{\V(D_i|X_i = X)\P(X_i = x)}{\sum \V(D_i | X_i = x')\P(X_i = x')} }_{\text{weight}} \\
 $$
 
 Notice how the weights are different. The weights in the OLS are the conditional variances of $D_i$. This means that OLS is **not** an unbiased estimator of the ATE or ATT, but rather, a weighted average of the ATT and ATU.
@@ -222,14 +222,14 @@ Where:
 
 $$
 \begin{split}
-w_1 & = \frac{(1 - P(D=1)) V(\pi(X)|D = 0)}{P(D=1)V(\pi(X)|D=1) + (1-P(D=1)V(\pi(X)|D=0)} \\
+w_1 & = \frac{(1 - \P(D=1)) \V(\pi(X)|D = 0)}{\P(D=1)\V(\pi(X)|D=1) + (1-\P(D=1)\V(\pi(X)|D=0)} \\
 w_0 & = 1 - w_1
 \end{split}
 $$
 
 The reason for this is because regression is prone to extrapolation beyond common support - i.e. it can "estimate" potential outcomes for units that are not observed. This can lead to bias. This is in contrast to the subclassification estimator, which cannot be computed if there are missing observable outcomes for a substratum/category of $X$.
 
-The weights of $D_i(X_i = x)$ can also be seen as propensity scores of $\pi(x)(1 - \pi(x)$. Weights are higher for groups with propensity scores close to 0.5, and lower for groups with propensity scores close to 0 or 1. OLS minimises estimation uncertainty by downweighting groups of $X_i$ where group-specific ATEs are less precisely estimated.
+OLS also minimises estimation uncertainty by downweighting groups of $X_i$ where group-specific ATEs are less precisely estimated.
 
 <br />
 
@@ -320,7 +320,7 @@ $$
 
 ### Matching Estimator
 
-We have a [missing data problem](quant4.qmd#observed-outcomes-and-missing-data) in causal inference: we do not know all the potential outcomes. Matching "estimates" missing potential outcomes of a unit.
+We have a [missing data problem](causal.qmd#observed-outcomes-and-missing-data) in causal inference: we do not know all the potential outcomes. Matching "estimates" missing potential outcomes of a unit.
 
 For each observation in the treated group, matching finds an observation in the untreated group that have the most similar values of a set of pre-treatment covariates $X$. Thus, we have pairs of treatment-control observations that act as counterfactuals. We can estimate the ATT as the average difference in observed outcomes within the pairs:
 
@@ -401,7 +401,7 @@ There is a new method: **Bias-corrected matching**, which estimates bias inehere
 Propensity Score matching is an alternative way to match over many dimensions. The **propensity score** is an unobserved property, defined as the probability of a unit $i$ of receiving treatment:
 
 $$
-\pi(X_i) \equiv P(D_i = 1|X_i)
+\pi(X_i) \equiv \P(D_i = 1|X_i)
 $$
 
 When supposing the [conditional ignorability and common support assumptions](#identification-assumptions), the propensity score $\pi(X_i)$ has the balancing property: $D_i \perp X_i \ | \ \pi(X_i)$. This implies that conditional ignorability holds on the propensity scores alone:
@@ -412,7 +412,7 @@ $$
 
 Thus, instead of conditioning on $X_i$ as we did in selection on observables, we can instead condition on $\pi (X_i)$, and still identify the causal estimand.
 
-However, we do not actually observe $\pi (X_i)$. We estimate $\pi (X_i)$ with a binary response model, with outcome variable $D_i$, and explanatory variables $X_i$. This will get us a fitted probability $P(D_i = 1) = \hat\pi(X_i)$.
+However, we do not actually observe $\pi (X_i)$. We estimate $\pi (X_i)$ with a binary response model, with outcome variable $D_i$, and explanatory variables $X_i$. This will get us a fitted probability $\P(D_i = 1) = \hat\pi(X_i)$.
 
 Then, once we have the propensity score estimates $\hat\pi(X_i)$, we can do nearest neighbour matching with the propensity scores (in $\mathbb R^1$). This will allow us to identify the $\tau_{ATT}$.
 
@@ -436,9 +436,9 @@ We know that the ATE can be written as a weighted average, as shown in @eq-discr
 
 $$
 \begin{split}
-& = \sum\limits_{x \in \mathcal X} \underbrace{(E(Y_{1i}|D_i = 1, X_i = x)}_{\because \text{ observed}} - \underbrace{E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ observed}})P(X_i = x) \\
-& = \sum\limits_{x \in \mathcal X}  (\underbrace{E(Y_{1i}|X_i = x)}_{\because \text{ eq. (1)}} - \underbrace{E(Y_{0i}|X_i = x)}_{\because \text{ eq. (1)}})P(X_i = x) \\
-& = \underbrace{E[E(Y_{1i}|X_i = x) - E(Y_{0i}|X_i = x)]}_{\text{definition of weighted average}}
+& = \sum\limits_{x \in \mathcal X} \underbrace{(\E(Y_{1i}|D_i = 1, X_i = x)}_{\because \text{ observed}} - \underbrace{\E(Y_{0i}|D_i = 0, X_i = x)}_{\because \text{ observed}})\P(X_i = x) \\
+& = \sum\limits_{x \in \mathcal X}  (\underbrace{\E(Y_{1i}|X_i = x)}_{\because \text{ eq. (1)}} - \underbrace{\E(Y_{0i}|X_i = x)}_{\because \text{ eq. (1)}})\P(X_i = x) \\
+& = \underbrace{\E[\E(Y_{1i}|X_i = x) - \E(Y_{0i}|X_i = x)]}_{\text{definition of weighted average}}
 \end{split}
 $$
 
@@ -446,37 +446,37 @@ Let us do an algebra trick - multiply both terms within the CATE by 1 (in blue):
 
 $$
 \begin{split}
-& = E \left [E(Y_{1i}|X_i=x) \color{blue}{\frac{\pi(X_i)}{\pi(X_i)}}\color{black} - (E(Y_{0i}|X_i=x) \color{blue}{\frac{1-\pi(X_i)}{1-\pi(X_i)}} \right] \\
-& \color{black} = E \left[ \frac{E(Y_{1i}|X_i = x) \pi(X_i)}{\pi(X_i)} -  \frac{E(Y_{0i}|X_i = x) (1-\pi(X_i))}{1-\pi(X_i)} \right]
+& = \E \left [\E(Y_{1i}|X_i=x) \color{blue}{\frac{\pi(X_i)}{\pi(X_i)}}\color{black} - (\E(Y_{0i}|X_i=x) \color{blue}{\frac{1-\pi(X_i)}{1-\pi(X_i)}} \right] \\
+& \color{black} = \E \left[ \frac{\E(Y_{1i}|X_i = x) \pi(X_i)}{\pi(X_i)} -  \frac{\E(Y_{0i}|X_i = x) (1-\pi(X_i))}{1-\pi(X_i)} \right]
 \end{split}
 $$
 
-We know that propensity score $\pi(X_i) := E(D_i|X_i = x)$. Thus, we can convert the above to:
+We know that propensity score $\pi(X_i) := \E(D_i|X_i = x)$. Thus, we can convert the above to:
 
 $$
 \begin{split}
-& = E \left[ \frac{E(Y_{1i}|X_i = x)E(D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}|X_i = x)(1-E(D_i|X_i = x))}{1-\pi(X_i)}\right] \\
-& = E \left[ \frac{E(Y_{1i}|X_i = x)E(D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}|X_i = x)E(1-D_i|X_i = x)}{1-\pi(X_i)}\right]
+& = \E \left[ \frac{\E(Y_{1i}|X_i = x)\E(D_i|X_i = x)}{\pi(X_i)} - \frac{\E(Y_{0i}|X_i = x)(1-\E(D_i|X_i = x))}{1-\pi(X_i)}\right] \\
+& = \E \left[ \frac{\E(Y_{1i}|X_i = x)\E(D_i|X_i = x)}{\pi(X_i)} - \frac{\E(Y_{0i}|X_i = x)\E(1-D_i|X_i = x)}{1-\pi(X_i)}\right]
 \end{split}
 $$
 
 $$
 \begin{align}
-& = E \left[ \frac{E(Y_{1i}D_i|X_i = x)}{\pi(X_i)} - \frac{E(Y_{0i}(1-D_i)|X_i = x)}{1 - \pi(X_i)}\right] && (\text{property of expectation})\\
-& = E \left[ E \left( \frac{Y_{1i}D_i}{\pi(X_i)} |X_i = x\right) - E \left( \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} | X_i = x \right) \right] && (\text{property of expectation})\\
-& = E\left[ E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} |X_i = x \right) \right]  && (\text{property of expectation})
+& = \E \left[ \frac{\E(Y_{1i}D_i|X_i = x)}{\pi(X_i)} - \frac{\E(Y_{0i}(1-D_i)|X_i = x)}{1 - \pi(X_i)}\right] && (\text{property of expectation})\\
+& = \E \left[ \E \left( \frac{Y_{1i}D_i}{\pi(X_i)} |X_i = x\right) - \E \left( \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} | X_i = x \right) \right] && (\text{property of expectation})\\
+& = \E\left[ \E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)} |X_i = x \right) \right]  && (\text{property of expectation})
 \end{align}
 $$
 
 $$
 \begin{align}
- & = E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)}\right) && (\text{LIE: } E(X) = E[E(X|Y)] \ ) \\
-& = E\left( \frac{Y_{i}D_i}{\pi(X_i)} - \frac{Y_{i}(1-D_i)}{1-\pi(X_i)}\right) && (\text{observered outcome}) \\
-& = E \left( \frac{\color{blue}{Y_i} \color{black}D_i(1-\pi(X_i))-\color{blue}{Y_i}\color{black}(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{getting common denom.}) \\
-& = E\left( Y_i \frac{D_i(1-\pi(X_i))-(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{factor out }Y_i) \\
-& = E\left( Y_i \frac{D_i - D_i\pi(X_i)-(\pi(X_i) -D_i\pi(X_i))}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{distribute out}) \\
-&  = E\left( Y_i \frac{D_i \color{blue}{- D_i\pi(X_i)} \color{black}-\pi(X_i) \color{blue}{+ D_i\pi(X_i)}}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{distribute out negative})\\
-& = E\left( Y_i \frac{D_i -\pi(X_i) }{\pi(X_i)(1-\pi(X_i))}\right) && (\text{cancel out})\\
+ & = \E\left( \frac{Y_{1i}D_i}{\pi(X_i)} - \frac{Y_{0i}(1-D_i)}{1-\pi(X_i)}\right) && (\text{LIE: } \E(X) = E[E(X|Y)] \ ) \\
+& = \E\left( \frac{Y_{i}D_i}{\pi(X_i)} - \frac{Y_{i}(1-D_i)}{1-\pi(X_i)}\right) && (\text{observered outcome}) \\
+& = \E \left( \frac{\color{blue}{Y_i} \color{black}D_i(1-\pi(X_i))-\color{blue}{Y_i}\color{black}(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{getting common denom.}) \\
+& = \E\left( Y_i \frac{D_i(1-\pi(X_i))-(1-D_i)\pi(X_i)}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{factor out }Y_i) \\
+& = \E\left( Y_i \frac{D_i - D_i\pi(X_i)-(\pi(X_i) -D_i\pi(X_i))}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{distribute out}) \\
+&  = \E\left( Y_i \frac{D_i \color{blue}{- D_i\pi(X_i)} \color{black}-\pi(X_i) \color{blue}{+ D_i\pi(X_i)}}{\pi(X_i)(1-\pi(X_i))}\right) &&(\text{distribute out negative})\\
+& = \E\left( Y_i \frac{D_i -\pi(X_i) }{\pi(X_i)(1-\pi(X_i))}\right) && (\text{cancel out})\\
 \end{align}
 $$ {#eq-ateweight}
 
@@ -489,7 +489,7 @@ And thus, we have identified the ATE.
 An alternative use of propensity scores is weighting. As shown above, under conditional ignorability and common support, we can identify the ATE as:
 
 $$
-\tau_{ATE} = E\left[ Y_i \times \underbrace{\frac{D_i - \pi(X_i)}{\pi(X_i) (1 - \pi(X_i))}}_{\text{weight}}\right]
+\tau_{ATE} = \E\left[ Y_i \times \underbrace{\frac{D_i - \pi(X_i)}{\pi(X_i) (1 - \pi(X_i))}}_{\text{weight}}\right]
 $$
 
 The **inverse probability weighting (IPW) estimator** is the sample estimator:
@@ -511,7 +511,7 @@ Essentially, those who are unlikely to be treated but do get treated get weighte
 The identification of the ATT under both conditional ignorability and common support are:
 
 $$
-\tau_{ATT} = \frac{1}{Pr(D = 1)} \times E\left[ Y_i \times \underbrace{\frac{D_i - \pi(X_i)}{(1 - \pi(X_i))}}_{\text{weight}}\right]
+\tau_{ATT} = \frac{1}{\P(D = 1)} \times \E\left[ Y_i \times \underbrace{\frac{D_i - \pi(X_i)}{(1 - \pi(X_i))}}_{\text{weight}}\right]
 $$
 
 The sample IPW estimator would be:
@@ -612,13 +612,13 @@ Let us decompose the ATE into parts:
 
 $$
 \begin{align}
-\tau_{ATE}  = & E(Y_{1i} - Y_{0i}) \\
+\tau_{ATE}  = & \E(Y_{1i} - Y_{0i}) \\
 & \\
- = & E(Y_{1i} - Y_{0i} | D_i = 1) P(D_i = 1) \\
-& \quad - E(Y_{1i} - Y_{0i}|D_i = 0)P(D_i = 0)  && (\text{def. of weighted avg.})\\
+ = & \E(Y_{1i} - Y_{0i} | D_i = 1) \P(D_i = 1) \\
+& \quad - \E(Y_{1i} - Y_{0i}|D_i = 0)\P(D_i = 0)  && (\text{def. of weighted avg.})\\
 & \\
-= & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}- \color{red}{E(Y_{0i}|D_i = 1)} \color{black}] P(D_i = 1) \\
-& \quad + [ \color{red}{E(Y_{1i}|D_i = 0)} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]P(D_i = 0) && (\text{observed + unobserved})
+= & [ \color{blue}{\E(Y_i |D_i = 1)} \color{black}- \color{red}{\E(Y_{0i}|D_i = 1)} \color{black}] \P(D_i = 1) \\
+& \quad + [ \color{red}{\E(Y_{1i}|D_i = 0)} \color{black} - \color{blue}{\E(Y_i|D_i = 0)} \color{black}]\P(D_i = 0) && (\text{observed + unobserved})
 \end{align}
 $$
 
@@ -632,29 +632,29 @@ One way to fill in our unobserved outcomes through the "best" and "worst" possib
 
 First, let us construct the worst-case scenario - the lowest possible $\tau$.
 
-1.  $E(Y_{0i}|D_i = 1) = Y_H$. Units in the treated $D_i=1$, their potential outcome $Y_{0i}$ will be the highest $Y$ possible, $Y_H$.
-2.  $E(Y_{1i}|D_i = 0) = Y_L$. Units in the control $D_i=0$, their unobserved potential outcome $Y_{1i}$ will be the lowest $Y$ possible, $Y_L$.
+1.  $\E(Y_{0i}|D_i = 1) = Y_H$. Units in the treated $D_i=1$, their potential outcome $Y_{0i}$ will be the highest $Y$ possible, $Y_H$.
+2.  $\E(Y_{1i}|D_i = 0) = Y_L$. Units in the control $D_i=0$, their unobserved potential outcome $Y_{1i}$ will be the lowest $Y$ possible, $Y_L$.
 
 Thus, the lowest possible $\tau$ (sharp lower bound) is:
 
 $$
 \begin{split}
-\tau_L = & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_H} \color{black}] P(D_i = 1) \\
-& \quad + [ \color{red}{Y_L} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]P(D_i = 0)
+\tau_L = & [ \color{blue}{\E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_H} \color{black}] \P(D_i = 1) \\
+& \quad + [ \color{red}{Y_L} \color{black} - \color{blue}{\E(Y_i|D_i = 0)} \color{black}]\P(D_i = 0)
 \end{split}
 $$
 
 Now, let us construct the best-case scenario - the highest possible $\tau$.
 
-1.  $E(Y_{0i}|D_i = 1) = Y_L$. Units in the treated $D_i=1$, their potential outcome $Y_{0i}$ will be the lowest $Y$ possible, $Y_L$.
-2.  $E(Y_{1i}|D_i = 0) = Y_H$. Units in the control $D_i=0$, their unobserved potential outcome $Y_{1i}$ will be the highest $Y$ possible, $Y_H$.
+1.  $\E(Y_{0i}|D_i = 1) = Y_L$. Units in the treated $D_i=1$, their potential outcome $Y_{0i}$ will be the lowest $Y$ possible, $Y_L$.
+2.  $\E(Y_{1i}|D_i = 0) = Y_H$. Units in the control $D_i=0$, their unobserved potential outcome $Y_{1i}$ will be the highest $Y$ possible, $Y_H$.
 
 Thus, the highest possible $\tau$ (sharp upper bound) is:
 
 $$
 \begin{split}
-\tau_H = & [ \color{blue}{E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_L} \color{black}] P(D_i = 1) \\
-& \quad + [ \color{red}{Y_H} \color{black} - \color{blue}{E(Y_i|D_i = 0)} \color{black}]P(D_i = 0)
+\tau_H = & [ \color{blue}{\E(Y_i |D_i = 1)} \color{black}  - \color{red}{Y_L} \color{black}] \P(D_i = 1) \\
+& \quad + [ \color{red}{Y_H} \color{black} - \color{blue}{\E(Y_i|D_i = 0)} \color{black}]\P(D_i = 0)
 \end{split}
 $$
 
@@ -670,8 +670,8 @@ One assumption is the **Monotone Treatment Selection (MTS)** assumption. This as
 
 $$
 \begin{split}
-& E(Y_{0i}|D_i = 0) ≤ \overbrace{E(Y_{0i}|D_i = 1)}^{\text{unobserved}} \\
-& \underbrace{E(Y_{1i} |D_i = 0)}_{\text{unobserved}} ≤ E(Y_{1i} |D_i = 1)
+& \E(Y_{0i}|D_i = 0) ≤ \overbrace{\E(Y_{0i}|D_i = 1)}^{\text{unobserved}} \\
+& \underbrace{\E(Y_{1i} |D_i = 0)}_{\text{unobserved}} ≤ \E(Y_{1i} |D_i = 1)
 \end{split}
 $$
 
@@ -681,9 +681,9 @@ This implies a tighter sharp upper bound on $\tau$.
 
 $$
 \begin{align}
-\tau_H = & [ \underbrace{E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{E(Y_{0i}|D_i = 0)} \color{black}] P(D_i = 1) \\
-& \quad + [ \color{red}{E(Y_{1i}|D_i =1)} \color{black} - \underbrace{E(Y_i|D_i = 0)}_{\text{observed}}]P(D_i = 0) \\
-= & E(Y_i|D_i = 1) - E(Y_i|D_i = 0) && (\text{def. of weighted avg.})\\
+\tau_H = & [ \underbrace{\E(Y_i |D_i = 1)}_{\text{observed}}  - \color{red}{\E(Y_{0i}|D_i = 0)} \color{black}] \P(D_i = 1) \\
+& \quad + [ \color{red}{\E(Y_{1i}|D_i =1)} \color{black} - \underbrace{\E(Y_i|D_i = 0)}_{\text{observed}}]\P(D_i = 0) \\
+= & \E(Y_i|D_i = 1) - \E(Y_i|D_i = 0) && (\text{def. of weighted avg.})\\
 \end{align}
 $$
 
