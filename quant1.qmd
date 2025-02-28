@@ -14,23 +14,19 @@ Use the right sidebar for quick navigation. R-code is provided at the bottom.
 
 ### Model Specification
 
-There is some random outcome variable $Y_i$, and several random explanatory variables $X_{i1}, X_{i2}, \dots, X_{ip}$. The population linear model is specified as:
+There is some random outcome variable $Y_i$, and $p$ explanatory variables $X_{i1}, X_{i2}, \dots, X_{ip}$. The population linear model is specified as a [conditional expectation function](stats.qmd#conditional-distributions):
+
+$$
+\E(Y_i|X_i) = \beta_0 + \beta_1 X_{i1} + \dots + \beta_p X_{ip}
+$$
+
+Where $\beta_0, \dots, \beta_p$ are population parameters to be estimated. We can also specify linear regression not as the expected $Y$ as above, but for each observation of $Y_i$:
 
 $$
 Y_i = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i \ = \  \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} + \eps_i
 $$
 
-Where $\beta_0, \dots, \beta_p$ are population parameters to be estimated, and $\eps_i$ is the error term representing the variation in $Y_i$ that is not explained by the $p$ explanatory variables (either a missing variable in our model, or some random noise).
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Visualising Regression and $\eps_i$
-
-Geometrically, the $\beta_0 + \beta_1X_{1i} + \beta_pX_{ip}$ part of the model creates a hyperplane (shown in yellow). The red dots are the actual $Y_i$ values. The black lines represent $\eps_i$, the variation in $Y_i$ not explained by the explanatory variables.
-
-![](images/clipboard-365376575.png){fig-align="center" width="45%"}
-:::
-
-The linear model implies for each observation/individual $i=1,\dots ,n$ in the population, with values $(y_i, x_{i1} \dots, x_{ip})$ has a regression equation:
+Where $\eps_i$ is the error term representing the variation in $Y_i$ that is not explained by the $p$ explanatory variables (either a missing variable in our model, or some random noise). This model implies for each observation/individual $i=1,\dots ,n$ in the population, with values $(y_i, x_{i1} \dots, x_{ip})$ has a regression equation:
 
 $$
 \begin{align}
@@ -50,35 +46,17 @@ y = X\beta + \eps \quad \iff \quad \begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\en
 + \begin{pmatrix}\eps_1 \\ \eps_2 \\ \vdots \\ \eps_n\end{pmatrix}
 $$
 
-The parameters in vector $\beta$ are population parameters that we do not know the value of. Our goal is to estimate our parameters to get our estimates $\hat\beta$, which allows us to create predicted fitted-values model $\hat y = X\hat\beta$.
+Our goal is to estimate $\beta$ to get our estimates $\hat\beta$, which allows us to create predicted fitted-values model $\hat y = X\hat\beta$.
 
 <br />
 
-### Ordinary Least Squares Estimator
+### Ordinary Least Squares Estimator {#ordinary-least-squares-estimator}
 
-To [estimate](stats.qmd#estimators-and-sampling-distributions) the population parameters $\beta_0, \dots, \beta_p$, we use our sample data, and try to find the values $\hat\beta_0, \dots, \hat\beta_p$ that **minimise the square sum of residuals** (SSR). We will define the SSR as function $S$:
-
-$$
-\begin{align}
-S(\hat\beta) & = (y - \hat y)^\top (y - \hat y) \ = \ (y - \color{blue}{X\hat\beta}\color{black})^\top (y - \color{blue}{X\hat\beta}\color{black}) && (\because \color{blue}{\hat y = X\hat\beta} \color{black})
-\end{align}
-$$
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Visualising the Sum of Squared Residuals
-
-The residuals are the difference from our predicted best-fit line result $\hat Y_i$, and the actual value of $Y_i$ in the data. Below highlighted in red are the residuals.
-
-![](images/clipboard-846785636.png){fig-align="center" width="60%"}
-
-After we have the residual values, we simply square each of them, then sum all of them together. That is the sum of squared residuals (SSR).
-:::
-
-This process of mimimising the SSR to estimate $\hat\beta$ is called the **ordinary least squares (OLS) estimator**:
+To [estimate](stats.qmd#estimators-and-sampling-distributions) the population parameters $\beta_0, \dots, \beta_p$, we use our sample data, and try to find the values $\hat\beta_0, \dots, \hat\beta_p$ that **minimise the square sum of residuals** (SSR): $\sum(Y_i - \hat Y_i)^2$ .We will define the SSR as function $S$:
 
 $$
 \begin{align}
-S(\hat\beta) &  = (y - \hat y)^\top (y - \hat y)\\
+S(\hat\beta) &  = (y - \hat y)^\top (y - \hat y) && (\Sigma(Y - \hat Y_i)^2 \text{ in linear algebra})\\
 & = (y - \color{blue}{X \hat\beta}\color{black} )^\top (y - \color{blue}{X \hat\beta}\color{black})  && (\because \color{blue}{\hat y = X \hat\beta}\color{black})\\
 & = y^\top y - \hat\beta^\top X^\top y - y^\top X \hat\beta +  \hat\beta^\top X^\top X \hat\beta && (\text{distribute out}) \\
 & = y^\top y \ \color{blue}{-  2 \hat\beta^\top X^\top y} \color{black}  +  \underbrace{\hat\beta^\top X^\top X \hat\beta}_{\text{quadratic}} && (\because \color{blue}{- \hat\beta^\top X^\top y - y^\top X \hat\beta = - 2 \hat\beta^\top X^\top y} \color{black})
@@ -102,14 +80,12 @@ $$
 \end{align}
 $$ {#eq-ols}
 
-Those are our coefficient solutions to OLS.
+Vector $\hat\beta$ is our coefficient estimates derived from OLS.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Alternative Derivation for Simple Linear Regression
 
-Currently, we are deriving the first order conditions for multiple linear regression using linear algebra.
-
-For simple linear regression (with one explanatory variable), we can use summation notation. Recall our sum of squared residuals in summation form:
+Currently, we are deriving the first order conditions for multiple linear regression using linear algebra. For simple linear regression (with one explanatory variable), we can use summation notation. Recall our sum of squared residuals in summation form:
 
 $$
 SSR = S(\hat\beta_0, \hat\beta_1)= \sum\limits_{i=1}^n(Y_i - \hat\beta_0 - \hat\beta_1X_i)^2
@@ -132,6 +108,43 @@ $$
 \hat\beta_1 & = \frac{\sum_{i=1}^n(X_i - \bar X)(Y_i - \bar Y)}{\sum_{i=1}^n(X_i - \bar X)^2} = \frac{Cov(X_i, Y_i)}{\V Y_i}
 \end{align}
 $$
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Proof OLS Estimates are Equal with $Y_i$ and $\E(Y_i|X_i)$
+
+Before, we specified the linear model in terms of both $Y_i$ and the conditional expectation function $\E(Y_i|X_i)$. However, I only derived OLS estimates in respect to $Y_i$. For those interested, this is proof the OLS estimates of both are equivalent.
+
+Best-approximation of a conditional expectation function is defined by the lowest mean-squared error (MSE). Let us prove OLS on $Y_i$ gets the same $\beta_0, \dots, \beta_p$ as the best linear approximation of $\E(Y_i|X_i)$. Take this very simple CEF and its MSE:
+
+$$
+\begin{align}
+\E(Y_i|X_i) & = b_0 + b_1X_i \\
+MSE & = \E(Y_i - \E(Y_i|X_i))^2 \\
+& =  \E(Y_i - (\color{blue}{b_0 + b_1X_i}\color{black}))^2  && (\because \color{blue}{\E(Y_i|X_i) = b_0 + b_1X_i}\color{black})\\
+& = \E(Y_i - b_0 - b_1 X_i) && \text{(distribute negative sign)}
+\end{align}
+$$
+
+The first order conditions are (using chain rule and partial derivatives):
+
+$$
+\begin{split}
+& \E(Y_i - b_0 - b_1X_i) = 0 \\
+& \E(X_i(Y_i - b_0 - b_1X_i) = 0
+\end{split}
+$$
+
+Now, recall our OLS minimisation conditions (simple linear regression, presented in the extra info box above). Since by definition, average/expectation is $\E(x) = \frac{1}{n} \sum x_i$, we can rewrite as:
+
+$$
+\begin{split}
+& \sum\limits_{i=1}^n (Y_i - \hat{\beta}_0 - \hat{\beta}_1 X_i) = \ n \times \E(Y_i - \hat\beta_0 - \hat\beta_1X_i) = 0 \\
+& \sum\limits_{i=1}^n X_i (Y_i - \hat{\beta}_0 - \hat{\beta}_1 X_i) = \  n \times \E(X_i(Y_i - \hat\beta_0 - \hat\beta_1X_i)) = 0
+\end{split}
+$$
+
+And since anything multiplied to a zero turns into zero, we can ignore the $n$ in the first order condition. Thus, we can see, are the exact same minimisation conditions as the conditional expectation function. Thus, OLS is the best approximation of the CEF. This property is very useful for interpreting our regression results.
 :::
 
 <br />
@@ -177,54 +190,13 @@ P^\top M & = \color{blue}{P}\color{black}M && (\because \color{blue}{P^\top = P}
 $$
 :::
 
-Fitted values $\hat{y}$ are a linear combination of our explanatory variables $X$. By the definition of [vector spaces](math.qmd#vector-spaces), that means our explanatory variable vectors $x_1, x_2, \dots, x_p$ span a space that includes our fitted values vector $\hat{y}$.
+Fitted values $\hat{y}$ are a linear combination of our explanatory variables $X$. By the definition of [vector spaces](math.qmd#vector-spaces-and-matrix-rank), that means our explanatory variable vectors $x_1, x_2, \dots, x_p$ span a space that includes our fitted values vector $\hat{y}$.
 
 So, what $\color{red}{ P}$ is doing is taking our original data vector $y$, and projecting it into the space spanned by our explanatory variables $X$ (called the **column space**). We can see in the figure below, our observed $y$ vector is being projected onto the blue plane spanned by $X$ to create our fitted values vector $\hat{y}$.
 
 ![](images/clipboard-880030792.png){fig-align="center" width="50%"}
 
 Residual maker $\color{purple}{M}$ projects $y$ onto the space orthogonal to the column space of $X$ to get our residuals $\hat{\eps}$. We can see in the figure the residuals vector (notated $\mathbf e$ in the figure) is orthogonal/perpendicular to the space of $\mathbf X$.
-
-<br />
-
-### Conditional Expectation Function {#conditional-expectation-function}
-
-Previously, we wrote the linear regression model in respect to $Y_i$. However, we can also write the linear regression model as the best linear approximation of a [conditional expectation](stats.qmd#conditional-distributions) function (CEF) $\E(Y_i |X_i)$:
-
-$$
-\E(Y_i|X_i) = \beta_0 + \beta_1 X_{i1} + \dots + \beta_p X_{ip}
-$$
-
-Best-approximation is defined by the lowest mean-squared error (MSE). Let us prove OLS on $Y_i$ gets the same $\beta_0, \dots, \beta_p$ as the best linear approximation of $\E(Y_i|X_i)$. Take this very simple CEF and its MSE:
-
-$$
-\begin{align}
-\E(Y_i|X_i) & = b_0 + b_1X_i \\
-MSE & = \E(Y_i - \E(Y_i|X_i))^2 \\
-& =  \E(Y_i - (\color{blue}{b_0 + b_1X_i}\color{black}))^2  && (\because \color{blue}{\E(Y_i|X_i) = b_0 + b_1X_i}\color{black})\\
-& = \E(Y_i - b_0 - b_1 X_i) && \text{(distribute negative sign)}
-\end{align}
-$$
-
-The first order conditions are (using chain rule and partial derivatives):
-
-$$
-\begin{split}
-& \E(Y_i - b_0 - b_1X_i) = 0 \\
-& \E(X_i(Y_i - b_0 - b_1X_i) = 0
-\end{split}
-$$
-
-Now, recall our OLS minimisation conditions (simple linear regression, presented in the extra info box above). Since by definition, average/expectation is $\E(x) = \frac{1}{n} \sum x_i$, we can rewrite as:
-
-$$
-\begin{split}
-& \sum\limits_{i=1}^n (Y_i - \hat{\beta}_0 - \hat{\beta}_1 X_i) = \ n \times \E(Y_i - \hat\beta_0 - \hat\beta_1X_i) = 0 \\
-& \sum\limits_{i=1}^n X_i (Y_i - \hat{\beta}_0 - \hat{\beta}_1 X_i) = \  n \times \E(X_i(Y_i - \hat\beta_0 - \hat\beta_1X_i)) = 0
-\end{split}
-$$
-
-And since anything multiplied to a zero turns into zero, we can ignore the $n$ in the first order condition. Thus, we can see, are the exact same minimisation conditions as the conditional expectation function. Thus, OLS is the best approximation of the CEF. This property is very useful for interpreting our regression results.
 
 <br />
 
@@ -332,7 +304,7 @@ Interpretation is as follows (category $j$ is any one of category $1, \dots, g-1
 
 The standard linear model assumes a continuous $Y_i$ variable. However, we can adapt the linear model to fit binary $Y_i$ variables. When $Y_i$ is binary and only has values $Y_i \in \{0, 1\}$, our linear model is actually no longer a predictor of $Y_i$, since our regression will output values that are not 0 and 1.
 
-Instead, our linear model will now predict the **probability** of unit $i$ having $Y_i = 1$. The is due to the [conditional expectation interpretation of regression](#conditional-expectation-function), and the expectation of the [stats distribution](quant1.qmd#bernoulli-and-binomial-distribution):
+Instead, our linear model will now predict the **probability** of unit $i$ having $Y_i = 1$. The is due to the [conditional expectation interpretation of regression](#conditional-expectation-function), and the expectation of the [binomial distribution](stats.qmd#bernoulli-and-binomial-distribution):
 
 $$
 \begin{align}
@@ -394,7 +366,7 @@ R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained 
 
 ### The Classical Assumptions {#the-classical-assumptions}
 
-The classical linear model makes several assumptions:
+The classical linear model has several assumptions:
 
 1\) **Linearity in Parameters**. This means that the linear model must be able to be written in the form $y = X\beta + \eps$. This [does not mean the best-fit line must be linear]{.underline} (as we will explore later).
 
@@ -519,7 +491,7 @@ This is the variance of the sampling distribution of $\hat\beta$. We will use th
 
 <br />
 
-### Gauss-Markov Theorem
+### Gauss-Markov Theorem {#gauss-markov-theorem}
 
 The Gauss-Markov Theorem states that if all 5 [classical assumptions](#the-classical-assumptions) are met, the OLS estimator is the **best linear unbiased estimator** (BLUE) - the unbiased linear estimator with the lowest variance. Any linear estimator takes the form $\tilde{\beta} = Cy$, including OLS. For any linear estimator $\tilde{\beta} = Cy$ to be unbiased, we need to assume $\color{red}{CX = I}$.
 
@@ -615,7 +587,13 @@ Thus, OLS is asymptotically consistent under the 4 conditions above. Note that i
 
 <br />
 
-### Implications of Heteroscedasticity
+<br />
+
+------------------------------------------------------------------------
+
+# **Generalised Least Squares**
+
+### Weakening Spherical Errors
 
 So far, we have assumed that the [classical assumptions](#the-classical-assumptions) are met. However, this is often not the case, especially with the final assumption: spherical errors (homoscedasticity + no autocorrelation).
 
@@ -643,7 +621,45 @@ $$
 \end{pmatrix}}\color{black} X ( X^\top X)^{-1}
 $$
 
-We will not discuss what happens when autocorrelation is violated in much detail, as this is not a huge concern in many causal inference designs (as we will see, most causal designs invoke some form of "as-if" randomisation). There are special standard errors for autocorrelation as well.
+The other assumption of spherical errors, autocorrelation, is a common problem in time-series and data that has spatial elements, and just like heteroscedasticity, this means that OLS is no longer BLUE (the generalised least squares will be BLUE), and that we will need special autocorrelation + heteroscedasticity (HAC) robust standard errors.
+
+<br />
+
+### Weighted Least Squares
+
+Let us say that the heteroscedastic variance of the errors takes the form $\V(\eps_i|X_i) = \sigma^2 h(X_i)$, where $\sigma^2$ is some unknown constant, and $h(X_i)$ is some known function of the regressors that determines the variance of the error. Using a lemma $\V(a(x) \eps | x) = a(x)^2 \V(\eps|x)$, we can determine that:
+
+$$
+\V \left( \frac{\eps_i}{\sqrt{h(X_i)}} | X_i \right) = \left( \frac{1}{\sqrt{h(X_i)}}\right)^2 \V (\eps_i|X_i ) =\sigma^2
+$$
+
+So this tells us that if we create a new error term $\eps_i^* = \eps_i / \sqrt{h(X_i)}$, our variance of the new error term $\eps_i^*$ will be homoscedastic. What this implies is that if we divide all terms of our regression by the heteroscedastic errors $\sigma^2_i = \sigma^2 h(x_i)$, we can get a new regression with homoscedasticity met. Let us define $\Omega^{-1/2}$ as the inverse of the square root of the heteroscedastic covariance matrix of errors.
+
+$$
+\Omega^{-1/2} = \begin{pmatrix}
+1/\sigma_1 & 0 & \dots & 0 \\
+0 & 1/\sigma_2 & \dots & 0 \\
+\vdots & \vdots & \ddots & \vdots  \\
+0 & 0 & \dots & 1/\sigma_n
+\end{pmatrix}
+$$ Using this formula, we can write the transformed regression equation as:
+
+$$
+\underbrace{\Omega^{-1/2}y}_{y^*}  = \underbrace{\Omega^{-1/2}X}_{X^*} \beta+ \underbrace{\Omega^{-1/2}\eps}_{\eps_i^*}
+$$
+
+And since this is a homoscedastic regression, we can use OLS and have a BLUE estimator:
+
+$$
+\begin{align}
+\hat\beta & = (X^{*\top} X^*)^{-1}X^{*\top}y^* && \text{(OLS estimator solution)}  \\
+& = \left[ (\Omega^{-1/2}X)^\top (\Omega^{-1/2}X)\right]^{-1} (\Omega^{-1/2}X)^\top (\Omega^{-1/2}y) && (\text{plug in }X^*, y^*) \\
+& = [X^\top \Omega^{-1/2}\Omega^{-1/2}X]^{-1}X^\top\Omega^{-1/2}\Omega^{-1/2}y && \text{(matrix transposes)}\\
+& =(X^\top \Omega^{-1} X)^{-1}X^\top \Omega^{-1}y && (\because \Omega^{-1/2} \Omega^{-1/2} = \Omega^{-1})
+\end{align}
+$$
+
+This **weighted least squares estimator** is BLUE. This estimator, under the name of the generalised least squares (GLS) estimator, can also be applied to autocorrelated $\Omega$ and is BLUE in that case. However, in most cases, we do not know the structure of $\Omega$, so we will need to estimate it by either assuming some $h(X_i)$, or using OLS estimation first to get OLS residuals to build a structure for $\Omega$. Despite this, weighted least squares is generally more efficient than OLS. However, for autocorrelation feasible GLS tends to be worse than OLS due to difficulties in estimating $\Omega$.
 
 <br />
 
@@ -660,7 +676,7 @@ We need to know the form of the $\hat\beta$ sampling distribution. We have two o
 1.  If our sample size is sufficiently large, we can invoke the central limit theorem, which says that the sampling distribution of $\hat\beta$ is approximately normal if our sample size $n$ is large enough.
 2.  Or, we can impose a condition of normality of the error terms: $\eps | X \sim \mathcal N(0, \sigma^2 I)$. This will ensure the sampling distribution of $\hat\beta$ is normally distributed. (Note, the mean 0 and variance $\sigma^2 I$ come from the [classical assumptions](#the-classical-assumptions) of zero-conditional mean and spherical errors).
 
-Now, we will need the standard error of the sampling distribution. We know the standard error is the square root of the variance of the sampling distribution, which we derived (assuming the classical assumptions are met) as:
+Now, we will need the standard error of the sampling distribution. We know the standard error is the square root of the variance of the sampling distribution, which we [derived](#variance-of-the-ols-estimator) (assuming the classical assumptions are met) as:
 
 $$
 \V(\hat\beta | X) = \sigma^2 (X^\top X)^{-1}
@@ -674,7 +690,7 @@ $$
 
 While this estimator is unbiased, the estimator $s^2$ has variance. The implication of this is that we can no longer use the standard normal distribution for our sampling distribution, and instead, use the t-distribution, which has fatter tails and a lower peak to account for this variance in $s^2$.
 
-If we believe **heteroscedasticity is violated** (which we assume by default), we should use the heteroscedasticity variance of OLS:
+If we believe **heteroscedasticity is violated** (which we assume by default), we should use the [heteroscedasticity variance](#weakening-spherical-errors) of OLS:
 
 $$
 \V(\hat{\beta}| X)  = (X^\top X)^{-1} X^\top \Omega\color{black} X ( X^\top X)^{-1}
@@ -804,15 +820,18 @@ Thus, we can see by not including confounder $z$ in our "short regression", the 
 
 <br />
 
-### Heterogeneity and Interactions
+### Functional Form Specification
 
-Hetergeneity is when we believe the magnitude of the relationship between $X_{i1}$ and $Y_i$ in the population is affected by another variable $X_{i2}$, called the **moderating** variable. If we believe this to be true in the population, we must model it in our regression to ensure our model is correctly specified (and our estimates of $\hat\beta$ are accurate):
+There are several functional form decisions we have to make for our model: Interactions, polynomial transformations, and logarithmic transformations.
 
-An interaction between $X_{i1}$ and the moderating variable $X_{i2}$ means they are multiplied in the regression equation:
+**Heterogeneity** is when we believe the magnitude of the relationship between $X_{i1}$ and $Y_i$ in the population is affected by another variable $X_{i2}$, called the **moderating** variable. An **interaction** between $X_{i1}$ and the moderating variable $X_{i2}$ means they are multiplied in the regression equation:
 
 $$
 Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \underbrace{\beta_3 X_{i1} X_{i2}}_{\text{interaction}}
 $$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Interpreting Interaction Effects
 
 In an interaction, $\hat\beta_0$ is still the expected $Y_i$ when all explanatory variables equal 0. The other coefficient's interpretations are:
 
@@ -829,35 +848,18 @@ In an interaction, $\hat\beta_0$ is still the expected $Y_i$ when all explanator
 +-------------------------+---------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------+
 
 The hypothesis test for $\hat\beta_3$ tests the null hypothesis that there is no interaction in the population between $X_{i1}$ and $X_{i2}$. If our coefficient $\hat\beta_3$ is statistically significant, we can conclude that this null is wrong, and there indeed is an interaction. If $\hat\beta_3$ is insignificant, we fail to reject the null, and can drop the interaction effect from our regression.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Proof of Interpretations of Interactions
-
-We can solve for the change of $X_{i1}$ on $Y_i$ using a partial derivative of $Y_i$ in respect to $X_{i1}$:
-
-$$
-\begin{split}
-\frac{\partial \hat Y_i}{\partial X_{i1}} & = \frac{\partial}{\partial X_{i1}} \left[ \widehat{\beta_0} + \widehat{\beta_1}X_{i1} + \widehat{\beta_2}X_{i2} + \widehat{\beta_3}X_{i1}X_{i2}\right] \\
-\frac{\partial \hat Y_i}{\partial X_{i1}} & = \hat\beta_1 + \hat\beta_3X_{i2}
-\end{split}
-$$
-
-This gives us the effect of $X_{i1}$ on $Y_i$.
 :::
 
-<br />
-
-### Functional Form and Polynomials
-
-Sometimes the relationship between two variables in the population is not a straight lienar line. Thus, to accurately model our process and get accurate $\hat\beta$ estimates, we should aim to correctly specify the nature of the non-linear relationship between $X_i$ and $Y_i$.
-
-The most common form of polynomial transformation is the quadratic transformation:
+Sometimes the relationship between two variables in the population is not a straight linear line. The most common form of **polynomial transformation** is the quadratic transformation:
 
 $$
 Y_i = \beta_0 + \beta_1X_i + \beta_2 X_i^2 + \eps_i
 $$
 
 Note that while $X_i$ is non-linear, the actual regression is still linear in [parameters]{.underline}. We can see this because it can still be written as $y = X\beta + \eps$ when you consider $X_i$ and $X_i^2$ to be two different explanatory variables.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Interpreting Polynomial Transformations
 
 Our estimated $\hat\beta_0$ remains the expected value of $Y_i$ when all explanatory variables equal 0. Unfortunately, the $\hat\beta_1$ and $\hat\beta_2$ coefficients are not directly interpretable.
 
@@ -868,58 +870,16 @@ We can interpret two things about the quadratic transformation:
 
 -   For every one unit increase in $X_i$, there is an expected $\hat\beta_1 + 2 \hat\beta_2X_i$ unit increase in $Y_i$.
 -   The minimum/maximum point in the best-fit parabola occurs at $X_i = - \hat\beta_1/2 \hat\beta_2$
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Proof of Polynomial Interpretations
-
-We can derive the change in $Y_i$ given a one unit increase in $X_i$ by finding the partial derivative of $Y_i$ in respect to $X_i$:
-
-$$
-\begin{split}
-\frac{\partial \hat Y_i}{\partial X_i} & = \frac{\partial}{\partial X_i} \left[ \hat\beta_0 + \hat\beta_1X_i + \hat\beta_2X_i^2 \right] \\
-\frac{\partial \hat Y_i}{\partial X_i} & = \hat\beta_1 + 2 \hat\beta_2X_i
-\end{split}
-$$
-
-We can also solve for the $X_i$ that results in the minimum/maximum of the best-fit parabola by setting the partial derivative equal to 0:
-
-$$
-\begin{split}
-0 & = \hat\beta_1 + 2 \hat\beta_2X_i \\
-X_i & = - \hat\beta_1/2 \hat\beta_2
-\end{split}
-$$
 :::
 
-We can go beyond quadratic to $j$-degree polynomials, as long as we always include lower degree terms in our model:
-
-$$
-Y_i = \beta_0 + \sum\limits_{j=1}^n\beta_{ij}X_i^j + \eps_i
-$$
-
-<br />
-
-### Logarithmic Transformations
-
-Logarithmic transformations are often used to change skewed variables into normally distributed variables. The reason you might want to do this is because of the [classical assumption](#the-classical-assumptions) of homoscedasticity. Often, skewed variables will violate this assumption, which means the [Gauss-Markov theorem](#gauss-markov-theorem) of OLS being BLUE no longer applies. By applying a logarithmic transformation, you can meet homoscedasticity and retain the BLUE properties of OLS.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Logging a Skewed Variable
-
-Many monetary variables are heavily skewed. Natural logging these variables can turn them into normal distributions. For example, take this variable called *expenses* with a significant right skew:
-
-![](images/clipboard-4184932163.png){fig-align="center" width="50%"}
-
-If we take the log of this variable, we get the following distribution that is almost normal:
-
-![](images/clipboard-296612325.png){fig-align="center" width="50%"}
-:::
-
-We have 3 types of logarithmic transformations:
+**Logarithmic** transformations are often used to change skewed variables into normally distributed variables. Often, skewed variables will violate homoscedasticity, which means the [Gauss-Markov theorem](#gauss-markov-theorem) of OLS being BLUE no longer applies. By applying a logarithmic transformation, you can meet homoscedasticity and retain the BLUE properties of OLS. We have 3 types of logarithmic transformations:
 
 -   Linear-Log model: $Y_i = \beta_0 + \beta_1 \log X_i + \eps_i$.
 -   Log-Linear model: $\log Y_i = \beta_0 + \beta_1 X_i + \eps_i$.
 -   Log-Log model: $\log Y_i = \beta_0 + \beta_1 \log X_i + \eps_i$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Interpreting Logarithmic Transformations
 
 The coefficient interpretations become a little more complex with logarithms:
 
@@ -932,80 +892,8 @@ The coefficient interpretations become a little more complex with logarithms:
 +--------------+----------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
 | $\log (Y_i)$ | Log-Linear Model:                                                                            | Log-Log Model:                                                                            |
 |              |                                                                                              |                                                                                           |
-|              | For every one unit increase in $X_i$, the expected $Y_i$ is multiplied by $e^{\hat\beta_1}$. | Multiplying $X_i$ by $e$ will multiply the expected value of $Y_i$ by $e^{\hat\beta_1}$.  |
+|              | For every one unit increase in $X_i$, the expected $Y_i$ is multiplied by $e^{\hat\beta_1}$. | Multiplying $X_i$ by $e$ will multiply the expected value of $Y_i$ by $e^{\hat\beta_1}$.x |
 +--------------+----------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Proof of Interpretations for Log Transformations
-
-Proof of Linear-Log Model:
-
-$$
-\begin{split}
-& \E(Y_i|X_i = x) = \beta_0 + \beta_1 \log x \\
-& \E(Y_i | X_i = e^A x) = \beta_0 + \beta_1 \log(e^A x) \\
-& = \beta_0 + \beta_1 (\log(e^A) + \log x) \\
-& = \beta_0 + \beta_1 (A + \log x) \\
-& = \beta_0 + \beta_1A + \beta_1 \log x
-\end{split}
-$$
-
-$$
-\begin{split}
-\E(Y_i|X_i = \alpha x) - \E(Y_i|X_i = x) & = \beta_0 + \beta_1 A + \beta_1 \log (x) - (\beta_0 + \beta_1 \log x) \\
-& = \beta_1 A
-\end{split}
-$$
-
--   When $A = 0.095$, then $e^A = 1.1$. Thus, a 1.1 times increase of $X_i$ results in a $0.095 \widehat{\beta_1}$ change in $Y_i$.
-
-<br />
-
-Proof of Log-Linear Model:
-
-$$
-\begin{split}
-\E(\log Y_i | X_i = x) =  \log Y_i & = \beta_0 + \beta_1 x \\
-Y_i & = e^{\beta_0 + \beta_1 x} \\
-Y_i & = e^{\beta_0}e^{\beta_1 x} \\
-\E(\log Y_i|X_i = x+1) = \log Y_i & = \beta_0 + \beta_1(x+1) \\
-Y_i & = e^{\beta_0 + \beta_1 + \beta_1 x} \\
-Y_i & = e^{\beta_0}e^{\beta_1}e^{\beta_1x}
-\end{split}
-$$
-
-$$
-\begin{split}
-\frac{\E(\log Y_i|X_i = x+1)}{\E(\log Y_i | X_i = x)} & = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1x}}{e^{\beta_0}e^{\beta_1x}} \\
-& = e^{\beta_1}
-\end{split}
-$$
-
--   Thus, when $X_i$ increases by one, there is a multiplicative increase of $e^{\beta_1}$ for $Y_i$.
-
-<br />
-
-Proof of Log-Log model:
-
-$$
-\begin{split}
-\E(\log Y_i | X_i = x) =  \log Y_i & = \beta_0 + \beta_1 \log x \\
-Y_i & = e^{\beta_0 + \beta_1 \log x} \\
-Y_i & = e^{\beta_0}e^{\beta_1 \log x} \\
-\E(\log Y_i|X_i = ex) = \log Y_i & = \beta_0 + \beta_1 \log (ex) \\
-Y_i & = e^{\beta_0 + \beta_1 \log e + \beta_1 \log x} \\
-Y_i & = e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}
-\end{split}
-$$
-
-$$
-\begin{split}
-\frac{\E(\log Y_i|X_i = ex)}{\E(\log Y_i | X_i = x)} & = \frac{e^{\beta_0}e^{\beta_1}e^{\beta_1 \log x}}{e^{\beta_0}e^{\beta_1 \log x}} \\
-& = e^{\beta_1}
-\end{split}
-$$
-
--   Thus, when $X_i$ is multiplied by $e$, there is a multiplicative increase of $e^{\beta_1}$ in $Y_i$.
 :::
 
 <br />

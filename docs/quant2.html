@@ -481,7 +481,7 @@ Y_{di} \text{ under current randomisation} &amp; = Y_{di} \text{ under all other
 <p>The Average Treatment Effect is defined as:</p>
 <p><span class="math display">\[
 \begin{split}
-\tau_{ATE} &amp; = E(Y_{1i} - Y_{0i}) \\
+\tau_{ATE} &amp; = \E(Y_{1i} - Y_{0i}) \\
 &amp; = \underbrace{\frac{1}{N} \sum\limits_{i=1}^N (Y_{1i} - Y_{0i})}_{\text{a formula for average}}
 \end{split}
 \]</span></p>
@@ -493,7 +493,7 @@ Y_{di} \text{ under current randomisation} &amp; = Y_{di} \text{ under all other
 <p>An alternative estimand to the ATE is the <strong>Average Treatment Effect on the Treated (ATT)</strong>:</p>
 <p><span class="math display">\[
 \begin{split}
-\tau_{ATT} &amp; = E(Y_{1i} - Y_{0i} \ | \ D_i = 1) \\
+\tau_{ATT} &amp; = \E(Y_{1i} - Y_{0i} \ | \ D_i = 1) \\
 &amp; = \underbrace{\frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i}) \quad  \text{where } N_1 = \sum\limits_{i=1}^ND_i}_{\text{a formula for the average only for treated units}}
 \end{split}
 \]</span></p>
@@ -508,7 +508,7 @@ Y_{di} \text{ under current randomisation} &amp; = Y_{di} \text{ under all other
 <h3 class="anchored" data-anchor-id="conditional-average-treatment-effect-cate">Conditional Average Treatment Effect (CATE)</h3>
 <p>The conditional average treatment effect is any treatment effect where there is a condition on a characteristic/covariate:</p>
 <p><span class="math display">\[
-\tau_{CATE}(x) = E(Y_{1i} - Y_{0i} \ | \ \underbrace{X_i = x)}_{\text{condition}}
+\tau_{CATE}(x) = \E(Y_{1i} - Y_{0i} \ | \ \underbrace{X_i = x)}_{\text{condition}}
 \]</span></p>
 <p>This is the causal effect of only variables who meet the condition of the covariate specified. For example, you could find the conditional average treatment effect of only women (so the covariate which we are conditioning on is <em>gender</em>). You can also condition on multiple covariates.</p>
 <p>This is often used for tailoring products/medicine/advertising to certain groups of people. It is also frequently used in identification strategies.</p>
@@ -524,15 +524,15 @@ Y_{di} \text{ under current randomisation} &amp; = Y_{di} \text{ under all other
 <h3 class="anchored" data-anchor-id="naive-estimator-and-selection-bias">Naive Estimator and Selection Bias</h3>
 <p>A natural way to estimate the ATE is to use a naive estimator: find the average difference of <u><strong>observed</strong></u> outcomes. This is called the naive estimator:</p>
 <p><span class="math display">\[
-\hat\tau_{naive} = \underbrace{E(Y_i|D_i = 1)}_{\text{for treated}} - \underbrace{E(Y_i|D_i = 0)}_{\text{for control}}
+\hat\tau_{naive} = \underbrace{\E(Y_i|D_i = 1)}_{\text{for treated}} - \underbrace{\E(Y_i|D_i = 0)}_{\text{for control}}
 \]</span></p>
 <p>However, there is an issue - we can show this with algebra:</p>
 <p><span class="math display">\[
 \begin{align}
-\hat\tau_{naive} &amp; = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
-&amp; = \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
-&amp; = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{0i}|D_i = 1) \color{red}{- E(Y_{0i}|D_i = 1)}}_{\because \text{ this equals 0, so we can add it}} \\
-&amp; = \underbrace{E(Y_{1i}|D_i = 1) \color{red}{- E(Y_{0i}|D_i = 1)}}_{\tau_{ATT}} + \underbrace{E(Y_{0i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
+\hat\tau_{naive} &amp; = \E(Y_i|D_i = 1) - \E(Y_i|D_i = 0) \\
+&amp; = \underbrace{\E(Y_{1i}|D_i = 1) - \E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
+&amp; = \E(Y_{1i}|D_i = 1) - \E(Y_{0i} | D_i = 0) + \underbrace{\E(Y_{0i}|D_i = 1) \color{red}{- \E(Y_{0i}|D_i = 1)}}_{\because \text{ this equals 0, so we can add it}} \\
+&amp; = \underbrace{\E(Y_{1i}|D_i = 1) \color{red}{- \E(Y_{0i}|D_i = 1)}}_{\tau_{ATT}} + \underbrace{\E(Y_{0i}|D_i = 1) - \E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
 \end{align}
 \]</span></p>
 <p>We can see that our naive estimator produces the <span class="math inline">\(\tau_{ATT}\)</span> <strong>plus</strong> an extra bit (called the selection bias). Thus, our naive estimator is <a href="./quant1.html#finite-sample-properties-of-estimators">biased</a>, so we should be careful about using this naive estimator (correlation does not equal causation).</p>
@@ -551,10 +551,10 @@ Naive Estimator Biased for ATU
 <p>The proof above shows how the naive estimator is a biased estimator for the <span class="math inline">\(\tau_{ATT}\)</span>. We can also prove it is a biased estimator of the ATU:</p>
 <p><span class="math display">\[
 \begin{split}
-\hat\tau_{naive} &amp; = E(Y_i|D_i = 1) - E(Y_i|D_i = 0) \\
-&amp; = \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
-&amp; = E(Y_{1i}|D_i = 1) - E(Y_{0i} | D_i = 0) + \underbrace{E(Y_{1i}|D_i = 0) - E(Y_{1i}|D_i = 0)}_{\because \text{ this equals 0, so we can add it}} \\
-&amp; = \underbrace{E(Y_{1i}|D_i = 0)- E(Y_{0i}|D_i = 0)}_{\tau_{ATU}} + \underbrace{E(Y_{1i}|D_i = 1) - E(Y_{1i} | D_i = 0)}_{\text{Selection Bias}} \\
+\hat\tau_{naive} &amp; = \E(Y_i|D_i = 1) - \E(Y_i|D_i = 0) \\
+&amp; = \underbrace{\E(Y_{1i}|D_i = 1) - \E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
+&amp; = \E(Y_{1i}|D_i = 1) - \E(Y_{0i} | D_i = 0) + \underbrace{\E(Y_{1i}|D_i = 0) - \E(Y_{1i}|D_i = 0)}_{\because \text{ this equals 0, so we can add it}} \\
+&amp; = \underbrace{\E(Y_{1i}|D_i = 0)- \E(Y_{0i}|D_i = 0)}_{\tau_{ATU}} + \underbrace{\E(Y_{1i}|D_i = 1) - \E(Y_{1i} | D_i = 0)}_{\text{Selection Bias}} \\
 \end{split}
 \]</span></p>
 </div>
@@ -576,36 +576,36 @@ Naive Estimator Biased for ATE
 <p>Let us first start with the ATE. Let us call <span class="math inline">\(Y_{1i} - Y_{0i} := \tau_i\)</span> for notation simplicity:</p>
 <p><span class="math display">\[
 \begin{align}
-\tau_{ATE} &amp; = E(Y_{1i} - Y_{0i})  = E(\tau_i)\\
-&amp; = \underbrace{E(\tau_i|D_i = 1)Pr(D_i = 1) + E(\tau_i|D_i = 0)Pr(D_i = 0)}_{\because \text{ weighted average of ATE and ATU by proportion}} \\
-&amp; = E(\tau_i|D_i = 1) \underbrace{(1 -Pr(D_i = 0))}_{\because \text{ complement prob.}} + E(\tau_i|D_i = 0)Pr(D_i = 0) \\
+\tau_{ATE} &amp; = \E(Y_{1i} - Y_{0i})  = \E(\tau_i)\\
+&amp; = \underbrace{\E(\tau_i|D_i = 1)\P(D_i = 1) + \E(\tau_i|D_i = 0)\P(D_i = 0)}_{\because \text{ weighted average of ATE and ATU by proportion}} \\
+&amp; = \E(\tau_i|D_i = 1) \underbrace{(1 -\P(D_i = 0))}_{\because \text{ complement prob.}} + \E(\tau_i|D_i = 0)\P(D_i = 0) \\
 \end{align}
 \]</span></p>
-<p>Let us call <span class="math inline">\(Pr(D_i = 0) := \pi\)</span> for notation simplicity. Now, continue:</p>
+<p>Let us call <span class="math inline">\(\P(D_i = 0) := \pi\)</span> for notation simplicity. Now, continue:</p>
 <p><span class="math display">\[
 \begin{split}
-&amp; = \underbrace{E(\Delta|D_i = 1) - \pi E(\Delta|D_i = 1)}_{\because \text{ distribute out}} + E(\tau_i|D_i = 0)\pi \\
-&amp; = E(\tau_i|D_i = 1) + \underbrace{\pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)]}_{\because \ \pi \text{ factored out }} \\
-&amp; = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 1) + \pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)] \\
+&amp; = \underbrace{\E(\Delta|D_i = 1) - \pi \E(\Delta|D_i = 1)}_{\because \text{ distribute out}} + \E(\tau_i|D_i = 0)\pi \\
+&amp; = \E(\tau_i|D_i = 1) + \underbrace{\pi[\E(\tau_i|D_i = 0) - \E(\tau_i|D_i = 1)]}_{\because \ \pi \text{ factored out }} \\
+&amp; = \E(Y_{1i} |D_i = 1) - \E(Y_{0i}|D_i = 1) + \pi[\E(\tau_i|D_i = 0) - \E(\tau_i|D_i = 1)] \\
 \end{split}
 \]</span></p>
-<p>Let us call the part <span class="math inline">\(\pi[E(\tau_i|D_i = 0) - E(\tau_i|D_i = 1)] := \Pi(\tau_i)\)</span>. Now, continue to simplify:</p>
+<p>Let us call the part <span class="math inline">\(\pi[\E(\tau_i|D_i = 0) - \E(\tau_i|D_i = 1)] := \Pi(\tau_i)\)</span>. Now, continue to simplify:</p>
 <p><span class="math display">\[
 \begin{split}
-&amp; = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 1) + \Pi(\tau_i) + \underbrace{E(Y_{1i} |D_i = 0) - E(Y_{0i}|D_i = 0)}_{\because \text{ these two cancel out so we add 0}}  \\
-&amp; = E(Y_{1i} |D_i = 1) - E(Y_{0i}|D_i = 0) + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-&amp; = \underbrace{E(Y_i|D_i = 1)}_{\because \text{ observed outcome}} - \underbrace{E(Y_i|D_i = 0)}_{\because \text{ observed outcome}} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-&amp; = \underbrace{E(Y_{i} |D_i = 1) - E(Y_{i}|D_i = 0)}_{\hat\tau_{naive}} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-&amp; = \hat\tau_{naive}+ E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i)
+&amp; = \E(Y_{1i} |D_i = 1) - \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) + \underbrace{\E(Y_{1i} |D_i = 0) - \E(Y_{0i}|D_i = 0)}_{\because \text{ these two cancel out so we add 0}}  \\
+&amp; = \E(Y_{1i} |D_i = 1) - \E(Y_{0i}|D_i = 0) + \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; = \underbrace{\E(Y_i|D_i = 1)}_{\because \text{ observed outcome}} - \underbrace{\E(Y_i|D_i = 0)}_{\because \text{ observed outcome}} + \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; = \underbrace{\E(Y_{i} |D_i = 1) - \E(Y_{i}|D_i = 0)}_{\hat\tau_{naive}} + \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; = \hat\tau_{naive}+ \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i)
 \end{split}
 \]</span></p>
 <p>Thus, we can see that <span class="math inline">\(\tau_{ATE}\)</span> is not equivalent to <span class="math inline">\(\hat\tau_{naive}\)</span>. Let us isolate <span class="math inline">\(\hat\tau_{naive}\)</span> to identify the selection bias.</p>
 <p><span class="math display">\[
 \begin{split}
-&amp; \tau_{ATE} = \hat\tau_{naive}+ E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-&amp; -\hat\tau_{naive} = -\tau{ATE} + E(Y_{1i} |D_i = 0)- E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-&amp; \hat\tau_{naive} = \tau_{ATE} - E(Y_{1i} |D_i = 0) + E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-&amp; \hat\tau_{naive} = \tau_{ATE} + \underbrace{E(Y_{0i}|D_i = 1)- E(Y_{1i} |D_i = 0) + \Pi(\tau_i)}_{\text{selection bias}}
+&amp; \tau_{ATE} = \hat\tau_{naive}+ \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; -\hat\tau_{naive} = -\tau{ATE} + \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; \hat\tau_{naive} = \tau_{ATE} - \E(Y_{1i} |D_i = 0) + \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
+&amp; \hat\tau_{naive} = \tau_{ATE} + \underbrace{\E(Y_{0i}|D_i = 1)- \E(Y_{1i} |D_i = 0) + \Pi(\tau_i)}_{\text{selection bias}}
 \end{split}
 \]</span></p>
 </div>
@@ -617,7 +617,7 @@ Naive Estimator Biased for ATE
 <h3 class="anchored" data-anchor-id="confounders">Confounders</h3>
 <p>Take the selection bias formula from above:</p>
 <p><span class="math display">\[
-\underbrace{E(Y_{0i}|D_i = 1)}_{Y_{0i}\text{ (treated)}} - \underbrace{E(Y_{0i} | D_i = 0)}_{Y_{0i}\text{ (control)}}
+\underbrace{\E(Y_{0i}|D_i = 1)}_{Y_{0i}\text{ (treated)}} - \underbrace{\E(Y_{0i} | D_i = 0)}_{Y_{0i}\text{ (control)}}
 \]</span></p>
 <p>If selection bias is non-zero, this essentially states that the expected potential outcome before treatment <span class="math inline">\(Y_{0i}\)</span> between the treatment and control groups is not equal.</p>
 <p>Or in other words, the treatment and control groups have some other variable causing differences even before treatment has begun. This implies that the differences between the treatment and control group may not be due to treatment <span class="math inline">\(D\)</span>, but due to the underlying differences before treatment even occurred.</p>
@@ -625,7 +625,7 @@ Naive Estimator Biased for ATE
 <p>This is why correlation does not equal causation - if the treatment and control group are different before we start the experiment, we cannot say the difference between the two is purely a result of treatment <span class="math inline">\(D\)</span>.</p>
 <p>We can also think about confounders in terms of <a href="./quant1.html#omitted-variable-bias">omitted variable bias</a>. The formula for omitted variable bias is:</p>
 <p><span class="math display">\[
-E(\hat{\beta}) = \beta + \eta \delta
+\E\hat{\beta} = \beta + \eta \delta
 \]</span></p>
 <p>Where <span class="math inline">\(\beta\)</span> are the true population parameters, <span class="math inline">\(\eta\)</span> is the relationship between the confounder and treatment, and <span class="math inline">\(\delta\)</span> is the relationship between confounder and outcome.</p>
 <p>We can see that if either <span class="math inline">\(\eta = 0\)</span> or <span class="math inline">\(\delta = 0\)</span>, then there is 0 omitted variable bias - which implies that a confounder that causes bias must be correlated with both the treatment and outcome.</p>
