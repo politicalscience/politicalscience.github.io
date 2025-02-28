@@ -1,0 +1,747 @@
+---
+title: "Factor Analysis Models"
+subtitle: "Further Statistical Methods, Quantitative Methods"
+sidebar: side
+---
+
+PCA, as we discussed in the last chapter, is essentially an *algorithm based* method of dimensional reduction. In this chapter, we will discuss Factor Analysis, a *model-based* method. These models specify some probability model that represents an approximation of the data-generating process, that allow us to model latent variables.
+
+Use the right sidebar for navigation. R-code provided at the bottom.
+
+------------------------------------------------------------------------
+
+# **Factor Analysis**
+
+### Factor Analysis Models
+
+Factor Analysis models are Latent Variable Models, with a few characteristics:
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Explanation of Latent Variables
+
+A latent variable is a variable that is not observed. Instead, we observe several variables that are **indicators** of the latent variable.
+
+A measurement model represents how the observed indicators measure the true concept of interest, the latent variable.
+
+![](images/clipboard-3108594497.png){fig-align="center" width="35%"}
+
+An example of latent variables is the measurement of personality traits.
+
+We can measure personality traits by asking survey respondents many different questions, and asking them to respond on a scale of 0-10 on each question.
+
+But, these answers to the questions are all measuring one latent variable - the personality.
+:::
+
+1.  All observed indicator variables (**items**) and latent variables (**factors**) are treated as continuous variables.
+2.  All distributions of the variables are specified as normal distributions.
+3.  All the observed variables (items) are treated as measures of latent variables.
+4.  The latent variables (factors) are on an equal footing with each other - associations between factors are represented with correlations.
+
+We can decide how many factors we need to properly measure the latent variables. We can assign predictions (factor scores) of the latent variable to create constructs of the latent variable to use in statistical analysis.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Factor Analysis
+
+Below is a model of a factor analysis with 2 factors that are correlated (double sided arrow).
+
+![](images/clipboard-1470139227.png){fig-align="center" width="70%"}
+:::
+
+<br />
+
+### Exploratory and Confirmatory Analysis
+
+There are two types of factor analysis: Exploratory factor analysis and confirmatory factor analysis.
+
+Exploratory factor analysis (**EFA**):
+
+-   We do not assume any number of factors, or what the factor pattern will look like.
+-   Our aim is to find the smallest number of interpretable factors needed to explain the correlations between the observed items.
+-   Models have minimum number of constraints on model parameters.
+
+Confirmatory factor analysis (**CFA**):
+
+-   Models have more than the minimum number of parameter constraints.
+-   Can be used to study how well hypothesized measurement models fit the data.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Exploratory Factor Analysis**
+
+### One-Factor Model Specification
+
+We denote the latent variable **factor** (common factor) with $\xi$. This latent variable is normally distributed with mean $k$ and variance $\phi$:
+
+$$
+\xi \sim \mathcal N(k, \phi)
+$$
+
+We denote our observed **indicator** variables (**items**) by $x_1, \dots, x_p$. Each item $x_i$ is related to the latent factor $\xi$ with a linear regression model:
+
+$$
+x_i = \tau_i + \lambda_i \xi + \delta_i
+$$
+
+$\lambda_i$ is the slope, also called the **factor loadings**, which determine the associations between $\xi$ and $x_i$. $\delta_i$ is the error term, called the **unique factors**.
+
+![](images/clipboard-3884145761.png){fig-align="center" width="60%"}
+
+<br />
+
+### Assumptions and Identification
+
+There are several assumptions that the exploratory factor analysis model makes:
+
+1.  Error terms $\delta_i$ for each regression model between $\xi$ and $x_i$ is normally distributed with a mean of 0: $\delta_i \sim \mathcal N(0, \theta_{ii})$.
+2.  Error terms $\delta_1, \dots, \delta_p$ are uncorrelated with each other. This implies that correlations between the $x_1, \dots, x_p$ are entirely explained by the factor. In other words, all $x_i$ are *conditionally independent* given $\xi$.
+3.  Factor $\xi$ is uncorrelated with the error terms $\delta_i$.
+
+We also generally fix $k$ and $\phi$ in $\xi \sim \mathcal N(k, \phi)$ such that $\xi$ is a standard normal distribution. This is due to a problem of unique identification:
+
+$$
+\xi \sim \mathcal N(k = 0, \ \phi = 1)
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Problem of Unique Identification
+
+Many different values of $k, \phi, \tau_i, \lambda_i$ can give the same observed means, variances, and covariances of the items $x_1, \dots, x_p$. Thus, we have many potential solutions to the problem, which means it is difficult to estimate.
+
+Thus, we need to fix $k$ and $\phi$ of $\xi \sim \mathcal N(k, \phi)$ by assumption. The standard assumption is $k = 0$ and $\phi =1$, so $\xi \sim \mathcal N(0, 1)$. This makes $\xi$ take a standard normal distribution.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Other Choices of Assumptions
+
+We can also, instead of assuming $k$ and $\phi$ in $\xi \sim \mathcal N(k, \phi)$, we can instead assume the size of $\tau_i$ and $\lambda_i$. This also allows for a unique identification of the model.
+
+The most common alternative assumption is to choose one item (generally $x_1$), and set $\tau_1 = 0$ and $\lambda = 1$. Since $x_1$ is normally distributed, this implies that $x_i \sim \mathcal N(k, \phi + \theta_{11})$.
+:::
+
+<br />
+
+### Estimation Process
+
+We know that our latent factor $\xi \sim \mathcal N(k, \phi)$. We know that $x_i$ is related to $\xi$ by $x_i = \tau_i + \lambda_i \xi + \delta_i$, a linear regression.
+
+Thus, the expected value/mean of $x_i$ is given by $E(x_i|\xi) = \tau_i + \lambda_i \xi$. Since $x_i$ is also assumed to be normally distributed, we can determine the distribution of each item $x_i$:
+
+$$
+x_i \sim \mathcal N(\tau_i + \lambda_i \xi, \ \lambda_i^2\phi +\theta_{ii})
+$$
+
+We can construct a theoretical covariance matrix of all the items $x_1, \dots x_p$, where the diagonals are the variances:
+
+$$
+\begin{pmatrix}
+\V(x_1) = \lambda_1^2\phi + \theta_{11} & Cov(x_1, x_2) = \lambda_1\phi\lambda_2 & \dots & Cov(x_1, x_p) = \lambda_1\phi\lambda_p \\
+Cov(x_2, x_1) = \lambda_2\phi\lambda_1 & \V(x_2) = \lambda_2^2 \phi + \theta_{22}& \dots & Cov(x_2, x_p) = \lambda_1\phi\lambda_p \\
+\dots & \dots & \ddots & \vdots \\
+Cov(x_p, x_1) = \lambda_p\phi\lambda_1 & Cov(x_p, x_2) = \lambda_p\phi\lambda_2 & \dots & \V(x_p) = \lambda_p^2 \phi + \theta_{pp}
+\end{pmatrix}
+$$
+
+If we fix $\xi \sim \mathcal N(0, 1)$, that implies $\phi = 1$. This allows us to simplify the above theoretical covariance matrix:
+
+$$
+\begin{pmatrix}
+\V(x_1) = \lambda_1^2 + \theta_{11} & Cov(x_1, x_2) = \lambda_1\lambda_2 & \dots & Cov(x_1, x_p) = \lambda_1\lambda_p \\
+Cov(x_2, x_1) = \lambda_2\lambda_1 & \V(x_2) = \lambda_2^2  + \theta_{22}& \dots & Cov(x_2, x_p) = \lambda_1\lambda_p \\
+\dots & \dots & \ddots & \vdots \\
+Cov(x_p, x_1) = \lambda_p\lambda_1 & Cov(x_p, x_2) = \lambda_p\lambda_2 & \dots & \V(x_p) = \lambda_p^2  + \theta_{pp}
+\end{pmatrix}
+$$
+
+The estimation process is to find the values of $\lambda_i$ and $\theta_{ii}$, that make the above hypothetical covariance matrix, as close as possible to our observed covariance matrix from our sample with $x_1, \dots, x_p$. This is generally done with maximum likelihood estimation.
+
+<br />
+
+### Interpretation of Factor Loadings
+
+Recall the relationship between each item $x_i$ and the latent factor $\xi$:
+
+$$
+x_i = \tau_i + \lambda_i \xi + \delta_i
+$$
+
+The estimated factor loading, $\widehat{\lambda_i}$, is the estimated covariance between the observed item $x_i$, and the latent factor $\xi$. If item $x_i$ has been standardised to a standard normal distribution, $\widehat{\lambda_i}$ is also the correlation between $x_i$ and $\xi$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Additional Note on Multiple Factors
+
+When there are two or more factors, these interpretations of $\widehat{\lambda_i}$ only hold if the multiple factors are uncorrelated.
+
+For correlated factors, the covariances and correlations between the factors are still dependent on $\widehat{\lambda_i}$, but they need to be calculated with an additional calculation.
+:::
+
+Interpretation of the latent factor $\xi$ is based on the items $x_i$ that have large (positive or negative) loadings $\widehat{\lambda_i}$ on the factor $\xi$. For example, take this example below:
+
+![](images/clipboard-2153557303.png){fig-align="center" width="60%"}
+
+We can see all the items are positively correlated with the factor. Thus, we could interpret the personality factor $\xi$ as a measure of status/power-oriented personality. We can see that *admire* and *success* carry larger weights (more important for the factor), while *rich* and *respect* carry less weight.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Rotation of Factors
+
+In a one-factor model, the direction of the factor $\xi$ is not identified, so it can be chosen freely.
+
+For example, we can change the sign of the values of the factors from $\xi$ to $-\xi$.
+
+Rotating the factors would simply inverse the signs of the loading from $\lambda_i$ to $-\lambda_i$.
+:::
+
+<br />
+
+### Communality and Reliability
+
+When we set our model such that $\xi \sim \mathcal N(0, 1)$, the model implies that the variances of $x_i$ is:
+
+$$
+\V(x_i) = \lambda_i^2 + \theta_{ii}
+$$
+
+$\lambda_i^2$ is the part of the variance of $x_i$ explained by the common factor $\xi$, known as the **communality** of $x_i$. $\theta_{ii}$ is the residual variance, also called the specific variance.
+
+$\theta_{ii}$ is the **unique variance** (or error variance), which is the the part of the variance in $x_i$ not explained by the factor $\xi$.
+
+The proportion $\lambda_i^2/ (\lambda_i^2 + \theta_{ii})$ is called the **reliability** $\rho_i$ of $x_i$. It is the $R^2$ of the measurement model for $x_i$ on $\xi$: the proportion of variance in $x_i$ that is explained by $\xi$.
+
+When all $x_i$ are standardised to have a variance $\V(x_i) = 1$, then the communality $\lambda_i^2$ is equal to the reliability: $\lambda_i^2 = 1 - \theta_{ii}$.
+
+The mean of all the communalities of each item $x_1, \dots, x_p$ is the proportion of total variance of all the items explained by the common factor $\xi$.
+
+<br />
+
+### Factor Scores
+
+Once we have estimated the factor analysis model, we can then use $x_1, \dots, x_k$ values for a individual, and predict their latent variable values $\xi$, called **factor scores**. These are calculated as a linear combination of the observed items:
+
+$$
+\tilde\xi = w_0 + w_1x_1 + w_2x+2 + \dots + w_px_p
+$$
+
+The coefficients $w_1, \dots w_p$ depend on the model parameters. Coefficients $w_i$ are highest for items $x_i$ which are the strongest measures of $\xi$ according to the model.
+
+$w_0$ is the intercept. $w_0 = 0$ if both $\xi$ has a mean of 0, and all $x_i$ are standardised (to a standard normal distribution $\mathcal N(0, 1)$) to have a mean of 0.
+
+These weights $w$ are determined by three different situations:
+
+1.  **Congeneric Measures**: This is when the communality $\lambda_i^2$ and unique variance $\theta_{ii}$ are differerent for different items $x_i$ and $x_k$. this indicates that the items measure the same factor, but on different scales, and with different amount of errors and reliabilities $\rho$.
+2.  **Tau-equivalent measures** are when the communality $\lambda_i^2$ are equivalent for different items $x_i$ and $x_k$, but unique variance $\theta_{ii}$ is different. That implies the items measure the same factor on the same scale, but with different amounts of error and reliability $\rho$.
+3.  **Parallel Measures** are when the communality $\lambda_i^2$ and unique variance $\theta_{ii}$ are equivalent for different items $x_1$ and $x_k$. These items measure the same factor, at the same scale, with the same amount of error.
+
+If items $x_i, x_k$ are parallel measures, they recieve equal weights $w_i = w_k$ in the calculation of factor scores for $\xi$.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Multiple Factor EFA**
+
+### Model Specification
+
+We can have a model with $q$ number of latent factors $\boldsymbol\xi = (\xi_1, \dots, \xi_q)$. The model for the distribution of vector $\boldsymbol\xi$ is:
+
+$$
+\boldsymbol\xi \sim \mathcal N(\boldsymbol k, \boldsymbol\Phi)
+$$
+
+-   Where $\boldsymbol k = (k_1, k_2, \dots, k_q)$.
+-   Where $\boldsymbol\Phi$ is a matrix with diagonal elements being variances $Var(\xi_j) = \phi_{jj}$, and other elements being covariances $Cov(\xi_j, \xi_k) = \phi_{jk}$.
+
+This implies that each latent factor $\xi_j$ is a standard normal distribution:
+
+$$
+\xi_j \sim \mathcal N(k_j, \phi_{jj})
+$$
+
+Now, the measurement model of how $x_i$ is related to each factor $\xi_j$ is as follows:
+
+$$
+x_i = \tau_i + \lambda_{i1} \xi_1 + \lambda_{i2} \xi_2 + \dots + \lambda_{iq} \xi_q + \delta_i
+$$
+
+The assumptions remain the same from the first model:
+
+1.  Error term $\delta_i$ is normally distributed with a mean of 0: $\delta_i \sim \mathcal N(0, \theta_{ii})$. The variance $\theta_{ii}$ depends on which factor $x_i$ we are using.
+2.  Error terms $\delta_{1j}, \dots, \delta_{pj}$ are uncorrelated with each other. This implies that correlations between the items, are entirely explained by the factor. In other words, all $x_i$ are *conditionally independent* given $\xi_j$.
+3.  All factors $\xi_j$ is uncorrelated with the error terms $\delta_i$.
+
+<br />
+
+### Model Identification
+
+For a given number of items $p$, you must have a sufficiently small number of factors $q$. Generally, the maximum amount of factors $q$ is given by:
+
+$$
+df = \frac{(p-q)^2 - (p+q)}{2} ≥ 0
+$$
+
+As in the 1-factor model, we need to specify the scales of the factors. The most conventional way is to set all means of all factors $\xi_j$ to 0, $k_j = 0$, and set all variances of all factors $\xi_j$ to 1, $\phi_{jj} = 1$. Thus, every factor will be defined as:
+
+$$
+\xi_j \sim \mathcal N(k_j = 0, \ \Phi_{jj} = 1)
+$$
+
+Fixing $\Phi_{jj} = 1$ means our variance-covariance matrix $\boldsymbol\Phi$ has diagonals of 1. However, the non-diagonal elements $Cov(\xi_j, \xi_k) = \phi_{jk}$ are not defined, so these covariances between factors are parameters that we need to estimate.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## The Heywood Case
+
+Even when the model is formally identified, the number of factors $q$ can be "too large".
+
+The Heywood Case is the name of an estimated variance of $x_i$, $\theta_{ii}$, which is 0 or even negative for some observed variable $x_i$.
+
+It is possible that this means that $x_i$ is a perfect measure of the factors $\xi_j$. However, it is far more likely that this indicates that the model has too many factors .
+
+The best way to deal with this is to fit the model with one fewer factor. You can also use a confirmatory factor analysis model which sets some loadings to 0.
+:::
+
+<br />
+
+### Factor Rotation
+
+Choosing the scale of the latent factors does not fully resolve their identification. This is because there are actually infinitely many rotations of our latent factors, that all produce the same fit.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Details on the Rotation Identification Issue
+
+Suppose we start with two factors, $\xi_1$ and $\xi_2$. Let us transform them to 2 new factors with some linear combinations with coefficients $a$:
+
+$$
+\begin{split}
+& \xi_1^* = a_{11}\xi_1 + a_{12}\xi_2 \\
+& \xi_2^* = a_{21} \xi_1 + a_{22} \xi_2
+\end{split}
+$$
+
+This transformation can be interpreted as a rotation (change in coordinate axes) of the space of these factors. Both pairs $(\xi_1, \xi_2)$ and $(\xi_1^*, \xi_2^*)$ both produce the exactly same fit for the observed items. Thus, this causes a unique identification issue.
+
+In fact, any choice of coefficients $a$ (there are infinitely many of them) will produce the same model fit.
+:::
+
+Generally, we choose the rotation based on the interpretability of the resulting factors. Interpretation is easiest when each factor has high loadings for some variables, and small (near 0) loadings for all the rest. This allows us to clearly identify what each factor is representing.
+
+**Orthogonal** factors (perpendicular to each other in vector space) imply that the factors are uncorrelated. However, some rotations can be **oblique** rotations, which allow the factors to be correlated.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Visualisation of Orthogonal and Oblique Rotations
+
+The below illustrates orthogonal and oblique rotations of factors:
+
+![](images/clipboard-249696322.png){fig-align="center" width="70%"}
+
+We can see that the obliquely rotated axes are not exactly perpendicular to each other.
+:::
+
+If the main goal of analysis is interpretation, we generally want to use an oblique rotation, as they are easier to interpret. This also shows if there are correlations between the factors.
+
+For data reduction purposes, the orthogonal rotation can be useful, as it avoids multicollinearity.
+
+<br />
+
+### Factor Interpretation
+
+Interpretation is very similar to the one-factor models.
+
+Interpretation of a factor $\xi$ is based on the items $x_i$ that have large (positive or negative) loadings $\widehat{\lambda_{ij}}$ on the factor $\xi$.
+
+When there are two or more factors, these interpretations of $\widehat{\lambda_{ij}}$ (which were the covariance between $x_i$ and $\xi_j$) only hold if the multiple factors are uncorrelated.
+
+For correlated factors, the covariances and correlations between the factors are still dependent on $\widehat{\lambda_i}$, but they are not exactly the value of $\widehat{\lambda_i}$.
+
+We can still calculate our factor scores as before.
+
+$$
+\tilde\xi_j = w_{0j} + w_{1j}x_1 + w_{2j}x+2 + \dots + w_{pj}x_p
+$$
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Confirmatory Factor Analysis**
+
+### Introduction
+
+Explanatory factor analysis allows us to learn from our data. However, we also make some arbitrary restrictions for indentification:
+
+1.  We rely on arbitrary guidelines/personal judgement to determine how many factors $\xi$ to include.
+2.  We rely on personal judgement to interpret factors by determining which loadings $\widehat{\lambda}_i$ are large and small.
+3.  We have to make arbitrary rotation decisions (oblique or orthogonal).
+
+Confirmatory Factor Analysis is a different approach. Instead of letting the data "speak for itself", CFA allows us to test our own theories that we already have about the relationships of indicators to factors.
+
+We can test theories about relationships between factors $\xi$ by constraining them according to our theory. For example, based on our theories, we might set some component loadings to zero, and sometimes, set measurement parameters for different items $x_i, x_k$ equal to each other.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example of Confirmatory Factor Analysis
+:::
+
+<br />
+
+### Model Specification
+
+The model specification of CFA is almost identical to multiple-factor EFA.
+
+Remember our factor analysis model, with observed items $x_1, \dots, x_p$, and latent factors $\xi_1, \dots, \xi_q$ is composed of a series of regressions between one item $x_i$ and all the factors $\xi_1, \dots, \xi_q$:
+
+$$
+x_i = \tau_i + \lambda_{i1} \xi_1 + \lambda_{i2} \xi_2 + \dots + \lambda_{iq} \xi_q + \delta_i  
+$$
+
+As with EFA, we assume that all latent factors $\boldsymbol\xi = \xi_1, \dots, \xi_q$ are normally distributed with means $\boldsymbol\kappa = \kappa_1, \dots, \kappa_q$ and variances $\boldsymbol\Phi = \phi_1, \dots \phi_q$:
+
+$$
+\boldsymbol\xi \sim \mathcal N(\boldsymbol\kappa, \boldsymbol\Phi)
+$$
+
+And as with EFA, the error terms $\delta_i$ are normally distributed $\delta_i \sim \mathcal N(0, \theta_{ii})$, and $\delta_i$ is uncorrelated with the $\xi_j$'s.
+
+The estimation process is identical to EFA estimation that was previously discussed.
+
+<br />
+
+### Rotation and Scales of Factors
+
+In EFA, all loadings $\lambda_{ij}$ (coefficients in the regression of $x_i$ on $\xi_1, \dots, \xi_q$) are non-zero, or the minimum number of 0's to fix a specific ration.
+
+In CFA, We can fix the factor rotation by setting enough 0 loadings (putting some $\lambda_i = 0$), based on theories on which factors might not have any influence on a certain indicator $x_i$.
+
+A 0 loading implies that that specific $\xi_j$ is not being measured by an observed item $x_i$ (since a coefficient of 0 implies no correlation between $x_i$ and $\xi_j$). Ideally, for CFA, we want a simple structure where each item $x_i$ has only one non-0 loading. This makes interpretation quite easy, as each item will only be measuring one factor.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Visualisation of the Ideal Structure
+
+Let us say we have 8 items, and 2 factors. The ideal structure of our loadings is that each of the 8 items only has one non-zero loading. Or in other words, each item is only measuring one of the two factors.
+
+Graphically, such a structure would be visualised as:
+
+![](images/clipboard-1917310441.png){fig-align="center" width="80%"}
+
+This makes interpretation of the factors much easier. Below are the factor loadings of this model in EFA and CFA:
+
+![](images/clipboard-183404437.png){fig-align="center" width="80%"}
+
+We can clearly see that the first factor is measuring some combination of rich, admire, success, and respect, while the second factor is measuring friend, equal, nature, and care.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Further Conditions for Identification
+
+If you want a simple structure where each item $x_i$ only has one non-zero loading, and you assume that errors $\delta_i$ are all uncorrelated with each other, you will need a certain factor-item ratio.
+
+-   For a 1-factor CFA model, you must have at least 3 observed items.
+-   For a model with 2 or more factors, you must have at least 2 items per factor.
+
+Further conditions exist for more specific cases. Generally, the computer software will give you a warning message when a model cannot be identified.
+:::
+
+In CFA, we can also fix the scales of individual factors through two ways:
+
+1.  We could, just like in EFA, assume that factors are standard normal distributions $\xi_j \sim \mathcal N(0,1)$. This option is the more common one, since it is simple.
+2.  Or, each factor $\xi_j$ can be standardised to have the same scale of one item $x_i$. This is done by choosing a $\xi_j$ to standardise to $x_i$, going into that $x_i$'s regression, and setting the coefficient of $\xi_j$, $\lambda_{ij} = 1$ in that $x_i$'s regression.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Model Selection**
+
+### Selection Choices in Factor Analysis
+
+For both exploratory and confirmatory factor analysis, we have choices to make.
+
+-   For exploratory factor analysis, we need to decide how many factors.
+-   For confirmator factor analysis, we need to decide the number of factors, and what parameter constraints to use (what components to set equal to 0).
+
+Generally, we judge models on a few set of criteria:
+
+1.  The **error variance** of each item, or **reliability** of each item. If the reliability is very low, we may not want to include it. We will show a few tests to determine this later.
+2.  **Interpretation**: once we have selected the number of factors, can those factors be interpreted?
+
+Generally, if we have any concerns with the above criteria, we will typically omit items with poor reliability, or just omit items such that the smaller number of interpretable factors fits the model better.
+
+There are a number of statistical tests and metrics to help us make these decisions.
+
+<br />
+
+### Global Goodness of Fit Test
+
+The estimation process of factor analysis involes finding parameters to estimate the covariance matrix $\boldsymbol\Sigma$. The likelihood ratio test compares the fit of two models, relating to how well the fit the covariance matrix $\boldsymbol\Sigma$ of the observed items $x_1, \dots, x_p$.
+
+For the global goodness of fit test, we want to estimate the "goodness" of one model we have fitted. The two models in the test are:
+
+1.  The **Saturated** "Full" Model $f$ , which reproduces the sample covariance matrix $\boldsymbol\Sigma$ perfectly, using $\frac{p(p+1)}{2}$ parameters.
+2.  Our **fitted model** $R$ (also called the restricted model), which produces a fitted covariance matrix $\hat{\boldsymbol\Sigma}$, using $\nu_r$ number of parameters. All the parameters used in the fitted model are also present in the saturated model (which means our fitted model is "nested" in the saturated model).
+
+The hypothesis of the test is:
+
+-   $H_0$: the fitted/restricted model $r$ is correct.
+-   $H_1$: the fitted/restricted model $r$ is incorrect.
+
+So unlike many other hypothesis tests, we actually do not want to reject the null hypothesis $H_0$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Details on the Global Goodness of Fit Test
+
+The test statistic is the likelihood ratio statistic:
+
+$$
+L^2 = 2(L-L_r)
+$$
+
+Where $L_r$ is the log-likelihood for the fitted/restricted model, and $L$ is the log-likelihood for the saturated/full model. Essentially, $L^2$ is comparing the difference between the sample covariance matrix $\boldsymbol\Sigma$ and our fitted covariance matrix $\hat{\boldsymbol\Sigma}$.
+
+The degrees of freedom of the test is the difference in number of parameters between the two models:
+
+$$
+\text{df} = \nu_f - \nu_r \ = \  \frac{p(p+1)}{2} - \nu_r
+$$
+
+Once we calculate the test-statistic $L^2$, we consult a $\chi^2$ distribution with the above degrees of freedom.
+
+If the p-value is small (p\<0.05), we reject $H_0$, and conclude that $\boldsymbol\Sigma$ and $\hat{\boldsymbol\Sigma}$ are not very similar, and the restricted fitted model is not a good fit of the data.
+
+If the p-value is not small (p\>0.05), we refuse to reject $H_0$, conclude that $\boldsymbol\Sigma$ and $\hat{\boldsymbol\Sigma}$ are similar, and the restricted fitted model is a good fit of the data.
+:::
+
+Own drawback of this goodness-of-fit test is that it is sensitive to sample size. That means the larger the sample size, the more likely the test rejects the restricted model, even if the differences between the two models is minimal.
+
+<br />
+
+### Global Fit Indicies
+
+As discussed above, the global goodness-of-fit test is sensitive to sample size. It also assumes we are testing against exact fit in the population, which may not make sense.
+
+There are some alternative **fit indicies** that address this limitation of the goodness-of-fit tests, that are more specialised. These statistics are often all reported alongside a factor analysis model, but are not too important to understand.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Root Mean Square Error of Approximation (RMSEA)
+
+RMSEA is a global goodness-of-fit metric that determines how well a fitted model does. The value is calculated as:
+
+$$
+\text{RMSEA} = \sqrt{\frac{T_m - \text{df}_m}{\text{df}_m(N-1)}}
+$$
+
+-   Where $T_m$ is the overal goodness of fit $\chi^2$ statistic of the implied model.
+-   Where $\text{df}_m$ is the corresponding degrees of freedom.
+-   Where $N$ is the sample size.
+
+A RMSEA of 0 is a perfect fit. Values smaller than 0.05 indicate close fit. Values greater than 0.1 indicate poor fit.
+
+-   Although these cutoffs can be questionable for smaller sample sizes (less than 100).
+
+We can conduct statistical hypothesis tests of $H_0 : RMSEA = 0.05$. This means the null hypothesis assumes a close fit - and if our null hypothesis is rejected, that means we have a poor fit (when doing a one tailed test towards higher values of RMSEA).
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Standard Root Mean Square Residual (SRMR)
+
+The standard root mean square residual is the average covariance residual of our estimates to the actual sample covariances.
+
+The smaller the value, the better the fit. Generally, values less tha 0.08 are indications of good fit.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Tucker and Lewis Index (TLI)
+
+The Tucker and Lewis Index compares our fitted model $m$ with some baseline model $b$. It is as follows:
+
+$$
+TLI = \frac{\frac{T_b}{df_b} - \frac{T_m}{df_m}}{T_b \ df_b - 1}
+$$
+
+-   Where $T_b$ and $T_m$ are the chi-squared statistics for the baseline model $b$ and the implied model $m$.
+-   $df$ are the degrees of freedom.
+
+Values less than 0.9 indicate poor fit. 1 indicates a very good fit. If you get a value over 1, that may indicate overfitting.
+
+This statistic does not differ too much with sample size.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Comparative Fit Index (CFI)
+
+The Comparative Fit Index compares our fitted model $m$ with some baseline model $b$. It is as follows:
+
+$$
+CFI = \frac{(T_b - df_b) - (T_m - df_m)}{T_b - df_b}
+$$
+
+-   Where $T_b$ and $T_m$ are the chi-squared statistics for the baseline model $b$ and the implied model $m$.
+-   $df$ are the degrees of freedom.
+
+The values are always between 0 and 1. Values closer to 1 indicate a good fit.
+
+This statistic does not differ too much with sample size.
+:::
+
+<br />
+
+### Nested Likelihood Ratio Test
+
+In the global goodness-of-fit test, we compared one fitted model to an "accurate" model.
+
+However, we can also compare two fitted models, just like the F-test in Linear Regression or Likelihood Ratio test in Logistic Regression.
+
+We will have two models that we fit: one is a smaller (restricted model) $M_0$, and one is the larger (less restricted model) $L_1$. Our hypotheses are:
+
+1.  Null hypothesis: $H_0 : M_0$.
+2.  Alternate Hypothesis: $H_1: M_1$.
+
+This essentially tests if the additional parameters in the larger model are statistically significant - i.e. are they worth including.
+
+-   For exploratory factor analysis, a larger model is a model with more factors. The test is to see if including an extra factor makes the model statistically significantly better.
+-   For confirmatory factor analysis, we can do the same tests as EFA. We can also test if setting additional loadings to 0 in the larger model is statistically significant.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Details on Likelihood Ratio Tests
+
+The test statistic is the likelihood ratio statistic:
+
+$$
+L^2 - 2(L_1- L_0)
+$$
+
+Where $L_r$ is the log-likelihood for the restricted model $M_0$, and $L$ is the log-likelihood for the less-restricted model $M_1$. Essentially, $L^2$ is comparing the difference between the fitted covariance matrices $\hat{\boldsymbol\Sigma}$ for both models.
+
+The degrees of freedom of the test is the difference in number of parameters between the two models:
+
+$$
+\text{df} = \nu_1 - \nu_0
+$$
+
+Once we calculate the test-statistic $L^2$, we consult a $\chi^2$ distribution with the above degrees of freedom.
+
+If the p-value is small (p\<0.05), we reject $H_0$, and conclude that $\boldsymbol\Sigma$ and $\hat{\boldsymbol\Sigma}$ are not very similar, and the larger model $M_1$ is the better model (and the additional parameters are statistically significant).
+
+If the p-value is not small (p\>0.05), we refuse to reject $H_0$, conclude that $\boldsymbol\Sigma$ and $\hat{\boldsymbol\Sigma}$ are similar, and the larger model $M_1$ is no better than the smaller model $M_0$ (and the additional parameters are not statistically significant.
+:::
+
+<br />
+
+### Tests of Single Coefficients
+
+You can also conduct singificance tests of individual parameter estimates. This is useful for CFA, if you want to determine if a loading should be 0 or not. The hypotheses are:
+
+1.  Null hypothesis: $H_0 : \lambda_i = 0$.
+2.  Alternate Hypothesis: $H_1 : \lambda_i ≠ 0$.
+
+The CFA software will produce standard errors for the parameter estimates. Using these standard errors, we can conduct $z$-tests (or Wald tests):
+
+$$
+z = \frac{\widehat{\lambda_i}}{se(\widehat{\lambda_i})}, \quad W = \left( \frac{\widehat{\lambda_i}}{se(\widehat{\lambda_i})} \right)^2
+$$
+
+For the $z$ test, you consult a standard normal distribution to find the p-values. For the wald test, consult a $\chi^2$ distribution with 1 degree of freedom.
+
+-   If p\<0.05, we can reject the null hypothesis, and conclude that $\lambda_i$ is not 0, and should not be set to 0 in our CFA.
+-   If p\>0.05, we cannot reject the null, so we cannot conclude that $\lambda_i$ is not 0, and thus, we can set it to 0 in our CFA.
+
+<br />
+
+### Information Criteria Statistics
+
+Information Criteria Statistics (the same as in Logistic regression) can be used to compare different models, and how good they fit the model.
+
+The two most common are:
+
+1.  **Akaike's Information Criterion**: $AIC = L^2 - 2df$, where $L^2$ is the likelihood ratio statistic of the fitted restricted model against the full/satruated model, and $df$ is the degrees of freedom.
+2.  **Bayesian Information Criterion**: $BIC = L^2 - \log(N) df$, where $N$ is the sample size.
+
+Smaller values indicates a better model. Generally, these values cannot be interpreted on their own - they need to be interpreted in relation to other models (comparison/ordinal, not cardinal). BIC rewards having fewer parameters more strongly than AIC.
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Implementation in R**
+
+For exploratory factor analysis, you will need the package *psych* and *GPArotation*:
+
+```{r, eval = FALSE}
+library(psych)
+library(GPArotation)
+```
+
+Before starting factor analysis, you want a dataset with only complete observations (no NA's) for the variables you are items for factor analysis:
+
+```{r, eval = FALSE}
+no_na <- apply(mydata, 1, FUN=function(x){all(!is.na(x))})
+mydata <- mydata[no_na,]
+```
+
+Also subset the data so that only the items you want to use are in the dataframe.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## EFA with One Factor
+
+We can use the *fa()* command to conduct factor analysis:
+
+```{r, eval = FALSE}
+fa_object <- fa(mydata, nfactors=1, fm="ml")
+print(fa_object)
+```
+
+The output provides
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## EFA with Two Factors
+
+We can use the *fa()* command to conduct factor anlaysis.
+
+For a non-rotated (orthogonal) rotation, the code is as follows:
+
+```{r, eval = FALSE}
+fa_object <- fa(mydata, nfactors=1, fm="ml", rotate = "none")
+print(fa_object)
+```
+
+For a oblique rotation, the code is as follows:
+
+```{r, eval = FALSE}
+fa_object <- fa(mydata, nfactors=1, fm="ml", rotate = "oblimin")
+print(fa_object)
+```
+
+The output provides a table of the loadings $\lambda_i$ for each item. ML1 represents the first factor $\xi_1$, and ML2 represents the second factor $\xi_2$, and so on...
+
+For the oblique rotation, there is also a table of correlations between all the factors $\xi_j$.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Factor Scores
+
+To calculate factor scores, we can extract them from the *fa_object* in which we stored our factor analysis.
+
+```{r, eval = FALSE}
+fa_object$scores
+```
+
+This will give you a table, with the rows being different units in the data, and the columns being different factor scores for each factor.
+
+If you are wanting to just view the scores, it is recommended to subset the data if you have too many observations:
+
+```{r, eval = FALSE}
+fa_object$scores[1:10,] #first 10 units
+```
+
+You can also subset the number of factors (although if you don't need extra factors, you would just specify less when estimating):
+
+```{r, eval = FALSE}
+pca_object$scores[,1:2] #first 2 factors
+```
+:::

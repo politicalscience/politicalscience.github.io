@@ -4,7 +4,7 @@ subtitle: "Chapter 1, Quantitative Methods"
 sidebar: side
 ---
 
-Before we start with causal inference or prediction, we need to understand the classical linear model, its mechanics, and how we can achieve unbiased estimates of relationships. This chapter discusses the classical linear models, the properties of the ordinary least squares estimator, statistical inference in a regression setting, and model selection.
+Before we start with causal inference, we need to understand relationships between variables (correlations). This chapter inroduces the **classical linear model**, its mechanics, and how we can achieve unbiased estimates of relationships. This chapter discusses the classical linear models, the properties of the ordinary least squares estimator, statistical inference in a regression setting, and model selection.
 
 Use the right sidebar for quick navigation. R-code is provided at the bottom.
 
@@ -26,7 +26,7 @@ $$
 Y_i = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i \ = \  \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} + \eps_i
 $$
 
-Where $\eps_i$ is the error term representing the variation in $Y_i$ that is not explained by the $p$ explanatory variables (either a missing variable in our model, or some random noise). This model implies for each observation/individual $i=1,\dots ,n$ in the population, with values $(y_i, x_{i1} \dots, x_{ip})$ has a regression equation:
+Where $\eps_i$ is the error term representing the variation in $Y_i$ that is not explained by the $p$ explanatory variables: either a missing variable in our model, or some random noise. This model implies for each observation/individual $i=1,\dots ,n$ in the population, with values $(y_i, x_{i1} \dots, x_{ip})$ has a regression equation:
 
 $$
 \begin{align}
@@ -52,7 +52,7 @@ Our goal is to estimate $\beta$ to get our estimates $\hat\beta$, which allows u
 
 ### Ordinary Least Squares Estimator {#ordinary-least-squares-estimator}
 
-To [estimate](stats.qmd#estimators-and-sampling-distributions) the population parameters $\beta_0, \dots, \beta_p$, we use our sample data, and try to find the values $\hat\beta_0, \dots, \hat\beta_p$ that **minimise the square sum of residuals** (SSR): $\sum(Y_i - \hat Y_i)^2$ .We will define the SSR as function $S$:
+To [estimate](stats.qmd#estimators-and-sampling-distributions) the population parameters $\beta_0, \dots, \beta_p$, we use our sample data and try to find the values $\hat\beta_0, \dots, \hat\beta_p$ that **minimise the square sum of residuals** (SSR): $\sum(Y_i - \hat Y_i)^2$ .We will define the SSR as function $S(\hat\beta)$:
 
 $$
 \begin{align}
@@ -80,12 +80,12 @@ $$
 \end{align}
 $$ {#eq-ols}
 
-Vector $\hat\beta$ is our coefficient estimates derived from OLS. With $\hat\beta$, we can calculate predictions of $y$ with $\hat y = X \hat\beta$.
+Vector $\hat\beta$ is our coefficient estimates derived from OLS. With $\hat\beta$, we can calculate **predictions** of $y$ with $\hat y = X \hat\beta$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Alternative Derivation for Simple Linear Regression
 
-Currently, we are deriving the first order conditions for multiple linear regression using linear algebra. For simple linear regression (with one explanatory variable), we can use summation notation. Recall our sum of squared residuals in summation form:
+For simple linear regression (with one explanatory variable), we can use summation notation instead of linear regression. Our SSR in summation form is:
 
 $$
 SSR = S(\hat\beta_0, \hat\beta_1)= \sum\limits_{i=1}^n(Y_i - \hat\beta_0 - \hat\beta_1X_i)^2
@@ -144,7 +144,7 @@ $$
 \end{split}
 $$
 
-And since anything multiplied to a zero turns into zero, we can ignore the $n$ in the first order condition. Thus, we can see, are the exact same minimisation conditions as the conditional expectation function. Thus, OLS is the best approximation of the CEF. This property is very useful for interpreting our regression results.
+And since anything multiplied to a zero turns into zero, we can ignore the $n$ in the first order condition. Thus, we can see, are the exact same minimisation conditions as the conditional expectation function.
 :::
 
 <br />
@@ -164,6 +164,12 @@ $$
 $$
 
 Matrix $\color{red}{P}$, called the **projection matrix**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{ y}$. Matrix $\color{purple}{M}$, called the **residual maker**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{\eps}$.
+
+Fitted values $\hat{y}$ are a linear combination of our explanatory variables. That implies our explanatory variable vectors $x_1, x_2, \dots, x_p$ span a [vector space](math.qmd#vector-spaces-and-matrix-rank) that includes our fitted values vector $\hat{y}$. Thus, what $\color{red}{ P}$ is doing is taking our original vector $y$, and projecting it into the space spanned by our $X$ (called the **column space**). In the figure below, our observed $y$ vector is being projected onto the blue plane spanned by $X$ to create our $\hat{y}$.
+
+![](images/clipboard-880030792.png){fig-align="center" width="45%"}
+
+Residual maker $\color{purple}{M}$ projects $y$ onto the space orthogonal to the column space of $X$ to get our residuals $\hat{\eps}$. We can see in the figure the residuals vector (notated $\mathbf e$ in the figure) is orthogonal/perpendicular to the space of $\mathbf X$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Matrix Properties of $P$ and $M$
@@ -190,14 +196,6 @@ P^\top M & = \color{blue}{P}\color{black}M && (\because \color{blue}{P^\top = P}
 $$
 :::
 
-Fitted values $\hat{y}$ are a linear combination of our explanatory variables $X$. By the definition of [vector spaces](math.qmd#vector-spaces-and-matrix-rank), that means our explanatory variable vectors $x_1, x_2, \dots, x_p$ span a space that includes our fitted values vector $\hat{y}$.
-
-So, what $\color{red}{ P}$ is doing is taking our original data vector $y$, and projecting it into the space spanned by our explanatory variables $X$ (called the **column space**). We can see in the figure below, our observed $y$ vector is being projected onto the blue plane spanned by $X$ to create our fitted values vector $\hat{y}$.
-
-![](images/clipboard-880030792.png){fig-align="center" width="50%"}
-
-Residual maker $\color{purple}{M}$ projects $y$ onto the space orthogonal to the column space of $X$ to get our residuals $\hat{\eps}$. We can see in the figure the residuals vector (notated $\mathbf e$ in the figure) is orthogonal/perpendicular to the space of $\mathbf X$.
-
 <br />
 
 <br />
@@ -214,7 +212,7 @@ $$
 y = X_1 \beta_1 + X_2 \beta_2 + \eps
 $$
 
-Recall our "residual maker" matrix $M$. First, note a unique property: $\color{red}{MX = 0}$. Now, let us define the residual making matrix for the second part of the regression $M_2$:
+Recall "[residual maker](#orthogonal-projection-of-ols)" matrix $M$. First, note a unique property: $\color{red}{MX = 0}$. Now, let us define the residual making matrix for the second part of the regression $M_2$:
 
 $$
 M_2 = I - X_2 (X_2^\top X_2)^{-1}X_2^\top
@@ -230,7 +228,7 @@ M_2 y & = M_2 X_1 \beta_1 + M_2 \eps && (\because M_2X_2 = 0, \ \because \color{
 \end{align}
 $$
 
-Now, let us denote $\tilde{y} := M_2 y$, $\tilde{X}_1: = M_2 X_1$, and error $\tilde\eps := M_2 \eps$. Then we get the following regression equation and OLS coefficient estimates:
+Now, let us define $\tilde{y} := M_2 y$, $\tilde{X}_1: = M_2 X_1$, and error $\tilde\eps := M_2 \eps$. Then we get the following regression equation and OLS coefficient estimates:
 
 $$
 \tilde y = \tilde X_1 \beta_1 + \tilde\eps
@@ -242,7 +240,7 @@ $$
 
 Remember that vector $\hat{\beta}_1$ is our coefficient estimates for $X_1$, the portion of $X$ we are interested in. This is equivalent to the coefficient estimates had we not partitioned the model.
 
-Notice how in the formula, we have $\tilde{X}_1$. What is $\tilde{X}_1 := M_2 X_1$? Well, we know that $M_2 X_2 = 0$. That tells us that any part of $X_1$ that was correlated to $X_2$ also became 0. [Thus, $\tilde{X}_1$ is the part of $X_1$ that is uncorrelated with $X_2$.]{.underline} Essentially, we are **partialling out** the effect of other variables. [This is why we can "control" for other variables when focusing on the coefficient of one (or a few) variables]{.underline}.
+Notice how in the formula, we have $\tilde{X}_1 := M_2 X_1$. We know that $M_2 X_2 = 0$. That tells us that any part of $X_1$ that was correlated to $X_2$ also became 0. [Thus, $\tilde{X}_1$ is the part of $X_1$ that is uncorrelated with $X_2$.]{.underline} Essentially, we are **partialling out** the effect of other variables. [This is why we can "control" for other variables when conducting multiple regression.]{.underline}
 
 <br />
 
@@ -252,13 +250,11 @@ Above, we showed OLS coefficients partial out (control) for the other control va
 
 I assume here that $Y_i$ is continuous. For interpretations for non-linear $Y_i$, see the [linear probability model](#linear-probability-model) section below. For categorical $X_{ij}$, see the [categorical explanatory variables](#categorical-explanatory-variables) section.
 
-+---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|               |                                                                                                                                                     |                                                                                                                                                              |
+|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |               | **Continuous** $X_{ij}$                                                                                                                             | **Binary** $X_{ij}$                                                                                                                                          |
-+---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_j$ | For every one unit increase in $X_{ij}$, there is an expected $\hat\beta_j$ unit change in $Y_i$, holding all other explanatory variables constant. | There is a $\hat\beta_j$ unit difference in $Y_i$ between category $X_{ij} = 1$ and category $X_{ij} = 0$, holding all other explanatory variables constant. |
-+---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_0$ | When all explanatory variables equal 0, the expected value of $Y_i$ is $\hat\beta_0$.                                                               | For category $X_{ij} = 0$, the expected value of $Y_i$ is $\hat\beta_0$ (when all other explanatory variables equal 0).                                      |
-+---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Note: these interpretations are not causal effects, just correlations. We also have not discussed if the actual estimates of $\hat\beta_j$ are reliable (which will be covered in the classical least squares theory below).
 
@@ -282,14 +278,6 @@ $$
 $$
 :::
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Binary $Y_i$: Linear Probability Model
-
-+----------------------------+
-|                            |
-+----------------------------+
-:::
-
 <br />
 
 ### Goodness of Fit with R-Squared {#goodness-of-fit-with-r-squared}
@@ -302,13 +290,13 @@ $$
 \end{align}
 $$
 
-One thing we might be interested in is how well our model $Py$ explains the actual $y$. One way we can do this is the scalar product: the scalar product $y^\top Py$ describes the shadow the actual $y$ casts on our projected model. However, this value will change based on the scale of our $y$ variable. Thus, we will divide it by $y^\top y$, which is the "maximum" shadow possible (perfect shadow). This ratio is called $R^2$.
+We are interested in is how well our model $Py$ explains the actual $y$. The [scalar product](math.qmd#vector-algebra) $y^\top Py$ describes the shadow the actual $y$ casts on our projected model. We can divide it by $y^\top y$, which is the "maximum" shadow possible (perfect shadow) to create a value between 0 and 1. This ratio is $R^2$.
 
 $$
 R^2 = \frac{y^\top Py}{y^\top y}
 $$
 
-We can also reason about $R^2$ in a another way. The total amount of variation in $y$ is called the total sum of squares (SST). The part of $y$ we cannot explain is the Sum of Squared Residuals (SSR) that we minimised for OLS esimtation. That implies that the remaining part SST-SSR is the variation in $y$ that our model explains, called the sum of explained squares (SSE). $R^2$ can be though of the ratio of explained variation in $y$ by our model to the total variation in $y$:
+The total amount of variation in $y$ is called the total sum of squares (SST). The part of $y$ we cannot explain is the SSR that we minimised for OLS esimtation. That implies that the remaining part SST-SSR is the variation in $y$ that our model explains, called the sum of explained squares (SSE). $R^2$ can be though of the ratio of explained variation in $y$ by our model to the total variation in $y$:
 
 $$
 R^2 = \frac{SSE}{SST} = \frac{SST - SSR}{SST} = 1 - \frac{SSR}{SST} = 1 - \frac{\sum (Y_i - \hat Y_i)^2}{\sum(Y_i - \bar Y)^2}
@@ -325,8 +313,6 @@ R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained 
 # **Classical Least Squares Theory**
 
 ### The Classical Assumptions {#the-classical-assumptions}
-
-The classical linear model has several assumptions:
 
 1\) **Linearity in Parameters**. This means that the linear model must be able to be written in the form $y = X\beta + \eps$. This [does not mean the best-fit line must be linear]{.underline} (as we will explore later).
 
@@ -365,9 +351,7 @@ An easy way to identify homoscedasticity is to look at a residual plot (just the
 
 Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of $X_i$.
 
-The heteroscedasticity (when homoscedasticity is violated) residuals have a clear pattern - the up-down variance is smaller when $X_i$ is smaller, and the up-down variance is larger when $X_i$ is larger.
-
-Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.
+The heteroscedasticity (when homoscedasticity is violated) residuals have a clear pattern - the up-down variance is smaller when $X_i$ is smaller, and the up-down variance is larger when $X_i$ is larger. Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.
 :::
 
 <br />
@@ -403,7 +387,7 @@ $$
 \end{align}
 $$
 
-Thus, OLS is unbiased under the 4 conditions above. This is extremely desirable, as in causal inference (which is the purpose of this course), we will want unbiased estimators that can accurately find the causal effects of one variable on another. In fact, most of the methods we cover in later chpaters will be about trying to satisfy these conditions.
+Thus, OLS is unbiased under the 4 conditions above. This is extremely desirable, as in causal inference (which is a major goal in the social sciences), we will want unbiased estimators that can accurately find the causal effects of one variable on another. In fact, most of the methods we cover in later chapters will be about trying to satisfy these conditions.
 
 <br />
 
@@ -509,7 +493,7 @@ Since $\sigma^2 CM C^\top$ is positive semi-definite (I will not prove this, but
 
 ### Asymptotic Consistency of OLS
 
-We know OLS is unbiased under the first 4 [classical assumptions](#the-classical-assumptions): linearity, i.i.d., no perfect multiocllinearity, and zero-conditional mean. OLS is also an [asymptotically consistent estimator](stats.qmd#asymptotic-properties-of-estimators) of $\beta_j$ under the first 3 classical assumptions, and one weakened version of the zero-conditional mean.
+We know OLS is unbiased under the first 4 [classical assumptions](#the-classical-assumptions): linearity, i.i.d., no perfect multicollinearity, and zero-conditional mean. OLS is also an [asymptotically consistent estimator](stats.qmd#asymptotic-properties-of-estimators) of $\beta_j$ under the first 3 classical assumptions, and one weakened version of the zero-conditional mean.
 
 For asymptotic consistency, we replace zero-conditional mean with **zero-mean and exogeneity**: $\E(\eps_i) = 0$, and $Cov(x_i, \eps_i) = 0$, which implies $E(X_i \eps_i) = 0$. This means that no regressor should be correlated with $\eps$. This is weaker than Zero-Conditional mean, since it means a function of regressors can be correlated with $\eps_i$.
 
@@ -526,7 +510,7 @@ $$
 $$
 :::
 
-Let us start of where we left of from @eq-simplify. Using vector notation, [law of large numbers](stats.qmd#asymptotically-consistent-estimators), and zero-mean and exogeneity condition:
+Let us start of where we left of from @eq-simplify. Using vector notation, we can simplify:
 
 $$
 \begin{align}
@@ -535,6 +519,8 @@ $$
 & = \beta + \left( \frac{1}{n}\sum\limits_{i=1}^n x_i x_i^\top \right)^{-1} \left( \frac{1}{n} \sum\limits_{i=1}^n x_i \eps_i \right) && (\left(\frac{1}{n}\right)^{-1}, \frac{1}{n} \text{ cancel out})
 \end{align}
 $$
+
+Now, we apply probability limits to both sides, and then use the law of large numbers and zero-conditional mean and exogeniety condition to simplify:
 
 $$
 \begin{align}
@@ -562,7 +548,7 @@ $$
 \end{pmatrix}
 $$
 
-What are the implications of heteroscedasticity? First, heteroscedasticity [**does not** bias OLS]{.underline}, as the unbiasedness proof only relies on the first 4 classical assumptions. Second, heteroscedasticity means OLS is [no longer BLUE]{.underline} - i.e. there exists are more efficient unbiased linear estimator (the generalised least squares estimator).
+What are the implications of heteroscedasticity? First, heteroscedasticity [**does not** bias OLS]{.underline}, as the unbiasedness proof only relies on the first 4 classical assumptions. Second, heteroscedasticity means OLS is [no longer BLUE]{.underline} - i.e. there exists are more efficient unbiased linear estimator (the generalised least squares estimator, which we will not cover since it is rarely used).
 
 Third, and most relevant to us, is that the OLS variance formula (and standard errors) are no longer valid. Instead, we have to use the Huber-White Standard Errors (also called **robust standard errors**). This is because if we recall from @eq-var, we originally simplified this equation using the homoscedasticity assumption. Instead, for robust standard errors, we start from @eq-var, and plug in our error covariance matrix $\Omega$ from above:
 
@@ -587,10 +573,9 @@ The other assumption of spherical errors, autocorrelation, is a common problem i
 
 ### Normality and Standard Errors
 
-We need to know the form of the $\hat\beta$ sampling distribution. We have two options here:
+We need to know the form of the $\hat\beta$ sampling distribution for statistical tests. If our sample size is sufficiently large, we can invoke the central limit theorem, which says that the sampling distribution of $\hat\beta$ is approximately normal if our sample size $n$ is large enough.
 
-1.  If our sample size is sufficiently large, we can invoke the central limit theorem, which says that the sampling distribution of $\hat\beta$ is approximately normal if our sample size $n$ is large enough.
-2.  Or, we can impose a condition of normality of the error terms: $\eps | X \sim \mathcal N(0, \sigma^2 I)$. This will ensure the sampling distribution of $\hat\beta$ is normally distributed. (Note, the mean 0 and variance $\sigma^2 I$ come from the [classical assumptions](#the-classical-assumptions) of zero-conditional mean and spherical errors).
+Or, we can impose a condition of normality of the error terms: $\eps | X \sim \mathcal N(0, \sigma^2 I)$. This will ensure the sampling distribution of $\hat\beta$ is normally distributed. (Note, the mean 0 and variance $\sigma^2 I$ come from the [classical assumptions](#the-classical-assumptions) of zero-conditional mean and spherical errors). However, this condition is very restrictive, so we typically rely on the reliable central limit theorem.
 
 Now, we will need the standard error of the sampling distribution. We know the standard error is the square root of the variance of the sampling distribution, which we [derived](#variance-of-the-ols-estimator) (assuming the classical assumptions are met) as:
 
@@ -684,8 +669,6 @@ We then consult a F-distribution with $k_a - k_0$ and $n-k_a - 1$ degrees of fre
 
 ### Omitted Variable Bias
 
-From the [regression anatomy theorem](#regression-anatomy-and-controlling), we know that $\hat\beta_j$ is the relationship of $Y_i$ and the part of $X_{ij}$ that is uncorrelated with all the other explanatory variables. That implies that if we omit a variable that is correlated with both $X_{ij}$ and $Y_i$, that we will get a different (biased) coefficient estimate. This is called **omitted variable bias**.
-
 Suppose there is some variable $Z_i$ that we have not included in a "short" regression. The actual, "true" regression of the population, would include this confounder $Z_i$
 
 $$
@@ -693,18 +676,16 @@ $$
  \qquad \underbrace{y = X\beta + z\delta + \eps}_{\text{true regression with z} }
 $$
 
-The [OLS estimate](#ordinary-least-squares-estimator) of the "short regression" excluding confounder $Z_i$ is:
+We can find the expected value of the [OLS estimate](#ordinary-least-squares-estimator) of the "short regression" excluding confounder $Z_i$:
 
 $$
 \begin{align}
 \hat\beta & = (X^\top X)^{-1}X^\top y \\
 & = (X^\top X)^{-1}X^\top(\color{blue}{X\beta + z\delta + \eps}\color{black}) && (\because \color{blue}{y = X\beta + z\delta + \eps}\color{black}) \\
 & = \underbrace{(X^\top X)^{-1}X^\top X}_{= \ I}\beta + (X^\top X)^{-1}X^\top z\delta + (X^\top X)^{-1} X^\top \eps && \text{(multiply out)} \\
-& = \beta + (X^\top X)^{-1}X^\top z\delta + (X^\top X)^{-1} X^\top \eps
+& = \beta + (X^\top X)^{-1}X^\top z\delta + (X^\top X)^{-1} X^\top \eps \\
 \end{align}
 $$
-
-Now, let us find the expected value of $\hat\beta$, which is conditional on $X, z$, and simplify (using [zero conditional mean](#the-classical-assumptions)):
 
 $$
 \begin{align}
@@ -713,13 +694,7 @@ $$
 \end{align}
 $$
 
-Now, what if we had a regression of outcome variable being the confounder $z$, on the explanatory variables $X$, such that $z = X\eta + u$. Our OLS estimate would have the solution:
-
-$$
-\hat\eta = (X^\top X)^{-1} X^\top z
-$$
-
-Now, we can plug $\hat\eta$ into our expected value of $\hat\beta$. Assume our estimator $\hat{\eta}$ is unbiased:
+Now, imagine a regression of outcome variable being the confounder $z$, on the explanatory variables $X$, such that $z = X\eta + u$. Our OLS estimate would of $\eta$ would be $\hat\eta = (X^\top X)^{-1} X^\top z$. Now, we can plug $\hat\eta$ into our expected value of $\hat\beta$. Assume our estimator $\hat{\eta}$ is unbiased:
 
 $$
 \begin{align}
@@ -732,7 +707,7 @@ $$
 \end{align}
 $$
 
-Thus, we can see by not including confounder $z$ in our "short regression", the estimator is now biased by $\hat\eta \delta$. In the next chapter when we start discussing causality, we will see omitted confounders as a huge issue in our estimation.
+Thus, we can see by not including confounder $z$ in our "short regression", the estimator is now **biased** by $\hat\eta \delta$. In later chapters when we start discussing causality, we will see omitted confounders as a huge issue in our estimation.
 
 <br />
 
@@ -808,7 +783,7 @@ The coefficient interpretations become a little more complex with logarithms:
 
 <br />
 
-### Categorical Explanatory Variables
+### Categorical Explanatory Variables {#categorical-explanatory-variables}
 
 Take an explanatory variable $X_i$, which has $g$ number of categories $1, \dots, g$. To include $X_i$ in our regression, we would create $g-1$ dummy (binary) variables, to create the following regression model:
 
@@ -831,7 +806,7 @@ One type of categorical explanatory variable is a fixed effect. This is done in 
 
 <br />
 
-### Linear Probability Model
+### Linear Probability Model {#linear-probability-model}
 
 The standard linear model assumes a continuous $Y_i$ variable. However, we can adapt the linear model to fit binary $Y_i$ variables. When $Y_i$ is binary and only has values $Y_i \in \{0, 1\}$, our linear model is actually no longer a predictor of $Y_i$, since our regression will output values that are not 0 and 1.
 
@@ -852,15 +827,13 @@ $$
 
 Our interpretations of coefficients also slightly change.
 
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                     |                                                                                                                                                                                                                          |                                                                                                                                                                                                                                  |
+|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |                     | **Continuous** $X_{ij}$                                                                                                                                                                                                  | **Binary** $X_{ij}$                                                                                                                                                                                                              |
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_j$       | For every one unit increase in $X_{ij}$, there is an expected $\hat\beta_j \times 100$ percentage point change in the probability of a unit being in category $Y_i=1$, holding all other explanatory variables constant. | There is a $\hat\beta_j\times 100$ percentage point difference in the probability of a unit being in category $Y_i=1$ between category $X_{ij} = 1$ and category $X_{ij} = 0$, holding all other explanatory variables constant. |
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_0 \times 100$                                                                                         | For category $X_{ij} = 0$, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_j \times 100$ (when all other explanatory variables equal 0).                                                              |
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-The main downside to the lienar probability model relates to prediction - i.e. $\P(Y-i = 1|X_i)$ as a probability should be restricted between 0 and 1, however, the linear model does not guarantee this restriction. Further models such as the logistic or probit models deal with this issue.
+The main downside to the linear probability model relates to prediction - i.e. $\P(Y-i = 1|X_i)$ as a probability should be restricted between 0 and 1, however, the linear model does not guarantee this restriction. We will introduce methods to deal with this in the next chapter.
 
 <br />
 
