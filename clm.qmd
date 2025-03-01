@@ -10,17 +10,23 @@ Use the right sidebar for quick navigation. R-code is provided at the bottom.
 
 ------------------------------------------------------------------------
 
-# **The Linear Model**
+# **The Classical Model**
 
 ### Model Specification
 
 There is some random outcome variable $Y_i$, and $p$ explanatory variables $X_{i1}, X_{i2}, \dots, X_{ip}$. The population linear model is specified as a [conditional expectation function](stats.qmd#conditional-distributions):
 
 $$
-\E(Y_i|X_i) = \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} \quad \iff \quad  \E(Y_i|X_i) = x_i^\top\beta, \quad x_i = \begin{pmatrix} 1 \\ X_{i1} \\ \vdots \\ X_{ip}\end{pmatrix}, \ \beta = \begin{pmatrix} \beta_0 \\ \beta_{1} \\ \vdots \\ \beta_{p}\end{pmatrix}
+\E(Y_i|X_i) = \beta_0 + \beta_1X_{i1} + \dots + \beta_p X_{ip} \ \equiv \ \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij}
 $$
 
-Where vector $\beta$ are population parameters to be estimated. We can also specify for each observation of $Y_i$:
+Where vector $\beta$ are population parameters to be estimated. We can rewrite this with vectors $x_i$ and $\beta$:
+
+$$
+ \E(Y_i|X_i) = x_i^\top\beta, \quad x_i = \begin{pmatrix} 1 \\ X_{i1} \\ \vdots \\ X_{ip}\end{pmatrix}, \ \beta = \begin{pmatrix} \beta_0 \\ \beta_{1} \\ \vdots \\ \beta_{p}\end{pmatrix}
+$$
+
+Instead of $\E(Y_i|X_i)$, We can also specify for each observation of $Y_i$:
 
 $$
 \begin{align}
@@ -28,18 +34,7 @@ Y_i = \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} + \eps_i \quad  \iff \quad Y_i
 \end{align}
 $$
 
-Where $\eps_i$ is the error term representing the variation in $Y_i$ that is not explained by the $p$ explanatory variables: either a missing variable in our model, or some random noise. This model implies for each observation/individual $i=1,\dots ,n$ in the population, with values $(y_i, x_{i1} \dots, x_{ip})$ has a regression equation:
-
-$$
-\begin{align}
-y_1 = & \ \beta_0 + \beta_1x_{11} + \dots + \beta_px_{1p} + \eps_1 \\
-y_2 = & \ \beta_0 + \beta_1x_{21} + \dots + \beta_px_{2p} + \eps_2 \\
-& \qquad \vdots \qquad \qquad \vdots \\
-y_n = & \ \beta_0 + \beta_1x_{n1} + \dots + \beta_px_{np} + \eps_n
-\end{align}
-$$
-
-We can write this system of regression equations in linear algebra form:
+Where $\eps_i$ is the error term representing the variation in $Y_i$ that is not explained by the $p$ explanatory variables: either a missing variable in our model, or some random noise. This model implies for each observation/individual $i=1,\dots ,n$ in the population, with values $(y_i, x_{i1} \dots, x_{ip})$ has their own regression equation. We can write this system of $n$ regression equations in linear algebra form:
 
 $$
 y = X\beta + \eps \quad \iff \quad \begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix}  =
@@ -48,7 +43,51 @@ y = X\beta + \eps \quad \iff \quad \begin{pmatrix}y_1 \\ y_2 \\ \vdots \\ y_n\en
 + \begin{pmatrix}\eps_1 \\ \eps_2 \\ \vdots \\ \eps_n\end{pmatrix}
 $$
 
-Our goal is to estimate $\beta$ to get our estimates $\hat\beta$, which allows us to create predicted fitted-values model $\hat y = X\hat\beta$.
+Our goal is to estimate $\beta$ to get our estimates $\hat\beta$, which allows us to interpret the relationships between $X$ and $y$, as well as create predictions of $y$ with fitted values $\hat y = X\hat\beta$.
+
+<br />
+
+### The Classical Assumptions {#the-classical-assumptions}
+
+The classical model above has several "classical" assumptions that are normally assumed to be met:
+
+1\) **Linearity in Parameters**. The linear model must be able to be written in the form $y = X\beta + \eps$. This [does not mean the best-fit line must be linear]{.underline} (as we will explore later).
+
+2\) **Independent and Identically Distributed (i.i.d.)**. Any two observations $i$ and $j$ are sampled from the same random variable distribution with the same probabilities.
+
+3\) **No Perfect Multicolinearity**. No explanatory variables $X_{i1}, \dots, X_{ip}$ are perfectly correlated, i.e. can be written as an exact linear combination of other explanatory variables in the model.
+
+4\) **Zero Conditional Mean** $\E(\eps|X) = 0$. This can be broken down into two parts. First, $\E(\eps) = 0$: This is always met since if it is not 0, you can adjust $\beta_0$ until it is 0. Second, $\E(X^\top \eps) = 0$. This means that all regressors $X_{ij}$, and any combination of regressors, should be uncorrelated with the error term $\eps$.
+
+5\) **Spherical Errors**. This is an assumption made on the variance-covariance matrix of the error terms $\eps_i$:
+
+$$
+\underbrace{\V(\eps|X)}_{\mathrm{cov. \ matrix}} = \begin{pmatrix}
+\V\eps_1 & cov(\eps_1, \eps_2) & cov(\eps_1, \eps_3) & \dots \\
+cov(\eps_2, \eps_1) & \V\eps_2 & cov(\eps_2, \eps_3) & \dots \\
+cov(\eps_3, \eps_1) & cov(\eps_3, \eps_2) & \V\eps_3 & \vdots \\
+\vdots & \vdots & \dots & \ddots
+\end{pmatrix} = \sigma^2 I_n = \begin{pmatrix}
+\sigma^2 & 0 & \dots & 0 \\
+0 & \sigma^2 & \dots & 0 \\
+\vdots & \vdots & \ddots & 0 \\
+0 & 0 & \dots & \sigma^2
+\end{pmatrix}
+$$ {#eq-homo}
+
+This assumption can also be broken into two parts. **No** **Autocorrelation** means all error terms are uncorrelated $cov(\eps_i, \eps_j) = 0$, and is a result of the earlier i.d.d. assumption. Second, **Homoscedasticity** says that all the variances of each error term $\V(\eps_i)$ is constant at some value $\sigma^2$, which implies $X$ has no impact on the variance of $\eps_i$. If homoscedasticity is violated, we have heteroscedasticity.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Visualising Homoscedasticity
+
+An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all $\hat\eps_i$):
+
+![](images/clipboard-1713529842.png){fig-align="center" width="90%"}
+
+Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of $X_i$.
+
+The heteroscedasticity (when homoscedasticity is violated) residuals have a clear pattern - the up-down variance is smaller when $X_i$ is smaller, and the up-down variance is larger when $X_i$ is larger. Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.
+:::
 
 <br />
 
@@ -71,7 +110,7 @@ $$
 \frac{\partial S(\hat\beta)}{\partial \hat\beta} = -2 X^\top y + 2 X^\top X \hat\beta = 0
 $$
 
-When assuming $X^\top X$ is invertable (which is true if $X$ is full rank), we can isolate $\hat\beta$ to find the solution to OLS:
+When assuming $X^\top X$ is invertable (which is true if the [no perfect multicollinearity](#the-classical-assumptions) classical assumption is met), we can isolate $\hat\beta$ to find the solution to OLS:
 
 $$
 \begin{align}
@@ -82,7 +121,11 @@ $$
 \end{align}
 $$ {#eq-ols}
 
-Vector $\hat\beta$ is our coefficient estimates derived from OLS. With $\hat\beta$, we can calculate **predictions** of $y$ with $\hat y = X \hat\beta$.
+Vector $\hat\beta$ is our parameter estimates. With $\hat\beta$, we now have our "fitted" model:
+
+$$
+\hat y = X\hat\beta  \ \equiv \ X(X^\top X)^{-1}X^\top y
+$$
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Alternative Derivation for Simple Linear Regression
@@ -115,7 +158,7 @@ $$
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Proof OLS Estimates are Equal with $Y_i$ and $\E(Y_i|X_i)$
 
-Before, we specified the linear model in terms of both $Y_i$ and the conditional expectation function $\E(Y_i|X_i)$. However, I only derived OLS estimates in respect to $Y_i$. For those interested, this is proof the OLS estimates of both are equivalent.
+Before, we specified the linear model in terms of both $Y_i$ and the conditional expectation function $\E(Y_i|X_i)$. However, I only derived OLS estimates in respect to $Y_i$.
 
 Best-approximation of a conditional expectation function is defined by the lowest mean-squared error (MSE). Let us prove OLS on $Y_i$ gets the same $\beta_0, \dots, \beta_p$ as the best linear approximation of $\E(Y_i|X_i)$. Take this very simple CEF and its MSE:
 
@@ -153,12 +196,11 @@ And since anything multiplied to a zero turns into zero, we can ignore the $n$ i
 
 ### Orthogonal Projection of OLS {#orthogonal-projection-of-ols}
 
-We can use the OLS solution from @eq-ols to get our fitted values $\hat{y}$ and residuals $\hat\eps$:
+We can use the OLS solution from @eq-ols to get our fitted model $\hat{y}$ and residuals $\hat\eps$:
 
 $$
 \begin{align}
-\hat y & = X\hat\beta = X \color{blue}{(X^\top X)^{-1}X^\top y} && \color{black}(\because \color{blue}{\hat\beta = (X^\top X)^{-1}X^\top y} \color{black}) \\
-& = \color{red}{P}\color{black}y && (\because \color{red}{P:= X(X^\top X)^{-1}X^\top}) \\
+\hat y &  = X (X^\top X)^{-1}X^\top y  = \color{red}{P}\color{black}y && (\because \color{red}{P:= X(X^\top X)^{-1}X^\top}) \\
 & \\
 \hat\eps & = y - \hat y  = y - \color{blue}{Py} && \color{black}( \because \color{blue}{\hat y = Py}\color{black}) \\
 & = (I-P)y && (\text{factor out y}) \\
@@ -166,11 +208,7 @@ $$
 \end{align}
 $$
 
-Matrix $\color{red}{P}$, called the **projection matrix**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{ y}$. Matrix $\color{purple}{M}$, called the **residual maker**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{\eps}$. Fitted values $\hat{y}$ are a linear combination of explanatory variable vectors $x_1, x_2, \dots, x_p$, and thus $\hat y$ is in the [vector space](math.qmd#vector-spaces-and-matrix-rank) spanned by $X$. Projection matrix $\color{red}{ P}$ projects $y$ into $\hat y$ which is in the space spanned by our $X$ (called the **column space**):
-
-![](images/clipboard-880030792.png){fig-align="center" width="45%"}
-
-Residual maker $\color{purple}{M}$ projects $y$ onto the space orthogonal to the column space of $X$ to get our residuals $\hat{\eps}$. We can see in the figure the residuals vector (notated $\mathbf e$ in the figure) is orthogonal/perpendicular to the space of $\mathbf X$.
+Matrix $\color{red}{P}$, called the **projection matrix**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{ y}$. Matrix $\color{purple}{M}$, called the **residual maker**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{\eps}$. Both matrices are symmetric and idempotent (explanation in info box).
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Matrix Properties of $P$ and $M$
@@ -197,15 +235,41 @@ P^\top M & = \color{blue}{P}\color{black}M && (\because \color{blue}{P^\top = P}
 $$
 :::
 
-<br />
+Fitted values $\hat{y}$ are a linear combination of explanatory variable vectors $x_1, x_2, \dots, x_p$, and thus $\hat y$ is in the [vector space](math.qmd#vector-spaces-and-matrix-rank) spanned by $X$. Projection matrix $\color{red}{ P}$ projects $y$ into $\hat y$ which is in the space spanned by our $X$ (called the **column space**):
+
+![](images/clipboard-880030792.png){fig-align="center" width="45%"}
+
+Residual maker $\color{purple}{M}$ projects $y$ onto the space orthogonal to the column space of $X$ to get our residuals $\hat{\eps}$. We can see in the figure the residuals vector (notated $\mathbf e$ in the figure) is orthogonal/perpendicular to the space of $\mathbf X$.
 
 <br />
 
-------------------------------------------------------------------------
+### Goodness of Fit with R-Squared {#goodness-of-fit-with-r-squared}
 
-# **Interpreting the Model**
+Recall our fitted values equation, shown [previously](#orthogonal-projection-of-ols), can be rewritten with the projection matrix $P$:
 
-### Regression Anatomy and Controlling {#regression-anatomy-and-controlling}
+$$
+\begin{align}
+\hat y = X(X^\top X)^{-1} X^\top y \ = \ \color{blue}{P}\color{black}y && (\because \color{blue}{P := X(X^\top X)^{-1} X^\top})
+\end{align}
+$$
+
+We are interested in is how well our model $Py$ explains the actual $y$. The [scalar product](math.qmd#vector-algebra) $y^\top Py$ describes the shadow the actual $y$ casts on our projected model. We can divide it by $y^\top y$, which is the "maximum" shadow possible (perfect shadow) to create a value between 0 and 1. This ratio is $R^2$.
+
+$$
+R^2 = \frac{y^\top Py}{y^\top y}
+$$
+
+The total amount of variation in $y$ is called the total sum of squares (SST). The part of $y$ we cannot explain is the SSR that we minimised for OLS esimtation. That implies that the remaining part SST-SSR is the variation in $y$ that our model explains, called the sum of explained squares (SSE). $R^2$ can be though of the ratio of explained variation in $y$ by our model to the total variation in $y$:
+
+$$
+R^2 = \frac{SSE}{SST} = \frac{SST - SSR}{SST} = 1 - \frac{SSR}{SST} = 1 - \frac{\sum (Y_i - \hat Y_i)^2}{\sum(Y_i - \bar Y)^2}
+$$
+
+R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained by our explanatory variables. R-Squared is always between 0 and 1 (0%-100%). Higher values indicate our model better explains the variation in $y$.
+
+<br />
+
+### Regression Anatomy {#regression-anatomy-and-controlling}
 
 We can split up matrix $X$ into two matrices - $X_1$ containing the regressors we care about, and $X_2$ containing regressors we do not care about. Vector $\beta$ will be split in the same way. Our partitioned model is:
 
@@ -251,13 +315,11 @@ Above, we showed OLS coefficients partial out (control) for the other control va
 
 I assume here that $Y_i$ is continuous. For interpretations for non-linear $Y_i$, see the [linear probability model](#linear-probability-model) section below. For categorical $X_{ij}$, see the [categorical explanatory variables](#categorical-explanatory-variables) section.
 
-+---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|               |                                                                                                                                                     |                                                                                                                                                              |
+|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |               | **Continuous** $X_{ij}$                                                                                                                             | **Binary** $X_{ij}$                                                                                                                                          |
-+---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_j$ | For every one unit increase in $X_{ij}$, there is an expected $\hat\beta_j$ unit change in $Y_i$, holding all other explanatory variables constant. | There is a $\hat\beta_j$ unit difference in $Y_i$ between category $X_{ij} = 1$ and category $X_{ij} = 0$, holding all other explanatory variables constant. |
-+---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_0$ | When all explanatory variables equal 0, the expected value of $Y_i$ is $\hat\beta_0$.                                                               | For category $X_{ij} = 0$, the expected value of $Y_i$ is $\hat\beta_0$ (when all other explanatory variables equal 0).                                      |
-+---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Note: these interpretations are not causal effects, just correlations. We also have not discussed if the actual estimates of $\hat\beta_j$ are reliable (which will be covered in the classical least squares theory below).
 
@@ -283,79 +345,11 @@ $$
 
 <br />
 
-### Goodness of Fit with R-Squared {#goodness-of-fit-with-r-squared}
-
-Recall our fitted values equation, shown [previously](#orthogonal-projection-of-ols), can be rewritten with the projection matrix $P$:
-
-$$
-\begin{align}
-\hat y = X(X^\top X)^{-1} X^\top y \ = \ \color{blue}{P}\color{black}y && (\because \color{blue}{P := X(X^\top X)^{-1} X^\top})
-\end{align}
-$$
-
-We are interested in is how well our model $Py$ explains the actual $y$. The [scalar product](math.qmd#vector-algebra) $y^\top Py$ describes the shadow the actual $y$ casts on our projected model. We can divide it by $y^\top y$, which is the "maximum" shadow possible (perfect shadow) to create a value between 0 and 1. This ratio is $R^2$.
-
-$$
-R^2 = \frac{y^\top Py}{y^\top y}
-$$
-
-The total amount of variation in $y$ is called the total sum of squares (SST). The part of $y$ we cannot explain is the SSR that we minimised for OLS esimtation. That implies that the remaining part SST-SSR is the variation in $y$ that our model explains, called the sum of explained squares (SSE). $R^2$ can be though of the ratio of explained variation in $y$ by our model to the total variation in $y$:
-
-$$
-R^2 = \frac{SSE}{SST} = \frac{SST - SSR}{SST} = 1 - \frac{SSR}{SST} = 1 - \frac{\sum (Y_i - \hat Y_i)^2}{\sum(Y_i - \bar Y)^2}
-$$
-
-R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained by our explanatory variables. R-Squared is always between 0 and 1 (0%-100%). Higher values indicate our model better explains the variation in $y$.
-
-<br />
-
 <br />
 
 ------------------------------------------------------------------------
 
-# **Classical Least Squares Theory**
-
-### The Classical Assumptions {#the-classical-assumptions}
-
-1\) **Linearity in Parameters**. The linear model must be able to be written in the form $y = X\beta + \eps$. This [does not mean the best-fit line must be linear]{.underline} (as we will explore later).
-
-2\) **Independent and Identically Distributed (i.i.d.)**. Any two observations $i$ and $j$ are sampled from the same random variable distribution with the same probabilities.
-
-3\) **No Perfect Multicolinearity**. No explanatory variables $X_{i1}, \dots, X_{ip}$ can be written as an exact linear combination of other explanatory variables in the model. This is needed for inverting $X^\top X$ in the OLS solution.
-
-4\) **Zero Conditional Mean** $\E(\eps|X) = 0$. This can be broken down into two parts. First, $\E(\eps) = 0$: This is always met since if it is not 0, you can adjust $\beta_0$ until it is 0. Second, $\E(X^\top \eps) = 0$. This means that all regressors $X_{ij}$, and any combination of regressors, should be uncorrelated with the error term $\eps$.
-
-5\) **Spherical Errors**. This is an assumption made on the variance-covariance matrix of the error terms $\eps_i$:
-
-$$
-\underbrace{\V(\eps|X)}_{\mathrm{cov. \ matrix}} = \begin{pmatrix}
-\V\eps_1 & cov(\eps_1, \eps_2) & cov(\eps_1, \eps_3) & \dots \\
-cov(\eps_2, \eps_1) & \V\eps_2 & cov(\eps_2, \eps_3) & \dots \\
-cov(\eps_3, \eps_1) & cov(\eps_3, \eps_2) & \V\eps_3 & \vdots \\
-\vdots & \vdots & \dots & \ddots
-\end{pmatrix} = \sigma^2 I_n = \begin{pmatrix}
-\sigma^2 & 0 & \dots & 0 \\
-0 & \sigma^2 & \dots & 0 \\
-\vdots & \vdots & \ddots & 0 \\
-0 & 0 & \dots & \sigma^2
-\end{pmatrix}
-$$ {#eq-homo}
-
-This assumption can also be broken into two parts. **No** **Autocorrelation** means all error terms are uncorrelated $cov(\eps_i, \eps_j) = 0$, and is a result of the earlier i.d.d. assumption. Second, **Homoscedasticity** says that all the variances of each error term $\V(\eps_i)$ is constant at some value $\sigma^2$, which implies $X$ has no impact on the variance of $\eps_i$. If homoscedasticity is violated but 'no autocorrleation' is still met, we have heteroscedasticity.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Visualising Homoscedasticity
-
-An easy way to identify homoscedasticity is to look at a residual plot (just the plot of all $\hat\eps_i$):
-
-![](images/clipboard-1713529842.png){fig-align="center" width="90%"}
-
-Notice how the homoscedasticity residuals seem to have the same up-down variance, no matter the value of $X_i$.
-
-The heteroscedasticity (when homoscedasticity is violated) residuals have a clear pattern - the up-down variance is smaller when $X_i$ is smaller, and the up-down variance is larger when $X_i$ is larger. Essentially, if you see a pattern in the residual plot, it is likely heteroscedasticity.
-:::
-
-<br />
+# **Least Squares Theory**
 
 ### Unbiasedness of OLS {#ols-as-an-unbiased-estimator}
 
@@ -490,8 +484,8 @@ $$
 \begin{align}
 \V(\tilde\beta | X) & = \V(Cy|X) \\
 & = \V(C(\color{blue}{X\beta + \eps}\color{black})|X) && (\because \color{blue}{y = X\beta + \eps}\color{black}) \\
-& = \V(\underbrace{CX}_{= I}\beta + C\eps | X) && \text{(multiply out)} \\
-& = \V(\beta + C\eps | X) \\
+& = \V(CX\beta + C\eps | X) && \text{(multiply out)} \\
+& = \V(\beta + C\eps | X)  && (\because CX = I)\\
 & = C \V(\eps | X) C^\top && \text{(using lemma)} \\
 & = C \color{blue}{\sigma^2 I_n} \color{black} C^\top && (\mathrm{homoscedasticity} \ \color{blue}{\V(\eps|X) = \sigma^2 I_n}\color{black}) \\
 & = \sigma^2 CC^\top && \text{(rearrange and simplify)}
@@ -510,7 +504,15 @@ $$
 \end{align}
 $$
 
-Since $\sigma^2 CM C^\top$ is positive semi-definite (I will not prove this, but it is provable with the properties of $M$ introduced earlier), we know that $V(\tilde{\beta}| X) > V(\hat{\beta}| X)$. Thus, OLS is BLUE under the Gauss-Markov Theorem.
+We know $\sigma^2>0$ (variance of error term). Let us show $CMC^\top$ is positive semi-definite. We know that $M$ is positive semi-definite if $z^\top Mz ≥ 0$ for every vector $z$, and $M$ is [symmetric and idempotent](#orthogonal-projection-of-ols)
+
+$$
+\begin{align}
+z^\top CMC^\top z = \underbrace{z^\top CM}_{w^\top} \underbrace{M^\top C^\top z}_{w} = w^\top w = \sum\limits_{i=1}^n w_i^2 ≥0
+\end{align}
+$$
+
+Thus, $\sigma^2 CMC^\top$ is positive, thus $\V(\tilde{\beta}| X) > \V(\hat{\beta}| X)$, thus OLS is BLUE.
 
 <br />
 
@@ -652,7 +654,7 @@ The central limit theorem states that as sample size $n$ approaches infinity, th
 More importantly for us, it states that as $n$ increases, our $w_n$ becomes closer and closer to $\mathcal N (0, 1)$, which means we can say with large enough samples, our sampling distribution is [approximately]{.underline} normal.
 :::
 
-Now, we will need the standard error (std. devation) of the sampling distribution. We know the standard error is the square root of the variance of the sampling distribution, which we [derived](#variance-of-the-ols-estimator) (assuming the classical assumptions are met) as:
+We need the standard error (std. devation) of the sampling distribution. We know the standard error is the square root of the variance of the sampling distribution, which we [derived](#variance-of-the-ols-estimator) (under the classical assumptions) as:
 
 $$
 \V(\hat\beta | X) = \sigma^2 (X^\top X)^{-1}
@@ -666,13 +668,13 @@ $$
 
 While this estimator is unbiased, the estimator $s^2$ has variance. The implication of this is that we can no longer use the standard normal distribution for our sampling distribution, and instead, use the t-distribution, which has fatter tails and a lower peak to account for this variance in $s^2$.
 
-If we believe **heteroscedasticity is violated** (which we assume by default), we should use the [heteroscedasticity variance](#weakening-spherical-errors) of OLS:
+If we believe **heteroscedasticity is violated** (which we assume by default), we should use the [heteroscedasticity variance](#weakening-spherical-errors) of OLS that we derived:
 
 $$
 \V(\hat{\beta}| X)  = (X^\top X)^{-1} X^\top \Omega\color{black} X ( X^\top X)^{-1}
 $$
 
-The $\sigma^2_i$ in the $\Omega$ matrix can be estimated with $s_i^2 = \hat\eps_i^2$. The robust standard errors can be derived by taking the square root. [We typically use robust-standard errors in causal inference by default, unless we can prove homoscedasticity.]{.underline}
+The $\sigma^2_i$ in the $\Omega$ matrix can be estimated with $s_i^2 = \hat\eps_i^2$. The robust standard errors are the square root. [We typically use robust-standard errors in causal inference by default, unless we can prove homoscedasticity.]{.underline}
 
 <br />
 
@@ -696,7 +698,7 @@ Now, we consult a t-distribution of $n-k-1$ degrees of freedom. We find points $
 The area highlighted, divided by the entire area under the curve, is the p-value. The p-value we get is the probability of getting a test statistic equally or more extreme than the one we got, given the null hypothesis is true.
 
 -   If $p<0.05$, we believe the probability of a null hypothesis is low enough, such that we reject the null hypothesis (that there is no relationship between $X_{ij}$ and $Y_i$), and conclude our alternate hypothesis (that there is a relationship between $X_{ij}$ and $Y_i$).
--   If $p > 0.05$, we cannot reject the null hypothesis, and cannot reject there is no relationship between $X_{ij}$ and $Y_i$.
+-   If $p > 0.05$, we cannot reject the null hypothesis, and cannot reject there is no relationship.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Confidence Intervals
@@ -902,13 +904,11 @@ $$
 
 Our interpretations of coefficients also slightly change.
 
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                     |                                                                                                                                                                                                                          |                                                                                                                                                                                                                                  |
+|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |                     | **Continuous** $X_{ij}$                                                                                                                                                                                                  | **Binary** $X_{ij}$                                                                                                                                                                                                              |
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_j$       | For every one unit increase in $X_{ij}$, there is an expected $\hat\beta_j \times 100$ percentage point change in the probability of a unit being in category $Y_i=1$, holding all other explanatory variables constant. | There is a $\hat\beta_j\times 100$ percentage point difference in the probability of a unit being in category $Y_i=1$ between category $X_{ij} = 1$ and category $X_{ij} = 0$, holding all other explanatory variables constant. |
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_0 \times 100$                                                                                         | For category $X_{ij} = 0$, the expected probability of a unit being in category $Y_i=1$ is $\hat\beta_j \times 100$ (when all other explanatory variables equal 0).                                                              |
-+---------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 The main downside to the linear probability model relates to prediction - i.e. $\P(Y-i = 1|X_i)$ as a probability should be restricted between 0 and 1, however, the linear model does not guarantee this restriction. We will introduce methods to deal with this in the next chapter.
 

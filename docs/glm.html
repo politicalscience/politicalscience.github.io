@@ -257,18 +257,15 @@ window.Quarto = {
     <h2 id="toc-title">On This Page</h2>
    
   <ul>
-  <li><a href="#generalised-linear-model" id="toc-generalised-linear-model" class="nav-link active" data-scroll-target="#generalised-linear-model"><strong>Generalised Linear Model</strong></a>
+  <li><a href="#glms-and-maximum-likelihood" id="toc-glms-and-maximum-likelihood" class="nav-link active" data-scroll-target="#glms-and-maximum-likelihood"><strong>GLMs and Maximum Likelihood</strong></a>
   <ul class="collapse">
-  <li><a href="#limitations-of-the-classical-model" id="toc-limitations-of-the-classical-model" class="nav-link" data-scroll-target="#limitations-of-the-classical-model">Limitations of the Classical Model</a></li>
   <li><a href="#the-generalised-linear-model" id="toc-the-generalised-linear-model" class="nav-link" data-scroll-target="#the-generalised-linear-model">The Generalised Linear Model</a></li>
-  </ul></li>
-  <li><a href="#maximum-likelihood-estimator" id="toc-maximum-likelihood-estimator" class="nav-link" data-scroll-target="#maximum-likelihood-estimator"><strong>Maximum Likelihood Estimator</strong></a>
-  <ul class="collapse">
-  <li><a href="#likelihood-function" id="toc-likelihood-function" class="nav-link" data-scroll-target="#likelihood-function">Likelihood Function</a></li>
-  <li><a href="#log-likelihood-and-score-functions" id="toc-log-likelihood-and-score-functions" class="nav-link" data-scroll-target="#log-likelihood-and-score-functions">Log-Likelihood and Score Functions</a></li>
-  <li><a href="#gradient-descent-algorithms" id="toc-gradient-descent-algorithms" class="nav-link" data-scroll-target="#gradient-descent-algorithms">Gradient Descent Algorithms</a></li>
-  <li><a href="#properties-of-the-mle" id="toc-properties-of-the-mle" class="nav-link" data-scroll-target="#properties-of-the-mle">Properties of the MLE</a></li>
+  <li><a href="#maximum-likelihood-estimation" id="toc-maximum-likelihood-estimation" class="nav-link" data-scroll-target="#maximum-likelihood-estimation">Maximum Likelihood Estimation</a></li>
+  <li><a href="#score-function-and-expectation" id="toc-score-function-and-expectation" class="nav-link" data-scroll-target="#score-function-and-expectation">Score Function and Expectation</a></li>
+  <li><a href="#information-matrix-and-variance" id="toc-information-matrix-and-variance" class="nav-link" data-scroll-target="#information-matrix-and-variance">Information Matrix and Variance</a></li>
+  <li><a href="#asymptotic-properties-of-mle" id="toc-asymptotic-properties-of-mle" class="nav-link" data-scroll-target="#asymptotic-properties-of-mle">Asymptotic Properties of MLE</a></li>
   <li><a href="#ols-as-a-maximum-likelihood-estimator" id="toc-ols-as-a-maximum-likelihood-estimator" class="nav-link" data-scroll-target="#ols-as-a-maximum-likelihood-estimator">OLS as a Maximum Likelihood Estimator</a></li>
+  <li><a href="#newton-raphson-algorithm" id="toc-newton-raphson-algorithm" class="nav-link" data-scroll-target="#newton-raphson-algorithm">Newton-Raphson Algorithm</a></li>
   <li><a href="#information-criterion-statistics" id="toc-information-criterion-statistics" class="nav-link" data-scroll-target="#information-criterion-statistics">Information Criterion Statistics</a></li>
   </ul></li>
   <li><a href="#logistic-regression-model" id="toc-logistic-regression-model" class="nav-link" data-scroll-target="#logistic-regression-model"><strong>Logistic Regression Model</strong></a>
@@ -299,7 +296,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">The Generalised Linear Model</h1>
-<p class="subtitle lead">Chapter 1, Quantitative Methods</p>
+<p class="subtitle lead">Chapter 2, Quantitative Methods</p>
 </div>
 
 
@@ -319,26 +316,16 @@ window.Quarto = {
 <p>In the last chapter, we discussed the classical linear model. However, the classical linear model has a few limitations, which are addressed by the generalised linear model (GLM). In this chapter, we explore the generalised linear model, including logistic and negative binomial regression, and the maximum likelihood estimator used to estimate GLMs.</p>
 <p>Use the right sidebar for quick navigation. R-code is provided at the bottom.</p>
 <hr>
-<section id="generalised-linear-model" class="level1">
-<h1><strong>Generalised Linear Model</strong></h1>
-<section id="limitations-of-the-classical-model" class="level3">
-<h3 class="anchored" data-anchor-id="limitations-of-the-classical-model">Limitations of the Classical Model</h3>
-<p>Consider the <a href="./clm.html#linear-probability-model">linear probability model</a> introduced at the end of last chapter:</p>
+<section id="glms-and-maximum-likelihood" class="level1">
+<h1><strong>GLMs and Maximum Likelihood</strong></h1>
+<section id="the-generalised-linear-model" class="level3">
+<h3 class="anchored" data-anchor-id="the-generalised-linear-model">The Generalised Linear Model</h3>
+<p>There are some limitations to the classical linear model. Consider the <a href="./clm.html#linear-probability-model">linear probability model</a>:</p>
 <p><span class="math display">\[
 \P(Y_i = 1|X_i)= \pi_i = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i
 \]</span></p>
-<p>There are two main issues with using the classical model for probabilities:</p>
-<ol type="1">
-<li>The classical assumptions assume homoscedasticity. However, probability of a binary event is given by the bernoulli distribution, for which <span class="math inline">\(\V \pi_i = \pi_i(1-\pi_i)\)</span>, which is clearly a function of outcome <span class="math inline">\(\pi_i\)</span>.</li>
-<li>And more importantly, the linear model will predict probabilities <span class="math inline">\(\P(Y_i = 1 | X_i)\)</span> that are higher than 1 and less than 0, which, if we know the rules of probability, is nonsensical.</li>
-</ol>
-<p>Similar limitations apply to the classical model when applied to count data (counting the times something occurs) and rate data. This makes the classical linear model unsuited for accurate predictions.</p>
-<p>The generalised linear model aims to solve this by not requiring the response variable to just be <span class="math inline">\(Y_i\)</span> (or <span class="math inline">\(\pi_i\)</span> for probabilities). Instead, we can “transform” the response variable through a link function <span class="math inline">\(g(\cdot)\)</span> which will allow the linear model to be applied to other types of data and outcome variables.</p>
-<p><br></p>
-</section>
-<section id="the-generalised-linear-model" class="level3">
-<h3 class="anchored" data-anchor-id="the-generalised-linear-model">The Generalised Linear Model</h3>
-<p>As noted above, the generalised linear model allows us to “transform” the outcome variable through a link function <span class="math inline">\(g(\cdot)\)</span>, while maintaining the linear structure of the rest of the linear model. There are several of these generalised linear models that we will explore.</p>
+<p>The classical assumptions assume homoscedasticity. However, probability of a binary event is given by the bernoulli distribution, for which <span class="math inline">\(\V \pi_i = \pi_i(1-\pi_i)\)</span>, which is clearly a function of outcome <span class="math inline">\(\pi_i\)</span>, meaning it is homoscedastic. And more importantly, the linear model will predict probabilities <span class="math inline">\(\P(Y_i = 1 | X_i)\)</span> that are higher than 1 and less than 0, which, if we know the rules of probability, is nonsensical. This nonsensical outcome issue is also present in count and rate outcomes.</p>
+<p>The generalised linear model allows us to “transform” the outcome variable (either <span class="math inline">\(Y_i\)</span> or <span class="math inline">\(\pi_i\)</span> when dealing with probabilities) through a link function <span class="math inline">\(g(\cdot)\)</span>, while maintaining the linear structure of the rest of the linear model. This allows us to deal with other distributions and avoid nonsensical predictions.</p>
 <p>Of course, we have the <strong>Classical Linear Model</strong>, which is considered a GLM that has no link function:</p>
 <p><span class="math display">\[
 Y_i = \beta_0 + \beta_1X_{i1} + \beta_p X_{ip} + \eps_i \ = \ x_i^\top\beta + \eps_i
@@ -347,108 +334,100 @@ Y_i = \beta_0 + \beta_1X_{i1} + \beta_p X_{ip} + \eps_i \ = \ x_i^\top\beta + \e
 <p><span class="math display">\[
 \log \left( \frac{\pi_i}{1 - \pi_i} \right) = \beta_0 + \beta_1X_{i1} + \dots + \beta_p X_{ip} \ = \ x_i^\top\beta
 \]</span></p>
-<p>Where <span class="math inline">\(\pi_i\)</span> is the probabiltiy of success <span class="math inline">\(p\)</span> for a binomial distribution. The <strong>Probit Model</strong> is another model that deals with probabilities.</p>
-<p><span class="math display">\[
-\Phi^{-1}(\pi_i) = \beta_0 + \beta_1X_{i1} + \dots + \beta_p X_{ip} \ = \ x_i^\top\beta
-\]</span></p>
-<p>Where <span class="math inline">\(\Phi\)</span> is the cumulative density function of the standard normal distribution. We will not explore probit in detail, since it produces almost identical results as logistic regressions with worse interpretability.</p>
-<p>The <strong>Negative Binomial Model</strong> is a model that deals with count and rate data (only positive values):</p>
+<p>The <strong>Negative Binomial Model</strong> (and a special case called the Poisson model) is a model that deals with count and rate data (only positive values), where <span class="math inline">\(\lambda_i\)</span> is the <span class="math inline">\(\E Y_i\)</span> for a negative binomial distribution.</p>
 <p><span class="math display">\[
 \log \lambda_i = \beta_0 + \beta_1X_{i1} + \dots + \beta_p X_{ip} \ = \ x_i^\top \beta
 \]</span></p>
-<p>Where <span class="math inline">\(\lambda_i\)</span> is the <span class="math inline">\(\E Y_i\)</span> for a negative binomial distribution. A specific version of this regression with a more restrictive distribution assumption is called the <strong>Poisson model</strong>.</p>
 <p>We will explore each of these models in more detail later.</p>
 <p><br></p>
-<p><br></p>
-<hr>
 </section>
-</section>
-<section id="maximum-likelihood-estimator" class="level1">
-<h1><strong>Maximum Likelihood Estimator</strong></h1>
-<section id="likelihood-function" class="level3">
-<h3 class="anchored" data-anchor-id="likelihood-function">Likelihood Function</h3>
-<p>All generalised linear models are estimated with an estimator called the maximum likelihood estimator (MLE). This estimator is probably the most widely used in statistics, applied to many methods beyond the generalised linear model.</p>
+<section id="maximum-likelihood-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="maximum-likelihood-estimation">Maximum Likelihood Estimation</h3>
+<p>All GLMs are estimated with an estimator called the maximum likelihood estimator (MLE). This is also one of the most used estimators in statistics for a bunch of other methods, so it is useful to understand.</p>
 <p>We have a set of population parameters in the vector <span class="math inline">\(\theta\)</span> we want to estimate. This set of parameters determines our population distribution of <span class="math inline">\(Y_i\)</span>, which we can describe with some <a href="./stats.html#probability-density-functions">probability density function</a> <span class="math inline">\(\varphi(y, \theta)\)</span>. For example, in linear regression, our population <span class="math inline">\(y\)</span> is determined by the population parameters <span class="math inline">\(\beta_0, \dots, \beta_k\)</span>.</p>
-<p>When we are estimating parameters, we will have sample data with <span class="math inline">\(n\)</span> number of observations, with each observation <span class="math inline">\(i\)</span> having its own <span class="math inline">\(Y_i\)</span> value. Thus, our sample looks something like <span class="math inline">\((y_1, \dots, y_n)\)</span>.</p>
-<p>Based on the probability density function of the population <span class="math inline">\(Y_i\)</span>, the probability of getting our observed <span class="math inline">\(y_1\)</span> in our sample from the population data is <span class="math inline">\(\varphi(y_1, \theta)\)</span>, and the probability of getting observation <span class="math inline">\(y_i\)</span> is <span class="math inline">\(\varphi(y_i, \theta)\)</span>.</p>
+<p>When we are estimating parameters, we will have sample data with <span class="math inline">\(n\)</span> number of observations, with each observation <span class="math inline">\(i\)</span> having its own <span class="math inline">\(Y_i\)</span> value. Thus, our sample looks something like <span class="math inline">\((y_1, \dots, y_n)\)</span>. Based on the probability density function <span class="math inline">\(\varphi(\cdot)\)</span> of the population <span class="math inline">\(Y_i\)</span>, the probability of getting our observed <span class="math inline">\(y_1\)</span> in our sample from the population data is <span class="math inline">\(\varphi(y_1, \theta)\)</span>, and the probability of getting observation <span class="math inline">\(y_i\)</span> is <span class="math inline">\(\varphi(y_i, \theta)\)</span>.</p>
 <p>We know by the rules of probability, that the <a href="./math.html#basics-of-probability">probability of multiple independent events</a> is the product of their probabilities. Thus, the probability that we get a specific sample with <span class="math inline">\(y\)</span> values <span class="math inline">\((y_1, \dots ,y_n)\)</span>, based on the value of our population parameters <span class="math inline">\(\boldsymbol\theta\)</span> is given by the <strong>likelihood function</strong> <span class="math inline">\(L\)</span>:</p>
 <p><span class="math display">\[
-\begin{align}
-L(\theta, y_1, \dots y_n) &amp; = \varphi(y_1;\theta) \times \varphi(y_2;\theta) \times \dots \times \varphi(y_n;\theta) \\
-&amp; = \prod\limits_{i=1}^n \varphi(y_i, \theta) \\
-\end{align}
+L(\theta, y)  = \varphi(y_1;\theta) \times \varphi(y_2;\theta) \times \dots \times \varphi(y_n;\theta) = \prod\limits_{i=1}^n \varphi(y_i, \theta)
 \]</span></p>
-<p>We want to find some values of <span class="math inline">\(\boldsymbol\theta\)</span> that make it the highest probability we observe our sample <span class="math inline">\(y_1, \dots ,y_n\)</span>. This is done by maximising the likelihood function <span class="math inline">\(L(\cdot)\)</span>. Those parameters <span class="math inline">\(\theta\)</span> that maximise <span class="math inline">\(L\)</span> will become our estimates for our statistical model.</p>
-<p><br></p>
-</section>
-<section id="log-likelihood-and-score-functions" class="level3">
-<h3 class="anchored" data-anchor-id="log-likelihood-and-score-functions">Log-Likelihood and Score Functions</h3>
-<p>Maximising the likelihood function <span class="math inline">\(L(\cdot)\)</span> is very difficult, because of the product notation. Luckily, we can use the log of the likelihood function <span class="math inline">\(\ell(\cdot)\)</span>, which retains the same maximum/minimum points as <span class="math inline">\(L(\cdot)\)</span>. Using the properties of logarithms, we can also rewrite this log-likelihood function in terms of summation notation, making maximisation far easier.</p>
+<p>We want to find values of <span class="math inline">\(\theta\)</span> that make it the highest probability we observe our sample <span class="math inline">\(y_1, \dots ,y_n\)</span>. This is done by maximising the likelihood function <span class="math inline">\(L(\cdot)\)</span>. However, maximising the likelihood function <span class="math inline">\(L(\cdot)\)</span> is very difficult. Luckily, we can use the log of the likelihood function <span class="math inline">\(\ell(\cdot)\)</span>, which retains the same maximum/minimum points as <span class="math inline">\(L(\cdot)\)</span> why being easier to work with.</p>
 <p><span class="math display">\[
 \begin{align}
-\log L(\boldsymbol\theta, y_1, \dots y_n) &amp; = \log \left(\prod_{i=1}^n \varphi(y_i; \theta) \right) \\
+\ell (\theta; y)&amp; = \log L(\theta, y)  \\
+&amp; = \log \left(\prod_{i=1}^n \varphi(y_i; \theta) \right) \\
 &amp; = \log[\varphi(y_1, \boldsymbol\theta) \times \varphi(y_2, \boldsymbol\theta) \times \dots \times \varphi(y_n, \boldsymbol\theta)] &amp;&amp; \text{(expand product notation)} \\
 &amp; = \log[\varphi(y_1, \boldsymbol\theta)] + \log [\varphi(y_2, \boldsymbol\theta)] + \dots + \log[\varphi(y_n, \boldsymbol\theta)] &amp;&amp; \text{(property of logs)} \\
 &amp; = \sum\limits_{i=1}^n \log[\varphi(y_i, \boldsymbol\theta)] &amp;&amp; \text{(condense into sum)}
 \end{align}
 \]</span></p>
-<p>Thus, our goal in MLE is to maximise the log-likelihood function (denoted <span class="math inline">\(\ell\)</span>) to obtain our estimates <span class="math inline">\(\hat\theta\)</span>:</p>
-<p><span id="eq-loglike"><span class="math display">\[
-\hat\theta = \max\limits_{\theta} \ell(\theta; y_i) = \max\limits_\theta \sum\limits_{i=1}^n \log[\varphi(y_i \theta)]
-\tag{1}\]</span></span></p>
-<p>The vector of first derivatives of <span class="math inline">\(\ell(\theta; y)\)</span> with respect to vector <span class="math inline">\(\theta\)</span> is known as the <strong>score function</strong> <span class="math inline">\(s(\theta, y)\)</span>:</p>
+<p><br></p>
+</section>
+<section id="score-function-and-expectation" class="level3">
+<h3 class="anchored" data-anchor-id="score-function-and-expectation">Score Function and Expectation</h3>
+<p>The gradient of <span class="math inline">\(\ell(\theta; y)\)</span> with respect to vector <span class="math inline">\(\theta\)</span> is known as the <strong>score function</strong> <span class="math inline">\(s(\theta, y)\)</span>:</p>
 <p><span class="math display">\[
-s(\theta;y) = \frac{\partial}{\partial \theta} \ell(\theta; y) = \sum\limits_{i=1}^n \log[\varphi(y_i \theta)]\frac{\partial}{\partial \theta}
+s(\theta;y) = \frac{\partial}{\partial \theta} \ell(\theta; y) = \frac{\partial}{\partial \theta}
+\sum\limits_{i=1}^n \log[\varphi(y_i; \theta)]
 \]</span></p>
-<p>The <span class="math inline">\(\hat\theta\)</span> values of MLE are the <span class="math inline">\(\theta\)</span> that solve <span class="math inline">\(s(\theta; y) = 0\)</span>. In many cases, the score is not computable, so we will need to rely on other computer techniques and algorithms, such as gradient descent, which we will cover below.</p>
-<p><br></p>
-</section>
-<section id="gradient-descent-algorithms" class="level3">
-<h3 class="anchored" data-anchor-id="gradient-descent-algorithms">Gradient Descent Algorithms</h3>
-<p>In some more complex models, we cannot mathematically find the minimum of the log-likelihood function. So instead, we resort to a series of computer algorithms called gradient descent. The algorithm takes the following form:</p>
-<ol type="1">
-<li>We randomly choose values of <span class="math inline">\(\boldsymbol\theta\)</span> to start (let us notate the chosen as <span class="math inline">\(\boldsymbol\theta^*\)</span>), and calculate the likelihood <span class="math inline">\(L\)</span> with those chosen at <span class="math inline">\(\boldsymbol\theta^*\)</span>.</li>
-<li>We then slightly shift the values of <span class="math inline">\(\boldsymbol\theta^*\)</span> upwards and downwards, calculating all the likelihoods. We see in which shift-direction does the likelihood <span class="math inline">\(L\)</span> increase the most.</li>
-<li>Once we determine the direction that <span class="math inline">\(L\)</span> increases the most, we shift int hat direction to a new <span class="math inline">\(\boldsymbol\theta'\)</span> value. Once again, we slightly shift values of <span class="math inline">\(\boldsymbol\theta'\)</span> upwards and downwards, and see which shift-direction does the likelihood <span class="math inline">\(L\)</span> increase the most.</li>
-<li>We keep repeating this process of moving in the direction that increases <span class="math inline">\(L\)</span> the most, shifting around in all directions at that point, and once again moving in the direction that increases <span class="math inline">\(L\)</span> the most.</li>
-<li>We stop when we are at some point <span class="math inline">\(\boldsymbol\theta^!\)</span> where all directions of shits decrease <span class="math inline">\(L\)</span>. We are “at the top of the mountain”, and that becomes our estimate.</li>
-</ol>
-<p>This is a very simple gradient descent algorithm. You might point out that this algorithm only works if there is one global maximum, and no local maxima (since we would stop the algorithm at a local extrema if this were the case). This usually is not an issue since in common regression models (linear, logistic, poisson), their is only one global maximum. The figure below shows this:</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/clipboard-3075379377.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
-</figure>
-</div>
-<p>A solution for this problem of local maxima (which becomes more an issue with machine learning models) is to basically do the estimation algorithm multiple times, each time starting at some random <span class="math inline">\(\boldsymbol\theta^*\)</span>. Then, we find the time with the largest <span class="math inline">\(L\)</span>. This will in theory help us determine which are local and global maxima.</p>
-<p><br></p>
-</section>
-<section id="properties-of-the-mle" class="level3">
-<h3 class="anchored" data-anchor-id="properties-of-the-mle">Properties of the MLE</h3>
-<p>Let us find the variance of the score function <span class="math inline">\(s(\theta_0, y)\)</span>, where <span class="math inline">\(\theta_0\)</span> is the value of the parameter <span class="math inline">\(\theta\)</span> when <span class="math inline">\(s(\theta ; y_i) = 0\)</span> is solved, and <span class="math inline">\(y\)</span> is the vector of our observed values of <span class="math inline">\(Y_i\)</span>:</p>
+<p>The <span class="math inline">\(\hat\theta\)</span> values of MLE are the <span class="math inline">\(\theta\)</span> that solve <span class="math inline">\(s(\theta; y) = 0\)</span>. If we have <span class="math inline">\(p\)</span> parameters, there will be <span class="math inline">\(p\)</span> partial derivatives within the gradient.</p>
+<p>Let us define the true parameter value in the population as <span class="math inline">\(\theta_0\)</span>, which implies the score function of <span class="math inline">\(\theta_0\)</span> is <span class="math inline">\(s(\theta_0; Y_i)\)</span>, where <span class="math inline">\(Y_i\)</span> is the random variable. Vector <span class="math inline">\(y\)</span>, our sample, is a realisation of this random variable - since we are sampling for our observed <span class="math inline">\(y\)</span>, our sampled <span class="math inline">\(y\)</span> will change with a different sample. Thus, the score function is also a random variable with expectation and variance.</p>
+<p>The expectation of the score function in respect to random <span class="math inline">\(Y_i\)</span>, evaluated at true population parameter value <span class="math inline">\(\theta_0\)</span> is:</p>
 <p><span class="math display">\[
 \begin{align}
-\V s(\theta_0; y_i) &amp; = \E [(s(\theta_0; y) - \E(s(\theta_0; y))^2 ] &amp;&amp; (\because \V Z = \E[Z - \E Z]) \\
+\E[s(\theta_0; Y_i)] &amp; = \int s(\theta_0;y) \overbrace{\varphi(y; \theta_0)}^{\P \ \mathrm{ of\ sample \ y}}dy &amp;&amp; (\text{definition of continuous } \E) \\
+&amp; = \int \left[ \frac{\partial}{\partial\theta} \ell(\theta; y)\right]\varphi(y \theta_0)dy &amp;&amp; \text{(plug in score function)} \\
+&amp; = \int\left[\frac{\partial}{\partial\theta} \varphi(y; \theta) \right] \varphi (y; \theta_0)dy &amp;&amp; \text{(plug in } \ell \text{, y is vector so no summation needed)} \\
+&amp; = \int \frac{\frac{\partial}{\partial\theta} \varphi(y; \theta_0)}{\varphi(y; \theta_0)}\varphi(y; \theta_0) &amp;&amp; (\because [\log(u(x))]' = u'(x)/u(x) \ ) \\
+&amp; = \int \frac{\partial}{\partial\theta} \varphi(y; \theta_0) &amp;&amp; \text{(cancel out)} \\
+&amp; = \frac{\partial}{\partial\theta} \int \varphi(y; \theta_0) &amp;&amp; \text{(can flip deriv. and anti-deriv.)} \\
+&amp; = \frac{\partial}{\partial\theta} 1 = 0 &amp;&amp; \text{(indef int. of PDF = 1)}
+\end{align}
+\]</span></p>
+<p>Thus, the expectation of the score at true population parameter <span class="math inline">\(\theta_0\)</span> in respect to the random variable vector <span class="math inline">\(y\)</span> is 0.</p>
+<p><br></p>
+</section>
+<section id="information-matrix-and-variance" class="level3">
+<h3 class="anchored" data-anchor-id="information-matrix-and-variance">Information Matrix and Variance</h3>
+<p>With the expectation from above, we can also find the variance-covariance matrix of the score function at <span class="math inline">\(\theta_0\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
+\V s(\theta_0; y) &amp; = \E [(s(\theta_0; y) - \E(s(\theta_0; y))^2 ] &amp;&amp; (\because \V Z = \E[Z - \E Z]) \\
 &amp; = \E[(s(\theta_0; y) - 0)^2] &amp;&amp; (\because \E [s(\theta_0 ; y)] = 0) \\
 &amp; = \E\left [\frac{\partial \ell (\theta_0; y)}{\partial \theta} \frac{\partial \ell (\theta_0; y)}{\partial \theta^\top} \right] &amp;&amp; \text{(plug in and square } s(\theta_0, y)) \\
 &amp; = \E\left[ -\frac{\partial^2 \ell (\theta_0; y)}{\partial\theta\partial \theta^\top}\right] \equiv \mathcal I(\theta_0)
 \end{align}
 \]</span></p>
-<p>Where <span class="math inline">\(\mathcal I (\theta_0)\)</span> is also known as the <strong>expected fisher information matrix</strong>. Through complex math that I will not do here, we can show that asymptotically as <span class="math inline">\(n \rightarrow ∞\)</span>, the distribution of the MLE estimates <span class="math inline">\(\hat\theta\)</span> becomes:</p>
+<p>Where <span class="math inline">\(\mathcal I (\theta_0)\)</span> is also known as the <strong>expected fisher information matrix</strong>. This is also the matrix of second derivatives of the log-likelihood, meaning this is the negative of the Hessian matrix of the log-likelihood.</p>
+<p>We can also get the observed equivalent of our parameter estimate <span class="math inline">\(\theta\)</span>, called the <strong>observed information matrix</strong>, which does not involve expectation (which can be difficult):</p>
+<p><span class="math display">\[
+I(\theta;y) = -\frac{\partial^2 \ell(\theta; y)}{\partial \theta \partial \theta^\top}
+\]</span></p>
+<p>Through complex math beyond this course, we can show that the asymptotic variance of any MLE estimate <span class="math inline">\(\hat\theta\)</span>, <span class="math inline">\(\V \hat\theta\)</span>, is the inverse of the information matrix:</p>
+<p><span class="math display">\[
+\V (\hat\theta) = \mathcal I(\hat\theta)^{-1}
+\]</span></p>
+<p>When we have finite (but sufficiently large samples), this is our variance estimate. We can also use the observed information matrix <span class="math inline">\(I(\hat\theta)^{-1}\)</span>.</p>
+<p><br></p>
+</section>
+<section id="asymptotic-properties-of-mle" class="level3">
+<h3 class="anchored" data-anchor-id="asymptotic-properties-of-mle">Asymptotic Properties of MLE</h3>
+<p>Through complex proofs beyond the scope of this chapter, we can determine that asymptotically as <span class="math inline">\(n \rightarrow ∞\)</span>, the distribution of the MLE estimates <span class="math inline">\(\hat\theta\)</span> becomes:</p>
 <p><span class="math display">\[
 \hat\theta \sim \mathcal N(\theta_0, \mathcal I(\theta_0)^{-1})
 \]</span></p>
 <p>This tells us two things. First, maximum likelihood estimates are asymptotically consistent, since the asymptotic distribution has an expectation <span class="math inline">\(\E \hat\theta = \theta_0\)</span>.</p>
-<p>Second, this tells us the asumptotic variance of the MLE. To calculate the variance, we can estimate it with the expected fisher information matrix of our estimate <span class="math inline">\(\hat\theta\)</span>:</p>
+<p>Second, we know that the asymptotic variance of MLE estimates is <span class="math inline">\(\mathcal I(\theta_0)^{-1}\)</span>. This is notable because of the <strong>Carmer-Rao bound</strong>. The cramer rao bound states that the variance of any unbiased estimator <span class="math inline">\(\hat\theta\)</span> is bounded by the reciprocal of the Fisher Information matrix:</p>
 <p><span class="math display">\[
-\V \hat\theta = \mathcal I(\hat\theta)^{-1}
+\V \hat\theta_n ≥ \frac{1}{\mathcal I(\theta)}
 \]</span></p>
-<p>It can also be proven with the Cramer-Rao lower bound that the MLE is the asymptotic consistent estimator with the lowest asymptotic variance. However, do note that the MLE is biased in finite-samples (but the bias becomes small in large-samples). This becomes an issue when we are dealing with some applications of causal inference, such as fixed effects.</p>
+<p>We will not prove this here since it is technical. However, this is the lowest possible variance of any unbiased estimator. As we see above, the asymptotic variance of the MLE <span class="math inline">\(\hat\theta\)</span> is exactly <span class="math inline">\(1/\mathcal I(\theta)\)</span>. Thus, this tells us there is no other asymptotically consistent (unbiased) estimator that has a lower variance than the MLE.</p>
+<p>However, do note that the MLE is biased in finite-samples (but the bias becomes small in large-samples). This becomes an issue when we are dealing with some applications of causal inference, such as fixed effects.</p>
 <p><br></p>
 </section>
 <section id="ols-as-a-maximum-likelihood-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="ols-as-a-maximum-likelihood-estimator">OLS as a Maximum Likelihood Estimator</h3>
-<p>Earlier, we noted that all linear models are estimated with a Maximum Likelihood Estimator. This includes the classical linear model, as OLS is a MLE under classical conditions.</p>
-<p>We know in the classical model, <span class="math inline">\(\mu = E(y|x) = x_i^\top \beta\)</span>. Let us plug that into the <a href="quant1.qmd#the-normal-distribution">probability density function of a normal distribution</a> to get the PDF of <span class="math inline">\(Y_i\)</span> in a simple linear regression. By <a href="#eq-loglike" class="quarto-xref">Equation&nbsp;1</a>, the log-likelihood function <span class="math inline">\(\ell\)</span> of our sample for linear regression is:</p>
+<p>Earlier, we noted that all linear models are estimated with a Maximum Likelihood Estimator. This includes the classical linear model.</p>
+<p>OLS is a MLE under the classical assumptions, and assuming <span class="math inline">\(Y_i\)</span> is normally distributed at <span class="math inline">\(Y_i \sim \mathcal N(X\beta, \sigma^2)\)</span> (where <span class="math inline">\(\mu = \E(Y_i|X_i) = X\beta\)</span>, and <span class="math inline">\(\sigma^2\)</span> as the homoscedastic variance of <span class="math inline">\(\eps_i\)</span>). By the <a href="quant1.qmd#the-normal-distribution">PDF of a normal distribution</a> and <strong>?@eq-loglike</strong>, the log-likelihood function <span class="math inline">\(\ell\)</span> of our sample for linear regression is:</p>
 <p><span class="math display">\[
 \begin{align}
 \ell(\beta, \sigma^2; y_i)
@@ -458,27 +437,61 @@ s(\theta;y) = \frac{\partial}{\partial \theta} \ell(\theta; y) = \sum\limits_{i=
 &amp; = -\frac{n}{2} \log (2\pi\sigma^2)  -\frac{1}{2 \sigma^2}\sum\limits_{i=1}^n(y_i - x_i^\top\beta)^2 &amp;&amp; \text{(prop. of sums)}
 \end{align}
 \]</span></p>
-<p>Now, let us take the derivative in respect to vector <span class="math inline">\(\beta\)</span> to solve for our score function:</p>
+<p>Look at the right part of the above equation. We can see that is the SSR. Thus, we can rewrite:</p>
+<p><span class="math display">\[
+\ell(\beta, \sigma^2; y) = -\frac{n}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}(y-X\beta)^\top (y-X\beta)
+\]</span></p>
+<p>And if we take the gradient in respect to <span class="math inline">\(\beta\)</span>, we can see we get the same first order condition as OLS:</p>
+<p><span class="math display">\[
+\frac{\partial \ell}{\partial \beta} = -2X^\top y + 2 X^\top X\beta = 0
+\]</span></p>
+<p>With the same first order condition, we will get the same <span class="math inline">\(\beta\)</span> estimate as in OLS. Thus, we can see under the condition of normality of <span class="math inline">\(Y_i\)</span>, MLE is equivalent to OLS.</p>
+<p><br></p>
+</section>
+<section id="newton-raphson-algorithm" class="level3">
+<h3 class="anchored" data-anchor-id="newton-raphson-algorithm">Newton-Raphson Algorithm</h3>
+<p>We need to solve <span class="math inline">\(s(\theta; y) = 0\)</span> to find our MLE estimates <span class="math inline">\(\hat\theta\)</span>. However, there is often no closed form solution due to differentiation issues. Thus, we must use iterated algorithms to solve for <span class="math inline">\(\hat\theta\)</span>. Suppose <span class="math inline">\(\theta\)</span> is a scalar (only one parameter). For values of <span class="math inline">\(\theta\)</span> that are close to the true population <span class="math inline">\(\theta_0\)</span>, the first-order taylor series expansion of <span class="math inline">\(s(\theta)\)</span> about <span class="math inline">\(\theta_0\)</span> states:</p>
+<p><span class="math display">\[
+s(\theta; y) \approx s(\theta_0; y) + s'(\theta_0;y)(\theta - \theta_0)
+\]</span></p>
+<p>Where <span class="math inline">\(s'(\theta_0; y)\)</span> is the first derivative of the score function <span class="math inline">\(s(\theta; y)\)</span> evaluated at <span class="math inline">\(\theta = \theta_0\)</span>. When dealing with a vector <span class="math inline">\(\theta\)</span>, the equivalent first derivative is the hessian matrix of <span class="math inline">\(\ell(\cdot)\)</span>, or the negative of the <a href="#information-matrix-and-variance">observed information matrix</a>:</p>
+<p><span class="math display">\[
+\frac{\partial s(\theta; y)}{\partial \theta} = \frac{\partial^2 \ell(\theta; y)}{\partial \theta \partial \theta^\top} = - I(\theta)
+\]</span></p>
+<p>This gives us the following first-order taylor series expansion of <span class="math inline">\(s(\theta)\)</span>:</p>
+<p><span class="math display">\[
+s(\theta; y) \approx s(\theta_0; y) - I(\theta_0)(\theta - \theta_0)
+\]</span></p>
+<p>And when we solve <span class="math inline">\(s(\theta; y) = 0\)</span> to maximimse, we can solve for <span class="math inline">\(\theta\)</span>:</p>
 <p><span class="math display">\[
 \begin{align}
-\frac{\partial \ell}{\partial \beta} &amp; = 0 + \frac{1}{\sigma^2}\sum\limits_{i=1}^n(y_i - x_i^\top\beta)x_i &amp;&amp; \text{(by chain and power rule)} \\
-&amp; = \frac{1}{\sigma^2} \left[ \sum\limits_{i=1}^n y_i x_i - \sum\limits_{i=1}^n x_i x_i^\top \beta\right] &amp;&amp; \text{(multiply out, prop. of sums)}\\
-&amp; = \frac{1}{\sigma^2} (X^\top y - (X^\top X)\beta) &amp;&amp; \text{(vector to matrix notation)}
+0 &amp; \approx s(\theta_0; y) - I(\theta_0)(\theta - \theta_0) &amp;&amp; (\because s(\theta;y) = 0) \\
+I(\theta_0)(\theta - \theta_0) &amp; \approx s(\theta_0; y)  &amp;&amp; (+I(\theta_0)(\theta - \theta_0) \text{ to both sides})\\
+\theta - \theta_0 &amp; \approx I(\theta_0)^{-1}s(\theta_0; y) &amp;&amp; (\times I(\theta_0)^{-1} \text{ to both sides}) \\
+\theta &amp; \approx \theta_0 + \approx I(\theta_0)^{-1}s(\theta_0; y) &amp;&amp; (+\theta_0 \text{ to both sides})
 \end{align}
 \]</span></p>
-<p>And now set the score function equal to 0 and solve for <span class="math inline">\(\beta\)</span>. We can ignore the <span class="math inline">\(1/\sigma^2\)</span> out front since if the rest equals 0, the score function equals 0.</p>
+<p>Since <span class="math inline">\(\theta_0\)</span> is unknown, we cannot use this formula directly. Thus, we use an interative procedure. We start with some initial value <span class="math inline">\(\theta^{(0)}\)</span> that is randomly chosen. Then, we “update” for a new value <span class="math inline">\(\theta^{(1)}\)</span>:</p>
 <p><span class="math display">\[
-\begin{align}
-0 &amp; = X^\top y - (X^\top X)\beta \\
-(&amp; X^\top X)\beta = X^\top y &amp;&amp; (+(X^\top X)\beta \text{ to both sides}) \\
-\beta &amp; = (X^\top X)^{-1} X^\top y &amp;&amp; (\times (X^\top X)^{-1} \text{ to both sides})
-\end{align}
+\theta^{(1)} = \theta^{(0)} + I (\theta^{(0)})^{-1} s(\theta^{(0)}; y)
 \]</span></p>
-<p>And we can see, our MLE estimates are exactly the same form as the OLS estimates.</p>
+<p>And we do the same updating for <span class="math inline">\(\theta^{(2)}\)</span> with <span class="math inline">\(\theta^{(1)}\)</span>, and <span class="math inline">\(\theta^{(m+1)}\)</span> using <span class="math inline">\(\theta^{(m)}\)</span>, until the algorithm converges and the differences between <span class="math inline">\(\theta^{(m+1)}\)</span> using <span class="math inline">\(\theta^{(m)}\)</span> becomes minimal (under some pre-specified threshold of “tolerance”). An alternative is <strong>fisher-scoring</strong>, which does the same thing but with the <a href="#information-matrix-and-variance">expected fisher information matrix</a> <span class="math inline">\(\mathcal I(\theta)\)</span> instead of the observed <span class="math inline">\(I(\theta)\)</span> when <span class="math inline">\(\mathcal I(\theta)\)</span> is not too difficult to compute.</p>
 <p><br></p>
 </section>
 <section id="information-criterion-statistics" class="level3">
 <h3 class="anchored" data-anchor-id="information-criterion-statistics">Information Criterion Statistics</h3>
+<p>Recall that the likelihood function <span class="math inline">\(L(\cdot)\)</span> is the probability of observing a particular sample given the parameters <span class="math inline">\(\theta\)</span>, or in other words, <span class="math inline">\(\P (y | \theta)\)</span>.</p>
+<p>This property of <span class="math inline">\(L(\cdot)\)</span> also allows us to compare models between each other. For example, let us say we have two models of the same outcome variable <span class="math inline">\(Y_i\)</span>, one model with parameters <span class="math inline">\(\theta_1\)</span>, and another with parameters <span class="math inline">\(\theta_2\)</span> (perhaps one has more parameters/explanatory variables, etc). The model with a higher likelihood <span class="math inline">\(L(\theta; y)\)</span> is the model that is considered the better fit.</p>
+<p>Thus, the likelihood value <span class="math inline">\(L(\theta; y)\)</span> allows us to compare the explanatory power of models, like <span class="math inline">\(R^2\)</span> does for the classical linear model. This will become useful when we discuss likelihood ratio tests.</p>
+<p>A group of statistics, called <strong>information criterion (IC) statistics</strong>, use the likelihood <span class="math inline">\(L(\cdot)\)</span> to compare different models. The idea behind these statistics is to not only reward higher likelihoods <span class="math inline">\(L\)</span>, but also reward simplicty of models with less parameters.</p>
+<p>The most commonly used is <strong>Akaike’s Information Criterion (AIC)</strong>. The formula for AIC is as follows:</p>
+<p><span class="math display">\[
+AIC = -2 \log L + 2p
+\]</span></p>
+<ul>
+<li>Where <span class="math inline">\(L\)</span> is the likelihood of the model in question evaluated as <span class="math inline">\(L(\theta ; y)\)</span>, and <span class="math inline">\(p\)</span> is the number of parameters in the model.</li>
+</ul>
+<p>The lower the AIC is, the better the model is considered. There are also alternative IC statistics, such as the Bayesian Information Criterion (BIC).</p>
 <p><br></p>
 <p><br></p>
 <hr>
