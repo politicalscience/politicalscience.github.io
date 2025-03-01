@@ -14,7 +14,7 @@ Use the right sidebar for quick navigation. R-code is provided at the bottom.
 
 ### The Generalised Linear Model
 
-There are some limitations to the classical linear model. Consider the [linear probability model](clm.qmd#linear-probability-model):
+There are some limitations to the [classical linear model](clm.qmd). Consider the [linear probability model](clm.qmd#linear-probability-model):
 
 $$
 \P(Y_i = 1|X_i)= \pi_i = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i
@@ -50,14 +50,17 @@ We will explore each of these models in more detail later.
 
 All GLMs are estimated with an estimator called the maximum likelihood estimator (MLE). This is also one of the most used estimators in statistics for a bunch of other methods, so it is useful to understand.
 
-We have a set of population parameters in the vector $\theta$ we want to estimate. This set of parameters determines our population distribution of $Y_i$, which we can describe with some [probability density function](stats.qmd#probability-density-functions) $\varphi(y, \theta)$. For example, in linear regression, our population $y$ is determined by the population parameters $\beta_0, \dots, \beta_k$.
+We have a set of population parameters in the vector $\theta$ we want to estimate. This set of parameters determines our population distribution of $Y_i$, which we can describe with some [probability density function](stats.qmd#probability-density-functions) $\varphi(Y_i, \theta)$. For example, in linear regression, our population $y$ is determined by the population parameters $\beta_0, \dots, \beta_p$.
 
-When we are estimating parameters, we will have sample data with $n$ number of observations, with each observation $i$ having its own $Y_i$ value. Thus, our sample looks something like $(y_1, \dots, y_n)$. Based on the probability density function $\varphi(\cdot)$ of the population $Y_i$, the probability of getting our observed $y_1$ in our sample from the population data is $\varphi(y_1, \theta)$, and the probability of getting observation $y_i$ is $\varphi(y_i, \theta)$.
+When we are estimating parameters, we will have sample data with $n$ number of observations, with each observation $i$ having its own $Y_i$ value. Thus, our sample looks something like $(y_1, \dots, y_n)$. Based on the probability density function $\varphi(\cdot)$ of the population $Y_i$, the probability of getting our observed $y_1$ in our sample from the population data is $\varphi(y_1, \theta)$, and the probability of getting $y_i$ is $\varphi(y_i, \theta)$.
 
 We know by the rules of probability, that the [probability of multiple independent events](math.qmd#basics-of-probability) is the product of their probabilities. Thus, the probability that we get a specific sample with $y$ values $(y_1, \dots ,y_n)$, based on the value of our population parameters $\boldsymbol\theta$ is given by the **likelihood function** $L$:
 
 $$
-L(\theta, y)  = \varphi(y_1;\theta) \times \varphi(y_2;\theta) \times \dots \times \varphi(y_n;\theta) = \prod\limits_{i=1}^n \varphi(y_i, \theta)
+\begin{align}
+L(\theta, y) & = \varphi(y_1;\theta) \times \varphi(y_2;\theta) \times \dots \times \varphi(y_n;\theta) = \prod\limits_{i=1}^n \varphi(y_i, \theta) \\
+& = \varphi(y, \theta), \  \text{where this is a joint probability PDF with vector } y 
+\end{align}
 $$
 
 We want to find values of $\theta$ that make it the highest probability we observe our sample $y_1, \dots ,y_n$. This is done by maximising the likelihood function $L(\cdot)$. However, maximising the likelihood function $L(\cdot)$ is very difficult. Luckily, we can use the log of the likelihood function $\ell(\cdot)$, which retains the same maximum/minimum points as $L(\cdot)$ why being easier to work with.
@@ -70,7 +73,7 @@ $$
 & = \log[\varphi(y_1, \boldsymbol\theta)] + \log [\varphi(y_2, \boldsymbol\theta)] + \dots + \log[\varphi(y_n, \boldsymbol\theta)] && \text{(property of logs)} \\ 
 & = \sum\limits_{i=1}^n \log[\varphi(y_i, \boldsymbol\theta)] && \text{(condense into sum)}
 \end{align}
-$$
+$$ {#eq-loglike}
 
 <br />
 
@@ -85,7 +88,7 @@ $$
 
 The $\hat\theta$ values of MLE are the $\theta$ that solve $s(\theta; y) = 0$. If we have $p$ parameters, there will be $p$ partial derivatives within the gradient.
 
-Let us define the true parameter value in the population as $\theta_0$, which implies the score function of $\theta_0$ is $s(\theta_0; Y_i)$, where $Y_i$ is the random variable. Vector $y$, our sample, is a realisation of this random variable - since we are sampling for our observed $y$, our sampled $y$ will change with a different sample. Thus, the score function is also a random variable with expectation and variance.
+Let us define the true parameter value in the population as $\theta_0$, which implies the score function of $\theta_0$ is $s(\theta_0; Y_i)$, where $Y_i$ is the random outcome variable. Vector $y$, our sample, is a realisation of this random variable - since we are sampling for our observed $y$, our sampled $y$ will change with a different sample. Thus, the score function is also a random variable with expectation and variance.
 
 The expectation of the score function in respect to random $Y_i$, evaluated at true population parameter value $\theta_0$ is:
 
@@ -105,7 +108,7 @@ Thus, the expectation of the score at true population parameter $\theta_0$ in re
 
 <br />
 
-### Information Matrix and Variance {#information-matrix-and-variance}
+### Fischer Information Matrix {#information-matrix-and-variance}
 
 With the expectation from above, we can also find the variance-covariance matrix of the score function at $\theta_0$:
 
@@ -132,11 +135,21 @@ $$
 \V (\hat\theta) = \mathcal I(\hat\theta)^{-1}
 $$
 
+::: {.callout-note collapse="true" appearance="simple"}
+## Variance of an Estimator
+
+We have some true population parameter $\theta$ that we are estimating with a sample. Our sample will produce some estimate $\hat\theta_n$.
+
+Imagine we take another sample from the population: we will get a slightly different estimate. Taking $N$ samples, we get estimates $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$. Thus, our single sample estimate $\hat\theta_n$ is actually a realisation of a random variable, drawn from the sampling distribution $\hat\theta_1, \dots, \hat\theta_N$. The best guess of the value of $\hat\theta_n$ is the expected value $\E \hat\theta_n$ of the distribution.
+
+However, our sampling distribution of $\hat\theta_1, \dots, \hat\theta_N$ can also be described by the variance - how spread out the distribution is. Even if our estimator is unbiased, if it has a very high variance (spread), that means any specific realisation $\hat\theta_n$ might be far away from the expected value. Thus, we want a low-variance estimator.
+:::
+
 When we have finite (but sufficiently large samples), this is our variance estimate. We can also use the observed information matrix $I(\hat\theta)^{-1}$.
 
 <br />
 
-### Asymptotic Properties of MLE
+### Asymptotics and Cramér-Rao
 
 Through complex proofs beyond the scope of this chapter, we can determine that asymptotically as $n \rightarrow ∞$, the distribution of the MLE estimates $\hat\theta$ becomes:
 
@@ -146,7 +159,21 @@ $$
 
 This tells us two things. First, maximum likelihood estimates are asymptotically consistent, since the asymptotic distribution has an expectation $\E \hat\theta = \theta_0$.
 
-Second, we know that the asymptotic variance of MLE estimates is $\mathcal I(\theta_0)^{-1}$. This is notable because of the **Carmer-Rao bound**. The cramer rao bound states that the variance of any unbiased estimator $\hat\theta$ is bounded by the reciprocal of the Fisher Information matrix:
+::: {.callout-note collapse="true" appearance="simple"}
+## Asymptotic Consistency of an Estimator
+
+An estimator is asymptotically consistency, if as we increase the sample size $n$ towards $∞$, the sampling distribution will become more and more concentrated around the true population $\theta$. At $n = ∞$, our sampling distribution collapses to just the true population value $\theta$. Mathematically:
+
+$$
+\P(|\hat\theta_n - \theta) > \epsilon) \rightarrow 0, \ \mathrm{as} \ n \rightarrow ∞
+$$
+
+This essentially means that the probability that the difference between our sample estimate $\hat\theta_n$ and $\theta$ is greater than some arbitrarily small value $\epsilon$ becomes 0, as our sample size approaches infinity.
+
+Note: estimators can be biased but consistent. This means they are biased at small sample sizes, but as sample size increases, they are consistent.
+:::
+
+Second, we know that the asymptotic variance of MLE estimates is $\mathcal I(\theta_0)^{-1}$. This is notable because of the **Cramér-Rao bound**. The Cramér-Rao bound states that the variance of any unbiased estimator $\hat\theta$ is bounded by the reciprocal of the Fisher Information matrix:
 
 $$
 \V \hat\theta_n ≥ \frac{1}{\mathcal I(\theta)}
@@ -156,13 +183,29 @@ We will not prove this here since it is technical. However, this is the lowest p
 
 However, do note that the MLE is biased in finite-samples (but the bias becomes small in large-samples). This becomes an issue when we are dealing with some applications of causal inference, such as fixed effects.
 
+::: {.callout-note collapse="true" appearance="simple"}
+## Unbiased and Biased Estimators
+
+We have some true population parameter $\theta$ that we are estimating with a sample. Our sample will produce some estimate $\hat\theta_n$.
+
+Imagine we take another sample from the population: we will get a slightly different estimate. Taking $N$ samples, we get estimates $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$. Thus, our single sample estimate $\hat\theta_n$ is actually a realisation of a random variable, drawn from the sampling distribution $\hat\theta_1, \dots, \hat\theta_N$. The best guess of the value of $\hat\theta_n$ is the expected value $\E \hat\theta_n$ of the distribution.
+
+An unbiased estimator is when $\E\hat\theta_n = \theta$, or in other words, the expected sample estimate when drawn from the sampling distribution is equal to the true population value $\theta$. We want an unbiased estimator, because that means any sample estimate $\hat\theta_n$ is expected to equal the true population parameter.
+:::
+
 <br />
 
-### OLS as a Maximum Likelihood Estimator
+### OLS as a MLE
 
 Earlier, we noted that all linear models are estimated with a Maximum Likelihood Estimator. This includes the classical linear model.
 
-OLS is a MLE under the classical assumptions, and assuming $Y_i$ is normally distributed at $Y_i \sim \mathcal N(X\beta, \sigma^2)$ (where $\mu = \E(Y_i|X_i) = X\beta$, and $\sigma^2$ as the homoscedastic variance of $\eps_i$). By the [PDF of a normal distribution](quant1.qmd#the-normal-distribution) and @eq-loglike, the log-likelihood function $\ell$ of our sample for linear regression is:
+OLS is a MLE under the classical assumptions, and assuming $Y_i$ is normally distributed at $Y_i \sim \mathcal N(X\beta, \sigma^2)$ (where $\mu = \E(Y_i|X_i) = x_i^\top\beta$, and $\sigma^2$ as the homoscedastic variance of $\eps_i$). By the PDF of a normal distribution, we can express the PDF of $Y_i$:
+
+$$
+f(z) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(z-\mu)^2}{2\sigma^2}} \quad \implies \quad f(Y_i|\beta, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(Y_i - x_i^\top\beta)^2}{2\sigma^2}}
+$$
+
+Now using @eq-loglike, the log-likelihood function $\ell$ of our sample $(y_1, \dots, y_n)$ for linear regression is:
 
 $$
 \begin{align}
@@ -190,9 +233,11 @@ With the same first order condition, we will get the same $\beta$ estimate as in
 
 <br />
 
-### Newton-Raphson Algorithm
+### Newton and Fischer Algorithms
 
-We need to solve $s(\theta; y) = 0$ to find our MLE estimates $\hat\theta$. However, there is often no closed form solution due to differentiation issues. Thus, we must use iterated algorithms to solve for $\hat\theta$. Suppose $\theta$ is a scalar (only one parameter). For values of $\theta$ that are close to the true population $\theta_0$, the first-order taylor series expansion of $s(\theta)$ about $\theta_0$ states:
+We need to solve $s(\theta; y) = 0$ to find our MLE estimates $\hat\theta$. However, there is often no closed form/analytical solution like OLS. Thus, we must use iterated algorithms to solve for $\hat\theta$.
+
+One version is the **Newton Algorithm** (also called the newton-raphson algorithm). Suppose $\theta$ is a scalar (only one parameter). For values of $\theta$ that are close to the true population $\theta_0$, the first-order taylor series expansion of $s(\theta)$ about $\theta_0$ states:
 
 $$
 s(\theta; y) \approx s(\theta_0; y) + s'(\theta_0;y)(\theta - \theta_0)
@@ -204,16 +249,11 @@ $$
 \frac{\partial s(\theta; y)}{\partial \theta} = \frac{\partial^2 \ell(\theta; y)}{\partial \theta \partial \theta^\top} = - I(\theta)
 $$
 
-This gives us the following first-order taylor series expansion of $s(\theta)$:
-
-$$
-s(\theta; y) \approx s(\theta_0; y) - I(\theta_0)(\theta - \theta_0)
-$$
-
-And when we solve $s(\theta; y) = 0$ to maximimse, we can solve for $\theta$:
+This gives us the following first-order taylor series expansion of $s(\theta)$, and when we solve $s(\theta; y) = 0$ to maximimse, we can solve for $\theta$:
 
 $$
 \begin{align}
+s(\theta; y) & \approx s(\theta_0; y) - I(\theta_0)(\theta - \theta_0) \\
 0 & \approx s(\theta_0; y) - I(\theta_0)(\theta - \theta_0) && (\because s(\theta;y) = 0) \\
 I(\theta_0)(\theta - \theta_0) & \approx s(\theta_0; y)  && (+I(\theta_0)(\theta - \theta_0) \text{ to both sides})\\
 \theta - \theta_0 & \approx I(\theta_0)^{-1}s(\theta_0; y) && (\times I(\theta_0)^{-1} \text{ to both sides}) \\
@@ -221,13 +261,13 @@ I(\theta_0)(\theta - \theta_0) & \approx s(\theta_0; y)  && (+I(\theta_0)(\theta
 \end{align}
 $$
 
-Since $\theta_0$ is unknown, we cannot use this formula directly. Thus, we use an interative procedure. We start with some initial value $\theta^{(0)}$ that is randomly chosen. Then, we "update" for a new value $\theta^{(1)}$:
+Since $\theta_0$ is unknown, we cannot use this formula directly. Thus, we use an iterative procedure. We start with some initial value $\theta^{(0)}$ that is randomly chosen. Then, we "update" for a new value $\theta^{(1)}$:
 
 $$
 \theta^{(1)} = \theta^{(0)} + I (\theta^{(0)})^{-1} s(\theta^{(0)}; y)
 $$
 
-And we do the same updating for $\theta^{(2)}$ with $\theta^{(1)}$, and $\theta^{(m+1)}$ using $\theta^{(m)}$, until the algorithm converges and the differences between $\theta^{(m+1)}$ using $\theta^{(m)}$ becomes minimal (under some pre-specified threshold of "tolerance"). An alternative is **fisher-scoring**, which does the same thing but with the [expected fisher information matrix](#information-matrix-and-variance) $\mathcal I(\theta)$ instead of the observed $I(\theta)$ when $\mathcal I(\theta)$ is not too difficult to compute.
+And we do the same updating for $\theta^{(2)}$ with $\theta^{(1)}$, and $\theta^{(m+1)}$ using $\theta^{(m)}$, until the algorithm converges and the differences between $\theta^{(m+1)}$ using $\theta^{(m)}$ becomes minimal (under some pre-specified threshold of "tolerance"). An alternative is **fisher-scoring**, which does the same thing but with the [expected fisher information matrix](#information-matrix-and-variance) $\mathcal I(\theta)$ instead of the observed $I(\theta)$ when $\mathcal I(\theta)$ is not too difficult to compute. This is the method used for most GLMs.
 
 <br />
 
@@ -261,19 +301,122 @@ The lower the AIC is, the better the model is considered. There are also alterna
 
 ### Model Specification
 
-Include definition of $\pi_i$., and odds $pi_i / (1- \pi_i)$.
+The logistic model is a model for binary outcome variables $Y_i$ distribute according to the bernoulli distribution. Specifically, it models the outcome $\E(Y_i |X_i) = \P(Y_i = 1|X_i) = \pi_i$ like the [linear probability model](clm.qmd#linear-probability-model). As a GLM, logistic regression applies a link function to the outcome $\pi_i$. The model is specified:
 
-Include regression writeen in terms of $\pi_i$. (in in for box, show derivation).
+$$
+\log \left( \frac{\pi_i}{1-\pi_i}\right) = \beta_0 + \sum\limits_{j=1}^n \beta_j X_{ij} \ = \ x_i^\top \beta
+$$
 
-Show fitted values. plot.
+However, this form of the model with $\log(\pi_i/1-\pi_i))$ (called the log-odds) is not very useful - after all, we care about $\E(Y_i |X_i) = \P(Y_i = 1|X_i) = \pi_i$. Thus, through algebra manipulation, we can isolate $\pi_i$ on the left for a model of probabilities $\pi_i$ (proof provided below).
+
+Start with the original log-odds model, and take $e$ to the power of both sides to get rid of the natural log:
+
+$$
+\log \left( \frac{\pi_i}{1-\pi_i}\right) = x_i^\top\beta \quad \implies \quad \frac{\pi_i}{1-\pi_i} = e^{x_i^\top \beta}
+$$ {#eq-odds}
+
+The left eqution is a model for the odds (we will explore this more later). Now, we just solve for $\pi_i$:
+
+$$
+\begin{align}
+\pi_i & = (1- \pi_i)e^{x_i^\top \beta} && (\times (1-\pi_i) \text{ to both sides}) \\
+\pi_i & = e^{x_i^\top \beta} - \pi_i e^{x_i^\top \beta} && \text{(multiply out)} \\
+\pi_i + \pi_i e^{x_i^\top \beta} & = e^{x_i^\top \beta} && (+\pi_i e^{x_i^\top \beta} \text{ to both sides}) \\
+\pi_i(1 + e^{x_i^\top \beta}) & = e^{x_i^\top \beta} && (\text{factor out }\pi_i) \\
+\end{align}
+$$
+
+Finally, dividing both sides by $(1+e^{x_i^\top \beta})$ gets us the model for the outcome $\pi_i$:
+
+$$
+\E(Y_i |X_i) = \P(Y_i = 1|X_i) = \pi_i = \frac{e^{x_i^\top \beta}}{1+ e^{x_i^\top \beta}}
+$$
+
+In which we can estimate parameter vector $\beta$ with MLE as explained above. If you graph this function of $\pi_i$, you will see that $\pi_i$ always stays between 0 and 1.
 
 <br />
 
-### Interpretation and Odds Ratios
+### Fitted Probabilities and Applications
+
+Once we have estimated parameters in vector $\beta$, we can get fitted probabilities $\hat\pi_i$:
+
+$$
+\hat\pi_i = \frac{e^{x_i^\top \hat\beta}}{1+ e^{x_i^\top \hat\beta}}
+$$
+
+The fact that predicted $\hat\pi_i$ is always between 0 and 1 makes the logistic model significantly better for the prediction of probabilities than the linear probability model. In fact, if our goal is prediction, we will almost always prefer the logistic model over the classical linear model.
+
+We can also do **classification** - i.e. predicting if unit $i$ should be $\hat Y_i =1$ or $\hat Y_i = 0$. Typically if predicted $\hat\pi_i > 0.5$, we assign unit $i$ to $\hat Y_i = 1$.
+
+The form of the logistic regression is confusing - it is not a simple linear line. Below is the graph of a simple logistic regression with only one explanatory variable, and how changing coefficients $\beta_0 = \alpha$ and $\beta_1$ affect the curve of $\pi_i$:
+
+![](images/clipboard-1638897592.png){fig-align="center" width="70%"}
+
+We can see that the curves are always between 0 and 1. We also see that $\beta_1$ affects the relationship between $X_i$ and $\pi_i$. However, the value of $\beta_1$ is not directly interpretable unlike linear regression. However, there is a way to interpret a modified version of the coefficients, called the odds ratios (see below).
 
 <br />
+
+### Interpretation with Odds Ratios
+
+Before we define odds ratios and how they can help with interpretation, we first need to define the **odds** of an event $A$. This is defined as the probability of $A$ occuring, divided by the probability of $A$ not occuring. We can apply the same logic to $\P (Y_i = 1) = \pi_i$:
+
+$$
+\mathrm{odds}_A = \frac{\P(A)}{1-\P(A)} \quad \implies \quad \mathrm{odds}_{Y_i = 1} = \frac{\pi_i}{1 - \pi_i} 
+$$
+
+In @eq-odds, we also showed the logistic regression can be written with the outcome of odds of $Y_i = 1$.
+
+**Odds Ratios** are the ratio of two odds. For example, let us say we have two events $A$ and $B$. The odds ratio is:
+
+$$
+OR = \frac{\mathrm{odds}_{A}}{\mathrm{odds}_{B}} = \frac{\P(A)/[1-\P(A)]}{\P(B)/[1-\P(B)]}
+$$
+
+We know that the logistic model measures $\pi_i = \P(Y_i = 1 | X_i)$. This implies that $\pi_i$ depends on the value of $X_i$. That also means the odds depend on $X_i$. This allows us to compare how the odds change when we change $X_i$.
+
+For example, let us say we have the odds when $X_i = x$, and $X_i = x+1$ for a simple logistic regression. Using @eq-odds, we can calculate the odds and odds ratio of $Y_i$ given these two different values of $X_i$:
+
+$$
+\begin{align}
+& \mathrm{odds}_{Y_i = 1 |X_i = x} = \left(\frac{\pi_i}{1-\pi_i} \biggr|X_i = x \right) = e^{\beta_0 + \beta_1X_i} = e^{\beta_0 + \beta_1(x)}\\
+& \mathrm{odds}_{Y_i = 1 |X_i = x+1} = \left(\frac{\pi_i}{1-\pi_i} \biggr|X_i = x+1 \right) = e^{\beta_0 + \beta_1X_i} = e^{\beta_0 + \beta_1(x+1)} \\
+& \frac{\mathrm{odds}_{Y_i = 1|X_i = x+1}}{\mathrm{odds}_{Y_i = 1|X_i = x}} = \frac{e^{\beta_0 + \beta_1(x+1)}}{e^{\beta_0 + \beta_1(x)}} = \frac{e^{\beta_0 + \beta_1x+\beta_1}}{e^{\beta_0 + \beta_1x}} = \frac{e^{\beta_0}e^{\beta_1x}e^{\beta_1}}{e^{\beta_0} e^{\beta_1x}} = e^{\beta_1}
+\end{align}
+$$
+
+Thus, when increasing $X_i$ by one unit, the odds of an observation being in category $Y_i = 1$ multiply by $e^{\beta_1}$. A multiplicative increase also implies percentage change.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Percentage Change Interpretations
+
+We can also interpret odds ratios as percentage changes in odds (because that is what a multiplicative change in):
+
+-   If $e^{\beta_1} > 1$, then a one unit increase in $X_i$ is associated with a $(e^{\beta_1} - 1)\times 100$ percent increase in the odds of an observation being in category $Y_i = 1$.
+-   If $e^{\beta_1} < 1$, then a one unit increase in $X_i$ is associated with a $(1-e^{\beta_1} )\times 100$ percent decrease in the odds of an observation being in category $Y_i = 1$.
+-   If $e^{\beta_1} = 1$, then there is no relationship between $X_i$ and $Y_i$.
+:::
+
+An important point (that is often a mistake) is that odds are not probabilities. A doubling of odds is not equivalent to a doubling of probability. This is a common mistake in interpretation.
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Ordinal and Multinomial Models**
 
 ### Ordinal Logistic Regression
+
+The standard logistic model deals with binary $Y_i$. What if we have an ordinal $Y_i \in \{0, 1, 2, \dots \}$. The **ordinary logistic regression model** provides a solution to this.
+
+The Ordinal model is actually just a set of $c-1$ binary logistic regressions, where $c$ is the total number of categories. The figure below shows this with $c=4$, meaning 3 binary logistic regressions are run:
+
+![](images/clipboard-1556270979.png)
+
+Where the categories highlighted in yellow are considered to be $Y_i = 1$ for that specific binary regression, and the green are considered $Y_i =0$ for the specific binary regression.
+
+We can see that the yellow increases from just category 1 in the first regression, to categories 1-3 in the last regression. This tells us that these are actually measuring the **cumulative** probabilities $\gamma_j$ (for example, the final regression is predicting the probability of being in either category $j ≤ 3$, compared to $j = 4$).
 
 <br />
 
@@ -320,3 +463,11 @@ add odds ratios
 <br />
 
 ### Likelihood Ratio Test
+
+<br />
+
+<br />
+
+------------------------------------------------------------------------
+
+# **Implementation in R**
