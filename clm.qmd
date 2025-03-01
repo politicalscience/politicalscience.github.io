@@ -17,17 +17,14 @@ Use the right sidebar for quick navigation. R-code is provided at the bottom.
 There is some random outcome variable $Y_i$, and $p$ explanatory variables $X_{i1}, X_{i2}, \dots, X_{ip}$. The population linear model is specified as a [conditional expectation function](stats.qmd#conditional-distributions):
 
 $$
-\E(Y_i|X_i) = \beta_0 + \beta_1 X_{i1} + \dots + \beta_p X_{ip} \ = \ x_i^\top\beta
+\E(Y_i|X_i) = \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} \quad \iff \quad  \E(Y_i|X_i) = x_i^\top\beta, \quad x_i = \begin{pmatrix} 1 \\ X_{i1} \\ \vdots \\ X_{ip}\end{pmatrix}, \ \beta = \begin{pmatrix} \beta_0 \\ \beta_{1} \\ \vdots \\ \beta_{p}\end{pmatrix}
 $$
 
-Where $\beta_0, \dots, \beta_p$ are population parameters to be estimated, and vector $x_i^\top = (1, X_{i1}, \dots, X_{ip})$ and vector $\beta = (\beta_0, \dots \beta_p)$.
-
-We can also specify linear regression not as the expected $Y$ as above, but for each observation of $Y_i$:
+Where vector $\beta$ are population parameters to be estimated. We can also specify for each observation of $Y_i$:
 
 $$
 \begin{align}
-Y_i & = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i \\
-& =   \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} + \eps_i \ = \ x_i^\top\beta + \eps_i
+Y_i = \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} + \eps_i \quad  \iff \quad Y_i =  x_i^\top \beta + \eps_i
 \end{align}
 $$
 
@@ -162,15 +159,14 @@ $$
 \begin{align}
 \hat y & = X\hat\beta = X \color{blue}{(X^\top X)^{-1}X^\top y} && \color{black}(\because \color{blue}{\hat\beta = (X^\top X)^{-1}X^\top y} \color{black}) \\
 & = \color{red}{P}\color{black}y && (\because \color{red}{P:= X(X^\top X)^{-1}X^\top}) \\
+& \\
 \hat\eps & = y - \hat y  = y - \color{blue}{Py} && \color{black}( \because \color{blue}{\hat y = Py}\color{black}) \\
 & = (I-P)y && (\text{factor out y}) \\
 & = \color{purple}{M}\color{black}y && (\because \color{purple}{M:= I - P}\color{black})
 \end{align}
 $$
 
-Matrix $\color{red}{P}$, called the **projection matrix**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{ y}$. Matrix $\color{purple}{M}$, called the **residual maker**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{\eps}$.
-
-Fitted values $\hat{y}$ are a linear combination of our explanatory variables. That implies our explanatory variable vectors $x_1, x_2, \dots, x_p$ span a [vector space](math.qmd#vector-spaces-and-matrix-rank) that includes our fitted values vector $\hat{y}$. Thus, what $\color{red}{ P}$ is doing is taking our original vector $y$, and projecting it into the space spanned by our $X$ (called the **column space**). In the figure below, our observed $y$ vector is being projected onto the blue plane spanned by $X$ to create our $\hat{y}$.
+Matrix $\color{red}{P}$, called the **projection matrix**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{ y}$. Matrix $\color{purple}{M}$, called the **residual maker**, is a matrix operator that performs the [linear mapping](math.qmd#linear-mappings-and-combinations) $y \rightarrow \hat{\eps}$. Fitted values $\hat{y}$ are a linear combination of explanatory variable vectors $x_1, x_2, \dots, x_p$, and thus $\hat y$ is in the [vector space](math.qmd#vector-spaces-and-matrix-rank) spanned by $X$. Projection matrix $\color{red}{ P}$ projects $y$ into $\hat y$ which is in the space spanned by our $X$ (called the **column space**):
 
 ![](images/clipboard-880030792.png){fig-align="center" width="45%"}
 
@@ -321,13 +317,13 @@ R-Squared ($R^2$) measures the proportion of variation in $y$ that is explained 
 
 ### The Classical Assumptions {#the-classical-assumptions}
 
-1\) **Linearity in Parameters**. This means that the linear model must be able to be written in the form $y = X\beta + \eps$. This [does not mean the best-fit line must be linear]{.underline} (as we will explore later).
+1\) **Linearity in Parameters**. The linear model must be able to be written in the form $y = X\beta + \eps$. This [does not mean the best-fit line must be linear]{.underline} (as we will explore later).
 
-2\) **Independent and Identically Distributed (i.i.d.)**. Essentially, this means any two observations $i$ and $j$ are sampled from the same random variable distribution with the same probabilities.
+2\) **Independent and Identically Distributed (i.i.d.)**. Any two observations $i$ and $j$ are sampled from the same random variable distribution with the same probabilities.
 
-3\) **No Perfect Multicolinearity**. This means that no explanatory variables $X_{i1}, \dots, X_{ip}$ can be written as an exact linear combination of other explanatory variables in the model. This is needed for the OLS formula.
+3\) **No Perfect Multicolinearity**. No explanatory variables $X_{i1}, \dots, X_{ip}$ can be written as an exact linear combination of other explanatory variables in the model. This is needed for inverting $X^\top X$ in the OLS solution.
 
-4\) **Zero Conditional Mean** $\E(\eps|X) = 0$. This can be broken down into two parts. First, $\E(\eps) = 0$: This is always met since if it is not 0, you can adjust $\beta_0$ until it is 0. More importantly, the assumption of **exogeneity** $\E(X^\top \eps) = 0$. This means that all regressors $X_{ij}$, and any combination of regressors, should be uncorrelated with the error term $\eps$.
+4\) **Zero Conditional Mean** $\E(\eps|X) = 0$. This can be broken down into two parts. First, $\E(\eps) = 0$: This is always met since if it is not 0, you can adjust $\beta_0$ until it is 0. Second, $\E(X^\top \eps) = 0$. This means that all regressors $X_{ij}$, and any combination of regressors, should be uncorrelated with the error term $\eps$.
 
 5\) **Spherical Errors**. This is an assumption made on the variance-covariance matrix of the error terms $\eps_i$:
 
@@ -345,9 +341,7 @@ cov(\eps_3, \eps_1) & cov(\eps_3, \eps_2) & \V\eps_3 & \vdots \\
 \end{pmatrix}
 $$ {#eq-homo}
 
-This assumption can also be broken into two parts. **No** **Autocorrelation** is the assumption that all error terms are uncorrelated $cov(\eps_i, \eps_j) = 0$, and is directly a result of the earlier i.d.d. assumption. The second part is **Homoscedasticity**, which says that all the variances of each error term $\V(\eps_i)$ is constant at some value $\sigma^2$, which implies $X$ has no impact on the variance of $\eps_i$.
-
-If homoscedasticity is violated but 'no autocorrleation' is still met, we have heteroscedasticity. We will discuss heteroscedasticity later below, and we will not worry too much about autocorrelation here.
+This assumption can also be broken into two parts. **No** **Autocorrelation** means all error terms are uncorrelated $cov(\eps_i, \eps_j) = 0$, and is a result of the earlier i.d.d. assumption. Second, **Homoscedasticity** says that all the variances of each error term $\V(\eps_i)$ is constant at some value $\sigma^2$, which implies $X$ has no impact on the variance of $\eps_i$. If homoscedasticity is violated but 'no autocorrleation' is still met, we have heteroscedasticity.
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Visualising Homoscedasticity
@@ -365,9 +359,19 @@ The heteroscedasticity (when homoscedasticity is violated) residuals have a clea
 
 ### Unbiasedness of OLS {#ols-as-an-unbiased-estimator}
 
-OLS is an [unbiased estimator](stats.qmd#finite-sample-properties-of-estimators) of the relationship between any $X_{ij}$ and $Y_i$ under the first 4 [classical assumptions](#the-classical-assumptions): linearity, i.i.d., no perfect multicollinearity, and zero-conditional mean.
+OLS is an unbiased estimator of the relationship between any $X_{ij}$ and $Y_i$ under the first 4 [classical assumptions](#the-classical-assumptions): linearity, i.i.d., no perfect multicollinearity, and zero-conditional mean.
 
-Let us prove OLS is unbiased - i.e. $\E\hat\beta = \beta$ under the 4 classical assumptions. Let us manipulate our OLS solution:
+::: {.callout-note collapse="true" appearance="simple"}
+## Unbiased Estimators
+
+We have some true population parameter $\theta$ that we are estimating with a sample. Our sample will produce some estimate $\hat\theta_n$.
+
+Imagine we take another sample from the population: we will get a slightly different estimate. Taking $N$ samples, we get estimates $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$. Thus, our single sample estimate $\hat\theta_n$ is actually a realisation of a random variable, drawn from the sampling distribution $\hat\theta_1, \dots, \hat\theta_N$. The best guess of the value of $\hat\theta_n$ is the expected value $\E \hat\theta_n$ of the distribution.
+
+An unbiased estimator is when $\E\hat\theta_n = \theta$, or in other words, the expected sample estimate when drawn from the sampling distribution is equal to the true population value $\theta$. We want an unbiased estimator, because that means any sample estimate $\hat\theta_n$ is expected to equal the true population parameter.
+:::
+
+Let us prove OLS is unbiased $\E\hat\beta = \beta$ under the 4 classical assumptions. Let us manipulate our OLS solution:
 
 $$
 \begin{align}
@@ -400,7 +404,19 @@ Thus, OLS is unbiased under the 4 conditions above. This is extremely desirable,
 
 ### Variance of the OLS Estimator {#variance-of-the-ols-estimator}
 
-We want to find the variance of our estimator's sampling distribution, $\V(\hat\beta | X)$, under all 5 of the [classical assumptions](#the-classical-assumptions). First, let us start off where we left off in @eq-simplify:
+We want to find the variance of our estimator's sampling distribution, $\V(\hat\beta | X)$, under all 5 of the [classical assumptions](#the-classical-assumptions).
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Variance of Estimators
+
+We have some true population parameter $\theta$ that we are estimating with a sample. Our sample will produce some estimate $\hat\theta_n$.
+
+Imagine we take another sample from the population: we will get a slightly different estimate. Taking $N$ samples, we get estimates $\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N$. Thus, our single sample estimate $\hat\theta_n$ is actually a realisation of a random variable, drawn from the sampling distribution $\hat\theta_1, \dots, \hat\theta_N$. The best guess of the value of $\hat\theta_n$ is the expected value $\E \hat\theta_n$ of the distribution.
+
+However, our sampling distribution of $\hat\theta_1, \dots, \hat\theta_N$ can also be described by the variance - how spread out the distribution is. Even if our estimator is unbiased, if it has a very high variance (spread), that means any specific realisation $\hat\theta_n$ might be far away from the expected value. Thus, we want a low-variance estimator.
+:::
+
+First, let us start off where we left off in @eq-simplify:
 
 $$
 \begin{align}
@@ -500,7 +516,21 @@ Since $\sigma^2 CM C^\top$ is positive semi-definite (I will not prove this, but
 
 ### Asymptotic Consistency of OLS
 
-We know OLS is unbiased under the first 4 [classical assumptions](#the-classical-assumptions): linearity, i.i.d., no perfect multicollinearity, and zero-conditional mean. OLS is also an [asymptotically consistent estimator](stats.qmd#asymptotic-properties-of-estimators) of $\beta_j$ under the first 3 classical assumptions, and one weakened version of the zero-conditional mean.
+We know OLS is unbiased under the first 4 [classical assumptions](#the-classical-assumptions): linearity, i.i.d., no perfect multicollinearity, and zero-conditional mean. OLS is also an asymptotically consistent estimator of $\beta_j$ under the first 3 classical assumptions, and one weakened version of the zero-conditional mean.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Asymptotic Consistency of Estimators
+
+An estimator is asymptotically consistency, if as we increase the sample size $n$ towards $∞$, the sampling distribution will become more and more concentrated around the true population $\theta$. At $n = ∞$, our sampling distribution collapses to just the true population value $\theta$. Mathematically:
+
+$$
+\P(|\hat\theta_n - \theta) > \epsilon) \rightarrow 0, \ \mathrm{as} \ n \rightarrow ∞
+$$
+
+This essentially means that the probability that the difference between our sample estimate $\hat\theta_n$ and $\theta$ is greater than some arbitrarily small value $\epsilon$ becomes 0, as our sample size approaches infinity.
+
+Note: estimators can be biased but consistent. This means they are biased at small sample sizes, but as sample size increases, they are consistent.
+:::
 
 For asymptotic consistency, we replace zero-conditional mean with **zero-mean and exogeneity**: $\E(\eps_i) = 0$, and $Cov(x_i, \eps_i) = 0$, which implies $E(X_i \eps_i) = 0$. This means that no regressor should be correlated with $\eps$. This is weaker than Zero-Conditional mean, since it means a function of regressors can be correlated with $\eps_i$.
 
@@ -536,13 +566,31 @@ $$
 \end{align}
 $$
 
-Thus, OLS is asymptotically consistent under the 4 conditions above. Note that it is possible for OLS to be consistent but biased (if we only meet the weakened zero-mean and exogeneity condition, and not the full zero-conditional mean condition). However, asymptotic consistency is still valuable if we have large sample sizes.
+::: {.callout-note collapse="true" appearance="simple"}
+## Probability Limits and Law of Large Numbers
+
+We have a random variable $X_i$ with a true population mean $\mu$. Let us take a sample of $n$ units $(x_1, \dots, x_n)$. Our sample average will be $\bar x_n$. The law of large numbers states that:
+
+$$
+\mathrm{plim}(\bar x_n) = \mu
+$$
+
+Where plim (probability limit) states that as $n$ approaches infinity, the probability distribution of $\bar x_n$ collapses around $\mu$. Thus, **the law of large numbers** states that the sample average estimator $\bar x_n$ is an asymptotically consistent estimator of the true population average $\mu$.
+
+**Proof**: Recall from your basic statistics courses that the variance of a sample mean $\bar x_n$ is $\sigma^2/ n$. Now, as sample size $n$ increases to infinity, we get:
+
+$$
+\lim\limits_{n \rightarrow ∞} \frac{\sigma^2}{n} = 0
+$$
+
+Thus, as the sample size increases to $∞$, our sample mean $\bar x_n$'s variance becomes 0, so the probability distribution collapses around the true population mean.
+:::
 
 <br />
 
 ### Robust Standard Errors {#weakening-spherical-errors}
 
-So far, we have assumed that the [classical assumptions](#the-classical-assumptions) are met. However, this is often not the case, especially with the final assumption: spherical errors (homoscedasticity + no autocorrelation).
+So far, we have assumed that the [classical assumptions](#the-classical-assumptions) are met. However, this is often not the case, especially with the final assumption: spherical errors (specifically homoscedasticity).
 
 **Heteroscedasticity** is when homoscedasticity is violated - which implies each $i$ (based on its $X$ values) has its own error: $\V(\eps_i|X) = \sigma_i^2$. We still assume no autocorrelation.
 
@@ -555,7 +603,9 @@ $$
 \end{pmatrix}
 $$
 
-What are the implications of heteroscedasticity? First, heteroscedasticity [**does not** bias OLS]{.underline}, as the unbiasedness proof only relies on the first 4 classical assumptions. Second, heteroscedasticity means OLS is [no longer BLUE]{.underline} - i.e. there exists are more efficient unbiased linear estimator (the generalised least squares estimator, which we will not cover since it is rarely used).
+What are the implications of heteroscedasticity? First, heteroscedasticity [**does not** bias OLS]{.underline}, as the unbiasedness proof only relies on the first 4 classical assumptions.
+
+Second, heteroscedasticity means OLS is [no longer BLUE]{.underline} - i.e. there exists are more efficient unbiased linear estimator (the generalised least squares estimator, which we will not cover since it is rarely used).
 
 Third, and most relevant to us, is that the OLS variance formula (and standard errors) are no longer valid. Instead, we have to use the Huber-White Standard Errors (also called **robust standard errors**). This is because if we recall from @eq-var, we originally simplified this equation using the homoscedasticity assumption. Instead, for robust standard errors, we start from @eq-var, and plug in our error covariance matrix $\Omega$ from above:
 
@@ -568,8 +618,6 @@ $$
 \end{pmatrix}}\color{black} X ( X^\top X)^{-1}
 $$
 
-The other assumption of spherical errors, autocorrelation, is a common problem in time-series and data that has spatial elements, and just like heteroscedasticity, this means that OLS is no longer BLUE (the generalised least squares will be BLUE), and that we will need special autocorrelation + heteroscedasticity (HAC) robust standard errors.
-
 <br />
 
 <br />
@@ -580,11 +628,31 @@ The other assumption of spherical errors, autocorrelation, is a common problem i
 
 ### Normality and Standard Errors
 
-We need to know the form of the $\hat\beta$ sampling distribution for statistical tests. If our sample size is sufficiently large, we can invoke the central limit theorem, which says that the sampling distribution of $\hat\beta$ is approximately normal if our sample size $n$ is large enough.
+We need to know the form of the $\hat\beta$ sampling distribution for statistical tests. We can impose a condition of normality of the error terms: $\eps | X \sim \mathcal N(0, \sigma^2 I)$. This will ensure the sampling distribution of $\hat\beta$ is normally distributed. If our sample size is sufficiently large, we can invoke the central limit theorem, which says that the sampling distribution of $\hat\beta$ is approximately normal if our sample size $n$ is large enough.
 
-Or, we can impose a condition of normality of the error terms: $\eps | X \sim \mathcal N(0, \sigma^2 I)$. This will ensure the sampling distribution of $\hat\beta$ is normally distributed. (Note, the mean 0 and variance $\sigma^2 I$ come from the [classical assumptions](#the-classical-assumptions) of zero-conditional mean and spherical errors). However, this condition is very restrictive, so we typically rely on the reliable central limit theorem.
+::: {.callout-note collapse="true" appearance="simple"}
+## Central Limit Theorem
 
-Now, we will need the standard error of the sampling distribution. We know the standard error is the square root of the variance of the sampling distribution, which we [derived](#variance-of-the-ols-estimator) (assuming the classical assumptions are met) as:
+Let us say we have some random sample $(z_1, \dots, z_n)$. We have some estimator, for simplicity, let us say sample mean $\bar z_n$ (a random variable). The expected value of this estimate $\E (\bar z_n) = \mu$, and the variance of this estimator is $\sigma^2/ n$.
+
+Now, let us define a new random variable $w_n$ as the standardised verision of $\bar z_n$:
+
+$$
+w_n =\frac{\bar z_n - \mu}{\sigma / \sqrt{n}}
+$$
+
+The **central limit theorem** states that:
+
+$$
+w_n \rightarrow \mathcal N(0, 1), \ \mathrm{as} \ n \rightarrow ∞
+$$
+
+The central limit theorem states that as sample size $n$ approaches infinity, the standardised sampling distribution approximates a normal distribution. This theorem applies to any estimator, including $\beta$.
+
+More importantly for us, it states that as $n$ increases, our $w_n$ becomes closer and closer to $\mathcal N (0, 1)$, which means we can say with large enough samples, our sampling distribution is [approximately]{.underline} normal.
+:::
+
+Now, we will need the standard error (std. devation) of the sampling distribution. We know the standard error is the square root of the variance of the sampling distribution, which we [derived](#variance-of-the-ols-estimator) (assuming the classical assumptions are met) as:
 
 $$
 \V(\hat\beta | X) = \sigma^2 (X^\top X)^{-1}

@@ -363,14 +363,12 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="model-specification">Model Specification</h3>
 <p>There is some random outcome variable <span class="math inline">\(Y_i\)</span>, and <span class="math inline">\(p\)</span> explanatory variables <span class="math inline">\(X_{i1}, X_{i2}, \dots, X_{ip}\)</span>. The population linear model is specified as a <a href="./stats.html#conditional-distributions">conditional expectation function</a>:</p>
 <p><span class="math display">\[
-\E(Y_i|X_i) = \beta_0 + \beta_1 X_{i1} + \dots + \beta_p X_{ip} \ = \ x_i^\top\beta
+\E(Y_i|X_i) = \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} \quad \iff \quad  \E(Y_i|X_i) = x_i^\top\beta, \quad x_i = \begin{pmatrix} 1 \\ X_{i1} \\ \vdots \\ X_{ip}\end{pmatrix}, \ \beta = \begin{pmatrix} \beta_0 \\ \beta_{1} \\ \vdots \\ \beta_{p}\end{pmatrix}
 \]</span></p>
-<p>Where <span class="math inline">\(\beta_0, \dots, \beta_p\)</span> are population parameters to be estimated, and vector <span class="math inline">\(x_i^\top = (1, X_{i1}, \dots, X_{ip})\)</span> and vector <span class="math inline">\(\beta = (\beta_0, \dots \beta_p)\)</span>.</p>
-<p>We can also specify linear regression not as the expected <span class="math inline">\(Y\)</span> as above, but for each observation of <span class="math inline">\(Y_i\)</span>:</p>
+<p>Where vector <span class="math inline">\(\beta\)</span> are population parameters to be estimated. We can also specify for each observation of <span class="math inline">\(Y_i\)</span>:</p>
 <p><span class="math display">\[
 \begin{align}
-Y_i &amp; = \beta_0 + \beta_1X_{i1} + \dots + \beta_pX_{ip} + \eps_i \\
-&amp; =   \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} + \eps_i \ = \ x_i^\top\beta + \eps_i
+Y_i = \beta_0 + \sum\limits_{j=1}^p \beta_jX_{ij} + \eps_i \quad  \iff \quad Y_i =  x_i^\top \beta + \eps_i
 \end{align}
 \]</span></p>
 <p>Where <span class="math inline">\(\eps_i\)</span> is the error term representing the variation in <span class="math inline">\(Y_i\)</span> that is not explained by the <span class="math inline">\(p\)</span> explanatory variables: either a missing variable in our model, or some random noise. This model implies for each observation/individual <span class="math inline">\(i=1,\dots ,n\)</span> in the population, with values <span class="math inline">\((y_i, x_{i1} \dots, x_{ip})\)</span> has a regression equation:</p>
@@ -499,13 +497,13 @@ MSE &amp; = \E(Y_i - \E(Y_i|X_i))^2 \\
 \begin{align}
 \hat y &amp; = X\hat\beta = X \color{blue}{(X^\top X)^{-1}X^\top y} &amp;&amp; \color{black}(\because \color{blue}{\hat\beta = (X^\top X)^{-1}X^\top y} \color{black}) \\
 &amp; = \color{red}{P}\color{black}y &amp;&amp; (\because \color{red}{P:= X(X^\top X)^{-1}X^\top}) \\
+&amp; \\
 \hat\eps &amp; = y - \hat y  = y - \color{blue}{Py} &amp;&amp; \color{black}( \because \color{blue}{\hat y = Py}\color{black}) \\
 &amp; = (I-P)y &amp;&amp; (\text{factor out y}) \\
 &amp; = \color{purple}{M}\color{black}y &amp;&amp; (\because \color{purple}{M:= I - P}\color{black})
 \end{align}
 \]</span></p>
-<p>Matrix <span class="math inline">\(\color{red}{P}\)</span>, called the <strong>projection matrix</strong>, is a matrix operator that performs the <a href="./math.html#linear-mappings-and-combinations">linear mapping</a> <span class="math inline">\(y \rightarrow \hat{ y}\)</span>. Matrix <span class="math inline">\(\color{purple}{M}\)</span>, called the <strong>residual maker</strong>, is a matrix operator that performs the <a href="./math.html#linear-mappings-and-combinations">linear mapping</a> <span class="math inline">\(y \rightarrow \hat{\eps}\)</span>.</p>
-<p>Fitted values <span class="math inline">\(\hat{y}\)</span> are a linear combination of our explanatory variables. That implies our explanatory variable vectors <span class="math inline">\(x_1, x_2, \dots, x_p\)</span> span a <a href="./math.html#vector-spaces-and-matrix-rank">vector space</a> that includes our fitted values vector <span class="math inline">\(\hat{y}\)</span>. Thus, what <span class="math inline">\(\color{red}{ P}\)</span> is doing is taking our original vector <span class="math inline">\(y\)</span>, and projecting it into the space spanned by our <span class="math inline">\(X\)</span> (called the <strong>column space</strong>). In the figure below, our observed <span class="math inline">\(y\)</span> vector is being projected onto the blue plane spanned by <span class="math inline">\(X\)</span> to create our <span class="math inline">\(\hat{y}\)</span>.</p>
+<p>Matrix <span class="math inline">\(\color{red}{P}\)</span>, called the <strong>projection matrix</strong>, is a matrix operator that performs the <a href="./math.html#linear-mappings-and-combinations">linear mapping</a> <span class="math inline">\(y \rightarrow \hat{ y}\)</span>. Matrix <span class="math inline">\(\color{purple}{M}\)</span>, called the <strong>residual maker</strong>, is a matrix operator that performs the <a href="./math.html#linear-mappings-and-combinations">linear mapping</a> <span class="math inline">\(y \rightarrow \hat{\eps}\)</span>. Fitted values <span class="math inline">\(\hat{y}\)</span> are a linear combination of explanatory variable vectors <span class="math inline">\(x_1, x_2, \dots, x_p\)</span>, and thus <span class="math inline">\(\hat y\)</span> is in the <a href="./math.html#vector-spaces-and-matrix-rank">vector space</a> spanned by <span class="math inline">\(X\)</span>. Projection matrix <span class="math inline">\(\color{red}{ P}\)</span> projects <span class="math inline">\(y\)</span> into <span class="math inline">\(\hat y\)</span> which is in the space spanned by our <span class="math inline">\(X\)</span> (called the <strong>column space</strong>):</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-880030792.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:45.0%"></p>
@@ -664,10 +662,10 @@ R^2 = \frac{SSE}{SST} = \frac{SST - SSR}{SST} = 1 - \frac{SSR}{SST} = 1 - \frac{
 <h1><strong>Classical Least Squares Theory</strong></h1>
 <section id="the-classical-assumptions" class="level3">
 <h3 class="anchored" data-anchor-id="the-classical-assumptions">The Classical Assumptions</h3>
-<p>1) <strong>Linearity in Parameters</strong>. This means that the linear model must be able to be written in the form <span class="math inline">\(y = X\beta + \eps\)</span>. This <u>does not mean the best-fit line must be linear</u> (as we will explore later).</p>
-<p>2) <strong>Independent and Identically Distributed (i.i.d.)</strong>. Essentially, this means any two observations <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> are sampled from the same random variable distribution with the same probabilities.</p>
-<p>3) <strong>No Perfect Multicolinearity</strong>. This means that no explanatory variables <span class="math inline">\(X_{i1}, \dots, X_{ip}\)</span> can be written as an exact linear combination of other explanatory variables in the model. This is needed for the OLS formula.</p>
-<p>4) <strong>Zero Conditional Mean</strong> <span class="math inline">\(\E(\eps|X) = 0\)</span>. This can be broken down into two parts. First, <span class="math inline">\(\E(\eps) = 0\)</span>: This is always met since if it is not 0, you can adjust <span class="math inline">\(\beta_0\)</span> until it is 0. More importantly, the assumption of <strong>exogeneity</strong> <span class="math inline">\(\E(X^\top \eps) = 0\)</span>. This means that all regressors <span class="math inline">\(X_{ij}\)</span>, and any combination of regressors, should be uncorrelated with the error term <span class="math inline">\(\eps\)</span>.</p>
+<p>1) <strong>Linearity in Parameters</strong>. The linear model must be able to be written in the form <span class="math inline">\(y = X\beta + \eps\)</span>. This <u>does not mean the best-fit line must be linear</u> (as we will explore later).</p>
+<p>2) <strong>Independent and Identically Distributed (i.i.d.)</strong>. Any two observations <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> are sampled from the same random variable distribution with the same probabilities.</p>
+<p>3) <strong>No Perfect Multicolinearity</strong>. No explanatory variables <span class="math inline">\(X_{i1}, \dots, X_{ip}\)</span> can be written as an exact linear combination of other explanatory variables in the model. This is needed for inverting <span class="math inline">\(X^\top X\)</span> in the OLS solution.</p>
+<p>4) <strong>Zero Conditional Mean</strong> <span class="math inline">\(\E(\eps|X) = 0\)</span>. This can be broken down into two parts. First, <span class="math inline">\(\E(\eps) = 0\)</span>: This is always met since if it is not 0, you can adjust <span class="math inline">\(\beta_0\)</span> until it is 0. Second, <span class="math inline">\(\E(X^\top \eps) = 0\)</span>. This means that all regressors <span class="math inline">\(X_{ij}\)</span>, and any combination of regressors, should be uncorrelated with the error term <span class="math inline">\(\eps\)</span>.</p>
 <p>5) <strong>Spherical Errors</strong>. This is an assumption made on the variance-covariance matrix of the error terms <span class="math inline">\(\eps_i\)</span>:</p>
 <p><span id="eq-homo"><span class="math display">\[
 \underbrace{\V(\eps|X)}_{\mathrm{cov. \ matrix}} = \begin{pmatrix}
@@ -682,8 +680,7 @@ cov(\eps_3, \eps_1) &amp; cov(\eps_3, \eps_2) &amp; \V\eps_3 &amp; \vdots \\
 0 &amp; 0 &amp; \dots &amp; \sigma^2
 \end{pmatrix}
 \tag{2}\]</span></span></p>
-<p>This assumption can also be broken into two parts. <strong>No</strong> <strong>Autocorrelation</strong> is the assumption that all error terms are uncorrelated <span class="math inline">\(cov(\eps_i, \eps_j) = 0\)</span>, and is directly a result of the earlier i.d.d. assumption. The second part is <strong>Homoscedasticity</strong>, which says that all the variances of each error term <span class="math inline">\(\V(\eps_i)\)</span> is constant at some value <span class="math inline">\(\sigma^2\)</span>, which implies <span class="math inline">\(X\)</span> has no impact on the variance of <span class="math inline">\(\eps_i\)</span>.</p>
-<p>If homoscedasticity is violated but ‘no autocorrleation’ is still met, we have heteroscedasticity. We will discuss heteroscedasticity later below, and we will not worry too much about autocorrelation here.</p>
+<p>This assumption can also be broken into two parts. <strong>No</strong> <strong>Autocorrelation</strong> means all error terms are uncorrelated <span class="math inline">\(cov(\eps_i, \eps_j) = 0\)</span>, and is a result of the earlier i.d.d. assumption. Second, <strong>Homoscedasticity</strong> says that all the variances of each error term <span class="math inline">\(\V(\eps_i)\)</span> is constant at some value <span class="math inline">\(\sigma^2\)</span>, which implies <span class="math inline">\(X\)</span> has no impact on the variance of <span class="math inline">\(\eps_i\)</span>. If homoscedasticity is violated but ‘no autocorrleation’ is still met, we have heteroscedasticity.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -711,8 +708,26 @@ Visualising Homoscedasticity
 </section>
 <section id="ols-as-an-unbiased-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="ols-as-an-unbiased-estimator">Unbiasedness of OLS</h3>
-<p>OLS is an <a href="./stats.html#finite-sample-properties-of-estimators">unbiased estimator</a> of the relationship between any <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span> under the first 4 <a href="#the-classical-assumptions">classical assumptions</a>: linearity, i.i.d., no perfect multicollinearity, and zero-conditional mean.</p>
-<p>Let us prove OLS is unbiased - i.e.&nbsp;<span class="math inline">\(\E\hat\beta = \beta\)</span> under the 4 classical assumptions. Let us manipulate our OLS solution:</p>
+<p>OLS is an unbiased estimator of the relationship between any <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span> under the first 4 <a href="#the-classical-assumptions">classical assumptions</a>: linearity, i.i.d., no perfect multicollinearity, and zero-conditional mean.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Unbiased Estimators
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We have some true population parameter <span class="math inline">\(\theta\)</span> that we are estimating with a sample. Our sample will produce some estimate <span class="math inline">\(\hat\theta_n\)</span>.</p>
+<p>Imagine we take another sample from the population: we will get a slightly different estimate. Taking <span class="math inline">\(N\)</span> samples, we get estimates <span class="math inline">\(\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N\)</span>. Thus, our single sample estimate <span class="math inline">\(\hat\theta_n\)</span> is actually a realisation of a random variable, drawn from the sampling distribution <span class="math inline">\(\hat\theta_1, \dots, \hat\theta_N\)</span>. The best guess of the value of <span class="math inline">\(\hat\theta_n\)</span> is the expected value <span class="math inline">\(\E \hat\theta_n\)</span> of the distribution.</p>
+<p>An unbiased estimator is when <span class="math inline">\(\E\hat\theta_n = \theta\)</span>, or in other words, the expected sample estimate when drawn from the sampling distribution is equal to the true population value <span class="math inline">\(\theta\)</span>. We want an unbiased estimator, because that means any sample estimate <span class="math inline">\(\hat\theta_n\)</span> is expected to equal the true population parameter.</p>
+</div>
+</div>
+</div>
+<p>Let us prove OLS is unbiased <span class="math inline">\(\E\hat\beta = \beta\)</span> under the 4 classical assumptions. Let us manipulate our OLS solution:</p>
 <p><span id="eq-simplify"><span class="math display">\[
 \begin{align}
 \hat\beta &amp; = (X^\top X)^{-1} X^\top y \\
@@ -738,7 +753,26 @@ Visualising Homoscedasticity
 </section>
 <section id="variance-of-the-ols-estimator" class="level3">
 <h3 class="anchored" data-anchor-id="variance-of-the-ols-estimator">Variance of the OLS Estimator</h3>
-<p>We want to find the variance of our estimator’s sampling distribution, <span class="math inline">\(\V(\hat\beta | X)\)</span>, under all 5 of the <a href="#the-classical-assumptions">classical assumptions</a>. First, let us start off where we left off in <a href="#eq-simplify" class="quarto-xref">Equation&nbsp;3</a>:</p>
+<p>We want to find the variance of our estimator’s sampling distribution, <span class="math inline">\(\V(\hat\beta | X)\)</span>, under all 5 of the <a href="#the-classical-assumptions">classical assumptions</a>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Variance of Estimators
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We have some true population parameter <span class="math inline">\(\theta\)</span> that we are estimating with a sample. Our sample will produce some estimate <span class="math inline">\(\hat\theta_n\)</span>.</p>
+<p>Imagine we take another sample from the population: we will get a slightly different estimate. Taking <span class="math inline">\(N\)</span> samples, we get estimates <span class="math inline">\(\hat\theta_1, \hat\theta_2, \dots, \hat\theta_N\)</span>. Thus, our single sample estimate <span class="math inline">\(\hat\theta_n\)</span> is actually a realisation of a random variable, drawn from the sampling distribution <span class="math inline">\(\hat\theta_1, \dots, \hat\theta_N\)</span>. The best guess of the value of <span class="math inline">\(\hat\theta_n\)</span> is the expected value <span class="math inline">\(\E \hat\theta_n\)</span> of the distribution.</p>
+<p>However, our sampling distribution of <span class="math inline">\(\hat\theta_1, \dots, \hat\theta_N\)</span> can also be described by the variance - how spread out the distribution is. Even if our estimator is unbiased, if it has a very high variance (spread), that means any specific realisation <span class="math inline">\(\hat\theta_n\)</span> might be far away from the expected value. Thus, we want a low-variance estimator.</p>
+</div>
+</div>
+</div>
+<p>First, let us start off where we left off in <a href="#eq-simplify" class="quarto-xref">Equation&nbsp;3</a>:</p>
 <p><span class="math display">\[
 \begin{align}
 &amp; \hat\beta = \beta + (X^\top X)^{-1} X^\top \eps \\
@@ -746,7 +780,7 @@ Visualising Homoscedasticity
 \end{align}
 \]</span></p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -755,7 +789,7 @@ Lemma: Property of Variance
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Lemma</strong>: If <span class="math inline">\(\eps\)</span> is an <span class="math inline">\(n\)</span> dimensional vector of random variables, <span class="math inline">\(c\)</span> is an <span class="math inline">\(m\)</span> dimensional vector, and <span class="math inline">\(B\)</span> is an <span class="math inline">\(n \times m\)</span> dimensional matrix with fixed constants, then the following is true (I will not prove this lemma here, but it is provable):</p>
 <p><span id="eq-lemma"><span class="math display">\[
@@ -786,7 +820,7 @@ Lemma: Property of Variance
 <h3 class="anchored" data-anchor-id="gauss-markov-theorem">Gauss-Markov Theorem</h3>
 <p>The Gauss-Markov Theorem states that if all 5 <a href="#the-classical-assumptions">classical assumptions</a> are met, the OLS estimator is the <strong>best linear unbiased estimator</strong> (BLUE) - the unbiased linear estimator with the lowest variance. Any linear estimator takes the form <span class="math inline">\(\tilde{\beta} = Cy\)</span>, including OLS. For any linear estimator <span class="math inline">\(\tilde{\beta} = Cy\)</span> to be unbiased, we need to assume <span class="math inline">\(\color{red}{CX = I}\)</span>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -795,7 +829,7 @@ Proof <span class="math inline">\(CX = I\)</span> For a Unbiased Linear Estimato
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For any linear estimator <span class="math inline">\(\tilde{\beta} = Cy\)</span> to be unbiased, we need to assume <span class="math inline">\(\color{red}{CX = I}\)</span>. The proof of this is as follows:</p>
 <p><span class="math display">\[
@@ -842,10 +876,31 @@ Proof <span class="math inline">\(CX = I\)</span> For a Unbiased Linear Estimato
 </section>
 <section id="asymptotic-consistency-of-ols" class="level3">
 <h3 class="anchored" data-anchor-id="asymptotic-consistency-of-ols">Asymptotic Consistency of OLS</h3>
-<p>We know OLS is unbiased under the first 4 <a href="#the-classical-assumptions">classical assumptions</a>: linearity, i.i.d., no perfect multicollinearity, and zero-conditional mean. OLS is also an <a href="./stats.html#asymptotic-properties-of-estimators">asymptotically consistent estimator</a> of <span class="math inline">\(\beta_j\)</span> under the first 3 classical assumptions, and one weakened version of the zero-conditional mean.</p>
+<p>We know OLS is unbiased under the first 4 <a href="#the-classical-assumptions">classical assumptions</a>: linearity, i.i.d., no perfect multicollinearity, and zero-conditional mean. OLS is also an asymptotically consistent estimator of <span class="math inline">\(\beta_j\)</span> under the first 3 classical assumptions, and one weakened version of the zero-conditional mean.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Asymptotic Consistency of Estimators
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>An estimator is asymptotically consistency, if as we increase the sample size <span class="math inline">\(n\)</span> towards <span class="math inline">\(∞\)</span>, the sampling distribution will become more and more concentrated around the true population <span class="math inline">\(\theta\)</span>. At <span class="math inline">\(n = ∞\)</span>, our sampling distribution collapses to just the true population value <span class="math inline">\(\theta\)</span>. Mathematically:</p>
+<p><span class="math display">\[
+\P(|\hat\theta_n - \theta) &gt; \epsilon) \rightarrow 0, \ \mathrm{as} \ n \rightarrow ∞
+\]</span></p>
+<p>This essentially means that the probability that the difference between our sample estimate <span class="math inline">\(\hat\theta_n\)</span> and <span class="math inline">\(\theta\)</span> is greater than some arbitrarily small value <span class="math inline">\(\epsilon\)</span> becomes 0, as our sample size approaches infinity.</p>
+<p>Note: estimators can be biased but consistent. This means they are biased at small sample sizes, but as sample size increases, they are consistent.</p>
+</div>
+</div>
+</div>
 <p>For asymptotic consistency, we replace zero-conditional mean with <strong>zero-mean and exogeneity</strong>: <span class="math inline">\(\E(\eps_i) = 0\)</span>, and <span class="math inline">\(Cov(x_i, \eps_i) = 0\)</span>, which implies <span class="math inline">\(E(X_i \eps_i) = 0\)</span>. This means that no regressor should be correlated with <span class="math inline">\(\eps\)</span>. This is weaker than Zero-Conditional mean, since it means a function of regressors can be correlated with <span class="math inline">\(\eps_i\)</span>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -854,7 +909,7 @@ Lemma: Vector Notation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The following statements are true (with <span class="math inline">\(x_i\)</span> being a vector and <span class="math inline">\(\eps_i\)</span> being a scalar):</p>
 <p><span class="math display">\[
@@ -881,12 +936,36 @@ Lemma: Vector Notation
 &amp; = \beta + (\E(x_i x_i^\top))^{-1} \underbrace{\E(x_i \eps_i)}_{= 0} = \beta &amp;&amp; \text{(law of large numbers)}
 \end{align}
 \]</span></p>
-<p>Thus, OLS is asymptotically consistent under the 4 conditions above. Note that it is possible for OLS to be consistent but biased (if we only meet the weakened zero-mean and exogeneity condition, and not the full zero-conditional mean condition). However, asymptotic consistency is still valuable if we have large sample sizes.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Probability Limits and Law of Large Numbers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We have a random variable <span class="math inline">\(X_i\)</span> with a true population mean <span class="math inline">\(\mu\)</span>. Let us take a sample of <span class="math inline">\(n\)</span> units <span class="math inline">\((x_1, \dots, x_n)\)</span>. Our sample average will be <span class="math inline">\(\bar x_n\)</span>. The law of large numbers states that:</p>
+<p><span class="math display">\[
+\mathrm{plim}(\bar x_n) = \mu
+\]</span></p>
+<p>Where plim (probability limit) states that as <span class="math inline">\(n\)</span> approaches infinity, the probability distribution of <span class="math inline">\(\bar x_n\)</span> collapses around <span class="math inline">\(\mu\)</span>. Thus, <strong>the law of large numbers</strong> states that the sample average estimator <span class="math inline">\(\bar x_n\)</span> is an asymptotically consistent estimator of the true population average <span class="math inline">\(\mu\)</span>.</p>
+<p><strong>Proof</strong>: Recall from your basic statistics courses that the variance of a sample mean <span class="math inline">\(\bar x_n\)</span> is <span class="math inline">\(\sigma^2/ n\)</span>. Now, as sample size <span class="math inline">\(n\)</span> increases to infinity, we get:</p>
+<p><span class="math display">\[
+\lim\limits_{n \rightarrow ∞} \frac{\sigma^2}{n} = 0
+\]</span></p>
+<p>Thus, as the sample size increases to <span class="math inline">\(∞\)</span>, our sample mean <span class="math inline">\(\bar x_n\)</span>’s variance becomes 0, so the probability distribution collapses around the true population mean.</p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="weakening-spherical-errors" class="level3">
 <h3 class="anchored" data-anchor-id="weakening-spherical-errors">Robust Standard Errors</h3>
-<p>So far, we have assumed that the <a href="#the-classical-assumptions">classical assumptions</a> are met. However, this is often not the case, especially with the final assumption: spherical errors (homoscedasticity + no autocorrelation).</p>
+<p>So far, we have assumed that the <a href="#the-classical-assumptions">classical assumptions</a> are met. However, this is often not the case, especially with the final assumption: spherical errors (specifically homoscedasticity).</p>
 <p><strong>Heteroscedasticity</strong> is when homoscedasticity is violated - which implies each <span class="math inline">\(i\)</span> (based on its <span class="math inline">\(X\)</span> values) has its own error: <span class="math inline">\(\V(\eps_i|X) = \sigma_i^2\)</span>. We still assume no autocorrelation.</p>
 <p><span class="math display">\[
 \V(\eps| X) = \Omega = \begin{pmatrix}
@@ -896,7 +975,8 @@ Lemma: Vector Notation
 0 &amp; 0 &amp; \dots &amp; \sigma^2_n
 \end{pmatrix}
 \]</span></p>
-<p>What are the implications of heteroscedasticity? First, heteroscedasticity <u><strong>does not</strong> bias OLS</u>, as the unbiasedness proof only relies on the first 4 classical assumptions. Second, heteroscedasticity means OLS is <u>no longer BLUE</u> - i.e.&nbsp;there exists are more efficient unbiased linear estimator (the generalised least squares estimator, which we will not cover since it is rarely used).</p>
+<p>What are the implications of heteroscedasticity? First, heteroscedasticity <u><strong>does not</strong> bias OLS</u>, as the unbiasedness proof only relies on the first 4 classical assumptions.</p>
+<p>Second, heteroscedasticity means OLS is <u>no longer BLUE</u> - i.e.&nbsp;there exists are more efficient unbiased linear estimator (the generalised least squares estimator, which we will not cover since it is rarely used).</p>
 <p>Third, and most relevant to us, is that the OLS variance formula (and standard errors) are no longer valid. Instead, we have to use the Huber-White Standard Errors (also called <strong>robust standard errors</strong>). This is because if we recall from <a href="#eq-var" class="quarto-xref">Equation&nbsp;5</a>, we originally simplified this equation using the homoscedasticity assumption. Instead, for robust standard errors, we start from <a href="#eq-var" class="quarto-xref">Equation&nbsp;5</a>, and plug in our error covariance matrix <span class="math inline">\(\Omega\)</span> from above:</p>
 <p><span class="math display">\[
 \V(\hat{\beta}| X)  = (X^\top X)^{-1} X^\top \color{blue}{\begin{pmatrix}
@@ -906,7 +986,6 @@ Lemma: Vector Notation
 0 &amp; 0 &amp; \dots &amp; \sigma^2_n
 \end{pmatrix}}\color{black} X ( X^\top X)^{-1}
 \]</span></p>
-<p>The other assumption of spherical errors, autocorrelation, is a common problem in time-series and data that has spatial elements, and just like heteroscedasticity, this means that OLS is no longer BLUE (the generalised least squares will be BLUE), and that we will need special autocorrelation + heteroscedasticity (HAC) robust standard errors.</p>
 <p><br></p>
 <p><br></p>
 <hr>
@@ -916,9 +995,34 @@ Lemma: Vector Notation
 <h1><strong>Statistical Inference</strong></h1>
 <section id="normality-and-standard-errors" class="level3">
 <h3 class="anchored" data-anchor-id="normality-and-standard-errors">Normality and Standard Errors</h3>
-<p>We need to know the form of the <span class="math inline">\(\hat\beta\)</span> sampling distribution for statistical tests. If our sample size is sufficiently large, we can invoke the central limit theorem, which says that the sampling distribution of <span class="math inline">\(\hat\beta\)</span> is approximately normal if our sample size <span class="math inline">\(n\)</span> is large enough.</p>
-<p>Or, we can impose a condition of normality of the error terms: <span class="math inline">\(\eps | X \sim \mathcal N(0, \sigma^2 I)\)</span>. This will ensure the sampling distribution of <span class="math inline">\(\hat\beta\)</span> is normally distributed. (Note, the mean 0 and variance <span class="math inline">\(\sigma^2 I\)</span> come from the <a href="#the-classical-assumptions">classical assumptions</a> of zero-conditional mean and spherical errors). However, this condition is very restrictive, so we typically rely on the reliable central limit theorem.</p>
-<p>Now, we will need the standard error of the sampling distribution. We know the standard error is the square root of the variance of the sampling distribution, which we <a href="#variance-of-the-ols-estimator">derived</a> (assuming the classical assumptions are met) as:</p>
+<p>We need to know the form of the <span class="math inline">\(\hat\beta\)</span> sampling distribution for statistical tests. We can impose a condition of normality of the error terms: <span class="math inline">\(\eps | X \sim \mathcal N(0, \sigma^2 I)\)</span>. This will ensure the sampling distribution of <span class="math inline">\(\hat\beta\)</span> is normally distributed. If our sample size is sufficiently large, we can invoke the central limit theorem, which says that the sampling distribution of <span class="math inline">\(\hat\beta\)</span> is approximately normal if our sample size <span class="math inline">\(n\)</span> is large enough.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Central Limit Theorem
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let us say we have some random sample <span class="math inline">\((z_1, \dots, z_n)\)</span>. We have some estimator, for simplicity, let us say sample mean <span class="math inline">\(\bar z_n\)</span> (a random variable). The expected value of this estimate <span class="math inline">\(\E (\bar z_n) = \mu\)</span>, and the variance of this estimator is <span class="math inline">\(\sigma^2/ n\)</span>.</p>
+<p>Now, let us define a new random variable <span class="math inline">\(w_n\)</span> as the standardised verision of <span class="math inline">\(\bar z_n\)</span>:</p>
+<p><span class="math display">\[
+w_n =\frac{\bar z_n - \mu}{\sigma / \sqrt{n}}
+\]</span></p>
+<p>The <strong>central limit theorem</strong> states that:</p>
+<p><span class="math display">\[
+w_n \rightarrow \mathcal N(0, 1), \ \mathrm{as} \ n \rightarrow ∞
+\]</span></p>
+<p>The central limit theorem states that as sample size <span class="math inline">\(n\)</span> approaches infinity, the standardised sampling distribution approximates a normal distribution. This theorem applies to any estimator, including <span class="math inline">\(\beta\)</span>.</p>
+<p>More importantly for us, it states that as <span class="math inline">\(n\)</span> increases, our <span class="math inline">\(w_n\)</span> becomes closer and closer to <span class="math inline">\(\mathcal N (0, 1)\)</span>, which means we can say with large enough samples, our sampling distribution is <u>approximately</u> normal.</p>
+</div>
+</div>
+</div>
+<p>Now, we will need the standard error (std. devation) of the sampling distribution. We know the standard error is the square root of the variance of the sampling distribution, which we <a href="#variance-of-the-ols-estimator">derived</a> (assuming the classical assumptions are met) as:</p>
 <p><span class="math display">\[
 \V(\hat\beta | X) = \sigma^2 (X^\top X)^{-1}
 \]</span></p>
@@ -957,7 +1061,7 @@ t = \frac{\hat\beta_j - H_0}{\widehat{se}(\hat\beta_j)}
 <li>If <span class="math inline">\(p &gt; 0.05\)</span>, we cannot reject the null hypothesis, and cannot reject there is no relationship between <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span>.</li>
 </ul>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -966,7 +1070,7 @@ Confidence Intervals
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The 95% <a href="./stats.html#confidence-intervals">confidence intervals</a> of coefficients have the following bounds:</p>
 <p><span class="math display">\[
@@ -1223,7 +1327,7 @@ Y_i = \beta_0 + \beta_1X_i + \beta_2 X_i^2 + \eps_i
 </div>
 <p>Output will include coefficients, standard errors, p-values, and more.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1232,7 +1336,7 @@ Binary and Categorical Variables
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can include binary and categorical variables by using the <em>as.factor()</em> function:</p>
 <div class="cell">
@@ -1243,7 +1347,7 @@ Binary and Categorical Variables
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1252,7 +1356,7 @@ Fixed Effects
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can include one-way fixed effects by adding a | after your regression formula in <em>feols()</em>:</p>
 <div class="cell">
@@ -1270,7 +1374,7 @@ Fixed Effects
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1279,7 +1383,7 @@ Interaction Effects
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Two interact two variables, use * between them. This will automatically include both the interaction term, and the two variables by themselves.</p>
 <div class="cell">
@@ -1293,7 +1397,7 @@ Interaction Effects
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1302,7 +1406,7 @@ Polynomial Transformations
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>To conduct a polynomial transformation, you can use the <em>I()</em> function. The second argument is the degree of the polynomial:</p>
 <div class="cell">
@@ -1312,7 +1416,7 @@ Polynomial Transformations
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1321,7 +1425,7 @@ Logarithmic Transformations
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The best way to do a logarithmic transformation is to create a new variable that is the log of the variable you want to transform using the <em>log()</em> function, before you even start the regression:</p>
 <div class="cell">
@@ -1331,7 +1435,7 @@ Logarithmic Transformations
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1340,7 +1444,7 @@ Confidence Intervals
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>To find the confidence intervals for coefficients, first estimate the model with <em>lm()</em> or <em>feols()</em> as shown previously, then use the <em>confint()</em> command:</p>
 <div class="cell">
@@ -1350,7 +1454,7 @@ Confidence Intervals
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1359,7 +1463,7 @@ F-Tests
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>To run a f-test, use the <em>anova()</em> command, and input your two different models, with the null model going first.</p>
 <div class="cell">
@@ -1370,7 +1474,7 @@ F-Tests
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1379,7 +1483,7 @@ LaTeX Regression Tables
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can use the <em>texreg</em> package to make nice regression tables automatically.</p>
 <div class="cell">
@@ -1398,7 +1502,7 @@ LaTeX Regression Tables
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1407,7 +1511,7 @@ Prediction
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>We can use the <em>predict()</em> function to generate fitted value predictions in R:</p>
 <div class="cell">
