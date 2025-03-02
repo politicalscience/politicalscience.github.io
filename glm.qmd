@@ -408,15 +408,49 @@ An important point (that is often a mistake) is that odds are not probabilities.
 
 ### Ordinal Logistic Regression
 
-The standard logistic model deals with binary $Y_i$. What if we have an ordinal $Y_i \in \{0, 1, 2, \dots \}$. The **ordinary logistic regression model** provides a solution to this.
+What if we have an ordinal outcome $Y_i \in \{0, 1, 2, \dots \}$. The **ordinary logistic regression model** is a set of $c-1$ binary logistic regressions that calculate cumulative probabilities, where $c$ is the total number of categories.
 
-The Ordinal model is actually just a set of $c-1$ binary logistic regressions, where $c$ is the total number of categories. The figure below shows this with $c=4$, meaning 3 binary logistic regressions are run:
+::: {.callout-note collapse="true" appearance="simple"}
+## Ordinal Models as a set of Binary Models
 
-![](images/clipboard-1556270979.png)
+Ordinal logistic model is a set of $c-1$ binary models, where $c$ is the number of categories. For example, take $c=4$:
+
+1.  The first model is a binary of category 1 vs. categories 2-4.
+2.  The second model is a binary of categories 1-2 vs. categories 3-4.
+3.  The third model is a binary of categories 1-3 vs. category 4.
+
+![](images/clipboard-1556270979.png){fig-align="center" width="60%"}
 
 Where the categories highlighted in yellow are considered to be $Y_i = 1$ for that specific binary regression, and the green are considered $Y_i =0$ for the specific binary regression.
 
 We can see that the yellow increases from just category 1 in the first regression, to categories 1-3 in the last regression. This tells us that these are actually measuring the **cumulative** probabilities $\gamma_j$ (for example, the final regression is predicting the probability of being in either category $j ≤ 3$, compared to $j = 4$).
+:::
+
+The ordinal logistic regression model is a model for the cumulative probability $\gamma_j$ of an outcome $Y_i$ being in a certain category $j$ or below, for categories $j = 1, \dots, c-1$:
+
+$$
+\gamma_j = \P(Y_i ≤ j) = \frac{e^{\beta_{0j} - (\beta_1X_{i1} + \dots + \beta_p X_{ip})}}{1 + e^{\beta_{0j} - (\beta_1X_{i1} + \dots + \beta_p X_{ip})}}
+$$
+
+Notice how for each $j$, there is a different intercept $\beta_{0j}$ value. However, the other coefficients $\beta_1, \dots, \beta_p$ do not depend on $j$, and are consistent across all $j$. What this means is that the $c-1$ binary logistic regressions are "parallel", since they have the same coefficients, but are shifted by intercepts. This is called the **proportional odds** assumption, and assumes all of the binary comparisons must have the same correlation between $X_{ij}$ and $Y_i$. If you believe this is not reasonable to assume, you should use the multinomial model below.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Visualisation of Proportional Odds
+
+Imagine we have $c=4$ categories. The 3 binary model's predicted cumulative probabilities are displayed below.
+
+![](images/clipboard-3226102876.png){fig-align="center" width="50%"}
+
+Notice how all three are parallel, since they have the same $\beta_1, \dots, \beta_p$ coefficient values. They are only shifted due to $\beta_{0j}$ depending on the model $j$.
+:::
+
+Interpretation of the coefficients $\beta_1, \dots, \beta_p$ use [odds ratios](#interpretation-with-odds-ratios) as discussed above. An increase in one unit of $X_I$ increases the odds of a unit being in a higher category of $Y_i$ by a multiplicative increase of $e^{\beta_j}$.
+
+Predictions for probabilities can be calculated with the above equation but substituting in our predicted $\hat\beta$ from maximum likelihood estimation. Of course, the model is specified towards cumulative probabilities $\gamma_j = \P(Y_i ≤ j)$. For the probability of a specific category $\P(Y_i = j)$:
+
+-   The probability of the first category $j=1$ is $\P (Y_i = 1) =\hat\gamma_1$.
+-   The probability the last category $j =c$ is 1 minus the cumulative probability of the second-to-last category: $\P(Y_i = c) = 1 - \gamma_{c-1}$.
+-   The probability of any category $j$ in the middle is that category $j$'s cumulative probability minus the cumulative probability of $j-1$: $\P(Y_i = j) = \gamma_j - \gamma_{j-1}$.
 
 <br />
 

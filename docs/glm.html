@@ -662,11 +662,69 @@ Percentage Change Interpretations
 <h1><strong>Ordinal and Multinomial Models</strong></h1>
 <section id="ordinal-logistic-regression" class="level3">
 <h3 class="anchored" data-anchor-id="ordinal-logistic-regression">Ordinal Logistic Regression</h3>
-<p>The standard logistic model deals with binary <span class="math inline">\(Y_i\)</span>. What if we have an ordinal <span class="math inline">\(Y_i \in \{0, 1, 2, \dots \}\)</span>. The <strong>ordinary logistic regression model</strong> provides a solution to this.</p>
-<p>The Ordinal model is actually just a set of <span class="math inline">\(c-1\)</span> binary logistic regressions, where <span class="math inline">\(c\)</span> is the total number of categories. The figure below shows this with <span class="math inline">\(c=4\)</span>, meaning 3 binary logistic regressions are run:</p>
-<p><img src="images/clipboard-1556270979.png" class="img-fluid"></p>
+<p>What if we have an ordinal outcome <span class="math inline">\(Y_i \in \{0, 1, 2, \dots \}\)</span>. The <strong>ordinary logistic regression model</strong> is a set of <span class="math inline">\(c-1\)</span> binary logistic regressions that calculate cumulative probabilities, where <span class="math inline">\(c\)</span> is the total number of categories.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ordinal Models as a set of Binary Models
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Ordinal logistic model is a set of <span class="math inline">\(c-1\)</span> binary models, where <span class="math inline">\(c\)</span> is the number of categories. For example, take <span class="math inline">\(c=4\)</span>:</p>
+<ol type="1">
+<li>The first model is a binary of category 1 vs.&nbsp;categories 2-4.</li>
+<li>The second model is a binary of categories 1-2 vs.&nbsp;categories 3-4.</li>
+<li>The third model is a binary of categories 1-3 vs.&nbsp;category 4.</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1556270979.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
 <p>Where the categories highlighted in yellow are considered to be <span class="math inline">\(Y_i = 1\)</span> for that specific binary regression, and the green are considered <span class="math inline">\(Y_i =0\)</span> for the specific binary regression.</p>
 <p>We can see that the yellow increases from just category 1 in the first regression, to categories 1-3 in the last regression. This tells us that these are actually measuring the <strong>cumulative</strong> probabilities <span class="math inline">\(\gamma_j\)</span> (for example, the final regression is predicting the probability of being in either category <span class="math inline">\(j ≤ 3\)</span>, compared to <span class="math inline">\(j = 4\)</span>).</p>
+</div>
+</div>
+</div>
+<p>The ordinal logistic regression model is a model for the cumulative probability <span class="math inline">\(\gamma_j\)</span> of an outcome <span class="math inline">\(Y_i\)</span> being in a certain category <span class="math inline">\(j\)</span> or below, for categories <span class="math inline">\(j = 1, \dots, c-1\)</span>:</p>
+<p><span class="math display">\[
+\gamma_j = \P(Y_i ≤ j) = \frac{e^{\beta_{0j} - (\beta_1X_{i1} + \dots + \beta_p X_{ip})}}{1 + e^{\beta_{0j} - (\beta_1X_{i1} + \dots + \beta_p X_{ip})}}
+\]</span></p>
+<p>Notice how for each <span class="math inline">\(j\)</span>, there is a different intercept <span class="math inline">\(\beta_{0j}\)</span> value. However, the other coefficients <span class="math inline">\(\beta_1, \dots, \beta_p\)</span> do not depend on <span class="math inline">\(j\)</span>, and are consistent across all <span class="math inline">\(j\)</span>. What this means is that the <span class="math inline">\(c-1\)</span> binary logistic regressions are “parallel”, since they have the same coefficients, but are shifted by intercepts. This is called the <strong>proportional odds</strong> assumption, and assumes all of the binary comparisons must have the same correlation between <span class="math inline">\(X_{ij}\)</span> and <span class="math inline">\(Y_i\)</span>. If you believe this is not reasonable to assume, you should use the multinomial model below.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Visualisation of Proportional Odds
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Imagine we have <span class="math inline">\(c=4\)</span> categories. The 3 binary model’s predicted cumulative probabilities are displayed below.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3226102876.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
+</figure>
+</div>
+<p>Notice how all three are parallel, since they have the same <span class="math inline">\(\beta_1, \dots, \beta_p\)</span> coefficient values. They are only shifted due to <span class="math inline">\(\beta_{0j}\)</span> depending on the model <span class="math inline">\(j\)</span>.</p>
+</div>
+</div>
+</div>
+<p>Interpretation of the coefficients <span class="math inline">\(\beta_1, \dots, \beta_p\)</span> use <a href="#interpretation-with-odds-ratios">odds ratios</a> as discussed above. An increase in one unit of <span class="math inline">\(X_I\)</span> increases the odds of a unit being in a higher category of <span class="math inline">\(Y_i\)</span> by a multiplicative increase of <span class="math inline">\(e^{\beta_j}\)</span>.</p>
+<p>Predictions for probabilities can be calculated with the above equation but substituting in our predicted <span class="math inline">\(\hat\beta\)</span> from maximum likelihood estimation. Of course, the model is specified towards cumulative probabilities <span class="math inline">\(\gamma_j = \P(Y_i ≤ j)\)</span>. For the probability of a specific category <span class="math inline">\(\P(Y_i = j)\)</span>:</p>
+<ul>
+<li>The probability of the first category <span class="math inline">\(j=1\)</span> is <span class="math inline">\(\P (Y_i = 1) =\hat\gamma_1\)</span>.</li>
+<li>The probability the last category <span class="math inline">\(j =c\)</span> is 1 minus the cumulative probability of the second-to-last category: <span class="math inline">\(\P(Y_i = c) = 1 - \gamma_{c-1}\)</span>.</li>
+<li>The probability of any category <span class="math inline">\(j\)</span> in the middle is that category <span class="math inline">\(j\)</span>’s cumulative probability minus the cumulative probability of <span class="math inline">\(j-1\)</span>: <span class="math inline">\(\P(Y_i = j) = \gamma_j - \gamma_{j-1}\)</span>.</li>
+</ul>
 <p><br></p>
 </section>
 <section id="multinomial-logistic-regression" class="level3">
