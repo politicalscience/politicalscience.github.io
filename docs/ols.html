@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Classical Least Squares – Statistics for Political Science</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<link href="./gls.html" rel="next">
+<link href="./inference.html" rel="prev">
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="mathjax-config.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./random.html">Part I: Theoretical Statistics</a></li><li class="breadcrumb-item"><a href="./ols.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Classical Least Squares</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Statistics for Political Science</a> 
+    </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Theoretical Statistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./random.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Random Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical Inference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ols.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Classical Least Squares</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Generalised Least Squares</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Maximum Likelihood</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mom.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Method of Moments</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./causal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Causal Inference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./identify.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Causal Identification</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Applied Statistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./glm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Generalised Linear Model</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-classical-linear-model" id="toc-the-classical-linear-model" class="nav-link active" data-scroll-target="#the-classical-linear-model"><span class="header-section-number">3.1</span> The Classical Linear Model</a></li>
+  <li><a href="#ordinary-least-squares" id="toc-ordinary-least-squares" class="nav-link" data-scroll-target="#ordinary-least-squares"><span class="header-section-number">3.2</span> Ordinary Least Squares</a></li>
+  <li><a href="#geometry-and-projection" id="toc-geometry-and-projection" class="nav-link" data-scroll-target="#geometry-and-projection"><span class="header-section-number">3.3</span> Geometry and Projection</a></li>
+  <li><a href="#regression-anatomy" id="toc-regression-anatomy" class="nav-link" data-scroll-target="#regression-anatomy"><span class="header-section-number">3.4</span> Regression Anatomy</a></li>
+  <li><a href="#unbiasedness-of-ols" id="toc-unbiasedness-of-ols" class="nav-link" data-scroll-target="#unbiasedness-of-ols"><span class="header-section-number">3.5</span> Unbiasedness of OLS</a></li>
+  <li><a href="#variance-of-ols" id="toc-variance-of-ols" class="nav-link" data-scroll-target="#variance-of-ols"><span class="header-section-number">3.6</span> Variance of OLS</a></li>
+  <li><a href="#gauss-markov-theorem" id="toc-gauss-markov-theorem" class="nav-link" data-scroll-target="#gauss-markov-theorem"><span class="header-section-number">3.7</span> Gauss-Markov Theorem</a></li>
+  <li><a href="#asymptotic-consistency" id="toc-asymptotic-consistency" class="nav-link" data-scroll-target="#asymptotic-consistency"><span class="header-section-number">3.8</span> Asymptotic Consistency</a></li>
+  <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference"><span class="header-section-number">3.9</span> Statistical Inference</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./random.html">Part I: Theoretical Statistics</a></li><li class="breadcrumb-item"><a href="./ols.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Classical Least Squares</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Classical Least Squares</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>In the previous chapters, we have mostly talked about the theory of random variables and statistical inference.</p>
+<p>In this chapter, we introduce our first estimator, the Ordinary Least Squares (OLS) Estimator, which can only be used on a set of models that meet some assumptions. We first introduce the conditions in which the OLS estimator can be used. We then discuss derivation of the estimator, and the properties of the estimator. We conclude with a brief discussion on statistical inference with OLS.</p>
+<p><br></p>
+<section id="the-classical-linear-model" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="the-classical-linear-model"><span class="header-section-number">3.1</span> The Classical Linear Model</h2>
+<p>The OLS estimator is an estimator for population estimands <span class="math inline">\(\theta\)</span>. However, the OLS estimator can only be applied in one specific model: the classical linear model. The assumptions of the classical linear model are below:</p>
+<section id="assumption-1-linearity-in-parameters" class="level4">
+<h4 class="anchored" data-anchor-id="assumption-1-linearity-in-parameters"><u>Assumption 1: Linearity in Parameters</u></h4>
+<p>Let us say there are individuals <span class="math inline">\(t = 1, 2, \dots, n\)</span> in the population. The DGP (<a href="inference.html#def-dgp" class="quarto-xref">definition&nbsp;<span>2.1</span></a>) of each individual’s <span class="math inline">\(Y_t\)</span> value must be in the form:</p>
+<p><span id="eq-normallinear"><span class="math display">\[
+Y_t \sim \mathcal N (\beta_0 + \beta_1X_{t1} + \beta_2X_{t2} + \dots + \beta_pX_{tp}, \  \sigma^2)
+\tag{3.1}\]</span></span></p>
+<p>Where set <span class="math inline">\(\set X = \{X_1, \dots, X_p\}\)</span> are called <em>explanatory variables</em> or <em>regressors</em> that are correlated with some <em>outcome variable</em> <span class="math inline">\(Y\)</span>. Parameters <span class="math inline">\(\beta_1, \dots, \beta_p\)</span> explain the relationship between <span class="math inline">\(\set X\)</span> and <span class="math inline">\(Y\)</span>, and <span class="math inline">\(\sigma^2\)</span> is the randomness in <span class="math inline">\(Y\)</span> not explained by the regressors. More commonly, we will describe the linear model in the form of</p>
+<p><span class="math display">\[
+Y_t = \underbrace{\beta_0 + \beta_1 X_{t1} + \dots + \beta_pX_{tp}}_{\mu_Y \ = \  \E(Y_t|X_{t1}, \dots X_{tp})} + \eps_t, \quad \eps_t \sim \mathcal N(0, \sigma^2)
+\]</span></p>
+<p>Which splits the model up into a portion that identifies <span class="math inline">\(\mu_Y = \E(Y_t|\set X_t)\)</span>, and <span class="math inline">\(\eps\)</span> (called the error term) that explains the randomness with variance <span class="math inline">\(\sigma^2\)</span>. We can also express this model in matrix form:</p>
+<div id="def-linearmodel" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.1 (Linear Model)</strong></span> The classical linear model takes the form:</p>
+<p><span class="math display">\[
+\b y = \b{X\beta} + \b\eps \iff \begin{pmatrix} y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} =
+\begin{pmatrix} 1 &amp; x_{11} &amp; \dots &amp; x_{1p} \\
+1 &amp; x_{21} &amp; \dots &amp; x_{2p} \\
+\vdots &amp; \vdots &amp; \dots &amp; \vdots \\
+1 &amp; x_{n1} &amp; \dots &amp; x_{np}\end{pmatrix}
+\begin{pmatrix} \beta_0 \\ \beta_1 \\ \vdots \\ \beta_p\end{pmatrix} +
+\begin{pmatrix} \eps_1 \\ \eps_2 \\ \vdots \\ \eps_n \end{pmatrix}
+\]</span></p>
+<p>A model is linear in parameters if it can be written in the above form, which implies no parameters <span class="math inline">\(\beta_0, \dots, \beta_p\)</span> can be multiplied together.</p>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Linearity of Parameters vs.&nbsp;Linearity of Variables
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The linear model only has to be linear in parameters, i.e.&nbsp;no parameters <span class="math inline">\(\beta_0, \dots, \beta_p\)</span> can be multiplied together.</p>
+<p>It does not need to be linear in variables. For example, take this regression:</p>
+<p><span class="math display">\[
+Y_t = \beta_0 + \beta_1 X_t + \beta_2 X_t^2
+\]</span></p>
+<p>This is still linear in parameters, as no parameters <span class="math inline">\(\beta_0, \dots, \beta_p\)</span> are multiplied together. If we pretend that <span class="math inline">\(X_2 = X_1^2\)</span>, then we can write this in the matrix form above.</p>
+</div>
+</div>
+</div>
+<p>The goal of OLS is to estimate the population parameters in vector <span class="math inline">\(\b\beta\)</span>.</p>
+</section>
+<section id="assumption-2-independent-and-identically-distributed-i.i.d." class="level4">
+<h4 class="anchored" data-anchor-id="assumption-2-independent-and-identically-distributed-i.i.d."><u>Assumption 2: Independent and Identically Distributed (i.i.d.)</u></h4>
+<p>Each individual in the population <span class="math inline">\(t\)</span>’s <span class="math inline">\(Y_t\)</span> value, <span class="math inline">\(y_1, y_2, \dots, y_n\)</span>, must be a result of random variables <span class="math inline">\(Y_1, \dots, Y_n\)</span> in which all of these random variables are independent of each other (<a href="random.html#def-independence" class="quarto-xref">definition&nbsp;<span>1.6</span></a>), and have the exact same distribution with each other.</p>
+</section>
+<section id="assumption-3-no-perfect-multicollinearity" class="level4">
+<h4 class="anchored" data-anchor-id="assumption-3-no-perfect-multicollinearity"><u>Assumption 3: No Perfect Multicollinearity</u></h4>
+<p>No explanatory variables <span class="math inline">\(X_1, \dots, X_p\)</span> can be perfectly correlated with any other explanatory variable, or perfectly correlated with any linear combination of other explanatory variables. This assumption is required for estimation to be possible with the ordinary least squares estimator, as it requires matrix <span class="math inline">\(\b X\)</span> to be full rank which allows <span class="math inline">\(\b X^\top \b X\)</span> to be invertable.</p>
+</section>
+<section id="assumption-4-strict-exogeneity" class="level4">
+<h4 class="anchored" data-anchor-id="assumption-4-strict-exogeneity"><u>Assumption 4: Strict Exogeneity</u></h4>
+<div id="def-strictexog" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.2 (Strict Exogeneity)</strong></span> This condition is <span class="math inline">\(\E(\b\eps | \b X) = 0\)</span>. This also implies that <span class="math inline">\(\E(\b X^\top \b\eps) = 0\)</span>, which means all regressors <span class="math inline">\(X_1, \dots, X_p\)</span> should be uncorrelated with the error terms <span class="math inline">\(\eps\)</span>, and any linear combination of <span class="math inline">\(X_1, \dots, X_p\)</span> should be uncorrelated with the error term.</p>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Notes on Strict Exogeneity
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Strict exogeneity is the most violated condition, and when violated, it will bias OLS estimates (as we will see below).</p>
+<p>The most common reason for why strict exogeneity is violated is when we forget to include an explanatory variable <span class="math inline">\(W\)</span> in our model that is correlated with both some of <span class="math inline">\(X_1, \dots, X_p\)</span> and <span class="math inline">\(Y\)</span>. Thus, the part of <span class="math inline">\(W\)</span> correlated with <span class="math inline">\(X_1, \dots, X_p\)</span> will also be correlated with the error term <span class="math inline">\(\eps_i\)</span>, since <span class="math inline">\(W\)</span> if not included in our model will be present in the error.</p>
+<p>Later lessons (such as method of moments) will have solutions to deal with when exogeneity is violated.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="assumption-5-spherical-errors" class="level4">
+<h4 class="anchored" data-anchor-id="assumption-5-spherical-errors"><u>Assumption 5: Spherical Errors</u></h4>
+<p>The spherical errors assumption says that this covariance matrix should take a certain form:</p>
+<div id="def-sphericalerrors" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.3 (Spherical Errors)</strong></span> The spherical errors assumption states that the covariance matrix of errors <span class="math inline">\(\eps_t\)</span> takes the form:</p>
+<p><span class="math display">\[
+\V(\b\eps|\b X) = \sigma^2 \b I_n = \begin{pmatrix}
+\sigma^2 &amp; 0 &amp; 0 &amp; \dots \\
+0 &amp; \sigma^2 &amp; 0 &amp; \dots  \\
+0 &amp; 0&amp; \sigma^2 &amp; \vdots \\
+\vdots &amp; \vdots &amp; \dots &amp; \ddots
+\end{pmatrix}
+\]</span></p>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Variance-Covariance Matrix of Errors
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The variance-covariance matrix of errors <span class="math inline">\(\eps_t\)</span> takes the form:</p>
+<p><span class="math display">\[
+\V(\b\eps | \b X) = \b\Omega = \begin{pmatrix}
+\V \eps_1 &amp; Cov(\eps_1, \eps_2) &amp; Cov(\eps_1, \eps_3) &amp; \dots \\
+Cov(\eps_2, \eps_1) &amp; \V \eps_2 &amp; Cov(\eps_2, \eps_3) &amp; \dots \\
+Cov(\eps_3, \eps_1) &amp; Cov(\eps_3, \eps_2) &amp; \V\eps_3 &amp; \vdots \\
+\vdots &amp; \vdots &amp; \dots &amp; \ddots
+\end{pmatrix}
+\]</span></p>
+</div>
+</div>
+</div>
+<p>Spherical errors implies two things: <strong>No Autocorrelation</strong> means that the covariance of any two error terms <span class="math inline">\(Cov(\eps_i, \eps_j) = 0\)</span>. This is reflected in spherical errors with all the 0’s in the non-diagonal positions. This assumption is generally met if we meet the <a href="#assumption-2-independent-and-identically-distributed-i.i.d.">i.i.d.</a> assumption.</p>
+<p><strong>Homoscedasticity</strong> means that every <span class="math inline">\(\eps_t\)</span> for any observation <span class="math inline">\(t\)</span> has the same variance <span class="math inline">\(\sigma^2\)</span>. The variance of the error <span class="math inline">\(\eps_t\)</span> does not depend on the values of <span class="math inline">\(X_1, \dots, X_p\)</span>. If this condition is violated, as in each observation <span class="math inline">\(t\)</span> has their own <span class="math inline">\(\sigma^2_t\)</span>, we call this homoscedasticity.</p>
+<p><br></p>
+</section>
+</section>
+<section id="ordinary-least-squares" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="ordinary-least-squares"><span class="header-section-number">3.2</span> Ordinary Least Squares</h2>
+<p>We have some sample data that we have put into our model <span class="math inline">\(\b y = \b{X\beta} + \b\eps\)</span>. How can we derive estimates <span class="math inline">\(\hat{\b\beta}\)</span> of parameters <span class="math inline">\(\b\beta\)</span>? One logical way is to see what values of <span class="math inline">\(\b{\hat\beta}\)</span> will produce the closest predictions of <span class="math inline">\(\b y\)</span> values to the actual sample values.</p>
+<p>We can define our predicted <span class="math inline">\(\b y\)</span> values as <span class="math inline">\(\hat{\b y} = \b X \hat{\b\beta}\)</span>. Our prediction does not include the error term <span class="math inline">\(\b\eps\)</span> because based on the strict exogeneity assumption, <span class="math inline">\(\E(\b\eps) = 0\)</span>.</p>
+<p>Ordinary Least Squares estimator is an estimation process that finds the values our estimates <span class="math inline">\(\hat{\b\beta}\)</span> by the <span class="math inline">\(\hat{\b\beta}\)</span> values that minimise the <strong>sum of squared residuals</strong> (SSR), which is the difference between <span class="math inline">\(\b y\)</span> and predicted <span class="math inline">\(\hat{\b y}\)</span> squared.</p>
+<div id="def-ssr" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.4 (Sum of Squared Residuals)</strong></span> We will define the SSR by function <span class="math inline">\(S(\hat{\b\beta})\)</span>:</p>
+<p><span class="math display">\[
+S(\hat{\b\beta}) = (\b y - \hat{\b y})^\top (\b y - \hat{\b y})
+\]</span></p>
+<p>Or in summation notation:</p>
+<p><span class="math display">\[
+S(\hat{\b\beta}) = \sum\limits_{t=1}^n(Y_t - \hat Y_t)^2
+\]</span></p>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why Sum of Squared Residuals?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>One common question is why are we squaring the residuals (difference between <span class="math inline">\(\b y\)</span> and <span class="math inline">\(\hat{\b y}\)</span>). The main reason is that squaring gets rid of negative and positive residuals, which might cancel each other out. We do not care about the direction of residuals/errors, only the magnitude.</p>
+<p>The reason we choose to square the residuals, and not to use absolute value, is because of a variety of unique properties of OLS (unbiasedness, variance, efficeincy) that we will explore throughout this chapter.</p>
+</div>
+</div>
+</div>
+<p>We know that predicted <span class="math inline">\(\hat{\b y} = \b X \hat{\b \beta}\)</span>. Thus, let us plug that into the above, and simplify to get:</p>
+<p><span class="math display">\[
+\begin{align}
+S(\hat{\b\beta}) &amp; = (\b y - \b X \hat{\b\beta})^\top (\b y - \b X \hat{\b\beta}) \\
+&amp; = \b y^\top \b y - \hat{\b\beta}^\top \b X^\top \b y - \b y^\top \b X \hat{\b\beta} +  \hat{\b\beta}^\top \b{X^\top X} \hat{\b\beta}
+\end{align}
+\]</span></p>
+<p>And using the properties of transposes, we can combine <span class="math inline">\(- \hat{\b\beta}^\top \b X^\top \b y - \b y^\top \b X \hat{\b\beta}\)</span> into <span class="math inline">\(-2 \hat{\b\beta}^\top \b{X^\top y}\)</span>, and thus, we get</p>
+<p><span class="math display">\[
+S(\hat{\b\beta}) = \b y^\top \b y - 2 \hat{\b\beta}^\top \b{X^\top y} + \underbrace{\hat{\b\beta}^\top \b{X^\top X} \hat{\b\beta}}_{\text{quadratic term}}
+\]</span></p>
+<p>Now, we want to maximise in respect to <span class="math inline">\(\hat{\b\beta}\)</span>, so let us take the gradient of function <span class="math inline">\(S\)</span> in respect to <span class="math inline">\(\hat{\b\beta}\)</span>, and set it equal to 0.</p>
+<p><span class="math display">\[
+\frac{\partial S}{\partial \hat{\b\beta}} = -2 \b{X^\top y} + 2 \b{X^\top X} \hat{\b\beta} = 0
+\]</span></p>
+<p>Now, solving for <span class="math inline">\(\hat{\b\beta}\)</span>, we can first move <span class="math inline">\(-2\b{X^\top y}\)</span> to the right side, and then use matrix inversion to isolate <span class="math inline">\(\hat{\b\beta}\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
+2 \b{X^\top X}\hat{\b\beta} &amp; = 2 \b{X^\top y} \\
+\hat{\b\beta} &amp; = (2 \b{X^\top X})^{-1}2 \b{X^\top y} \\
+\hat{\b\beta} &amp; =  (2^{-1})2(\b{X^\top X})^{-1}\b{X^\top y} \\
+\hat{\b\beta} &amp; =  (\b{X^\top X})^{-1}\b{X^\top y}
+\end{align}
+\]</span></p>
+<p>And we have derived our OLS estimates of parameters <span class="math inline">\(\hat{\b\beta}\)</span>.</p>
+<div id="def-ols" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.5 (OLS Estimate)</strong></span> The OLS estimate of parameters <span class="math inline">\(\b\beta\)</span> is:</p>
+<p><span class="math display">\[
+\hat{\b\beta} =  (\b{X^\top X})^{-1}\b{X^\top y}
+\]</span></p>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Non-Matrix Derivation for Simple Linear Regression
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For simple linear regression, our sum of squared errors (<a href="#def-ssr" class="quarto-xref">definition&nbsp;<span>3.4</span></a>) is:</p>
+<p><span class="math display">\[
+S(\hat\beta_0, \hat\beta_1) = \sum\limits_{t=1}^n (Y_t - \hat\beta_0 - \hat\beta_1 X_t)^2
+\]</span></p>
+<p>Our first order conditions by taking the partial derivative in respect to <span class="math inline">\(\hat\beta_0\)</span> and <span class="math inline">\(\hat\beta_1\)</span> are:</p>
+<p><span class="math display">\[
+\begin{align}
+&amp; \frac{\partial S}{\partial \hat\beta_0} = \sum\limits_{i=1}^n (Y_t -\hat\beta_0 = \hat\beta X_t) = 0 \\
+&amp; \frac{\partial S}{\partial \hat\beta_1} = \sum\limits_{i=1}^n X_t (Y_t -\hat\beta_0 = \hat\beta X_t) = 0 \\
+\end{align}
+\]</span></p>
+<p>And the final solutions for <span class="math inline">\(\hat\beta_0\)</span> and <span class="math inline">\(\hat\beta_1\)</span> after solving this system of equations is:</p>
+<p><span class="math display">\[
+\begin{align}
+&amp; \hat\beta_0 = \bar Y - \hat\beta_1 \bar X \\
+&amp; \hat\beta_1 = \frac{\sum (X_t -\bar X)(Y_t -\bar Y)}{\sum (X_t - \bar X)^2} = \frac{Cov(X, Y)}{\V Y}
+\end{align}
+\]</span></p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="geometry-and-projection" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="geometry-and-projection"><span class="header-section-number">3.3</span> Geometry and Projection</h2>
+<p>We have derived our OLS estimation solution for <span class="math inline">\(\hat{\b\beta}\)</span>. But what does this solution mean? What is OLS doing? First, let us define two matrices:</p>
+<div id="def-projectmatrix" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.6 (Projection Matrix)</strong></span> Let us define the projection matrix <span class="math inline">\(\b P\)</span> as:</p>
+<p><span class="math display">\[
+\color{red}{\b P}\color{black} := \b X(\b{X^\top X})^{-1} \b X^\top
+\]</span></p>
+<p>Matrix <span class="math inline">\(\color{red}{\b P}\)</span> is symmetrical as in <span class="math inline">\(\b P^\top = \b P\)</span>, and is idempotent as in <span class="math inline">\(\b{PP} = \b P\)</span>.</p>
+</div>
+<div id="def-residmatrix" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.7 (Residual Maker Matrix)</strong></span> Let us define the residual maker matrix <span class="math inline">\(\b M\)</span> as:</p>
+<p><span class="math display">\[
+\color{purple}{\b M}\color{black} := \b I - \b X(\b{X^\top X})^{-1} \b X^\top = \b I - \color{red}{\b P}
+\]</span></p>
+<p>Matrix <span class="math inline">\(\color{purple}{\b M}\)</span> is symmetrical as in <span class="math inline">\(\b M^\top = \b M\)</span>, and is idempotent as in <span class="math inline">\(\b{MM} = \b M\)</span>. Residual maker <span class="math inline">\(\b M\)</span> is also orthogonal to <span class="math inline">\(\b P\)</span> and <span class="math inline">\(\b X\)</span>, implying <span class="math inline">\(\b{PX} = 0\)</span> and <span class="math inline">\(\b{MX} = 0\)</span>.</p>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Proof <span class="math inline">\(M\)</span> and <span class="math inline">\(P\)</span> are Idempotent
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We can prove <span class="math inline">\(\color{red}{\b P}\)</span> is an idempotent matrix (A similar proof is applicable to <span class="math inline">\(\color{purple}{\b M}\)</span>.):</p>
+<p><span class="math display">\[
+\begin{align}
+\b{PP} &amp; = \b X(\b{X^\top X})^{-1} \underbrace{\b X^\top \b X(\b{X^\top X})^{-1}}_{\text{inverses cancel}} \b X^\top \\
+&amp; = \b X(\b{X^\top X})^{-1} \b X^\top = \b P
+\end{align}
+\]</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Proof <span class="math inline">\(M\)</span> and <span class="math inline">\(P\)</span> are Orthogonal
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We can show <span class="math inline">\(\b M\)</span> and <span class="math inline">\(\b P\)</span> are orthogonal, i.e.&nbsp;<span class="math inline">\(\b{P^\top&lt;} = 0\)</span>. First, recall that <span class="math inline">\(\b P\)</span> is a symmetrical matrix, meaning, <span class="math inline">\(\b P^\top = \b P\)</span>. Thus,</p>
+<p><span class="math display">\[
+\b{P^\top M} = \b{PM}
+\]</span></p>
+<p>Now, let us substitute the definition of <span class="math inline">\(\b M\)</span> from (<a href="#def-residmatrix" class="quarto-xref">definition&nbsp;<span>3.7</span></a>), to get :</p>
+<p><span class="math display">\[
+\begin{align}
+\b{P^\top M} &amp; = \b P( \b I - \b P) \\
+&amp; = \b P - \b{PP}
+\end{align}
+\]</span></p>
+<p>And since <span class="math inline">\(\b P\)</span> is idempotent, i.e.&nbsp;<span class="math inline">\(\b{PP} = \b P\)</span>, then we know that</p>
+<p><span class="math display">\[
+\b{P^\top M} = \b P - \b P = 0
+\]</span></p>
+<p>Thus proving <span class="math inline">\(\b P\)</span> and <span class="math inline">\(\b M\)</span> are orthogonal.</p>
+</div>
+</div>
+</div>
+<p>Now, recall our predictions <span class="math inline">\(\hat{\b y} = \b X \hat{\b\beta}\)</span>. Using our OLS solution, and the plugging in the definition of projection matrix <span class="math inline">\(\color{red}{\b P}\)</span> (<a href="#def-projectmatrix" class="quarto-xref">definition&nbsp;<span>3.6</span></a>), we can find</p>
+<p><span class="math display">\[
+\hat{\b y} = \b X (\b{X^\top X})^{-1} \b{X^\top y} = \color{red}{\b P}\color{black}{\b y}
+\]</span></p>
+<p>Now, let us look at our residuals <span class="math inline">\(\hat{\b \eps} = \b y - \hat{\b y}\)</span>. By plogging in <span class="math inline">\(\b y = \b{Py}\)</span> from above, and substituting the definition of <span class="math inline">\(\color{purple}{\b M}\)</span> (<a href="#def-residmatrix" class="quarto-xref">definition&nbsp;<span>3.7</span></a>), we can get:</p>
+<p><span id="eq-calcresiduals"><span class="math display">\[
+\hat{\b\eps} = \b y - \color{red}{\b P} \color{black}{\b y} = (\b I - \color{red}{\b P}\color{black})\b y = \color{purple}{\b M} \color{black}{\b y}
+\tag{3.2}\]</span></span></p>
+<p>We can see that projection matrix <span class="math inline">\(\color{red}{\b P}\)</span> performs a linear mapping of <span class="math inline">\(\b y \rightarrow \hat{\b y}\)</span>, hence why it is called the “projection” matrix. We can see that residual maker matrix <span class="math inline">\(\color{purple}{\b M}\)</span> performs a linear mapping of <span class="math inline">\(\b y \rightarrow \hat{\b\eps}\)</span>, thus “making” the residuals <span class="math inline">\(\hat{\b\eps}\)</span>.</p>
+<p>We know that our predictsion <span class="math inline">\(\hat{\b y}\)</span> are a linear combination of our explanatory variable vectors <span class="math inline">\(X_1, \dots, X_p\)</span>, since <span class="math inline">\(\hat{\b y} = \b X \hat{\b\beta}\)</span>. This means that projection matrix <span class="math inline">\(\color{red}{\b P}\)</span> projects <span class="math inline">\(\b y\)</span> into <span class="math inline">\(\hat{\b y}\)</span> which is in the space spanned by our <span class="math inline">\(\b X\)</span> (called the column space of <span class="math inline">\(\b X\)</span>).</p>
+<p>This is visualised in the figure below, where observed vector <span class="math inline">\(\b y\)</span> is projected into the blue space of regressors <span class="math inline">\(\b X\)</span> to create vector <span class="math inline">\(\hat{\b y}\)</span>:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-880030792.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>We can see as well that residual maker <span class="math inline">\(\color{purple}{\b M}\)</span> projects vector <span class="math inline">\(\b y\)</span> into vector <span class="math inline">\(\b\eps\)</span>, which is in the space orthogonal/perpendicular to the column space of <span class="math inline">\(\b X\)</span>. This is why our condition of strict exogeneity (<a href="#def-strictexog" class="quarto-xref">definition&nbsp;<span>3.2</span></a>) is required - there should be no correlation between <span class="math inline">\(\b X\)</span> and <span class="math inline">\(\b \eps\)</span> as they are orthogonal by design.</p>
+<p>This idea of projection means we can measure the fit of our model with the correlation/overlap between original vector <span class="math inline">\(\b y\)</span> and our predicted values vector <span class="math inline">\(\hat{\b y} = \b{Py}\)</span>.</p>
+<div id="def-rsquared" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.8 (R-Squared)</strong></span> <span class="math inline">\(R^2\)</span> is a metric to measure the fit of our model. It is defined as:</p>
+<p><span class="math display">\[
+R^2 = \frac{\overbrace{\b{y^\top Py}}^{\text{model}}}{\underbrace{\b{y^\top y}}_{\V Y}} \ = \ 1-\frac{\overbrace{\sum(Y_t - \hat Y_t)^2}^{\text{SSR}}}{\underbrace{\sum (Y_t - \bar Y)^2}_{\V Y}}
+\]</span></p>
+<p><span class="math inline">\(R^2\)</span> is always between 0 and 1, and measures the proportion of variance our model with explanatory variables <span class="math inline">\(X_1, \dots, X_p\)</span> explains the variation in <span class="math inline">\(Y\)</span>.</p>
+</div>
+<p><br></p>
+</section>
+<section id="regression-anatomy" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="regression-anatomy"><span class="header-section-number">3.4</span> Regression Anatomy</h2>
+<p>So we now know how to derive OLS estimates <span class="math inline">\(\hat{\b \beta}\)</span>, and we know the projection interpretation of OLS. But what does <span class="math inline">\(\b{\hat\beta}\)</span> actually mean? What does estimating these parameters tell us about the data generating process and the real-world? To understand the parameter estimates of OLS, we want to study the partitioned regression model.</p>
+<div id="def-partionedmodel" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.9 (Partitioned Regression Model)</strong></span> A partitioned regression model is when we split up our matrices/vectors in our classical linear model <span class="math inline">\(\b y = \b{X\beta} + \b\eps\)</span>.</p>
+<p>Let us say we only care about some of the explanatory variables in our data generating process. We can split matrix <span class="math inline">\(\b X\)</span> into two: <span class="math inline">\(\b X_1\)</span> contains the explanatory variables we care about, and <span class="math inline">\(\b X_2\)</span> contains the other explanatory variables. Similarly, we divide <span class="math inline">\(\b\beta\)</span> into <span class="math inline">\(\b\beta_1\)</span> and <span class="math inline">\(\b\beta_2\)</span> in the same way. We can write our new regression model as:</p>
+<p><span class="math display">\[
+\b y = \b X_1 \b\beta_1 + \b X_2 \b\beta_2 + \b\eps
+\]</span></p>
+</div>
+<p><br></p>
+<p>Recall the residual maker matrix <span class="math inline">\(\b M\)</span> (<a href="#def-residmatrix" class="quarto-xref">definition&nbsp;<span>3.7</span></a>), and recall how <span class="math inline">\(\b M\)</span> is orthogonal to <span class="math inline">\(\b X\)</span>, meaning <span class="math inline">\(\b{MX} = 0\)</span>.</p>
+<p>Now, let us consider only the residual maker matrix of the second part of our partitioned model <span class="math inline">\(\b M_2\)</span>, which means <span class="math inline">\(\b M_2 \b X_2 = 0\)</span>. Let us take our partitioned regression model, and pre-multiply <span class="math inline">\(\b M_2\)</span> to both sides:</p>
+<p><span class="math display">\[
+\b M_2 \b y = \b M_2(\b X_1 \b\beta_1 + \b X_2 \b\beta_2 + \b\eps)
+\]</span></p>
+<p>Now, let us distribute out to get</p>
+<p><span class="math display">\[
+\b M_2 \b y = \b M_2 \b X_1 \b\beta_1 + \b M_2 \b X_2 \b\beta_2 + \b M_2 \b\eps
+\]</span></p>
+<p>Now recall that <span class="math inline">\(\b M_2 \b X_2 = 0\)</span>. That means we can simplify the above to</p>
+<p><span class="math display">\[
+\b M_2 \b y = \b M_2 \b X_1 \b\beta_1  + \b M_2 \b\eps
+\]</span></p>
+<p>Now, let us define <span class="math inline">\(\tilde{\b y} := \b M_2 \b y\)</span>, <span class="math inline">\(\tilde{\b X_1} := \b M_2 \b X_1\)</span>, and error <span class="math inline">\(\tilde{\b\eps} = \b M_2 \b\eps\)</span>. We can rewrite as</p>
+<p><span class="math display">\[
+\tilde{\b y} = \tilde{\b X_1}\b\beta_1 + \tilde{\b \eps}
+\]</span></p>
+<p>Remember, since we multiplied <span class="math inline">\(\b M_2\)</span> to both sides, this above model is equivalent to that of our partitioned model and our original regression model. Using <a href="#def-ols" class="quarto-xref">definition&nbsp;<span>3.5</span></a>, we know the OLS estimate of <span class="math inline">\(\hat{\b \beta_1}\)</span> is:</p>
+<p><span id="eq-partiallingout"><span class="math display">\[
+\hat{\b\beta}_1 = (\tilde{\b X_1^\top} \tilde{\b X_1}) \tilde{\b X_1^\top} \tilde{\b y}
+\tag{3.3}\]</span></span></p>
+<p>This OLS estimate of <span class="math inline">\(\hat{\b\beta}_1\)</span> is the same as if we had calculated our OLS estimates normally without partitioning the model.</p>
+<p>What does this tell us? Notice how we have <span class="math inline">\(\tilde{\b X_1} := \b M_2 \b X_1\)</span> in our formula. Well, we know <span class="math inline">\(\b M_2 \b X_2 = 0\)</span>. That means that any part of <span class="math inline">\(\b X_1\)</span> that was correlated to <span class="math inline">\(\b X_2\)</span> became 0, after it was multiplied by <span class="math inline">\(\b M_2\)</span>. Thus, <span class="math inline">\(\tilde{\b X_1}\)</span> is the part of <span class="math inline">\(\b X_1\)</span> that is uncorrelated with <span class="math inline">\(\b X_2\)</span>. We see that our OLS estimates are calculated in respect to <span class="math inline">\(\tilde{\b X_1}\)</span>.</p>
+<div id="thm-regressionanatomy" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Theorem 3.1 (Regression Anatomy Theorem)</strong></span> Our individual parameter estimates <span class="math inline">\(\hat\beta_j \in \{\hat\beta_1, \dots, \hat\beta_p \}\)</span> are the relationship between <span class="math inline">\(Y\)</span> and the part of <span class="math inline">\(X_j \in \{X_1, \dots, X_p\}\)</span> uncorrelated with the other explanatory variables.</p>
+</div>
+<p><br></p>
+<p>Essentially we are <strong>partialling out</strong> the effect of other variables in our coefficient estimates. This is why we you will hear people “control” for other variables in linear models.</p>
+<p><br></p>
+</section>
+<section id="unbiasedness-of-ols" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="unbiasedness-of-ols"><span class="header-section-number">3.5</span> Unbiasedness of OLS</h2>
+<p>We know that an estimator has two finite sample properties: unbiasedness (<a href="inference.html#def-unbiased" class="quarto-xref">definition&nbsp;<span>2.4</span></a>) and variance (<a href="inference.html#def-varest" class="quarto-xref">definition&nbsp;<span>2.5</span></a>). Let us focus on unbiasedness for now.</p>
+<div id="thm-olsunbiased" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Theorem 3.2 (OLS is an Unbiased Estimator)</strong></span> The Ordinary Least Squares estimator is an unbiased estimator under the assumptions of <a href="#assumption-1-linearity-in-parameters">linearity</a>, <a href="#assumption-2-independent-and-identically-distributed-i.i.d.">i.i.d.</a>, <a href="#assumption-3-no-perfect-multicollinearity">no perfect multicollinearity</a>, and <a href="#assumption-4-strict-exogeneity">strict exogeneity</a>.</p>
+<p><span class="math display">\[
+\E \hat{\b\beta} = \b\beta
+\]</span></p>
+<p>Note that the assumption of <a href="#assumption-5-spherical-errors">spherical errors</a> is <u>not</u> needed for the <a href="#assumption-5-spherical-errors">unbiasedness</a> of OLS.</p>
+</div>
+<p><br></p>
+<p><strong>Proof</strong>: Let us start with our OLS solution (<a href="#def-ols" class="quarto-xref">definition&nbsp;<span>3.5</span></a>), and plug in our original model <span class="math inline">\(\b y = \b{X\beta} + \b\eps\)</span> into where <span class="math inline">\(\b y\)</span> is in the OLS solution:</p>
+<p><span id="eq-olsimplify"><span class="math display">\[
+\begin{align}
+\hat{\b\beta} &amp; = (\b{X^\top X})^{-1} \b{X^\top y} \\
+&amp; = (\b{X^\top X})^{-1} \b X^\top (\b{X\beta} + \b\eps) \\
+&amp; = \underbrace{(\b{X^\top X})^{-1}\b{X^\top X}}_{\text{inverses cancel}}\b\beta + (\b{X^\top X})^{-1} \b{X^\top \eps} \\
+&amp; = \b\beta + (\b{X^\top X})^{-1}\b{X^\top \eps}
+\end{align}
+\tag{3.4}\]</span></span></p>
+<p>Now, let us take the expectation of <span class="math inline">\(\hat{\b\beta}\)</span> conditional on <span class="math inline">\(\b X\)</span> (remember that <span class="math inline">\(\b X\)</span> and <span class="math inline">\(\b \beta\)</span> are fixed constants, so they are not affected by the expectation). We can use the strict exogeneity assumption (<a href="#def-strictexog" class="quarto-xref">definition&nbsp;<span>3.2</span></a>) to simplify:</p>
+<p><span class="math display">\[
+\E(\hat{\b\beta}|\b X) = \b\beta + (\b{X^\top X})^{-1} \underbrace{\E (\b \eps | \b X)}_{= \ 0} = \b\beta
+\]</span></p>
+<p>Now, we know <span class="math inline">\(\E(\hat{\b\beta} | \b X)\)</span>. We can deduce <span class="math inline">\(\E(\hat{\b\beta})\)</span> using the law of iterated expectations (<a href="random.html#thm-lie" class="quarto-xref">theorem&nbsp;<span>1.3</span></a>), and plugging in <span class="math inline">\(\E(\hat{\b\beta} | \b X) = \b\beta\)</span>:</p>
+<p><span class="math display">\[
+\E(\hat{\b\beta}) = \E[\E(\hat{\b\beta}|\b X)] = \E[\b\beta] = \b\beta
+\]</span></p>
+<p>The final step is because the expectation of a constant <span class="math inline">\(\b\beta\)</span> (the fixed true population value) is the constant itself. Thus, we have proven OLS is an unbiased.</p>
+<p><br></p>
+</section>
+<section id="variance-of-ols" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="variance-of-ols"><span class="header-section-number">3.6</span> Variance of OLS</h2>
+<div id="thm-varols" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Theorem 3.3 (Variance of the OLS Estimator)</strong></span> The variance of the OLS estimator under the assumptions of <a href="#assumption-1-linearity-in-parameters">linearity</a>, <a href="#assumption-2-independent-and-identically-distributed-i.i.d.">i.i.d.</a>, <a href="#assumption-3-no-perfect-multicollinearity">no perfect multicollinearity</a>, <a href="#assumption-4-strict-exogeneity">strict exogeneity</a>, and <a href="#assumption-5-spherical-errors">spherical errors</a>, is given by</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) = \sigma^2 (\b{X^\top X})^{-1}
+\]</span></p>
+</div>
+<p><br></p>
+<p><strong>Proof:</strong> Let us start where we left off from <a href="#eq-olsimplify" class="quarto-xref">eq.&nbsp;<span>3.4</span></a> during the proof of unbiasedness. This tells us the variance of the OLS estimator is:</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) = \V(\b\beta + (\b{X^\top X})^{-1} \b{X^\top \eps})
+\]</span></p>
+<p>We know that <span class="math inline">\(\b\beta\)</span> is a vector of fixed true population values. <span class="math inline">\((\b{X^\top X})^{-1} \b X^\top\)</span> can also be considered a fixed constant matrix because we are conditioning our variance on <span class="math inline">\(\b X\)</span>. Thus, we can use <a href="random.html#thm-variance" class="quarto-xref">theorem&nbsp;<span>1.2</span></a> to rewrite the above as</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) = (\b{X^\top X})^{-1}\b X^\top \V(\b\eps| \b X)[(\b{X^\top X})^{-1}\b X^\top]^{-1}
+\]</span></p>
+<p>With the properties of matrix inverses and transposes, we can determine that <span class="math inline">\([(\b{X^\top X})^{-1}\b X^\top]^{-1}\)</span> is equivalent to <span class="math inline">\(\b X(\b{X^\top X})^{-1}\)</span>. Thus, plugging this in, we get</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) = (\b{X^\top X})^{-1}\b X^\top \V(\b\eps| \b X) \b X(\b{X^\top X})^{-1}
+\]</span></p>
+<p>Now, according to the assumption of spherical errors (<a href="#def-sphericalerrors" class="quarto-xref">definition&nbsp;<span>3.3</span></a>), we know that <span class="math inline">\(\V(\b \eps| \b X) = \sigma^2 \b I_n\)</span>. Thus, let us plug that into our equation to get</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) = (\b{X^\top X})^{-1}\b X^\top \sigma^2 \b I_n \b X(\b{X^\top X})^{-1}
+\]</span></p>
+<p>Since <span class="math inline">\(\b I_n\)</span> is the identity matrix, it cancels out. For notation simplicity, we can move the scalar <span class="math inline">\(\sigma^2\)</span> to the front, and simplify:</p>
+<p><span class="math display">\[
+\begin{align}
+\V(\hat{\b\beta}|\b X) &amp; = \sigma^2 \underbrace{(\b{X^\top X})^{-1}\b X^\top \b X}_{\text{inverses cancel}}(\b{X^\top X})^{-1} \\
+&amp; = \sigma^2 (\b{X^\top X})^{-1}
+\end{align}
+\]</span></p>
+<p>Thus, we have proved that the variance of the OLS estimator is as the theorem above.</p>
+<p><br></p>
+</section>
+<section id="gauss-markov-theorem" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="gauss-markov-theorem"><span class="header-section-number">3.7</span> Gauss-Markov Theorem</h2>
+<p>You might have noticed that the OLS estimator is quite restrictive in terms of the assumptions needed for it to apply. So then, what makes us want to use the OLS estimator? The answer is the Gauss-Markov Theorem.</p>
+<div id="thm-gaussmarkov" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Theorem 3.4 (Gauss-Markov)</strong></span> If all of the assumptions of <a href="#assumption-1-linearity-in-parameters">linearity</a>, <a href="#assumption-2-independent-and-identically-distributed-i.i.d.">i.i.d.</a>, <a href="#assumption-3-no-perfect-multicollinearity">no perfect multicollinearity</a>, <a href="#assumption-4-strict-exogeneity">strict exogeneity</a>, and <a href="#assumption-5-spherical-errors">spherical errors</a> are all met, then the Ordinary Least Squares estimator is the <strong>best linear unbiased estimator</strong> (BLUE) - the unbiased <a href="#assumption-1-linearity-in-parameters">linear</a> estimator with the lowest variance of any other unbiased estimator.</p>
+<p>Formally, if <span class="math inline">\(\hat{\b\beta}\)</span> is the OLS estimator, and <span class="math inline">\(\tilde{\b\beta}\)</span> is any other linear unbiased estimator, then</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) ≤ \V(\tilde{\b\beta} | \b X)
+\]</span></p>
+</div>
+<p><br></p>
+<p>Any linear estimator <span class="math inline">\(\tilde{\b\beta}\)</span> must be in the form <span class="math inline">\(\tilde{\b\beta} = \b{Cy}\)</span>, where <span class="math inline">\(\b C\)</span> is some linear mapping. For example, using projection matrix <span class="math inline">\(\b P\)</span> (<a href="#def-projectmatrix" class="quarto-xref">definition&nbsp;<span>3.6</span></a>), OLS can be written as <span class="math inline">\(\hat{\b\beta} = \b{Py}\)</span>. Before we prove the Gauss-Markov theorem, we need a lemma about any unbiased linear estimator.</p>
+<div id="lem-unbiasedlin" class="theorem lemma" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Lemma 3.1</strong></span> For any linear estimator <span class="math inline">\(\tilde{\b\beta} = \b{Cy}\)</span> to be unbiased, <span class="math inline">\(\b{CX} = \b I\)</span>.</p>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Proof of Lemma 3.1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Proof</strong>: Let us start off with our linear estimator <span class="math inline">\(\tilde{\b\beta} = \b{Cy}\)</span>, and plug in the true linear model <span class="math inline">\(\b y = \b{X\beta} + \b\eps\)</span> into our linear estimator:</p>
+<p><span class="math display">\[
+\tilde{\b\beta} = \b C (\b{X\beta} + \b\eps) = \b{CX\beta} + \b{C\eps}
+\]</span></p>
+<p>Now, let us find the expected value of this estimator conditional on <span class="math inline">\(\b X\)</span>. Remember that the expected values of constants (like <span class="math inline">\(\b C\)</span>, <span class="math inline">\(\b \beta\)</span>, and <span class="math inline">\(\b X\)</span> since we are conditioning on <span class="math inline">\(\b X\)</span>) are the constants themselves.</p>
+<p><span class="math display">\[
+\begin{align}
+\E(\tilde{\b\beta}|\b X) &amp; = \E(\b{CX\beta} + \b{C\eps}) \\
+&amp; = \b{CX\beta} + \b C \E(\b\eps| \b X)
+\end{align}
+\]</span></p>
+<p>From the strict exogeneity assumption (<a href="#def-strictexog" class="quarto-xref">definition&nbsp;<span>3.2</span></a>), we know <span class="math inline">\(\E(\b\eps | \b X) = 0\)</span>, so we can simplify to</p>
+<p><span class="math display">\[
+\E(\tilde{\b\beta}|\b X) = \b{CX\beta}
+\]</span></p>
+<p>And using the law of iterated expectations (<a href="random.html#thm-lie" class="quarto-xref">theorem&nbsp;<span>1.3</span></a>), we can find <span class="math inline">\(\E\tilde{\b\beta}\)</span>:</p>
+<p><span class="math display">\[
+\E\tilde{\b\beta} = \E[\E(\tilde{\b\beta}|\b X)] = \E[\b{CX\beta}] = \b{CX\beta}
+\]</span></p>
+<p>For unbiasedness (<a href="inference.html#def-unbiased" class="quarto-xref">definition&nbsp;<span>2.4</span></a>), we know <span class="math inline">\(\E\tilde{\b\beta} = \b\beta\)</span>. The only way <span class="math inline">\(\b{CX\beta}\)</span> will equal <span class="math inline">\(\b\beta\)</span> is if <span class="math inline">\(\b{CX} = \b I\)</span>. Thus, for any linear unbiased estimator, the lemma <span class="math inline">\(\b{CX} = \b I\)</span> must hold.</p>
+</div>
+</div>
+</div>
+<p>With this lemma, now let us prove Gauss-Markov. First, let us calculate the variance of unbiased linear estimator <span class="math inline">\(\tilde{\b\beta}\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
+\V(\tilde{\b\beta} | \b X) &amp; = \V(\b{Cy} | \b X) \\
+&amp; = \V(\b C( \b{X\beta} + \b \eps)| \b X) \\
+&amp; = \V(\b{CX\beta} + \b{C\eps} | \b X)
+\end{align}
+\]</span></p>
+<p>And since we know from <a href="#lem-unbiasedlin" class="quarto-xref">Lemma&nbsp;<span>3.1</span></a> that <span class="math inline">\(\b{CX = I}\)</span>, we can get</p>
+<p><span class="math display">\[
+\V(\tilde{\b\beta} | \b X) = \V(\b\beta + \b{C\eps} | \b X)
+\]</span></p>
+<p>We know that <span class="math inline">\(\b\beta\)</span> is a vector of fixed constants (the true population values). We also know <span class="math inline">\(\b C\)</span> is some fixed constant matrix (that depends on <span class="math inline">\(\b X\)</span>, but we are conditioning on <span class="math inline">\(\b X\)</span>). Thus, we can use <a href="random.html#thm-variance" class="quarto-xref">theorem&nbsp;<span>1.2</span></a> to rewrite the above as</p>
+<p><span class="math display">\[
+\V(\tilde{\b\beta} | \b X) = \b C\V(\b\eps | \b X) \b C^\top
+\]</span></p>
+<p>Now, according to the assumption of spherical errors (<a href="#def-sphericalerrors" class="quarto-xref">definition&nbsp;<span>3.3</span></a>), we know that <span class="math inline">\(\V(\b \eps| \b X) = \sigma^2 \b I_n\)</span>. Thus, let us plug that into our equation to get</p>
+<p><span class="math display">\[
+\V(\tilde{\b\beta} | \b X) = \b C \sigma^2 \b I_n \b C^\top
+\]</span></p>
+<p>Since <span class="math inline">\(\b I_n\)</span> is the identity matrix, it cancels out. For notation simplicity, we can move the scalar <span class="math inline">\(\sigma^2\)</span> to the front, and simplify:</p>
+<p><span id="eq-unbiasedlinearvar"><span class="math display">\[
+\V(\tilde{\b\beta} | \b X) = \sigma^2 \b{CC^\top}
+\tag{3.5}\]</span></span></p>
+<p>Now we have the variance of estimator <span class="math inline">\(\tilde{\b\beta}\)</span>. To prove Gauss-Markov, we need to show that the variance of <span class="math inline">\(\tilde{\b\beta}\)</span> is greater than the variance of <span class="math inline">\(\hat{\b\beta}\)</span>. For this to be true,</p>
+<p><span class="math display">\[
+\V(\tilde{\b\beta}|\b X) - \V(\tilde{\b\beta}| \b X) ≥ 0
+\]</span></p>
+<p>We can plug in the variance of <span class="math inline">\(\tilde{\b\beta}\)</span> from <a href="#eq-unbiasedlinearvar" class="quarto-xref">eq.&nbsp;<span>3.5</span></a>, and the variance of OLS <span class="math inline">\(\hat{\b\beta}\)</span> from <a href="#thm-varols" class="quarto-xref">theorem&nbsp;<span>3.3</span></a>:</p>
+<p><span class="math display">\[
+\sigma^2 \b{CC^\top} - \sigma^2 (\b{X^\top X})^{-1} ≥ 0
+\]</span></p>
+<p>We can factor out the <span class="math inline">\(\sigma^2\)</span> to get</p>
+<p><span class="math display">\[
+\sigma^2 (\b{CC^\top} - (\b{X^\top X})^{-1}) ≥ 0
+\]</span></p>
+<p>We know from <a href="#lem-unbiasedlin" class="quarto-xref">Lemma&nbsp;<span>3.1</span></a> that <span class="math inline">\(\b{CX} = \b I\)</span>, which through the properties of tranposes, also implies that <span class="math inline">\(\b{X^\top C^\top} = (\b{CX})^\top = \b I\)</span>. Multipling by <span class="math inline">\(\b I\)</span> doesn’t change anything, so we can insert a <span class="math inline">\(\b{CX}\)</span> and <span class="math inline">\(\b{X^\top C^\top}\)</span> into our equation above to get</p>
+<p><span class="math display">\[
+\sigma^2 (\b{CC^\top} - \b{CX} (\b{X^\top X})^{-1}\b{X^\top C^\top}) ≥ 0
+\]</span></p>
+<p>Factoring out <span class="math inline">\(\b C\)</span> and <span class="math inline">\(\b C^\top\)</span>, and remembering our residual maker <span class="math inline">\(\b M\)</span> (<a href="#def-residmatrix" class="quarto-xref">definition&nbsp;<span>3.7</span></a>),</p>
+<p><span class="math display">\[
+\begin{align}
+\sigma^2 \b C(\b I - \b X(\b{X^\top X}^{-1}\b X^\top) \b C^\top &amp; ≥ 0 \\
+\sigma^2 \b{CMC} &amp; ≥ 0
+\end{align}
+\]</span></p>
+<p>We know <span class="math inline">\(\sigma^2\)</span>, the variance of the error term, must be positive. <span class="math inline">\(\b{CMC}\)</span> is also a positive semi-definite matrix (behaves like a positive number). The proof is provided below.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Proof <span class="math inline">\(CMC\)</span> is Positive Semi-Definite
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To show <span class="math inline">\(\b {CMC}\)</span> is positive semi-definite, the following must be true for every vector <span class="math inline">\(\b z\)</span>:</p>
+<p><span class="math display">\[
+\b{z^\top CMC^\top z} ≥ 0
+\]</span></p>
+<p>Remember that from <a href="#def-residmatrix" class="quarto-xref">definition&nbsp;<span>3.7</span></a> that <span class="math inline">\(\b M\)</span> is symmetric and idempotent. This implies that <span class="math inline">\(\b M = \b{MM} = \b M^\top\)</span>. Thus, plugging this in, we get</p>
+<p><span class="math display">\[
+\underbrace{\b{z^\top CM}}_{\b w^\top} \underbrace{\b{M^\top C^\top z}}_{\b w} = \b{w^\top w} = \sum\limits_{i=1}^n w_i^2 ≥ 0
+\]</span></p>
+<p>Which is true since the square of any number cannot be negative. Thus, <span class="math inline">\(\b{CMC}\)</span> is positive semi-definite, and behaves like a positive number.</p>
+</div>
+</div>
+</div>
+<p>This property means that OLS produces the best estimates for any linear model, which makes it very popular in statistics (especially considering many statistical models are linear).</p>
+<p><br></p>
+</section>
+<section id="asymptotic-consistency" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="asymptotic-consistency"><span class="header-section-number">3.8</span> Asymptotic Consistency</h2>
+<p>Before we introduce asymptotic properties of the OLS estimator, we have to introduce a new assumption: <strong>Weak exogeneity</strong>. Previously, we discussed strict exogeneity (<a href="#def-strictexog" class="quarto-xref">definition&nbsp;<span>3.2</span></a>). Weak exgoeneity is a weaker version of this assumption.</p>
+<div id="def-weakexog" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.10 (Weak Exogeneity)</strong></span> Weak exogeneity is defined as <span class="math inline">\(\E(\b x_t \eps_t) = 0\)</span>. Weak exogeneity only requires that regressors <span class="math inline">\(X_1, \dots, X_p\)</span> individually are uncorrelated with the error term. Weak exogeneity allows for combinations of <span class="math inline">\(X_1, \dots, X_p\)</span> to to be correlated with <span class="math inline">\(\eps\)</span>, which is not allowed under strict exogeneity</p>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Relationship between Weak and Strict Exogeneity
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>If you meet strict exogeneity, you automatically meet the assumption of weak exogeneity. However, the opposite is not true - weak exogeneity does not imply strict exogeneity.</p>
+</div>
+</div>
+</div>
+<div id="thm-olsconsistent" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Theorem 3.5 (Consistency of OLS)</strong></span> The Ordinary Least Squares estimator is asymptotically consistent (<a href="inference.html#def-consistency" class="quarto-xref">definition&nbsp;<span>2.6</span></a>), under the assumptions of <a href="#assumption-1-linearity-in-parameters">linearity</a>, <a href="#assumption-2-independent-and-identically-distributed-i.i.d.">i.i.d.</a>, <a href="#assumption-3-no-perfect-multicollinearity">no perfect multicollinearity</a>, <a href="#def-weakexog">weak exogeneity</a>, and <a href="#assumption-5-spherical-errors">spherical errors</a>.</p>
+<p>Mathematically, this means</p>
+<p><span class="math display">\[
+\mathrm{plim}\hat{\b\beta} = \b\beta
+\]</span></p>
+</div>
+<p><br></p>
+<p><strong>Proof</strong>: Let us perform the same steps as in <a href="#eq-olsimplify" class="quarto-xref">eq.&nbsp;<span>3.4</span></a>, and start off where we left off. We can rewrite our matrix notation in the form of vectors, scalars, and summation:</p>
+<p><span class="math display">\[
+\begin{align}
+\hat{\b\beta} &amp; = \b\beta + (\b{X^\top X})^{-1}\b{X^\top\eps} \\
+&amp; = \b\beta + \left(\sum\limits_{t=1}^n \b x_t \b x_t^\top\right)^{-1} \left(\sum\limits_{t=1}^n\b x_t \eps_t \right)
+\end{align}
+\]</span></p>
+<p>Now, let us do a little algebra trick as follows:</p>
+<p><span class="math display">\[
+\hat{\b\beta} = \b\beta + \left(\frac{1}{n}\sum\limits_{t=1}^n \b x_t \b x_t^\top\right)^{-1} \left(\frac{1}{n}\sum\limits_{t=1}^n\b x_t \eps_t \right)
+\]</span></p>
+<p>The reason we can do this is because the first <span class="math inline">\(\frac{1}{n}\)</span> is inversed as <span class="math inline">\(\frac{1}{n}^{-1}\)</span>, so this cancels out the second one, maintaining the equality of our equation.</p>
+<p>Now, we want to prove <span class="math inline">\(\mathrm{plim}\hat{\b\beta} =\b\beta\)</span>, so let us take the probability limit of both sides.</p>
+<p><span class="math display">\[
+\mathrm{plim}\hat{\b\beta} = \mathrm{plim} \b\beta + \left( \mathrm{plim} \frac{1}{n}\sum\limits_{t=1}^n \b x_t \b x_t^\top \right)^{-1} \left( \mathrm{plim}\frac{1}{n}\sum\limits_{t=1}^n\b x_t \eps_t \right)
+\]</span></p>
+<p>We know that the probability limit of a constant is itself, so <span class="math inline">\(\mathrm{plim} \b\beta = \b\beta\)</span>, since <span class="math inline">\(\b\beta\)</span> is a constant of true population parameters. Look at the other two terms on the right. They take the form of sample averages <span class="math inline">\(\frac{1}{n}\sum\)</span>. Using the law of of large numbers (<a href="inference.html#thm-lawoflargenumbers" class="quarto-xref">theorem&nbsp;<span>2.1</span></a>), we can simplify to:</p>
+<p><span class="math display">\[
+\mathrm{plim}\hat{\b\beta} = \b\beta + (\E(\b x_t \b x_t^\top))^{-1} \underbrace{\E(\b x_t \eps_t)}_{=0} = \b\beta
+\]</span></p>
+<p>And we know <span class="math inline">\(\E(\b x_t \eps_t) = 0\)</span> because of the condition of <strong>weak</strong> <strong>exogeneity</strong> (<a href="#def-weakexog" class="quarto-xref">definition&nbsp;<span>3.10</span></a>). Thus, we have proved that OLS is asymptotically consistent.</p>
+<p>Notice how OLS is asymptotically consistent with just weak exogeneity, without requiring full exogeneity. This implies that if we only meet weak exogeneity, our OLS estimates will be biased according to <a href="#thm-olsunbiased" class="quarto-xref">theorem&nbsp;<span>3.2</span></a> (since unbiasedness requires <u>strict</u> exogeneity). However, under only weak exogeneity, our OLS estimates will still be asymptotically consistent despite being biased in finite samples.</p>
+<p>This means that if we have some reason to believe that we do not meet strict exogeneity, if we meet weak exogeneity, as long as our sample size is sufficiently large, our estimates can still be asymptotically consistent and accurate.</p>
+<p><br></p>
+</section>
+<section id="statistical-inference" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="statistical-inference"><span class="header-section-number">3.9</span> Statistical Inference</h2>
+<p>Standard errors are by definition, the square root of the variance of the estimator, which we derived in <a href="#thm-varols" class="quarto-xref">theorem&nbsp;<span>3.3</span></a> as:</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) = \sigma^2 (\b{X^\top X})^{-1}
+\]</span></p>
+<p>There is an issue though: <span class="math inline">\(\sigma^2\)</span> is the population variance of error term <span class="math inline">\(\eps_i\)</span>. But we don’t know this population value. Thus, we will need an estimator <span class="math inline">\(s^2\)</span> that will estimate <span class="math inline">\(\sigma^2\)</span>:</p>
+<p><span class="math display">\[
+s^2 = \frac{\b{\hat\eps^\top \hat\eps}}{n - p-1} = \frac{\sum_{t=1}^n \hat\eps_t^2}{n-p-1}
+\]</span></p>
+<p>Where <span class="math inline">\(\hat{\b\eps}\)</span> are equal to <span class="math inline">\(\b y - \hat{\b y}\)</span>, and can be calculated with residual maker <span class="math inline">\(\b M\)</span> as shown in <a href="#eq-calcresiduals" class="quarto-xref">eq.&nbsp;<span>3.2</span></a>. <span class="math inline">\(n\)</span> is the size of our sample, and <span class="math inline">\(p\)</span> is the number of explanatory variables we have. We will not prove it here, but this is an unbiased estimator of <span class="math inline">\(\sigma^2\)</span></p>
+<p>With this estimate of <span class="math inline">\(s^2\)</span>, we can find that our standard errors for any parameter <span class="math inline">\(\beta_j \in \{\beta_0, \dots, \beta_p\}\)</span> are on the diagonals of the matrix of the square root of the variance of the estimator:</p>
+<p><span class="math display">\[
+se(\hat\beta_j) = \sqrt{[s^2(\b{X^\top X})^{-1}]_{jj}}
+\]</span></p>
+<p>However, our estimate <span class="math inline">\(s^2\)</span> of true variance <span class="math inline">\(\sigma^2\)</span> also has an implication - every estimator has variance and uncertainty.</p>
+<p>Under the central limit theorem (<a href="inference.html#thm-clt" class="quarto-xref">theorem&nbsp;<span>2.2</span></a>), our standardised sampling distribution of <span class="math inline">\(\hat\beta_j\)</span> should be normally distributed. However, because we are estimating <span class="math inline">\(\sigma^2\)</span> with <span class="math inline">\(s^2\)</span>, this uncertainty in estimates <span class="math inline">\(s^2\)</span> means we cannot use the normal distribution as given by the central limit theorem. Instead, we use a t-distribution to account for the uncertainty.</p>
+<div id="def-ttest" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.11 (T-Test)</strong></span> In our t-test, our test statistic is the t-statistic.</p>
+<p><span class="math display">\[
+t = \frac{\hat\beta_j - \text{null value}}{se(\hat\beta_j)}
+\]</span></p>
+<p>And we will conduct a hypothesis test using the <span class="math inline">\(t\)</span>-distribution with <em>degrees of freedom</em> of <span class="math inline">\(n-p-1\)</span>.</p>
+</div>
+<p><br></p>
+<p>We then calculate a p-value. The procedure of conducting a hypothesis test was outlined in the <a href="#inference.qmd#hypothesis-testing">last chapter</a>. If our p-value is statistically significant, we can conclude there is a significant relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<p>We can also do a statistical inference test with multiple coefficients at a time with the <strong>F-test</strong>. The F-test compares two different models, a null model with less parameters, and a alternate model with all the parameters in the null and some more parameters:</p>
+<ul>
+<li><p><span class="math inline">\(M_0 : Y_t = \beta_0 + \sum\limits_{j=1}^g \beta_j X_{tj} + \eps_t\)</span> (the smaller null model with <span class="math inline">\(g\)</span> parameters).</p></li>
+<li><p><span class="math inline">\(M_a : Y_t = \beta_0 + \sum\limits_{j=1}^g \beta_j X_{tj} + \sum\limits_{j=g+1}^p \beta_j X_{tj} \eps_t\)</span> (the bigger model with the original <span class="math inline">\(g\)</span> parameters in the null + additional parameters up to <span class="math inline">\(p\)</span>).</p></li>
+</ul>
+<p>Recall <span class="math inline">\(R^2\)</span> (<a href="#def-rsquared" class="quarto-xref">definition&nbsp;<span>3.8</span></a>), which is a measure of fit for our models. F-tests compare the <span class="math inline">\(R^2\)</span> of the alternate model to the null model.</p>
+<div id="def-ftest" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 3.12 (F-test)</strong></span> F-tests are used to test a smaller model <span class="math inline">\(M_0\)</span> and larger model <span class="math inline">\(M_a\)</span> model. The F-test statistic is given by</p>
+<p><span class="math display">\[
+F = \frac{(SSR_0 - SSR_a) / (p_a - p_0)}{SSR_a /(n-p_A - 1)}
+\]</span></p>
+<p>Where <span class="math inline">\(SSR\)</span> represents the sum of squared residuals, <span class="math inline">\(p\)</span> represents the number of parameters in each model, and <span class="math inline">\(n\)</span> is the sample size (should be the same between both <span class="math inline">\(M_0\)</span> and <span class="math inline">\(M_a\)</span>).</p>
+<p>We then consult a F-distribution with <span class="math inline">\(p_1 - p_0\)</span> and <span class="math inline">\(n - p_a - 1\)</span> degrees of freedom.</p>
+</div>
+<p><br></p>
+<p>We then calculate a p-value. The procedure of conducting a hypothesis test was outlined in the <a href="#inference.qmd#hypothesis-testing">last chapter</a>.</p>
+<p>If our result is statistically significant, then the alternative model <span class="math inline">\(M_a\)</span> is a statistically significantly better model than <span class="math inline">\(M_0\)</span>, and the extra parameters in <span class="math inline">\(M_a\)</span> are jointly significant.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./inference.html" class="pagination-link" aria-label="Statistical Inference">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical Inference</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./gls.html" class="pagination-link" aria-label="Generalised Least Squares">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Generalised Least Squares</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

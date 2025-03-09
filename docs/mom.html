@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; Method of Moments – Statistics for Political Science</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<link href="./causal.html" rel="next">
+<link href="./mle.html" rel="prev">
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="mathjax-config.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./random.html">Part I: Statistical Theory</a></li><li class="breadcrumb-item"><a href="./mom.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Method of Moments</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Statistics for Political Science</a> 
+    </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Statistical Theory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./random.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Random Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical Inference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ols.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Classical Least Squares</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Generalised Least Squares</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Maximum Likelihood</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mom.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Method of Moments</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./causal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Causal Inference</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part II: Statistical Models</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: Quasi-Experiments</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./soo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Selection on Observables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./iv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#moments-and-estimation" id="toc-moments-and-estimation" class="nav-link active" data-scroll-target="#moments-and-estimation"><span class="header-section-number">6.1</span> Moments and Estimation</a></li>
+  <li><a href="#mean-and-variance-estimator" id="toc-mean-and-variance-estimator" class="nav-link" data-scroll-target="#mean-and-variance-estimator"><span class="header-section-number">6.2</span> Mean and Variance Estimator</a></li>
+  <li><a href="#moments-of-least-squares" id="toc-moments-of-least-squares" class="nav-link" data-scroll-target="#moments-of-least-squares"><span class="header-section-number">6.3</span> Moments of Least Squares</a></li>
+  <li><a href="#instrumental-variables" id="toc-instrumental-variables" class="nav-link" data-scroll-target="#instrumental-variables"><span class="header-section-number">6.4</span> Instrumental Variables</a></li>
+  <li><a href="#instrumental-variables-estimator" id="toc-instrumental-variables-estimator" class="nav-link" data-scroll-target="#instrumental-variables-estimator"><span class="header-section-number">6.5</span> Instrumental Variables Estimator</a></li>
+  <li><a href="#asymptotics-of-iv" id="toc-asymptotics-of-iv" class="nav-link" data-scroll-target="#asymptotics-of-iv"><span class="header-section-number">6.6</span> Asymptotics of IV</a></li>
+  <li><a href="#two-stage-least-squares" id="toc-two-stage-least-squares" class="nav-link" data-scroll-target="#two-stage-least-squares"><span class="header-section-number">6.7</span> Two Stage Least Squares</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./random.html">Part I: Statistical Theory</a></li><li class="breadcrumb-item"><a href="./mom.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Method of Moments</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Method of Moments</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>So far, we have covered estimators that require accurate model specification/form in the form of exogeneity, that the regressors and error terms are uncorrelated.</p>
+<p>In this chapter, we introduce the method of moments estimator, an alternative way to estimate parameters that requires little knowledge about the form of our data. Specifically, we will explore the instrumental variables estimator, which helps us deal with violations of exogeneity which the previous estimators cannot deal with.</p>
+<p><br></p>
+<section id="moments-and-estimation" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="moments-and-estimation"><span class="header-section-number">6.1</span> Moments and Estimation</h2>
+<p>In our original ordinary least squares estimator, we required <a href="./ols.html#the-classical-linear-model">5 conditions</a>: linearity, i.i.d., no perfect multicollinearity, exogeneity, and spherical errors. In the generalised least squares estimator, we dropped the spherical errors condition. In the maximum likelihood estimator, we dropped the spherical errors and linearity condition.</p>
+<p>However, all of these estimators require exogeneity. We previously defined exogeneity (<a href="ols.html#def-strictexog" class="quarto-xref">definition&nbsp;<span>3.2</span></a>, <a href="ols.html#def-weakexog" class="quarto-xref">definition&nbsp;<span>3.10</span></a>) as explanatory variables being uncorelated with the error term. However, exogeneity can also be described in another way - proper model specification. After all, exogeneity is only met if we properly specify our data generating process to seperate the mean <span class="math inline">\(\mu_Y\)</span> and variance of error <span class="math inline">\(\sigma^2\)</span>.</p>
+<p>What if we cannot meet this proper model specification of the data generating process? An alternative estimator is possible - the method of moments estimator. The method of moments estimator requires very few assumptions about the form of our model. Importantly, we do not even need to know the probability density function of our data generating process.</p>
+<p>The method of moments focuses on the moments of a distribution. Let us review what moments are. The <span class="math inline">\(k\)</span>th <strong>raw moment</strong> is defined as</p>
+<p><span class="math display">\[
+\mu_k = \E(X^k)
+\]</span></p>
+<p>Where the first moment <span class="math inline">\(\mu_X^1\)</span> is the expectation itself. There are also <strong>central moments</strong>, which are defined as</p>
+<p><span class="math display">\[
+\mu_k^1 = \E((X - \E X)^k)
+\]</span></p>
+<p>The method of moments equates each <span class="math inline">\(k\)</span> moment with the sample equivalent:</p>
+<p><span class="math display">\[
+\mu_k = \E(X^k) \ \approx \ \frac{1}{n}\sum\limits_{t=1}^nx_t^k
+\]</span></p>
+<p>So we equate the first moment <span class="math inline">\(\mu_X^1\)</span> with the first sample moment, the second moment <span class="math inline">\(\mu_X^2\)</span> with the second sample moment, and so on.</p>
+<p>We should have as many moments-sample moment combinations as we have unknown parameters. Once we have our moments, we can solve for our parameters. In the next section, we will go over the simple example of a sample-mean and variance estimator.</p>
+<p>Because of the law of large numbers (<a href="inference.html#thm-lawoflargenumbers" class="quarto-xref">theorem&nbsp;<span>2.1</span></a>), method of moments estimators as asymptotically consistent estimators. These estimators are also very simple - we do not require any information about the data generating process besides its moments.</p>
+<p><br></p>
+</section>
+<section id="mean-and-variance-estimator" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="mean-and-variance-estimator"><span class="header-section-number">6.2</span> Mean and Variance Estimator</h2>
+<p>Let us show how we can use method of moments to estimate the mean and variance of a population from a sample. Let <span class="math inline">\((x_1, \dots, x_n)\)</span> be a sample from a population with mean <span class="math inline">\(\mu\)</span> and variance <span class="math inline">\(\sigma^2\)</span>. We want to use our method of moments estimator to find the true value of these two parameters.</p>
+<p>Since we have two parameters, we will need two moments. Our first moment <span class="math inline">\(\mu_1\)</span> is</p>
+<p><span class="math display">\[
+\mu_1 = \E(X^1) = \mu \ \approx \ \frac{1}{n}\sum\limits_{t=1}^n x_t
+\]</span></p>
+<p>And our second population moment is</p>
+<p><span class="math display">\[
+\mu_2 = \E(X^2) \ \approx \ \frac{1}{n}\sum\limits_{t=1}^nx_t^2
+\]</span></p>
+<p>We can rewrite our second population moment from <span class="math inline">\(\E(X^2)\)</span> as the following:</p>
+<p><span class="math display">\[
+\E(X^2) = \E(X-\mu)^2 + 2\mu \E(X) - \E(\mu)^2
+\]</span></p>
+<p>You can prove this by multiplying out and cancelling the right hand side. We can simplify this expression using the definition of variance (<a href="random.html#def-var" class="quarto-xref">definition&nbsp;<span>1.3</span></a>) and property of expectations to get</p>
+<p><span class="math display">\[
+\begin{align}
+\E(X^2) &amp; = \E(X-\mu)^2 + 2\mu \E(X) - \E(\mu)^2 \\
+&amp; = \sigma^2 + 2\mu \mu - \mu^2 \\
+&amp; = \sigma^2 + \mu^2
+\end{align}
+\]</span></p>
+<p>Thus, we see the second population moment is equivalent to <span class="math inline">\(\sigma^2 + \mu^2\)</span>. Thus, our two moment conditions, and their sample equivalents are:</p>
+<p><span class="math display">\[
+\begin{align}
+&amp; \E(X^1): \mu \approx \frac{1}{n} \sum\limits_{t=1}^n x_t \\
+&amp; \E(X^2) : \mu^2 + \sigma^2 \approx \frac{1}{n} \sum\limits_{t=1}^nx_t^2
+\end{align}
+\]</span></p>
+<p>Thus, our sample estimate for sample mean <span class="math inline">\(\hat\mu\)</span> will be the first moment condition</p>
+<p><span class="math display">\[
+\hat\mu = \frac{1}{n} \sum\limits_{t=1}^n x_t
+\]</span></p>
+<p>And our sample estimate <span class="math inline">\(\sigma^2\)</span> will be a rearranged version (isolating <span class="math inline">\(\sigma^2\)</span>) of the second moment condition</p>
+<p><span class="math display">\[
+\begin{align}
+\hat\sigma^2 &amp; = \frac{1}{n}\sum\limits_{t=1}^n x_t^2 - \hat\mu^2 \\
+&amp; =  \frac{1}{n}\sum\limits_{t=1}^n (x_t^2 - \hat\mu)^2
+\end{align}
+\]</span></p>
+<p>And as we can see, according the the law of large numbers (<a href="inference.html#thm-lawoflargenumbers" class="quarto-xref">theorem&nbsp;<span>2.1</span></a>), and the definition of expectation (<a href="random.html#def-exp" class="quarto-xref">definition&nbsp;<span>1.2</span></a>) and variance (<a href="random.html#def-var" class="quarto-xref">definition&nbsp;<span>1.3</span></a>), that both these estimators are asymptotically consistent.</p>
+<p>This is a simple example of the implementation of the method of moments. From now on, we will focus on more complex cases of the method of moments, and how they can be used to address some of the issues with past estimators.</p>
+<p><br></p>
+</section>
+<section id="moments-of-least-squares" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="moments-of-least-squares"><span class="header-section-number">6.3</span> Moments of Least Squares</h2>
+<p>The <a href="./ols.html">ordinary least squares estimator</a> can be written as a method of moments estimator. Recall that the classical linear model</p>
+<p><span class="math display">\[
+Y \sim \mathcal N(\b{X\beta}, \sigma^2)
+\]</span></p>
+<p>We can split this model into two sections - the expected <span class="math inline">\(Y\)</span> and the variance:</p>
+<p><span id="eq-linearsplit"><span class="math display">\[
+\b y = \underbrace{\b{X\beta}}_{\mu_Y} \ + \ \underbrace{\b\eps \sim \mathcal N(0, \sigma^2)}_{\text{error term}}
+\tag{6.1}\]</span></span></p>
+<p>Where <span class="math inline">\(\mu_Y = \E(Y|X)\)</span>, and the error term explains the variation/randomness where not all <span class="math inline">\(Y\)</span> are exactly at the expectation <span class="math inline">\(\mu_Y\)</span>. For the OLS estimator, we are interested in the central moment of <span class="math inline">\(Y\)</span>:</p>
+<p><span class="math display">\[
+\mu_1' = \E(Y - \E(Y|X)) = \E( \b y - \b{X\beta} \ | \ \b X) = \E (\b\eps | \b X)
+\]</span></p>
+<p>And since we know from <a href="#eq-linearsplit" class="quarto-xref">eq.&nbsp;<span>6.1</span></a> that <span class="math inline">\(\b\eps\)</span> by assumption has a expectation of 0, we get:</p>
+<p><span class="math display">\[
+\mu_1' = \E(\b\eps | \b X) = 0
+\]</span></p>
+<p>However, there is an issue with this condition - this will only produce one equation to solve, when we have <span class="math inline">\(p\)</span> parameters that need to be estimated for OLS. The solution to this is to multiply the central moment condition by <span class="math inline">\(\b X\)</span>:</p>
+<p><span class="math display">\[
+\b X^\top \underbrace{\E(\b\eps | \b X)}_{= \ 0} = 0
+\]</span></p>
+<p>And this statement is still true since anything multiplied to 0 equals 0. Now, using the properties of exepctations, we can include <span class="math inline">\(\b X\)</span> within the expectation since it is a constant considering our expectation conditions of <span class="math inline">\(\b X\)</span>:</p>
+<p><span class="math display">\[
+\E( \b X^\top \b \eps | \b X) = 0
+\]</span></p>
+<p>And using the law of iterated expectations (<a href="random.html#thm-lie" class="quarto-xref">theorem&nbsp;<span>1.3</span></a>), we know</p>
+<p><span class="math display">\[
+\E(\b{X^\top \eps}) = \E[\E( \b X^\top \b \eps | \b X)] = \E[0] = 0
+\]</span></p>
+<p>Thus, we have our moment condition of OLS.</p>
+<div id="def-olsmoments" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 6.1 (OLS Moment Condition)</strong></span> The moment conditions of the ordinary least squares estimator is:</p>
+<p><span class="math display">\[
+\E(\b{X^\top \eps}) = 0
+\]</span></p>
+</div>
+<p><br></p>
+<p>Notice anything about this moment condition? It is exactly in the same form as our definition of exogeneity (<a href="ols.html#def-strictexog" class="quarto-xref">definition&nbsp;<span>3.2</span></a>). This is another reason why exogeneity is an important condition in OLS - when violated, our moment condition is invalid.</p>
+<p>To actually estimate OLS coefficients <span class="math inline">\(\hat{\b\beta}\)</span> with method of moments, we use our sample equivalents:</p>
+<p><span class="math display">\[
+\E(\b X^\top \b\eps) \approx \b X^\top \hat{\b\eps} = 0
+\]</span></p>
+<p>Where we can rewrite with the fact that <span class="math inline">\(\hat{\b\eps} = \b y - \hat{\b y}\)</span>, and that <span class="math inline">\(\hat{\b y} = \b{X\hat\beta}\)</span>. Thus, we get</p>
+<p><span class="math display">\[
+\begin{align}
+\b X^\top (\b y - \hat{\b y}) &amp; = 0 \\
+\b X^\top(\b y - \b X \hat{\b\beta}) &amp; = 0 \\
+\b{X^\top y} - \b{X^\top X \hat\beta} &amp; = 0
+\end{align}
+\]</span></p>
+<p>Now solving for <span class="math inline">\(\b{\hat\beta}\)</span> with matrix inversion, we get:</p>
+<p><span class="math display">\[
+\begin{align}
+- \b{X^\top X \hat\beta} &amp; = - \b{X^\top y} \\
+\b{X^\top X \hat\beta} &amp; = \b{X^\top y} \\
+\hat{\b\beta} &amp; = (\b{X^\top X})^{-1}\b{X^\top y}
+\end{align}
+\]</span></p>
+<p>And we can see, we get the same solution as OLS (<a href="ols.html#def-ols" class="quarto-xref">definition&nbsp;<span>3.5</span></a>). Thus, OLS is a method of moments estimator.</p>
+<p><br></p>
+</section>
+<section id="instrumental-variables" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="instrumental-variables"><span class="header-section-number">6.4</span> Instrumental Variables</h2>
+<p>Recall the OLS method of moments condition (<a href="#def-olsmoments" class="quarto-xref">definition&nbsp;<span>6.1</span></a>):</p>
+<p><span class="math display">\[
+\E(\b{X^\top \eps}) = 0
+\]</span></p>
+<p>As mentioned above, this is equivalent to the exogeneity condition (<a href="ols.html#def-strictexog" class="quarto-xref">definition&nbsp;<span>3.2</span></a>) - that the regressors <span class="math inline">\(\b X\)</span> are uncorrelated with the error term <span class="math inline">\(\b \eps\)</span>. However, what if this is violated? Our OLS estimates become biased, because exogeneity is a key condition in establishing the unbiasedness of OLS (<a href="ols.html#thm-olsunbiased" class="quarto-xref">theorem&nbsp;<span>3.2</span></a>).</p>
+<p>The <strong>instrumental variables estimator</strong> is a solution to this issue. The idea is to find a third variable (or more) <span class="math inline">\(Z\)</span>, that does meet this condition of exogeneity. Then, we will have the new condition</p>
+<p><span class="math display">\[
+\E(\b{Z^\top \eps}) = 0
+\]</span></p>
+<p>and we will have no exogeneity if <span class="math inline">\(Z\)</span> is not correlated with the error term. We then use these instruments <span class="math inline">\(Z\)</span> to predict <span class="math inline">\(X\)</span>, which will get us the parts of <span class="math inline">\(X\)</span> that are explained by <span class="math inline">\(Z\)</span> (and thus, uncorrelated with the error term). Then, we can use that exogenous part of <span class="math inline">\(X\)</span> to estimate the relationship with <span class="math inline">\(Y\)</span>. However, this hinges on <span class="math inline">\(Z\)</span> meeting that moments condition.</p>
+<div id="def-instrumentassumptions" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 6.2 (Assumptions of Instruments)</strong></span> For instrument(s) <span class="math inline">\(Z\)</span> to meet the moment condition <span class="math inline">\(\E(\b{Z^\top \eps}) = 0\)</span>, the following facts must be true:</p>
+<ol type="1">
+<li><span class="math inline">\(Z\)</span> must be exogenous/ignorable, i.e.&nbsp;<span class="math inline">\(Cov(Z, \eps) = 0\)</span>.</li>
+<li><span class="math inline">\(Z\)</span> must be relevant, i.e.&nbsp;<span class="math inline">\(Cov(Z, X) ≠ 0\)</span>.</li>
+<li><span class="math inline">\(Z\)</span> must meet the exclusions restriction (which is implied by exogenous). This means that <span class="math inline">\(Z\)</span> cannot have an independent effect on <span class="math inline">\(Y\)</span>, outside of its impact on <span class="math inline">\(Y\)</span> through <span class="math inline">\(X\)</span>.</li>
+</ol>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-4129117926.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></p>
+</figure>
+</div>
+<p>The classic instrument setup is as above. We want to find the relationship between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span>. However, there is some unobserved variable <span class="math inline">\(U\)</span> that is not in our regression, so it is in our error term <span class="math inline">\(\eps\)</span>. But because <span class="math inline">\(U\)</span> is correlated with <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span> and in the error term <span class="math inline">\(\eps\)</span>, it implies <span class="math inline">\(D\)</span> is correlated with the error term <span class="math inline">\(\eps\)</span>, violating exogeneity.</p>
+<p>To solve this, we introduce an instrument <span class="math inline">\(Z\)</span>. By using <span class="math inline">\(Z\)</span> to predict <span class="math inline">\(D\)</span>, we are only using the part of <span class="math inline">\(D\)</span> that is explained by <span class="math inline">\(Z\)</span>. That part of <span class="math inline">\(D\)</span> is not explained by <span class="math inline">\(U\)</span>, so that part of <span class="math inline">\(D\)</span> is now exogenous, and we can estimate the relationship between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-674883486.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>This figure shows potential violations of the assumptions of instrument <span class="math inline">\(Z\)</span>, when trying to measure the relationship between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span>. Finding a valid instrument is very difficult, but possible. However, it typically takes a lot of domain knowledge to get a good instrument.</p>
+<p><br></p>
+</section>
+<section id="instrumental-variables-estimator" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="instrumental-variables-estimator"><span class="header-section-number">6.5</span> Instrumental Variables Estimator</h2>
+<p>So we know what an instrument <span class="math inline">\(Z\)</span> is, and the requirements for <span class="math inline">\(Z\)</span> to be a valid instrument. But how does <span class="math inline">\(Z\)</span> help us estimate the effect between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>?</p>
+<p>Our moment condition and sample equivalent for instrumental variables is:</p>
+<p><span class="math display">\[
+\E(\b{Z^\top \eps}) \approx \b Z^\top \b\eps = 0
+\]</span></p>
+<p>Now, we know that <span class="math inline">\(\b\eps = \b y - \hat{\b y}\)</span> and <span class="math inline">\(\hat{\b y} = \b{X\hat\beta}\)</span>, so let us plug that in:</p>
+<p><span class="math display">\[
+\begin{align}
+\b Z^\top (\b y - \hat{\b y}) &amp; = 0 \\
+\b Z^\top (\b y - \b{X \hat\beta}) &amp; = 0 \\
+\b{Z^\top y} - \b{Z^\top X \hat\beta} &amp; = 0
+\end{align}
+\]</span></p>
+<p>And now, solving for <span class="math inline">\(\hat{\b\beta}\)</span> with matrix inversion, we get:</p>
+<p><span class="math display">\[
+\begin{align}
+- \b{Z^\top X \hat\beta} &amp; = - \b{Z^\top y} \\
+\b{Z^\top X \hat\beta} &amp; = \b{Z^\top y} \\
+\hat{\b\beta} &amp; = (\b{Z^\top X})^{-1} \b{Z^\top y}
+\end{align}
+\]</span></p>
+<div id="def-ivestimator" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 6.3 (Instrumental Variables Estimator)</strong></span> The IV estimator produces the estimates:</p>
+<p><span class="math display">\[
+\hat{\b\beta}^* = (\b{Z^\top X})^{-1} \b{Z^\top y}
+\]</span></p>
+</div>
+<p><br></p>
+<p>The instrumental variables estimator is a biased estimator in finite samples. This means we should be careful about using the instrumental variables in small sample sizes. However, it is asymptotically consistent (as we will demonstrate in the next section). This means that IV can give us good estimates of <span class="math inline">\(\b\beta\)</span> in large sample sizes even if <span class="math inline">\(X\)</span> is not exogenous.</p>
+<div id="thm-ivbias" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Theorem 6.1 (IV Bias)</strong></span> Instrumental variables estimator is a biased estimator.</p>
+</div>
+<p><br></p>
+<p><strong>Proof:</strong> Let us plug in the true model <span class="math inline">\(\b y = \b{X\beta} + \b \eps\)</span> into the IV estimator (<a href="#def-ivestimator" class="quarto-xref">definition&nbsp;<span>6.3</span></a>) to get</p>
+<p><span id="eq-ivsimplify"><span class="math display">\[
+\begin{align}
+\hat{\b\beta}^* &amp; = (\b{Z^\top X})^{-1} \b{Z^\top y} \\
+&amp; = (\b{Z^\top X})^{-1} \b{Z^\top}(\b{X\beta} + \b \eps) \\
+&amp; = \underbrace{(\b{Z^\top X})^{-1} \b{Z^\top X}}_{\text{inverses cancel}}\b\beta + (\b{Z^\top X})^{-1} \b{Z^\top\eps} \\
+&amp; = \b\beta + (\b{Z^\top X})^{-1} \b{Z^\top\eps}
+\end{align}
+\tag{6.2}\]</span></span></p>
+<p>Now, let us consider the conditional expectation of <span class="math inline">\(\hat{\b\beta}^*\)</span> in respect to both <span class="math inline">\(\b X\)</span> and <span class="math inline">\(\b Z\)</span>:</p>
+<p><span class="math display">\[
+\E(\hat{\b\beta}^* | \b X, \b Z) = \E( \b\beta + (\b{Z^\top X})^{-1} \b{Z^\top\eps} \ | \b X, \b Z)
+\]</span></p>
+<p>Now, let us take out the constants from the expectation to get:</p>
+<p><span class="math display">\[
+\E(\hat{\b\beta}^* | \b X, \b Z) = \b\beta + (\b{Z^\top X})^{-1} \b{Z^\top} \E(\b\eps | \b X, \b Z)
+\]</span></p>
+<p>Because <span class="math inline">\(\b X\)</span> is endogenous (and violates exogeneity), we know <span class="math inline">\(\E(\b\eps | \b X, \b Z) ≠ 0\)</span>. Thus, we cannot simplify this expression like we did for OLS. Thus, the instrumental variables estimator is biased.</p>
+<p><br></p>
+</section>
+<section id="asymptotics-of-iv" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="asymptotics-of-iv"><span class="header-section-number">6.6</span> Asymptotics of IV</h2>
+<p>Despite being biased, the instrumental variables estimator is an asymptotically consistent estimator of <span class="math inline">\(\b\beta\)</span> even with exogeneity between <span class="math inline">\(X\)</span> and <span class="math inline">\(\eps\)</span> violated (as long as <span class="math inline">\(Z\)</span> is exogenous).</p>
+<div id="thm-ivconsistency" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Theorem 6.2 (IV Consistency)</strong></span> The IV estimator is asymptotically consistent, meaning</p>
+<p><span class="math display">\[
+\mathrm{plim}\hat{\b\beta}^* = \b\beta
+\]</span></p>
+</div>
+<p><br></p>
+<p><strong>Proof</strong>: Let us start from where we left off in <a href="#eq-ivsimplify" class="quarto-xref">eq.&nbsp;<span>6.2</span></a>. We can rewrite our matrices in the form of vectors, scalars, and summation, just as we did in the proof of OLS consistency (<a href="ols.html#thm-olsconsistent" class="quarto-xref">theorem&nbsp;<span>3.5</span></a>). We thus get</p>
+<p><span class="math display">\[
+\begin{align}
+\hat{\b\beta}^* &amp; = \b\beta + (\b{Z^\top X})^{-1} \b{Z^\top\eps} \\
+&amp; = \b\beta + \left(\sum\limits_{t=1}^n \b z_t \b x_t^\top \right)^{-1} \left(\sum\limits_{t=1}^n \b z_t \eps_t \right)
+\end{align}
+\]</span></p>
+<p>Now, let us do a little algebra trick as follows:</p>
+<p><span class="math display">\[
+\hat{\b\beta}^* = \b\beta + \left(\frac{1}{n}\sum\limits_{t=1}^n \b z_t \b x_t^\top \right)^{-1} \left(\frac{1}{n}\sum\limits_{t=1}^n \b z_t \eps_t \right)
+\]</span></p>
+<p>The reason we can do this is because the first <span class="math inline">\(\frac{1}{n}\)</span> is inversed as <span class="math inline">\(\frac{1}{n}^{-1}\)</span>, so this cancels out the second one, maintaining the equality of our equation.</p>
+<p>Now, we want to prove <span class="math inline">\(\mathrm{plim}\hat{\b\beta}^* = \b\beta\)</span>, so let us take the probability limit of both sides:</p>
+<p><span class="math display">\[
+\mathrm{plim}\hat{\b\beta}^* = \mathrm{plim}\b\beta + \left(\mathrm{plim}\frac{1}{n}\sum\limits_{t=1}^n \b z_t \b x_t^\top \right)^{-1} \left(\mathrm{plim}\frac{1}{n}\sum\limits_{t=1}^n \b z_t \eps_t \right)
+\]</span></p>
+<p>We know the probability limit of a constant is itself. Look at the other two terms on the right: they take the form of sample averages <span class="math inline">\(\frac{1}{n}\sum\)</span>. Using the law of large numbers (<a href="inference.html#thm-lawoflargenumbers" class="quarto-xref">theorem&nbsp;<span>2.1</span></a>), we can simplify to:</p>
+<p><span class="math display">\[
+\mathrm{plim}\hat{\b\beta}^*  = \b\beta + (\E(\b z_t \b x_t^\top))^{-1} \underbrace{\E(\b z_t \eps_t)}_{= \ 0} = \b\beta
+\]</span></p>
+<p>And we know <span class="math inline">\(\E(\b z_t \eps_t) = 0\)</span> because this is the same condition as the moment condition <span class="math inline">\(\E(\b{Z^\top \eps}) = 0\)</span>, just written in terms of individual observations. Thus, the Instrumental variables estimator is asymptotically consistent.</p>
+<p>It can also be shown that the asymptotic variance of the instrumental variables estimator, under the assumption of spherical errors is</p>
+<p><span class="math display">\[
+\V \hat{\b\beta}^* = \sigma^2(\b{Z^\top X})^{-1} \b{Z^\top Z} (\b{X^\top Z})^{-1}
+\]</span></p>
+<p>Although the proof of this is beyond the scope of this chapter. There is also a more complex derivation for robust standard errors with instrumental variables estimation.</p>
+<p><br></p>
+</section>
+<section id="two-stage-least-squares" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="two-stage-least-squares"><span class="header-section-number">6.7</span> Two Stage Least Squares</h2>
+<p>While sometimes we do compute the instrumental variables estimator as shown in <a href="#def-ivestimator" class="quarto-xref">definition&nbsp;<span>6.3</span></a>, often, we use another estimator, the two-stage-least-squares (2SLS) estimator.</p>
+<p>The 2SLS estimator is based on the intuitive interpretation of instrumental variables: that we use only the part of <span class="math inline">\(X\)</span> explained by <span class="math inline">\(Z\)</span> (which should be endogenous), and estimate that part of <span class="math inline">\(X\)</span>’s relationship with <span class="math inline">\(Y\)</span>.</p>
+<p>The two stage least squares estimator follows this exact procedure. In the first stage, we find the part of <span class="math inline">\(X\)</span> that is explained by <span class="math inline">\(Z\)</span>, which we call <span class="math inline">\(\hat X_t\)</span>:</p>
+<p><span class="math display">\[
+\hat X_t = \hat\beta_0 + \hat\beta_1 Z_t
+\]</span></p>
+<p>We do this by running a linear OLS model with <span class="math inline">\(X_t\)</span> as the outcome variable, and <span class="math inline">\(Z_t\)</span> as the explanatory variable. Our predicted <span class="math inline">\(\hat X_t\)</span> will be the part of <span class="math inline">\(X\)</span> explained by instrument <span class="math inline">\(Z\)</span>.</p>
+<p>Then, for the second stange, we take this <span class="math inline">\(\hat X_t\)</span>, and use it in a model with <span class="math inline">\(Y\)</span> as follows:</p>
+<p><span class="math display">\[
+Y_t = \delta_0 + \delta_1 \hat X_t + \eps_t
+\]</span></p>
+<p>How is 2SLS in these two stages equal to instrumental variables estimator we derived in <a href="#def-ivestimator" class="quarto-xref">definition&nbsp;<span>6.3</span></a>? Our estimates (in matrix form) for the second stage would be:</p>
+<p><span id="eq-2slshat"><span class="math display">\[
+\hat{\b\beta}_{2SLS} = (\hat{\b X}^\top \hat{\b X})^{-1} \hat{\b X}^\top \b y
+\tag{6.3}\]</span></span></p>
+<p>Where <span class="math inline">\(\hat{\b X}\)</span> is given as the fitted values of the first stage:</p>
+<p><span class="math display">\[
+\hat{\b X} = \b Z \hat{\b \delta} = \b Z (\b{Z^\top Z})^{-1}\b{Z^\top X}
+\]</span></p>
+<p>We can plug <span class="math inline">\(\hat{\b X}\)</span> into <a href="#eq-2slshat" class="quarto-xref">eq.&nbsp;<span>6.3</span></a> to get:</p>
+<p><span class="math display">\[
+\hat{\b\beta}_{2SLS} = [(\b Z (\b{Z^\top Z})^{-1}\b{Z^\top X})^\top (\b Z (\b{Z^\top Z})^{-1}\b{Z^\top X})]^{-1}(\b Z (\b{Z^\top Z})^{-1}\b{Z^\top X})^\top \b y
+\]</span></p>
+<p>Using the properties of matrix transposes, we get:</p>
+<p><span class="math display">\[
+\begin{align}
+\hat{\b\beta}_{2SLS} &amp; = [(\b X^\top \b Z (\b{Z^\top Z})^{-1} \b Z^\top) (\b Z (\b{Z^\top Z})^{-1}\b{Z^\top X})]^{-1}(\b X^\top \b Z (\b{Z^\top Z})^{-1} \b Z^\top)\b y \\
+&amp; = [\b X^\top \b Z \underbrace{(\b{Z^\top Z})^{-1} \b Z^\top \b Z}_{\text{inverses cancel}} (\b{Z^\top Z})^{-1}\b{Z^\top X}]^{-1}\b X^\top \b Z (\b{Z^\top Z})^{-1} \b Z^\top\b y \\
+&amp; = (\underbrace{\b X^\top \b Z (\b{Z^\top Z})^{-1}}_{\text{cancel}}\b{Z^\top X})^{-1}\underbrace{\b X^\top \b Z (\b{Z^\top Z})^{-1}}_{\text{cancel}} \b Z^\top\b y \\
+&amp; = \underbrace{(\b{Z^\top X})^{-1} \b{Z^\top y}}_{\text{equal to IV}}
+\end{align}
+\]</span></p>
+<p>And the second to last step is possible because one of the highlighted “cancel” parts is within an inverse and the other isn’t, so they cancel. Thus, we have shown 2SLS is equivalent to the instrumental variables estimator.</p>
+<p>The main advantage of 2SLS is that we can include control variables in both stages. For example, recall this figure we saw previously:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-674883486.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>We want to uncover the effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span>. Imagine that we only have one of the violations above, the one notated <em>ignorability violation (i)</em>. In this case, <span class="math inline">\(Z\)</span> is not exogenous to <span class="math inline">\(Y\)</span>, because <span class="math inline">\(Z\)</span> and <span class="math inline">\(Y\)</span> are correlated with the confounder <span class="math inline">\(M\)</span> which is in the error term, meaning <span class="math inline">\(Z\)</span> is correlated with the error term.</p>
+<p>However, if we included <span class="math inline">\(M\)</span> in our model for both stages, then <span class="math inline">\(Z\)</span> would be exogenous, since <span class="math inline">\(M\)</span> would be a part of our model and not the error term <span class="math inline">\(\eps\)</span> anymore.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./mle.html" class="pagination-link" aria-label="Maximum Likelihood">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Maximum Likelihood</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./causal.html" class="pagination-link" aria-label="Causal Inference">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Causal Inference</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

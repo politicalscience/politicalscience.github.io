@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>1&nbsp; Random Variables – Statistics for Political Science</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<link href="./inference.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="mathjax-config.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./random.html">Part I: Statistical Theory</a></li><li class="breadcrumb-item"><a href="./random.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Random Variables</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Statistics for Political Science</a> 
+    </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Statistical Theory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./random.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Random Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical Inference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ols.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Classical Least Squares</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Generalised Least Squares</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Maximum Likelihood</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mom.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Method of Moments</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./causal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Causal Inference</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part II: Statistical Models</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: Quasi-Experiments</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./soo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Selection on Observables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./iv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#random-variables" id="toc-random-variables" class="nav-link active" data-scroll-target="#random-variables"><span class="header-section-number">1.1</span> Random Variables</a></li>
+  <li><a href="#expectation-and-moments" id="toc-expectation-and-moments" class="nav-link" data-scroll-target="#expectation-and-moments"><span class="header-section-number">1.2</span> Expectation and Moments</a></li>
+  <li><a href="#variance" id="toc-variance" class="nav-link" data-scroll-target="#variance"><span class="header-section-number">1.3</span> Variance</a></li>
+  <li><a href="#the-normal-distribution" id="toc-the-normal-distribution" class="nav-link" data-scroll-target="#the-normal-distribution"><span class="header-section-number">1.4</span> The Normal Distribution</a></li>
+  <li><a href="#chi-squared-and-t-distribution" id="toc-chi-squared-and-t-distribution" class="nav-link" data-scroll-target="#chi-squared-and-t-distribution"><span class="header-section-number">1.5</span> Chi-Squared and T-Distribution</a></li>
+  <li><a href="#bernoulli-and-binomial-distribution" id="toc-bernoulli-and-binomial-distribution" class="nav-link" data-scroll-target="#bernoulli-and-binomial-distribution"><span class="header-section-number">1.6</span> Bernoulli and Binomial Distribution</a></li>
+  <li><a href="#joint-distributions" id="toc-joint-distributions" class="nav-link" data-scroll-target="#joint-distributions"><span class="header-section-number">1.7</span> Joint Distributions</a></li>
+  <li><a href="#conditional-distributions" id="toc-conditional-distributions" class="nav-link" data-scroll-target="#conditional-distributions"><span class="header-section-number">1.8</span> Conditional Distributions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./random.html">Part I: Statistical Theory</a></li><li class="breadcrumb-item"><a href="./random.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Random Variables</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Random Variables</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>In this chapter, we will introduce the basics of statistics: random variables. We will discuss what a random variable is, how they can be described by distributions, and key properties and types of distributions.</p>
+<p><br></p>
+<section id="random-variables" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="random-variables"><span class="header-section-number">1.1</span> Random Variables</h2>
+<p>A random variable has a set of potential outcomes <span class="math inline">\(\Omega\)</span>, called the sample space. For example, if we are flipping a coin, the potential outcomes are either heads or tails, so <span class="math inline">\(\Omega = \{H, T\}\)</span>. Only one outcome <span class="math inline">\(\omega\)</span> can be realised from this random variable at a time.</p>
+<p><strong>Discrete random variables</strong> have a set of finite, distinct potential outcomes <span class="math inline">\(\Omega\)</span>. For example, both rolling a die and flipping a coin are discrete variables.</p>
+<p><strong>Continuous random variables</strong> are have an infinite number of outcomes <span class="math inline">\(\Omega\)</span> within a range. For example, take the random variable <em>how long will it take for me to get to school tomorrow</em>. The outcome could be 5 minutes, could be 6 minutes, and could also be 5.461 minutes.</p>
+<p>Every outcome <span class="math inline">\(\omega \in \Omega\)</span> has some probability of being realised. For example, the probability of getting heads in a coin flip is 50%. We can express the probability of a certain outcome <span class="math inline">\(\omega\)</span> with a probability density function (pdf).</p>
+<div id="def-pdf" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 1.1 (Probability Density Function)</strong></span> For a random variable <span class="math inline">\(Y\)</span>, the probability density function <span class="math inline">\(f_Y(y)\)</span> gives us the probability of a certain value <span class="math inline">\(y\)</span> will be the outcome:</p>
+<p><span class="math display">\[
+f_Y(y) = \P(Y = y)
+\]</span></p>
+</div>
+<p><br></p>
+<p>For discrete variables, we just plug in the outcome <span class="math inline">\(y\)</span> we want the probability of. For continuous random variables, while the PDF does give you the probability of outcome <span class="math inline">\(y\)</span>, this isn’t as useful in context.</p>
+<p>For example, let us say the random variable of <em>how long will it take for me to get to school tomorrow</em>? Do we really care about the probability that it will take exactly 5.372 minutes? No.&nbsp;What we care about is a range.</p>
+<p>Thus when calculating probabilities for continuous random variables, we find the probability that random variable <span class="math inline">\(Y\)</span> is somewhere between values <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>.</p>
+<p><span id="eq-pdfcont"><span class="math display">\[
+\P(Y \in [a, b]) = \int\limits_a^bf_Y(y)dy
+\tag{1.1}\]</span></span></p>
+<p>Another way to describe distributions is the <strong>cumulative distribution function (CDF)</strong>. The CDF <span class="math inline">\(F_Y(y)\)</span> finds the probability of an outcome equal or less to some value <span class="math inline">\(y\)</span>.</p>
+<p><span id="eq-cdf"><span class="math display">\[
+F(y) = \P(Y≤y) = \ \underbrace{\sum\limits_{-∞}^y f_Y(y)}_{\text{discrete}} \ = \ \underbrace{\int\limits_{-∞}^yf_Y(y)dy}_{\text{continuous}}
+\tag{1.2}\]</span></span></p>
+<p><br></p>
+</section>
+<section id="expectation-and-moments" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="expectation-and-moments"><span class="header-section-number">1.2</span> Expectation and Moments</h2>
+<p>The expectation of a random variable <span class="math inline">\(Y\)</span>, notated <span class="math inline">\(\E Y\)</span> or <span class="math inline">\(\mu_Y\)</span>, is a measure for the centre or average of a random value. As the name implies, if we randomly draw an outcome <span class="math inline">\(y\)</span> from a random variable <span class="math inline">\(Y\)</span>, the average outcome that we get will be <span class="math inline">\(\E Y\)</span>.</p>
+<div id="def-exp" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 1.2 (Expectation)</strong></span> For discrete random variables, the expectation is defined as the sum of every possible outcome <span class="math inline">\(y_t\)</span> multiplied with their probability of occuring <span class="math inline">\(f_Y(y_t)\)</span> (as given by the PDF):</p>
+<p><span class="math display">\[
+\E Y = \mu_Y =  \sum\limits_t y_tf_Y(y_t)
+\]</span></p>
+<p>For continuous random variables, the expectation is given by</p>
+<p><span class="math display">\[
+\E Y = \int\limits_{-∞}^∞y f_Y(y)dy
+\]</span></p>
+</div>
+<p><br></p>
+<p>Expected values also can be manipulated algebraically, as they are considered linear. This will show up in many proofs:</p>
+<div id="thm-linearity" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Theorem 1.1 (Linearity of Expectations)</strong></span> Expectations are linear. This means that they can be added:</p>
+<p><span class="math display">\[
+\E (X+Y) = \E X + \E Y
+\]</span></p>
+<p>And they can be multiplied with constants:</p>
+<p><span class="math display">\[
+\E(aX) = a  \E X
+\]</span></p>
+<p>The expectation of a constant is the constant itself:</p>
+<p><span class="math display">\[
+\E (a) = a
+\]</span></p>
+</div>
+<p><br></p>
+<p>Expectations can be used to define the <strong>raw</strong> <strong>moments</strong> of a random variable (also called raw moment). The <span class="math inline">\(k\)</span>th moment of a random variable is defined as</p>
+<p><span class="math display">\[
+\mu_k' = \E X^k
+\]</span></p>
+<p>The first raw moment <span class="math inline">\(\mu'_1\)</span> is the expected value of the random variable.</p>
+<p>The <strong>central moment</strong> of an expected variable is defined as</p>
+<p><span id="eq-centmoment"><span class="math display">\[
+\bar\mu_k = \E[(X - \E X)^k]
+\tag{1.3}\]</span></span></p>
+<p><br></p>
+</section>
+<section id="variance" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="variance"><span class="header-section-number">1.3</span> Variance</h2>
+<p>While expectation measures the average/centre of a random variable, we might also want to know something about how spread out the outcomes of a random variable are.</p>
+<div id="def-var" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 1.3 (Variance)</strong></span> Variance is a measure of the spread of a random variable <span class="math inline">\(Y\)</span>, notated <span class="math inline">\(\V Y\)</span> or <span class="math inline">\(\sigma^2_Y\)</span>. Mathematically speaking, it is the expected distance between each value of <span class="math inline">\(Y\)</span> and <span class="math inline">\(\E Y\)</span> squared:</p>
+<p><span class="math display">\[
+\V Y = \sigma^2_Y = \E [(Y - \E Y)^2]
+\]</span></p>
+</div>
+<p><br></p>
+<p>Variance is also the second central moment <span class="math inline">\(\bar\mu_2\)</span>, as explained in <a href="#eq-centmoment" class="quarto-xref">eq.&nbsp;<span>1.3</span></a>. Higher variance indicates a more spread out distribution, and lower variance indicates a less spread out distribution.</p>
+<p>Variance also has a useful algebraic property that we will see in many proofs:</p>
+<div id="thm-variance" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Theorem 1.2 (Algebraic Property of Variance)</strong></span> If <span class="math inline">\(c\)</span> and <span class="math inline">\(b\)</span> are constants, and <span class="math inline">\(X\)</span> is a random variable, the following is true:</p>
+<p><span class="math display">\[
+\V(c + bX) = b^2 \V(X)
+\]</span></p>
+<p>We can generalise this to linear algebra. If <span class="math inline">\(\b u\)</span> is an <span class="math inline">\(n\)</span>-dimensional vector of random variables, and <span class="math inline">\(\b c\)</span> is a <span class="math inline">\(m\)</span>-dimensional vector, and <span class="math inline">\(\b B\)</span> is an <span class="math inline">\(m \times n\)</span> matrix with fixed constants, then:</p>
+<p><span class="math display">\[
+\V(\b c+ \b{Bu}) = \b B \V(\b u) \b B^\top
+\]</span></p>
+</div>
+<p><br></p>
+<p><strong>Proof</strong>: From variance given in <a href="#def-var" class="quarto-xref">definition&nbsp;<span>1.3</span></a>, we can expand <span class="math inline">\(\V(\b c + \b{BU})\)</span> as follows:</p>
+<p><span id="eq-varlemma1"><span class="math display">\[
+= \E \left[ (\b c + \b{Bu} - \E(\b c + \b{Bu})) (\b c + \b{Bu} - \E(\b c + \b{Bu}))^\top \right]
+\tag{1.4}\]</span></span></p>
+<p>We know through the properties of expectation given in <a href="#thm-linearity" class="quarto-xref">theorem&nbsp;<span>1.1</span></a>, that the expectation of fixed constant vector <span class="math inline">\(\b c\)</span> and fixed constant matrix <span class="math inline">\(\b B\)</span> is themselves. Thus, we observe:</p>
+<p><span id="eq-varlemma2"><span class="math display">\[
+\begin{align}
+\b c + \b{Bu} - \E(\b c + \b{Bu}) &amp; = \b c + \b{Bu} - (\b c  - \b B \E\b u) \\
+&amp; = \b c + \b{Bu} - \b c  + \b B \E\b u \\
+&amp; = \b{Bu} + \b B \E \b u \\
+&amp; = \b B(\b u - \E \b u)
+\end{align}
+\tag{1.5}\]</span></span></p>
+<p>Similarly, we can use the same properties as above, as well as the algebraic properties of matrix transposes, to observe:</p>
+<p><span id="eq-varlemma3"><span class="math display">\[
+\begin{align}
+(\b c + \b{Bu} - \E(\b c + \b{Bu})^\top &amp; = (\b B(\b u - \E \b u))^\top \\
+&amp; = (\b u - \E \b u)^\top \b B^\top
+\end{align}
+\tag{1.6}\]</span></span></p>
+<p>Plugging in <a href="#eq-varlemma2" class="quarto-xref">eq.&nbsp;<span>1.5</span></a> and <a href="#eq-varlemma3" class="quarto-xref">eq.&nbsp;<span>1.6</span></a> into <a href="#eq-varlemma1" class="quarto-xref">eq.&nbsp;<span>1.4</span></a>, we get:</p>
+<p><span class="math display">\[
+\V(\b c + \b{Bu}) = \E[\b B(\b u - \E \b u)(\b u - \E \b u)^\top \b B^\top]
+\]</span></p>
+<p>We know from <a href="#thm-linearity" class="quarto-xref">theorem&nbsp;<span>1.1</span></a> that the expectation of a fixed constant matrix <span class="math inline">\(\b B\)</span> is itself, so we can pull out <span class="math inline">\(\b B\)</span> and <span class="math inline">\(\b B^\top\)</span> from the expectation to get</p>
+<p><span class="math display">\[
+\V(\b c + \b{Bu}) = \b B \E[(\b u - \E \b u)(\b u - \E \b u)^\top ] \b B^\top
+\]</span></p>
+<p>And by variance defined in <a href="#def-var" class="quarto-xref">definition&nbsp;<span>1.3</span></a>, we can see that the expectation in the above equation is just <span class="math inline">\(\V (u)\)</span>, so we can substitute that in to get</p>
+<p><span class="math display">\[
+\V(\b c + \b{Bu}) =  \b B \V (\b u) \b B^\top
+\]</span></p>
+<p>Thus proving this theorem regarding variance.</p>
+<p><br></p>
+</section>
+<section id="the-normal-distribution" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="the-normal-distribution"><span class="header-section-number">1.4</span> The Normal Distribution</h2>
+<p>The normal distribution is a continuous random variable which has a probability density function.</p>
+<div id="def-normalpdf" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 1.4 (PDF of a Normal Distirbution)</strong></span> The PDF of a normal distribution is given by:</p>
+<p><span class="math display">\[
+f_Y(y) = \frac{1}{\sqrt{2\pi\sigma^2_Y}}e^{-\frac{1}{2\sigma^2}(y - \mu_Y)^2}
+\]</span></p>
+<p>Where <span class="math inline">\(\mu_Y\)</span> is the expected value of the distribution and <span class="math inline">\(\sigma^2\)</span> is the variance.</p>
+</div>
+<p><br></p>
+<p>We can see that the PDF <span class="math inline">\(f_Y\)</span> is dependent on two <strong>parameters</strong>: the expected value <span class="math inline">\(\mu_Y\)</span>, and the variance <span class="math inline">\(\sigma^2_Y\)</span>. We often notate/define a normal distribution just by these parameters:</p>
+<p><span id="eq-normalparameters"><span class="math display">\[
+Y \sim \mathcal N(\mu_Y, \sigma^2_Y)
+\tag{1.7}\]</span></span></p>
+<p>Below illustrates how the PDF changes with different <span class="math inline">\(\mu_Y\)</span> and <span class="math inline">\(\sigma^2_Y\)</span> values:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2268260367.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:65.0%"></p>
+</figure>
+</div>
+<p>The normal distribution can be altered algebraically while remaining a normal distribution.</p>
+<ul>
+<li>We can add a constant <span class="math inline">\(c\)</span> to all outcomes <span class="math inline">\(\omega \in \Omega\)</span> in our normal distribution <span class="math inline">\(Y \sim \mathcal N(\mu_Y, \sigma^2_Y)\)</span>, and obtain a new normal distribution <span class="math inline">\(Z \sim \mathcal N(\mu_Y + c, \ \sigma^2_Y)\)</span>.</li>
+<li>We can multiply a constant <span class="math inline">\(c\)</span> to all outcomes <span class="math inline">\(\omega \in \Omega\)</span> in our normal distribution <span class="math inline">\(Y \sim \mathcal N(\mu_Y, \sigma^2_Y)\)</span>, and obtain a new normal distribution <span class="math inline">\(Z \sim \mathcal N(c\mu_Y, (c\sigma_Y)^2)\)</span>.</li>
+</ul>
+<p>Thus, with any normal distribution <span class="math inline">\(X\)</span>, we can manipulate them to obtain another normal distribution <span class="math inline">\(Z\)</span> with a mean of 0 and a variance of 1. This process is called standardisation:</p>
+<p><span id="eq-standardisation"><span class="math display">\[
+\mathrm{if } \  X \sim \mathcal N(\mu_X, \sigma^2_X), \quad Z = \frac{X - \mu_X}{\sigma_X} \sim \mathcal N(0, 1)
+\tag{1.8}\]</span></span></p>
+<p>This new normal distribution <span class="math inline">\(Z \sim \mathcal N(0, 1)\)</span> is called the <strong>standard normal distribution</strong>. It is frequently used in statistics, so we have special symbols denoting its PDF, <span class="math inline">\(\varphi\)</span>:</p>
+<p><span id="eq-stdnormal"><span class="math display">\[
+\varphi(z) = f_Z(z) = \frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}z^2}
+\tag{1.9}\]</span></span></p>
+<p>We often also notate the CDF of a standard normal as <span class="math inline">\(\Phi(z) = F_Z(z)\)</span>.</p>
+<p><br></p>
+</section>
+<section id="chi-squared-and-t-distribution" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="chi-squared-and-t-distribution"><span class="header-section-number">1.5</span> Chi-Squared and T-Distribution</h2>
+<p>Let us say that we have <span class="math inline">\(p\)</span> number of random variables <span class="math inline">\(Z_1, \dots, Z_p\)</span>, with all of these random variables being a standard normal <span class="math inline">\(Z_t \sim \mathcal N(0, 1)\)</span>. Now, the sum of their squares</p>
+<p><span class="math display">\[
+W = Z_1^2 + Z_2^2 + \dots + Z_p^2 = \sum\limits_{t=1}^pZ_t^2
+\]</span></p>
+<p>is distributed according the the <strong>chi-squared</strong> <span class="math inline">\(\chi^2\)</span> distribution with <span class="math inline">\(p\)</span> <em>degrees of freedom</em>:</p>
+<p><span class="math display">\[
+W \sim \chi^2_p
+\]</span></p>
+<p><em>Degrees of freedom</em> <span class="math inline">\(p\)</span> is the only parameter of the chi-squared distribution, and determines its shape and PDF. The figure below shows how the PDF changes as we change <span class="math inline">\(p\)</span> (notated <span class="math inline">\(k\)</span> below):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1362621856.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:65.0%"></p>
+</figure>
+</div>
+<p>Now, suppose two new random variables <span class="math inline">\(Z \sim \mathcal N(0, 1)\)</span>, and <span class="math inline">\(W \sim \chi^2_p\)</span>. Now the new random variable <span class="math inline">\(T\)</span> defined as</p>
+<p><span class="math display">\[
+T = \frac{Z}{\sqrt{W/p}}
+\]</span></p>
+<p>is distributed according to the <strong>t-distribution</strong> <span class="math inline">\(T \sim t_p\)</span> with <span class="math inline">\(p\)</span> degrees of freedom. The only parameter of the t-distribution is the <em>degrees of freedom</em>.</p>
+<p>The shape of the t-distribution mirrors that of a standard normal distribution, but with slightly thicker tails and a smaller peak. As the degrees of freedom increases, the more and more the t-distribution mirrors a standard normal distribution. The PDF is illustrated below.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-651760295.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p><br></p>
+</section>
+<section id="bernoulli-and-binomial-distribution" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="bernoulli-and-binomial-distribution"><span class="header-section-number">1.6</span> Bernoulli and Binomial Distribution</h2>
+<p>The <strong>Bernoulli distribution</strong> is a discrete binary random variable, with only two potential outcomes <span class="math inline">\(\Omega = \{0, 1\}\)</span>. Generally, we consider a value of 0 to be a <em>failure</em>, and a value of 1 to be a <em>success</em>.</p>
+<p>The Bernoulli distribution only has one parameter, <span class="math inline">\(p\)</span>, the probability of a <em>success</em>. This also implies that the probability of a <em>failure</em> is <span class="math inline">\(1-p\)</span>. The PDF is</p>
+<p><span class="math display">\[
+f_Y(y) = \begin{cases}1-p &amp; \text{if } y=0 \\ p &amp; \text{if } y = 1\end{cases}
+\]</span></p>
+<p>For example, flipping a coin can be a bernoulli distribution, if we consider heads to be a <em>success</em> and tails to be a <em>failure</em>. In this case, the probability of heads (success) is <span class="math inline">\(p = 0.5\)</span>.</p>
+<p>The expected value of the bernoulli distribution can be calculated as seen in <a href="#def-exp" class="quarto-xref">definition&nbsp;<span>1.2</span></a>.</p>
+<p><span id="eq-bernoulli"><span class="math display">\[
+\E Y  = \sum\limits_t y_t f_Y(y_t) = 0(1-p) + 1(p) = p
+\tag{1.10}\]</span></span></p>
+<p>And the variance of the bernoulli distribution is <span class="math inline">\(\V Y = p(1-p)\)</span>.</p>
+<p>The bernoulli distribution is a special case of the <strong>binomial distribution</strong>. The binomial distribution measures the probability of every number of <em>successes</em> after <span class="math inline">\(n\)</span> number of trials.</p>
+<p>For example, if <span class="math inline">\(n=4\)</span>, that would mean that if we consider flipping heads to be a sucesss and flipped a coin 4 times, the binomial distribution would give us the probability of 1 heads, 2 heads, 3 heads, and 4 heads. The PDF of a binomial distribution is:</p>
+<p><span class="math display">\[
+f_Y(y) = \frac{n!}{y!(n-y)!}p^y(1-p)^{n-y}
+\]</span></p>
+<p>We denote a binomial distribution as <span class="math inline">\(X \sim B(n, p)\)</span>, where <span class="math inline">\(n\)</span> is the number of trials, and <span class="math inline">\(p\)</span> is the probability of a success in any trial. This also implies that our Bernoulli distribution (which is just a <span class="math inline">\(n=1\)</span> trial binomial distribution) can be defined as <span class="math inline">\(X \sim B(1, p)\)</span>.</p>
+<p><br></p>
+</section>
+<section id="joint-distributions" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="joint-distributions"><span class="header-section-number">1.7</span> Joint Distributions</h2>
+<p>Let us say we have two random variables <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. What is the probability that we get both some value <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>? This probability is given by the joint probability density function.</p>
+<div id="def-jointpdf" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 1.5 (Joint Probability Density Function)</strong></span> The joint PDF <span class="math inline">\(f_{XY}\)</span> gives us the probability that random variable <span class="math inline">\(X = x\)</span> and <span class="math inline">\(Y = y\)</span>:</p>
+<p><span class="math display">\[
+\P(X =x,\ Y= y) = f_{XY}(x, y)
+\]</span></p>
+</div>
+<p><br></p>
+<p>As in <a href="#eq-pdfcont" class="quarto-xref">eq.&nbsp;<span>1.1</span></a> for continuous random variables, we are not interested in the probability of a specific outcome <span class="math inline">\(x\)</span> or <span class="math inline">\(y\)</span>, but rather, the probability of a range of outcomes <span class="math inline">\(a ≤ X≤ b\)</span> and <span class="math inline">\(c ≤ Y≤ d\)</span>. This is given by:</p>
+<p><span class="math display">\[
+\P(X \in [a,b], \ Y \in [c, d]) = \int\limits_a^b \int\limits_c^d f_{XY}(x,y)dy \ dx
+\]</span></p>
+<p>If we are ever given only the joint probability distribution function <span class="math inline">\(f_{XY}\)</span>, and not the individual probability distribution functions <span class="math inline">\(f_X\)</span> and <span class="math inline">\(f_Y\)</span>, we can still deduce the individual PDFs through the <strong>marginal distribution</strong>:</p>
+<p><span id="eq-marginaldistr"><span class="math display">\[
+f_X(x) = \int\limits_{-∞}^∞ f_{XY}(x,y)dy, \quad f_Y(y) = \int\limits_{-∞}^∞f_{XY}(x,y)dx
+\tag{1.11}\]</span></span></p>
+<p>The discussion of multiple random variables leads to a discussion abou the relationship between two random variables.</p>
+<div id="def-independence" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 1.6 (Independence)</strong></span> Two random variables <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are considered to be independent of each other <span class="math inline">\(X \ind Y\)</span> if the realisation of <span class="math inline">\(X=x\)</span> has no impact on the probabilities of <span class="math inline">\(Y= y\)</span>. If two random variables are independent, then</p>
+<p><span class="math display">\[
+\P(X = x, \ Y= y) = \P(X= x) \P(Y=y) \quad \text{if } X \ind Y
+\]</span></p>
+<p>This implies that if <span class="math inline">\(X \ind Y\)</span>, then the joint PDFs is also the product of the two independent PDFs:</p>
+<p><span class="math display">\[
+f_{XY}(x, y) = f_X(x) f_Y(y)
+\]</span></p>
+</div>
+<p><br></p>
+<p>We might not only care about the probabilities of a specific <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> in a joint distribution. We might also care about how two random variables are associated with each other - which can be measured by covariance or correlation.</p>
+<div id="def-covariance" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 1.7 (Covariance)</strong></span> Covariance is defined as</p>
+<p><span class="math display">\[
+Cov(X, Y) = \E[(X - \E X)(Y - \E Y)
+\]</span></p>
+<p>Where positive covariance indicates a positive relationship, negative covariance indicates a negative relationship, and 0 covariance indicates no relationship (independence).</p>
+</div>
+<p><br></p>
+<p>However, covariance is sensitive to measurement scale - i.e.&nbsp;if <span class="math inline">\(X\)</span> was height, if we switched from metres to centimetres, our covariance would change values despite measuring the exact same concept.</p>
+<p>Thus, correlation is a way to standardise and remove the effect of scale:</p>
+<p><span class="math display">\[
+Corr(X, Y) = \frac{Cov(X, Y)}{\sqrt{\V X \V Y}}
+\]</span></p>
+<p>Since covariance and correlation measure the relationship/association between two variables, that implies that if <span class="math inline">\(Cov(X,Y) ≠ 0\)</span>, then <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are not independent, and if <span class="math inline">\(Cov(X, Y) = 0\)</span>, then <span class="math inline">\(X \ind Y\)</span>.</p>
+<p><br></p>
+</section>
+<section id="conditional-distributions" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="conditional-distributions"><span class="header-section-number">1.8</span> Conditional Distributions</h2>
+<p>Let us say we have two random variables <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, however, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are correlated, and not independent. This means that when <span class="math inline">\(X\)</span> changes, <span class="math inline">\(Y\)</span> changes as well.</p>
+<p>What this implies is that knowing <span class="math inline">\(X\)</span> will give us some more indication on the distribution of <span class="math inline">\(Y\)</span> - after all, if they are positively correlated, as <span class="math inline">\(X\)</span> increases in value, we should expect <span class="math inline">\(\E Y\)</span> to also increase in value.</p>
+<p>The conditional distribution of a random variable <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span>, notated <span class="math inline">\(Y|X\)</span>, is the distribution of <span class="math inline">\(Y\)</span>, given a specific value <span class="math inline">\(x\)</span> of <span class="math inline">\(X\)</span>. The conditional PDF is given by</p>
+<p><span id="eq-condit"><span class="math display">\[
+f_{Y|X}(y |x) = \frac{f_{XY}(x, y)}{f_X(x)}
+\tag{1.12}\]</span></span></p>
+<p>We can also define the conditional distribution PDF in relation to the joint distributions:</p>
+<p><span id="eq-jointcond"><span class="math display">\[
+f_{XY}(x,y) = f_X(x)f_{Y|X}(y|x) = f_Y(y) f_{X|Y}(x|y)
+\tag{1.13}\]</span></span></p>
+<p>Since conditional distirbutions are distributions, they have the same properties of normal distributions, and are able to be described by expectation and variance.</p>
+<div id="def-condexp" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 1.8 (Conditional Expectation)</strong></span> This conditional distribution also has some expected value <span class="math inline">\(\E(Y|X)\)</span>. This is called a conditional expectation, and is given by</p>
+<p><span class="math display">\[
+\E(Y|X=x) = \int\limits_{-∞}^∞ y f_{Y|X}(y|x)dy
+\]</span></p>
+</div>
+<p>The conditional expectation have a very interesting property, the law of iterated expectations, which will be used extensively for proofs later on.</p>
+<div id="thm-lie" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Theorem 1.3 (The Law of Iterated Expectations)</strong></span> For any two random variables <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>,</p>
+<p><span class="math display">\[
+\E[\E(Y|X)] = \E(Y)
+\]</span></p>
+</div>
+<p><br></p>
+<p><strong>Proof</strong>: Let us start with the left side of the quation. Using <a href="#def-condexp" class="quarto-xref">definition&nbsp;<span>1.8</span></a>, we can rewrite <span class="math inline">\(\E(Y|X)\)</span>, and plug into the left side to get</p>
+<p><span class="math display">\[
+\E[\E(Y|X)] = \E\left[ \int y f_{Y|X}(y|x)dy\right]
+\]</span></p>
+<p>Using <a href="#def-exp" class="quarto-xref">definition&nbsp;<span>1.2</span></a>, we can rewrite <span class="math inline">\(\E(\cdot)\)</span>, and find</p>
+<p><span class="math display">\[
+= \int \left[ \int y f_{Y|X}(y|x)dy\right]f_X(x)dx
+\]</span></p>
+<p>Using <a href="#eq-jointcond" class="quarto-xref">eq.&nbsp;<span>1.13</span></a> and the properties of integrals, we can rewrite the above as</p>
+<p><span class="math display">\[
+=\int\int yf_{XY}(x,y)dxdy
+\]</span></p>
+<p>Now using the properties of integrals, we can get:</p>
+<p><span class="math display">\[
+=\int y \left[\int f_{XY}(x,y)dx\right]dy
+\]</span></p>
+<p>And using marginal distributions from <a href="#eq-marginaldistr" class="quarto-xref">eq.&nbsp;<span>1.11</span></a>, and the definition of expectation given in <a href="#def-exp" class="quarto-xref">definition&nbsp;<span>1.2</span></a>, we get</p>
+<p><span class="math display">\[
+= \int y f_Y(y)dy = \E Y
+\]</span></p>
+<p>Thus, we have proven the law of iterated expectations.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link" aria-label="Preface">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Preface</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./inference.html" class="pagination-link" aria-label="Statistical Inference">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical Inference</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

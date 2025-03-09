@@ -3,16 +3,22 @@ MathJax = {
       macros: {
         E: "\\mathbb{E}",
         V: "\\mathbb{V}",
-        P:"\\mathbb{P}",
-        eps: "\\varepsilon"
+        P: "\\mathbb{P}",
+        eps: "\\varepsilon",
+        b: "\\boldsymbol",
+        ind: "\\perp\\!\\!\\!\\!\\perp",
+        pt: "{\\textcolor{purple}{Y_t^{(1)}}}",
+        pc: "{\\textcolor{purple}{Y_t^{(0)}}}",
+        blue: "\\textcolor{blue}", 
+        red: "\\textcolor{red}",
+        purple: "\\textcolor{purple}",
+        set: "\\mathcal"
       }
     },
     chtml: {
-        scale: 1.05,
+        scale: 1,
         mtextInheritFont: true,
         mtextFont: 'Cambria',
-        displayAlign: 'left',
-        displayIndent: '1.5em'
     },
     startup: {
         typeset: true

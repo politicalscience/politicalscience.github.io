@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>4&nbsp; Generalised Least Squares – Statistics for Political Science</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<link href="./mle.html" rel="next">
+<link href="./ols.html" rel="prev">
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="mathjax-config.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./random.html">Part I: Statistical Theory</a></li><li class="breadcrumb-item"><a href="./gls.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Generalised Least Squares</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Statistics for Political Science</a> 
+    </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Statistical Theory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./random.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Random Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical Inference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ols.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Classical Least Squares</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gls.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Generalised Least Squares</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Maximum Likelihood</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mom.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Method of Moments</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./causal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Causal Inference</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part II: Statistical Models</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: Quasi-Experiments</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./soo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Selection on Observables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./iv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Instrumental Variables</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#conditional-heteroscedasticity" id="toc-conditional-heteroscedasticity" class="nav-link active" data-scroll-target="#conditional-heteroscedasticity"><span class="header-section-number">4.1</span> Conditional Heteroscedasticity</a></li>
+  <li><a href="#robust-standard-errors" id="toc-robust-standard-errors" class="nav-link" data-scroll-target="#robust-standard-errors"><span class="header-section-number">4.2</span> Robust Standard Errors</a></li>
+  <li><a href="#heteroscedasticity-transformation" id="toc-heteroscedasticity-transformation" class="nav-link" data-scroll-target="#heteroscedasticity-transformation"><span class="header-section-number">4.3</span> Heteroscedasticity Transformation</a></li>
+  <li><a href="#weighted-least-squares" id="toc-weighted-least-squares" class="nav-link" data-scroll-target="#weighted-least-squares"><span class="header-section-number">4.4</span> Weighted Least Squares</a></li>
+  <li><a href="#autocorrelation" id="toc-autocorrelation" class="nav-link" data-scroll-target="#autocorrelation"><span class="header-section-number">4.5</span> Autocorrelation</a></li>
+  <li><a href="#cochrane-orcutt-estimator" id="toc-cochrane-orcutt-estimator" class="nav-link" data-scroll-target="#cochrane-orcutt-estimator"><span class="header-section-number">4.6</span> Cochrane-Orcutt Estimator</a></li>
+  <li><a href="#generalised-least-squares-estimator" id="toc-generalised-least-squares-estimator" class="nav-link" data-scroll-target="#generalised-least-squares-estimator"><span class="header-section-number">4.7</span> Generalised Least Squares Estimator</a></li>
+  <li><a href="#feasible-generalised-least-squares" id="toc-feasible-generalised-least-squares" class="nav-link" data-scroll-target="#feasible-generalised-least-squares"><span class="header-section-number">4.8</span> Feasible Generalised Least Squares</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./random.html">Part I: Statistical Theory</a></li><li class="breadcrumb-item"><a href="./gls.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Generalised Least Squares</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="generalised-least-squares" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Generalised Least Squares</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>In the last chapter, we discussed the Ordinary Least Squares estimator, which can only be used in a linear model with specific assumptions met.</p>
+<p>In this chapter, we weaken the assumption of <a href="./ols.html#assumption-5-spherical-errors">spherical errors</a> and <a href="./ols.html#assumption-2-independent-and-identically-distributed-i.i.d.">i.i.d.</a>, and explore a new estimator called the Generalised Least Squares. We first discuss the consequences of heteroscedasticity and introduce the weighted least squares estimator. Then, we discuss the consequences of autocorrelation, and discuss the generalised least squares estimator.</p>
+<p><br></p>
+<section id="conditional-heteroscedasticity" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="conditional-heteroscedasticity"><span class="header-section-number">4.1</span> Conditional Heteroscedasticity</h2>
+<p>For the classical linear model, one of the assumptions was spherical errors (<a href="ols.html#def-sphericalerrors" class="quarto-xref">definition&nbsp;<span>3.3</span></a>). This was an assumption made on the variance-covariance matrix of error term <span class="math inline">\(\eps_t\)</span>. However, this assumption is often violated - in fact, in many fields like econometrics, we assume it is violated by default. What occurs when the other 4 assumptions of the classical model are met, but spherical errors is violated? This chapter explains how we can deal with this scenario.</p>
+<p>Spherical Errors was broken into two parts. No autocorrelation implied that the covariance elements were all equal to 0, and homoscedasticity implied that all the variances were equal to some constant <span class="math inline">\(\sigma^2\)</span>.</p>
+<p>For the first part of this chapter, we will keep the no autocorrelation assumption, but weaken homoscedasticity. Instead of assuming all observations <span class="math inline">\(t\)</span> have the same error variable <span class="math inline">\(\sigma^2\)</span>, we will now assume that each different observation has different error variances <span class="math inline">\(\sigma^2_t\)</span>.</p>
+<div id="def-heteroscedasticity" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 4.1 (Conditional Heteroscedasticity)</strong></span> Conditional heteroscedasticity says that the covariance matrix of errors <span class="math inline">\(\eps_t\)</span> takes the form:</p>
+<p><span class="math display">\[
+\V(\b\eps|\b X) = \b\Omega= \begin{pmatrix}
+\sigma^2_1 &amp; 0 &amp; 0 &amp; \dots \\
+0 &amp; \sigma^2_2 &amp; 0 &amp; \dots  \\
+0 &amp; 0&amp; \sigma^2_3 &amp; \vdots \\
+\vdots &amp; \vdots &amp; \dots &amp; \ddots
+\end{pmatrix}
+\]</span></p>
+<p>This implies that the error variance <span class="math inline">\(\sigma^2_i\)</span> depends on observation <span class="math inline">\(i\)</span>, and specifically, the values of the explanatory variables <span class="math inline">\(X_{i1}, \dots, X_{ip}\)</span> for that observation <span class="math inline">\(i\)</span>.</p>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1713529842.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+<p>The above is a residual plot of OLS residuals <span class="math inline">\(\hat\eps_i\)</span> against some explanatory variable <span class="math inline">\(X\)</span>. Notice how for homoscedasticity, the variance of the error terms (how spread out they are up-down wise) is constant for any value of <span class="math inline">\(X\)</span>.</p>
+<p>For heteroscedasticity, we can clearly see that the residual variance is smaller for some <span class="math inline">\(X\)</span> values, and larger for other <span class="math inline">\(X\)</span> values. If you see a pattern in your residual plot, it is likely heteroscedasticity.</p>
+<p>When heteroscedasticity is present, that means our spherical errors assumption of the classical linear model is violated. What implications does this have?</p>
+<p>Under heteroscedasticity, OLS is still unbiased, since by <a href="ols.html#thm-olsunbiased" class="quarto-xref">theorem&nbsp;<span>3.2</span></a>, we see that the unbiasedness of OLS does not require spherical errors.</p>
+<p>However, OLS now has inaccurate standard error estimates since OLS variance (<a href="ols.html#thm-varols" class="quarto-xref">theorem&nbsp;<span>3.3</span></a>) used the condition of spherical errors. OLS is also no longer the best linear unbiased estimator (the linear unbiased estimator with the least variance), since the Gauss-Markov Theorem (<a href="ols.html#thm-gaussmarkov" class="quarto-xref">theorem&nbsp;<span>3.4</span></a>) requires spherical errors.</p>
+<p>In this chapter, we will introduce two ways to deal with heteroscedasticity. First, we will discuss ways to “correct” the incorrect OLS standard errors, while sticking with the OLS estimator. Then, we will introduce a new estimator that is BLUE under Gauss-Markov when heteroscedasticity is present.</p>
+<p><br></p>
+</section>
+<section id="robust-standard-errors" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="robust-standard-errors"><span class="header-section-number">4.2</span> Robust Standard Errors</h2>
+<p>If conditional heteroscedasticity (<a href="#def-heteroscedasticity" class="quarto-xref">definition&nbsp;<span>4.1</span></a>) is present in our population model, then the standard OLS variance (<a href="ols.html#thm-varols" class="quarto-xref">theorem&nbsp;<span>3.3</span></a>) is inaccurate, since that variance calculation used homoscedasticity.</p>
+<p>Thus, we need to find the “true” standard errors under homoscedasticity.</p>
+<div id="thm-heterovar" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Theorem 4.1 (Heteroscedasticity Variance of OLS)</strong></span> The variance of the OLS estimator under heteroscedasticity is given by</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) = (\b{X^\top X})^{-1}\b X^\top \begin{pmatrix}
+\sigma^2_1 &amp; 0 &amp; 0 &amp; \dots \\
+0 &amp; \sigma^2_2 &amp; 0 &amp; \dots  \\
+0 &amp; 0&amp; \sigma^2_3 &amp; \vdots \\
+\vdots &amp; \vdots &amp; \dots &amp; \ddots
+\end{pmatrix} \b X(\b{X^\top X})^{-1}
+\]</span></p>
+</div>
+<p><br></p>
+<p><strong>Proof:</strong> Let us start where we left off from <a href="ols.html#eq-olsimplify" class="quarto-xref">eq.&nbsp;<span>3.4</span></a> during the proof of unbiasedness. This tells us the variance of the OLS estimator is:</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) = \V(\b\beta + (\b{X^\top X})^{-1} \b{X^\top \eps})
+\]</span></p>
+<p>We know that <span class="math inline">\(\b\beta\)</span> is a vector of fixed true population values. <span class="math inline">\((\b{X^\top X})^{-1} \b X^\top\)</span> can also be considered a fixed constant matrix because we are conditioning our variance on <span class="math inline">\(\b X\)</span>. Thus, we can use <a href="random.html#thm-variance" class="quarto-xref">theorem&nbsp;<span>1.2</span></a> to rewrite the above as</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) = (\b{X^\top X})^{-1}\b X^\top \V(\b\eps| \b X)[(\b{X^\top X})^{-1}\b X^\top]^{-1}
+\]</span></p>
+<p>With the properties of matrix inverses and transposes, we can determine that <span class="math inline">\([(\b{X^\top X})^{-1}\b X^\top]^{-1}\)</span> is equivalent to <span class="math inline">\(\b X(\b{X^\top X})^{-1}\)</span>. Thus, plugging this in, we get</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) = (\b{X^\top X})^{-1}\b X^\top \V(\b\eps| \b X) \b X(\b{X^\top X})^{-1}
+\]</span></p>
+<p>Now, by conditional heteroscedasticity (<a href="#def-heteroscedasticity" class="quarto-xref">definition&nbsp;<span>4.1</span></a>), we can replace <span class="math inline">\(\V(\b\eps|\b X)\)</span> with the heteroscedasticity variance matrix of errors:</p>
+<p><span class="math display">\[
+\V(\hat{\b\beta}|\b X) = (\b{X^\top X})^{-1}\b X^\top \begin{pmatrix}
+\sigma^2_1 &amp; 0 &amp; 0 &amp; \dots \\
+0 &amp; \sigma^2_2 &amp; 0 &amp; \dots  \\
+0 &amp; 0&amp; \sigma^2_3 &amp; \vdots \\
+\vdots &amp; \vdots &amp; \dots &amp; \ddots
+\end{pmatrix} \b X(\b{X^\top X})^{-1}
+\]</span></p>
+<p>And thus, we have proven the OLS variance under heteroscedasticity. When we actually write the formula, we will typically replace the matrix with <span class="math inline">\(\b\Omega\)</span>.</p>
+<p>However, we of course do not know what the population values of <span class="math inline">\(\sigma^2_1, \dots, \sigma^2_n\)</span> are. We can estimate them with OLS residuals as follows:</p>
+<p><span class="math display">\[
+\sigma_t^2 \approx s_t^2 = \eps^2_t
+\]</span></p>
+<p>And our robust standard errors for any parameter <span class="math inline">\(\hat\beta_j\)</span> are simply</p>
+<p><span class="math display">\[
+se(\hat\beta_j) = \sqrt{[(\b{X^\top X})^{-1}\b X^\top \hat{\b\Omega} \b X(\b{X^\top X})^{-1}]}_{jj}
+\]</span></p>
+<p>We can conduct statistical inference in the same way as we did for OLS, but replacing the standard errors with our new robust standard errors.</p>
+<p><br></p>
+</section>
+<section id="heteroscedasticity-transformation" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="heteroscedasticity-transformation"><span class="header-section-number">4.3</span> Heteroscedasticity Transformation</h2>
+<p>When heteroscedasticity (<a href="#def-heteroscedasticity" class="quarto-xref">definition&nbsp;<span>4.1</span></a>) is present, we could just use the OLS estimator with robust standard errors. However, OLS with robust standard errors is no longer the best linear unbiased estimator, as the Gauss-Markov theorem (<a href="ols.html#thm-gaussmarkov" class="quarto-xref">theorem&nbsp;<span>3.4</span></a>) depends on spherical errors.</p>
+<p>The weighted least squares (WLS) estimator is an alternative of OLS (and is considered a special case of the generalised least squares estimator we will see later in the chapter).</p>
+<p>Suppose that our heteroscedasticity is of the form:</p>
+<p><span id="eq-wlsvariance"><span class="math display">\[
+\V(\eps_t|\b X) = \sigma^2 \  \Omega(X_t)
+\tag{4.1}\]</span></span></p>
+<p>Where <span class="math inline">\(\sigma^2\)</span> is some constant (can be 1) and <span class="math inline">\(\Omega(X_t)\)</span> is some function of <span class="math inline">\(X_t\)</span> that explained the difference in error variance between individuals.</p>
+<p>Now, consider the variance of this (modified) error term that is the original error <span class="math inline">\(\eps_t\)</span> divided by the square root <span class="math inline">\(\Omega(X_t)\)</span>, which is a function of <span class="math inline">\(X_t\)</span>:</p>
+<p><span class="math display">\[
+\V \left( \frac{1}{\sqrt{\Omega(X_t)}}\eps_t \biggr| X_t \right)
+\]</span></p>
+<p>Using <a href="random.html#thm-variance" class="quarto-xref">theorem&nbsp;<span>1.2</span></a>, we know <span class="math inline">\(\V(cu) = c^2 \V(u)\)</span> if <span class="math inline">\(c\)</span> is a constant and <span class="math inline">\(u\)</span> is a random variable. This function also applies to a function <span class="math inline">\(a(x)\)</span> where <span class="math inline">\(\V(a(x) u) = a(x)^2 \V(u)\)</span>. Using this, we can determine the variance of the modified error term is equal to</p>
+<p><span class="math display">\[
+\V \left( \frac{1}{\sqrt{\Omega(X_t)}}\eps_t \biggr| X_t \right) = \left(\frac{1}{\sqrt{\Omega(X_t)}}\right)^2 \V(\eps_t | X_t)
+\]</span></p>
+<p>And from <a href="#eq-wlsvariance" class="quarto-xref">eq.&nbsp;<span>4.1</span></a>, we can plug in <span class="math inline">\(\V(\eps_t|X_t) = \sigma^2 \ \Omega(X_t)\)</span> to get</p>
+<p><span class="math display">\[
+\V \left( \frac{1}{\sqrt{\Omega(X_t)}}\eps_t \biggr| X_t \right) = \frac{1}{\Omega(X_t)}\sigma^2 \ \Omega(X_t) = \sigma^2
+\]</span></p>
+<p>What does this tell us? Well it tells us the modified error term <span class="math inline">\(\frac{1}{\sqrt{\Omega(X_i)}} \eps_t\)</span> has a variance of constant <span class="math inline">\(\sigma^2\)</span> for all units <span class="math inline">\(i\)</span>, which does not dependent on <span class="math inline">\(X_i\)</span>. What does this mean? Well, our modified error term is now meeting homoscedasticity (<a href="ols.html#def-sphericalerrors" class="quarto-xref">definition&nbsp;<span>3.3</span></a>)!</p>
+<p>However, we obviously cannot just divide the error term by <span class="math inline">\(1/\sqrt{\Omega(X_t)}\)</span> - that changes our linear model. What we can though do is divide every term of our linear model by <span class="math inline">\(1/\sqrt{\Omega(X_t)}\)</span>:</p>
+<p><span id="eq-wlstransformed"><span class="math display">\[
+\frac{Y_t}{\sqrt{\Omega(X_t)}} = \beta_0\left(\frac{1}{\sqrt{\Omega(X_t)}}\right) + \beta_1 \left(\frac{X_{t1}}{\sqrt{\Omega(X_t)}}\right) + \dots +  \frac{\eps_t}{\sqrt{\Omega(X_t)}}
+\tag{4.2}\]</span></span></p>
+<p>And since we divide both side by <span class="math inline">\(1/\sqrt{\Omega(X_t)}\)</span>, and our model is conditional on individual <span class="math inline">\(t\)</span> (see all the subscripts), that means this model is still “equivalent” to our original linear model.</p>
+<p>Thus, the idea of weighted least squares is to “transform” our heteroscedastic linear model into one that meets homoscedasitcity. We can then just use OLS on our new homoscedastic regression, and since homoscedsaticity is met, Gauss-Markov (<a href="ols.html#thm-gaussmarkov" class="quarto-xref">theorem&nbsp;<span>3.4</span></a>) is met, and our estimator is once again the best linear unbiased estimator.</p>
+<p><br></p>
+</section>
+<section id="weighted-least-squares" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="weighted-least-squares"><span class="header-section-number">4.4</span> Weighted Least Squares</h2>
+<p>In the last section and <a href="#eq-wlstransformed" class="quarto-xref">eq.&nbsp;<span>4.2</span></a>, we showed that dividing every term in the linear model by <span class="math inline">\(1/\sqrt{\Omega(X_t)}\)</span>, where <span class="math inline">\(\Omega(X_t)\)</span> is some function of <span class="math inline">\(X_t\)</span>, can get rid of heteroscedasticity, allowing us to use OLS to estimate the regression.</p>
+<p>Let us formalise this idea with our linear algebra representation of the linear model. First, let us define a matrix <span class="math inline">\(\b\Omega^{-1/2}\)</span>, which will be the inverse of the square root of the heteroscedastic covariance matrix given in <a href="#def-heteroscedasticity" class="quarto-xref">definition&nbsp;<span>4.1</span></a>:</p>
+<p><span class="math display">\[
+\b\Omega^{-1/2} = \begin{pmatrix}
+1/\sigma_1 &amp; 0 &amp; \dots &amp; 0 \\
+0 &amp; 1/\sigma_2 &amp; \vdots &amp; 0 \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots \\
+0 &amp; 0 &amp; \dots &amp; 1/\sigma_n
+\end{pmatrix}
+\]</span></p>
+<p>Note that by this definition, <span class="math inline">\(\b\Omega^{-1/2} \b\Omega^{-1/2} = \b\Omega^{-1}\)</span>, since <span class="math inline">\(\b\Omega^{-1/2}\)</span> is a square root.</p>
+<p>We can rewrite our transformed linear model from <a href="#eq-wlstransformed" class="quarto-xref">eq.&nbsp;<span>4.2</span></a> in linear algebra form as:</p>
+<p><span id="eq-wlstransformedmatrix"><span class="math display">\[
+\underbrace{\b\Omega^{-1/2}}_{\b y^*} \b y = \underbrace{\b\Omega^{-1/2} \b X}_{\b X^*} \b \beta + \underbrace{\b\Omega^{-1/2} \b \eps}_{\b \eps^*}
+\tag{4.3}\]</span></span></p>
+<p>We can see that this model is a transformed linear model <span class="math inline">\(\b y^* = \b X^* \b\beta + \b\eps^*\)</span>. Using our OLS estimator from <a href="ols.html#def-ols" class="quarto-xref">definition&nbsp;<span>3.5</span></a>, we know the OLS solution for <span class="math inline">\(\hat{\b\beta}\)</span> for this model is</p>
+<p><span class="math display">\[
+\hat{\b\beta} = (\b X^{*\top} \b X^*)^{-1} \b X^{*\top} \b y^*
+\]</span></p>
+<p>And if we plug in our definitions of <span class="math inline">\(\b y^*\)</span>, and <span class="math inline">\(\b X^*\)</span> from <a href="#eq-wlstransformedmatrix" class="quarto-xref">eq.&nbsp;<span>4.3</span></a>, we can get</p>
+<p><span class="math display">\[
+\hat{\b\beta} = \left[(\b\Omega^{-1/2} \b X)^\top (\b\Omega^{-1/2} \b X) \right]^{-1} (\b\Omega^{-1/2} \b X) (\b\Omega^{-1/2} \b y)
+\]</span></p>
+<p>And using the properties of matrix transposes, and that <span class="math inline">\(\b\Omega^{-1/2} \b\Omega^{-1/2} = \b\Omega^{-1}\)</span>, we can get</p>
+<p><span class="math display">\[
+\begin{align}
+\hat{\b\beta} &amp; = [\b X^\top \b\Omega^{-1/2} \b\Omega^{-1/2} \b X]^{-1} \b X^\top \b\Omega^{-1/2} \b\Omega^{-1/2} \b y \\
+&amp; = (\b X^\top \b\Omega^{-1} \b X)^{-1} \b X^\top \b\Omega^{-1} \b y
+\end{align}
+\]</span></p>
+<div id="def-wls" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 4.2 (Weighted Least Squares Estimator)</strong></span> The <span class="math inline">\(\hat{\b\beta}\)</span> estimates produced by the weighted least squares estimator is</p>
+<p><span class="math display">\[
+\hat{\b\beta} = (\b X^\top \b\Omega^{-1} \b X)^{-1} \b X^\top \b\Omega^{-1} \b y
+\]</span></p>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Alternative Way of Thinking about WLS
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We focused on weighted least squares as first transforming a linear model to meet spherical errors, then performing OLS.</p>
+<p>However, we can also think about weighted least squares in terms of minimising a weighted sum of squared residuals. The normal OLS estimator minimises the standard sum of squared residuals:</p>
+<p><span class="math display">\[
+SSR = \sum (Y_t - \hat Y_t)^2
+\]</span></p>
+<p>The weighted least squares minimises a weighted version of the sum of squared residuals:</p>
+<p><span class="math display">\[
+WSSR = \sum\frac{1}{w_i}(Y_t - \hat Y_t)^2
+\]</span></p>
+<p>When we set our weights equal to <span class="math inline">\(\b\Omega^{-1/2}\)</span>, both the weighted sum of squared residuals solution and the transformed-model solution get the same result.</p>
+</div>
+</div>
+</div>
+<p>Since the weighted least squares is essentially an OLS estimator on a transformed linear model that has homoscedasticity, it is also covered by the Gauss-Markov theorem (<a href="ols.html#thm-gaussmarkov" class="quarto-xref">theorem&nbsp;<span>3.4</span></a>). Thus, the Weighted Least Squares estimator is the linear unbiased estimator with the least variance, if heteroscedasticity is present in our original linear model.</p>
+<p>For statistical inference with this estimator, see the <a href="#generalised-least-squares-estimator">generalised least squares</a> section.</p>
+<p>Of course, the weighted least squares estimator requires us to know the structure of <span class="math inline">\(\b\Omega\)</span>, the covariance-variance matrix of the error term. This is a big limitation as we typically do not know the structure of this. We will explore weights to estimate <span class="math inline">\(\hat{\b\Omega}\)</span> in the <a href="#feasible-generalised-least-squares">feasible generalised least squares</a> estimator later in the chapter.</p>
+<p><br></p>
+</section>
+<section id="autocorrelation" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="autocorrelation"><span class="header-section-number">4.5</span> Autocorrelation</h2>
+<p>So far, we have weakened the spherical errors assumption (<a href="ols.html#def-sphericalerrors" class="quarto-xref">definition&nbsp;<span>3.3</span></a>) only through weakening homoscedasticity to heteroscedasticity.</p>
+<p>However, the spherical errors assumption also states another assumption - no autocorrelation - i.e.&nbsp;the covariance between two error terms <span class="math inline">\(Cov(\eps_i, \eps_j) = 0\)</span>. This assumption is typically implied by the <a href="./ols.html#assumption-2-independent-and-identically-distributed-i.i.d.">i.i.d</a> assumption.</p>
+<p>However, there are settings where we cannot assume i.i.d. and no autocorrelation. For example, in time series settings of one variable <span class="math inline">\(Y\)</span> over a set of time periods <span class="math inline">\(t\)</span>, we would expect a previous value in time <span class="math inline">\(t-1\)</span> to have some effect on <span class="math inline">\(t\)</span>, which implies that values from <span class="math inline">\(t-1\)</span> and <span class="math inline">\(t\)</span> are not independent random variables, and might have some covariance. We will discuss time series in far more detail later in the course.</p>
+<p>Similarly, in datasets with spatial characteristics, we might expect some neighbouring areas to have correlated errors. For example, if we are modelling <span class="math inline">\(Y\)</span> as unemployment rate, and we have a bunch of <span class="math inline">\(X_1, \dots, X_p\)</span>, we might be missing out on some regional trends, like a regional natural disaster that is causing some neighbouring counties to have higher than expected unemployment rates <span class="math inline">\(Y\)</span>.</p>
+<p>The presence of autocorrelation means that our error-covariance matrix will not be a diagonal matrix, as some <span class="math inline">\(Cov(\eps_i, \eps_j) ≠ 0\)</span>:</p>
+<p><span class="math display">\[
+\V(\b\eps | \b X) = \b\Omega = \begin{pmatrix}
+\V \eps_1 &amp; Cov(\eps_1, \eps_2) &amp; Cov(\eps_1, \eps_3) &amp; \dots \\
+Cov(\eps_2, \eps_1) &amp; \V \eps_2 &amp; Cov(\eps_2, \eps_3) &amp; \dots \\
+Cov(\eps_3, \eps_1) &amp; Cov(\eps_3, \eps_2) &amp; \V\eps_3 &amp; \vdots \\
+\vdots &amp; \vdots &amp; \dots &amp; \ddots
+\end{pmatrix}
+\]</span></p>
+<p>Just like with conditional heteroscedasticity, the presence of autocorrelation alone does not cause bias in OLS, since OLS unbiasedness (<a href="ols.html#thm-olsunbiased" class="quarto-xref">theorem&nbsp;<span>3.2</span></a>) does not depend on spherical errors. However, OLS will no longer be the best-linear unbiased estimator, and (as we will cover more in detail in the time-series chapters later), autocorrelation is often associated with violations of exogeneity (<a href="ols.html#def-strictexog" class="quarto-xref">definition&nbsp;<span>3.2</span></a>).</p>
+<p>If we assume that only autocorrelation is present (and no violation of exogeneity is occurring), then we have two approaches, just like in heteroscedasticity.</p>
+<p>We could stick with the OLS estimator, but use <strong>Autocorrelation and Heteroscedasticity Robust (HAC) standard errors</strong>. If we are sampling with clustered sampling, we can use clustered standard errors (see below). I will not derive them here, since these standard errors aren’t too commonly used, and are very difficult to derive.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Clustered Standard Errors
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Clustered standard errors are when you have done clustered sampling for your observations. For example, you randomly sample 100 people from 100 different villages.</p>
+<p>The errors of observations belonging to the same cluster (say village) might exhibit correlation, while errors of observtations from distinct clusters are assumed to be uncorrelated.</p>
+<p>Our covariance matrix might take the form:</p>
+<p><span class="math display">\[
+\b\Omega = \begin{pmatrix}
+\b\Sigma_1 &amp; 0 &amp; \dots &amp; 0 \\
+0 &amp; \b\Sigma_2 &amp; &amp; 0 \\
+\vdots &amp; 0 &amp; \ddots &amp; 0 \\
+0 &amp; 0&amp; \dots &amp; \b\Sigma_G
+\end{pmatrix}
+\]</span></p>
+<p>Where <span class="math inline">\(\b\Sigma_1, \dots \b\Sigma_G\)</span> are intracluster covariance-variance error matrices, that exhibit autocorrelation. We just insert this matrix where we would insert it for <a href="#robust-standard-errors">robust standard errors</a>.</p>
+</div>
+</div>
+</div>
+<p>Or, we could use another estimator, such as the Cochrane-Orcutt Estimator or the Generalised Least Squares estimator, which we will introduce later in the chapter.</p>
+<p><br></p>
+</section>
+<section id="cochrane-orcutt-estimator" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="cochrane-orcutt-estimator"><span class="header-section-number">4.6</span> Cochrane-Orcutt Estimator</h2>
+<p>Let us start off with a linear model, but in time-series form, so instead of observation <span class="math inline">\(i\)</span>, each variable/observation will be from a point in time <span class="math inline">\(t\)</span>. Our linear model will be</p>
+<p><span class="math display">\[
+Y_t = \beta_0 + \beta_1 X_{t}  + \eps_t
+\]</span></p>
+<p>Let us say some autocorrelation is present - which means the error term <span class="math inline">\(\eps_t\)</span> is related to some other error term of another observation. More specifically, let us assume an <strong>autoregressive order 1</strong> autocorrelation, which means that <span class="math inline">\(\eps_t\)</span> is correlated with the error term of the time period before, <span class="math inline">\(\eps_{t-1}\)</span>. We can model this as:</p>
+<p><span class="math display">\[
+\eps_t = \rho \eps_{t-1} + u_t
+\]</span></p>
+<p>Where <span class="math inline">\(\rho\)</span> is the coefficient describing the correlation between <span class="math inline">\(\eps_t\)</span> and <span class="math inline">\(\eps_{t-1}\)</span>, and <span class="math inline">\(u_t\)</span> is the error term of this smaller model that is the part of <span class="math inline">\(\eps_t\)</span> that is not explained by <span class="math inline">\(\eps_{t-1}\)</span>.</p>
+<p>Thus, our true linear model is:</p>
+<p><span class="math display">\[
+Y_t = \beta_0 + \beta_1 X_{t} + \rho \eps_{t-1} + u_t
+\]</span></p>
+<p>If we could get the <span class="math inline">\(\rho\eps_{t-1}\)</span> term out of this equation, we will no longer have any autocorrelation, since <span class="math inline">\(u_t\)</span> is not correlated/explained by past error terms. How do we do this?</p>
+<p>Consider the linear model for <span class="math inline">\(Y_{t-1}\)</span>:</p>
+<p><span class="math display">\[
+Y_{t-1} = \beta_0 + \beta_1 X_{t-1}+ \eps_{t-1}
+\]</span></p>
+<p>Now, let us multiply both sides (every term) with parameter <span class="math inline">\(\rho\)</span>:</p>
+<p><span class="math display">\[
+\rho Y_{t-1} = \rho\beta_0 + \rho\beta_1 X_{t-1} + \rho\eps_{t-1}
+\]</span></p>
+<p>Now, let us subtract our model for <span class="math inline">\(\rho Y_{t-1}\)</span> from our original <span class="math inline">\(Y_t\)</span>:</p>
+<p><span class="math display">\[
+\begin{array}{ccccccc}
+Y_t &amp; = &amp; \beta_0 &amp; + &amp; \beta_1X_t &amp; + &amp; \rho\eps_{t-1} + u_t \\
+\rho Y_{t-1} &amp; = &amp; \rho\beta_0 &amp; + &amp; \rho\beta_1X_{t-1} &amp; + &amp; \rho\eps_{t-1} \\
+\hline
+Y_t - \rho Y_{t-1} &amp; = &amp; \beta_0(1-\rho) &amp; + &amp; \beta_1(X_t - \rho X_{t-1}) &amp; + &amp; u_t
+\end{array}
+\]</span></p>
+<p>Now we can see we have a new transformed model with only error term <span class="math inline">\(u_t\)</span> which is not autocorrelated with <span class="math inline">\(t-1\)</span>.</p>
+<p><span class="math display">\[
+\underbrace{Y_t - \rho Y_{t-1}}_{Y_t^*} = \underbrace{\beta_0(1-\rho)}_{\beta_0^*} + \beta_1 \underbrace{(X_t - \rho X_{t-1})}_{X_t^*} + \underbrace{u_t}_{\eps_t^*}
+\]</span></p>
+<p>Which we can rewrite more simply as:</p>
+<p><span class="math display">\[
+Y_t^* = \beta_0^* + \beta_1 X_t^* + \eps_t^*
+\]</span></p>
+<p>Since this model no longer has autocorrelation and now meets spherical errors, we can use the OLS estimator on this transformed model, and this will be the best linear unbiased estimator.</p>
+<p>Do not that since this model depends on subtracting time <span class="math inline">\(t-1\)</span> from time <span class="math inline">\(t\)</span>, the first time period in a time-series must be thrown out to complete this transformation. In small sample sizes, this can lead to efficiency losses.</p>
+<p><br></p>
+</section>
+<section id="generalised-least-squares-estimator" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="generalised-least-squares-estimator"><span class="header-section-number">4.7</span> Generalised Least Squares Estimator</h2>
+<p>Both the Cochrane-Ocrutt Estimation and the Weighted Least Squares estimator can be thought of as specific versions of the generalised least squares estimator.</p>
+<p>In spherical errors, we assumed that the population variance-covariance matrix of errors had the following form:</p>
+<p><span class="math display">\[
+\V(\b\eps | \b X) = \E(\b{\eps\eps^\top}) =  \sigma^2 \b I_n
+\]</span></p>
+<p>And the variance is equivalent to <span class="math inline">\(\E(\b{\eps\eps^\top})\)</span> because we assume by strict exogeneity (<a href="ols.html#def-strictexog" class="quarto-xref">definition&nbsp;<span>3.2</span></a>) that <span class="math inline">\(\E(\b\eps) = 0\)</span>. So the formula for variance (<a href="random.html#def-var" class="quarto-xref">definition&nbsp;<span>1.3</span></a>) with strict exogeneity equals the variance of the error term.</p>
+<p>In the generalised least squares estimator, we assume that the variance-covariance matrix of errors has the form:</p>
+<p><span class="math display">\[
+\V(\b\eps | \b X) = \E(\b{\eps\eps^\top}) = \sigma^2 \b\Omega
+\]</span></p>
+<p>Where <span class="math inline">\(\sigma^2\)</span> is an unknown scalar constant, but <span class="math inline">\(\b\Omega\)</span> is a known matrix that is equivalent to the population variance-covariance matrix of errors (up to a scalar factor).</p>
+<p>Let us define a matrix <span class="math inline">\(\b\Omega^{-1/2}\)</span>, which will be the inverse of the square root of <span class="math inline">\(\b\Omega\)</span>. This means that the following should be true:</p>
+<p><span id="eq-glsproperty"><span class="math display">\[
+\b\Omega^{-1/2} \ \b\Omega \ {\b\Omega^{-1/2}}^\top = \b I
+\tag{4.4}\]</span></span></p>
+<p>We can use <span class="math inline">\(\b\Omega^{-1/2}\)</span> to transform our original model <span class="math inline">\(\b y = \b{X\beta} + \b\eps\)</span> to get:</p>
+<p><span id="eq-glstransformation"><span class="math display">\[
+\underbrace{\b\Omega^{-1/2}}_{\b y^*} \b y = \underbrace{\b\Omega^{-1/2} \b X}_{\b X^*} \b \beta + \underbrace{\b\Omega^{-1/2} \b \eps}_{\b \eps^*}
+\tag{4.5}\]</span></span></p>
+<p>This transformed model should have spherical errors. Let us calculate the variance of <span class="math inline">\(\b\eps^*\)</span> by plugging in the definition of <span class="math inline">\(\b\eps^*\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
+\V (\b\eps^* | \b X) &amp; = \E(\b\eps^* \b\eps^{*\top}) \\
+&amp; = \E(\b\Omega^{-1/2} \b \eps \b\eps^\top {\b\Omega^{-1/2}}^\top) \\
+&amp; = \b\Omega^{-1/2} \E(\b{\eps \eps^\top}) \b\Omega^{-1/2} \\
+&amp; = \b\Omega^{-1/2} \sigma^2 \b\Omega \b\Omega^{-1/2}
+\end{align}
+\]</span></p>
+<p>And by moving scalar <span class="math inline">\(\sigma^2\)</span> to the front, and using the property from <a href="#eq-glsproperty" class="quarto-xref">eq.&nbsp;<span>4.4</span></a>, we get:</p>
+<p><span class="math display">\[
+\V (\b\eps^* | \b X) = \sigma^2 \underbrace{\b\Omega^{-1/2} \b\Omega \b\Omega^{-1/2}}_{\b I} = \sigma^2 \b I
+\]</span></p>
+<p>Thus proving this transformed model meets the spherical errors assumption (<a href="ols.html#def-sphericalerrors" class="quarto-xref">definition&nbsp;<span>3.3</span></a>). Thus, we can use OLS on this transformed model, and it will be the best linear unbiased estimator. Our OLS estimator (<a href="ols.html#def-ols" class="quarto-xref">definition&nbsp;<span>3.5</span></a>) of the transformed model will be:</p>
+<p><span class="math display">\[
+\hat{\b\beta} = (\b X^{*\top} \b X^*)^{-1} \b X^{*\top} \b y^*
+\]</span></p>
+<p>And if we plug in our definitions of <span class="math inline">\(\b y^*\)</span>, and <span class="math inline">\(\b X^*\)</span> from <a href="#eq-glstransformation" class="quarto-xref">eq.&nbsp;<span>4.5</span></a>, we can get</p>
+<p><span class="math display">\[
+\hat{\b\beta} = \left[(\b\Omega^{-1/2} \b X)^\top (\b\Omega^{-1/2} \b X) \right]^{-1} (\b\Omega^{-1/2} \b X) (\b\Omega^{-1/2} \b y)
+\]</span></p>
+<p>And using the properties of matrix transposes, and that <span class="math inline">\(\b\Omega^{-1/2} \b\Omega^{-1/2} = \b\Omega^{-1}\)</span>, we can get</p>
+<p><span class="math display">\[
+\begin{align}
+\hat{\b\beta} &amp; = [\b X^\top \b\Omega^{-1/2} \b\Omega^{-1/2} \b X]^{-1} \b X^\top \b\Omega^{-1/2} \b\Omega^{-1/2} \b y \\
+&amp; = (\b X^\top \b\Omega^{-1} \b X)^{-1} \b X^\top \b\Omega^{-1} \b y
+\end{align}
+\]</span></p>
+<div id="def-gls" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 4.3 (Generalised Least Squares Estimator)</strong></span> The GLS estimator is</p>
+<p><span class="math display">\[
+\hat{\b\beta} = (\b X^\top \b\Omega^{-1} \b X)^{-1} \b X^\top \b\Omega^{-1} \b y
+\]</span></p>
+<p>Where <span class="math inline">\(\b\Omega\)</span> is the population variance-covariance matrix of errors. The variance is</p>
+<p><span class="math display">\[
+\V\hat{\b\beta} = (\b X^\top \b\Omega^{-1} \b X)^{-1}
+\]</span></p>
+</div>
+<p><br></p>
+<p>We can see that OLS is a GLS estimator, when <span class="math inline">\(\b\Omega = \b I\)</span>.</p>
+<p><br></p>
+</section>
+<section id="feasible-generalised-least-squares" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="feasible-generalised-least-squares"><span class="header-section-number">4.8</span> Feasible Generalised Least Squares</h2>
+<p>We have derived the generalised least squares (GLS) estimator’s parameter estimates and variance. However, we do not know what <span class="math inline">\(\b\Omega\)</span> is, as it is made up of the population variance and covariances of error terms <span class="math inline">\(\eps_i\)</span>. Thus, we need some estimator of <span class="math inline">\(\hat{\b\Omega}\)</span> to actually implement generalised least squares. When combining this estimator of <span class="math inline">\(\hat{\b\Omega}\)</span> with GLS, we call this new estimator the feasible generalised least squares (FGLS) estimator.</p>
+<p>We have two ways to get a consistent estimator of <span class="math inline">\(\b\Omega\)</span>. First, if we have some strong idea of the form of heteroscedasticity or autocorrelation in our population (perhaps due to past research or some strong internal reasoning), we could estimate <span class="math inline">\(\b\Omega\)</span>.</p>
+<p>For example, if we believe that there is autocorrelation defined by the Autoregerssive first order process from the <a href="#cochrane-orcutt-estimator">Cochrane-Orcutt Estimator</a>, then we know the structure of <span class="math inline">\(\b\Omega\)</span> is:</p>
+<p><span class="math display">\[
+\b\Omega = \begin{pmatrix}
+1 &amp; \rho &amp; \rho^2 &amp; \dots &amp; \rho^{n-1} \\
+\rho &amp; 1 &amp; \rho &amp; \dots &amp; \rho^{n-2} \\
+\rho^2 &amp; \rho &amp; 1 &amp; \dots &amp; \rho^{n-3} \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\rho^{n-1} &amp; \rho^{n-2} &amp; \rho^{n-3} &amp; \dots &amp; 1
+\end{pmatrix}
+\]</span></p>
+<p>Other examples of knowing <span class="math inline">\(\b\Omega\)</span> include financial data heteroscedasticity being proportional to some known factor like the market capitalisation of a unit, or spatial data where autocorrelation can be modeled as a [decaying] function of distance.</p>
+<p>The other option (which is far more common) is to estimate <span class="math inline">\(\b\Omega\)</span>. We typically produce a estimate <span class="math inline">\(\hat{\b\Omega}\)</span> by first running an OLS regression, in which we will obtain the residuals <span class="math inline">\(\hat\eps_i\)</span>. These can be used to estimate the structure of <span class="math inline">\(\b\Omega\)</span>, producing <span class="math inline">\(\hat{\b\Omega}\)</span>. Then, using this estimate <span class="math inline">\(\hat{\b\Omega}\)</span>, we can run feasible GLS, and obtain an estimator with less error.</p>
+<div id="def-fgls" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+<p><span class="theorem-title"><strong>Definition 4.4 (Feasible Generalised Least Squares Estimator)</strong></span> The feasible generalised least squares estimator produces estimates</p>
+<p><span class="math display">\[
+\hat{\b\beta} = (\b X^\top \hat{\b\Omega}^{-1} \b X)^{-1} \b X^\top \hat{\b\Omega}^{-1} \b y
+\]</span></p>
+<p>Where <span class="math inline">\(\hat{\b\Omega}\)</span> is the estimated variance-covariance matrix of the error term <span class="math inline">\(\eps_i\)</span>, frequently through an OLS estimation before conducting feasible generalised least squares. The variance of the estimator is</p>
+<p><span class="math display">\[
+\V\hat{\b\beta} = (\b X^\top \hat{\b\Omega}^{-1} \b X)^{-1}
+\]</span></p>
+</div>
+<p><br></p>
+<p>The square root of the variance of the FGLS estimator are the standard errors, and we can conduct t-tests just as we did for OLS.</p>
+<p>However, when we estimate <span class="math inline">\(\hat{\b\Omega}\)</span> with OLS (or any other method), we of course have some imprecision in our estimates. Econometricians have shown that the feasible GLS estimator often is far worse than the hypothetical perfect GLS. Very often, feasible GLS will actually result in larger variances of estimates.</p>
+<p>There is also some risk with feasible GLS. Often, heteroscedasticity and autocorrelation occur in our estimated OLS models not because the population actually has heteroscedasticity or autocorrelation, but rather, our original linear model is missing some explanatory variables which causes other violations in our classical linear model, such as exogeneity violations. This mispecified nature will not only make FGLS even more imprecise, but also has the potential to bias FGLS estimates.</p>
+<p>Thus, FGLS is not super popular in most applied statistician’s toolkit, and the default tends to be sticking to OLS with either robust standard errors or Heteroscedasticity-and-autocorrelation (HAC) robust standard errors.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./ols.html" class="pagination-link" aria-label="Classical Least Squares">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Classical Least Squares</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./mle.html" class="pagination-link" aria-label="Maximum Likelihood">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Maximum Likelihood</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

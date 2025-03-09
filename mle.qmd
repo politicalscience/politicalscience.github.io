@@ -1,0 +1,616 @@
+# Maximum Likelihood
+
+In the previous chapters, we have covered estimators that primarily deal with linear models. However, not every model is linear.
+
+In this chapter, we cover the Maximum Likelihood Estimator (MLE), the most commonly used estimator in statistics, especially commonly used for non-linear models. We discuss the intuition and mathematics behind the MLE, and how statistical inference is conducted with the MLE.
+
+<br />
+
+## Likelihood Function
+
+So far, the estimators we have covered can only work with the linear model in the form $\b y = \b{X\beta} + \b\eps$. However, a lot of [data generating processes](inference.qmd#data-generating-process) do not take this form.
+
+The maximum likelihood estimator allows us to estimate parameters $\theta$ that are not in the linear model form - as long as we know the form/probability density function of the data generating process. MLE also does not have to meet spherical errors, and only needs to meet the assumptions of [i.i.d.](ols.qmd#assumption-2-independent-and-identically-distributed-i.i.d.) and [exogeneity](ols.qmd#assumption-4-strict-exogeneity) (proper model specification).
+
+In statistics, to estimate the population parameters $\b\theta$, we gather some sample of observations $(y_1, y_2, \dots, y_n)$. Our random sample $(y_1, y_2, \dots, y_n)$ are each realisations of a random variable (our random selection from the population) $Y_1, Y_2, \dots, Y_n$.
+
+What is the probability that we draw $y_1$ from our random variable $Y_1$? Well, we know that the probability of realising a specific $y$ from a random variable $Y$ is given by the probability density function (@def-pdf). Thus, the probability of drawing $y_1$ is:
+
+$$
+\P(Y_1 = y_1) = f_{Y_1}(y_1)
+$$
+
+However, our probability density function $f_{Y_1}$ is determined by a set of parameters. For example, if $Y_1$ is normally distributed $Y_1 \sim \mathcal N(\mu_{Y_1}, \sigma^2_{Y_1})$, then the probability density function $f_{Y_1}$ is determined by parameters $\b \theta = (\mu_{Y_1}, \sigma^2_{Y_1})$. To represent this fact, in MLE, we will put the unknown parameters as a second input in our probability density function:
+
+$$
+\P(Y_1 = y_1) = f_{Y_1}(y_1; \b \theta)
+$$
+
+Similarly, the probability of drawing $y_2$ from $Y_2$ is $f_{Y_2}(y_2; \b \theta)$, and the probability of drawing $y_t$ from $Y_t$ is $f_{Y_t}(y_t; \b \theta)$.
+
+Okay, we know the probability of drawing any observation $y_t$ from $Y_t$ But, what is the probability of drawing the exact sample $(y_1, y_2, \dots, y_n)$ that we got? Or more mathematically, what is the probability of
+
+$$
+\P(Y_1 = y_1, \ Y_2 = y_2, \ \dots, \ Y_n = y_n)
+$$
+
+Well, we know that if random variables are independent (@def-independence) of each other (i.e. drawing $y_1$ doesn't affect the probability of drawing $y_2$), the joint probability density function is just all the product of all the PDFs. Thus, if $Y_1, \dots, Y_n$ are independent random variables, we know the joint probability density function is
+
+$$
+\begin{align}
+f_{Y_1, \dots , Y_n}(y_1, \dots, y_n; \ \b\theta ) & = f_{Y_1}(y_1; \b\theta) f_{Y_2}(y_2; \b\theta) \dots f_{Y_n}(y_n; \b\theta) \\
+& = \prod\limits_{t=1}^nf_{Y_t}(y_t; \b\theta)
+\end{align}
+$$
+
+And this joint probability density function gives us the exact probability of getting our exact sample $(y_1, \dots, y_n)$ through random sampling. We define this probability as the **likelihood** $L$ of getting our sample $(y_1, \dots, y_n)$, given our population parameters $\b\theta$.
+
+::: {#def-likelihood style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Likelihood Function
+
+The likelihood function $L(\b\theta; \b y)$ describes the probability that we get some sample $\b y = (y_1, \dots, y_n)$, given population parameters $\b\theta$.
+
+$$
+L(\b\theta; \ y_1, y_2, \dots , y_n) = \prod\limits_{t=1}^nf_{Y_t}(y_t; \b\theta)
+$$
+
+We can also write this in terms of vector $\b y$ containing all observations of the sample:
+
+$$
+L(\b\theta; \ \b y) = f_Y(\b y; \b \theta)
+$$
+:::
+
+<br />
+
+## Maximum Likelihood
+
+In the above section, we defined the likelihood function (@def-likelihood) as the likelihood of getting the exact sample we got, given the population parameters $\b\theta$.
+
+The **maximum likelihood estimator** is the idea that we should estimate our parameters $\hat{\b\theta}$ as the values of the parameters that maximise the likelihood we observe our specific sample $y_1, y_2, \dots y_n$.
+
+The reason is because if there was a set of potential parameter values $\b\theta^*$ that had a low chance of producing our sample $y_1, \dots, y_n$, we probably would not get our exact sample $y_1, \dots, y_n$. Since we would probably not get the exact sample we got, we either got really unlucky, or that set of potential parameter values $\b\theta^*$ is wrong.
+
+But if there was a set of potential parameter values $\b\theta^*$ that was likely to produce our exact sample $y_1, \dots, y_n$, we have a good chance we actually getting our exact sample $y_1, \dots, y_n$. Thus, we want to find the set of parameters $\hat{\b\theta}$ that maximise our chances of observing our specific sample $y_1 \dots, y_n$.
+
+To find the set of parameters $\hat{\b\theta}$ that maximise the likelihood we observe our specific sample, we need to find values of $\b\theta$ that maximise our likelihood function $L(\b \theta, \b y)$. Thus our goal is
+
+$$
+\hat{\b\theta} = \max\limits_{\b\theta} L(\b\theta; \b y)
+$$
+
+However, this maximisation problem is quite difficult, as the likelihood function (@def-likelihood) is a product. Finding the derivative of a product is not straight forward.
+
+Luckily, we have an alternative, the log-likelihood function $\ell(\b\theta ; \b y)$, since the same $\b\theta$ values that maximise $L$ will also maximise $\ell$. The log-likelihood function can be derived by taking the log of the likelihood function
+
+$$
+\begin{align}
+\ell(\b \theta; \b y) & = \log L(\b \theta; \b y) \\
+& = \log\left( \prod\limits_{t=1}^n f_{Y_t}(y_t; \b\theta)\right) \\
+& = \log[ f_{Y_1}(y_1, \b\theta) f_{Y_2}(y_2; \b\theta) \dots f_{Y_n}(y_n; \b\theta) ]
+\end{align}
+$$
+
+And using the property of logs that $\log(ab) = \log a + \log b$, we can determine
+
+$$
+\begin{align}
+\ell(\b \theta; \b y) & = \log(f_{Y_1}(y_1; \b\theta)) + \log(f_{Y_2}(y_2; \b\theta)) + \dots + f_{Y_n}(y_n; \b\theta) \\
+& = \sum\limits_{t=1}^n\log (f_{Y_t}(y_t; \b\theta))
+\end{align}
+$$
+
+::: {#def-loglike style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Log-Likelihood Function
+
+The log-likelihood function $\ell$ is the log of the likelihood function $L$ (@def-likelihood). The log-likelihood function takes the form
+
+$$
+\ell(\b \theta; \b y) = \sum\limits_{t=1}^n\log (f_{Y_t}(y_t; \b\theta))
+$$
+
+We can also write this in terms of vector $\b y$ containing all observations of the sample:
+
+$$
+\ell(\b \theta; \b y)  = \log(f_Y(\b y; \ \b\theta))
+$$
+:::
+
+<br />
+
+The summation notation in the log-likelihood makes it far easier to maximise by finding the derivative. Thus, in most applications, we will deal with the log-likelihood function for estimation purposes.
+
+<br />
+
+## Score Function
+
+The gradient of the log-likelihood $\ell(\b\theta; \b y)$ in respect to vector $\b\theta$ is the score function.
+
+::: {#def-scorefunc style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Score Function
+
+The score function $s$ is given by:
+
+$$
+s(\b\theta; \b y) = \frac{\partial}{\partial \b\theta} \ell(\b\theta; \b y) = \frac{\partial}{\partial \b\theta}  \sum\limits_{t=1}^n \log(f_{Y_t}(y_t; \b\theta))
+$$
+
+We can also write this in terms of vector $\b y$ containing all observations of the sample:
+
+$$
+s(\b\theta; \b y) = \frac{\partial}{\partial\b\theta} \log(f_Y(\b y; \b\theta))
+$$
+:::
+
+<br />
+
+As we know through calculus, to maximise a function, we set the gradient equal to zero. Thus, the estimates $\hat{\b\theta}$ of maximum likelihood estimation are the set of $\b\theta$ that make $s(\b\theta; \b y) = 0$.
+
+Let us define the true parameter value in the population as $\b\theta_0$. That means, the true score function of $\b\theta_0$ is $s(\b\theta_0; \b y)$.
+
+Vector $\b y$, our sample, is the reasliation of a set of random variables as we described earlier. Thus, the true population parameter $\b\theta_0$'s score function $s(\b\theta_0, \b y)$ is actually also a random variable in respect to random $\b y$. This means the true population parameter score function $s(\b\theta_0, \b y)$ has a expectation and variance.
+
+::: {#thm-scorezero style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+The expectation of the true population parameter $\b\theta$'s score function is 0.
+
+$$
+\E(s(\b\theta_0; \b y)) = 0
+$$
+:::
+
+<br />
+
+**Proof**: Let us first start with the definition of expectation of a continuous variable (@def-exp). That means we can deduce
+
+$$
+\E(s(\b\theta_0; \b y)) = \int \underbrace{s(\b\theta_0; \b y)}_{\mathrm{s \ given} \ \b y} \overbrace{f_Y(\b y ; \b\theta)}^{\P(Y=\b y)} dy
+$$
+
+Now, let us plug in the score function (@def-scorefunc):
+
+$$
+\E(s(\b\theta_0; \b y)) = \int\left[\frac{\partial}{\partial\b\theta}\log f_Y(\b y; \b\theta)\right] f_Y(\b y; \b\theta)
+$$
+
+Using the derivative rule $\frac{d}{dx}\log u(x) = \frac{u'(x)}{u(x)}$, we get
+
+$$
+\begin{align}
+\E(s(\b\theta_0; \b y)) & = \int\frac{\frac{\partial}{\partial\b\theta} f_Y(\b y; \b \theta)}{f_Y(\b y; \b \theta)}f_Y(\b y; \b \theta) \\
+& = \int \frac{\partial}{\partial\b\theta} f_Y(\b y; \b \theta)
+\end{align}
+$$
+
+We can flip the derivative and anti-derivative to get
+
+$$
+\begin{align}
+\E(s(\b\theta_0; \b y)) & =  \frac{\partial} {\partial\b\theta} \int f_Y(\b y; \b \theta) \\
+& = \frac{\partial} {\partial\b\theta} 1 \ = \ 0
+\end{align}
+$$
+
+And the last step is because the integral (are under the curve) of a PDF is always 1 (the entire probability space). Thus, we see that the expectation of the score function at true population parameter $\b\theta_0$ in respect to random vector $\b y$ is 0.
+
+<br />
+
+## Fisher Information
+
+We have established the expected value of the score function of the true population parameter $\b\theta_0$. As a random variable, we can also consider its variance. From the definition of variance (@def-var), we know:
+
+$$
+\V[s(\b\theta_0; \b y)] = \E[s(\b\theta_0; \b y) - \E(s(\b\theta_0; \b y))]
+$$
+
+We know the $E(s(\b\theta_0; \b y)) = 0$ from the proof above (@thm-scorezero), so we can plug that in:
+
+$$
+\V[s(\b\theta_0; \b y)] = \E[s(\b\theta_0; \b y) - 0)^2]
+$$
+
+Now, plugging in the definition of the score function (@def-scorefunc), we see
+
+$$
+\begin{align}
+\V[s(\b\theta_0; \b y)] & = \E \left[ \left(\frac{\partial \ell(\b\theta_0; \b y)}{\partial\b\theta}\right)^2 \right] \ \equiv \ \b{\mathcal I}(\b\theta_0)
+\end{align}
+$$
+
+Where $\mathcal I(\b\theta_0)$ is called the fisher information matrix of $\b\theta_0$. We can generalise this to any values of $\b\theta$:
+
+::: {#def-fischerinfo style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Fisher Information Matrix
+
+The fisher information matrix is given by the variance of the score function for any $\b\theta$ value:
+
+$$
+\b{\mathcal I}(\b\theta) = \E \left[ \left( \frac{\partial}{\partial \b\theta} \ell(\b\theta ; \b y) \right)^2 \biggr | \b\theta\right]
+$$
+
+We can also define the fisher information matrix as the negative expectation of the hessian matrix of second derivatives of the log-likelihood function.
+
+$$
+\b{\mathcal I}(\b\theta) = - \E\left[\frac{\partial^2}{\partial \b\theta \partial \b\theta^\top} \ell(\b\theta; \b y) \right]
+$$
+:::
+
+<br />
+
+The fischer information is always positive: $\mathcal I(\theta) ≥ 0$. Higher fisher information implies that the absolute value of the score is higher. Also importantly, the fisher information does not depend on the random realisation of sample $\b y$, since the expectation averages it our.
+
+However, the fischer information matrix can be sometimes difficult to calculate. Thus, we sometimes use what is called the observed information matrix $\b I(\b\theta, \b y)$, without the expectation.
+
+::: {#def-obsinfo style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Observed Information Matrix
+
+The observed information matrix is defined as
+
+$$
+\b I(\b\theta; \b y) = -\frac{\partial^2}{\partial\b\theta \partial \b\theta^\top} \ell(\b\theta; \b y)
+$$
+
+And it is the negative of the hessian matrix of second order derivatives of the log-likelihood function.
+:::
+
+<br />
+
+Unlike the fisher information matrix, which is only dependent on $\b\theta$ and not the realisation of sample $\b y$ (due to expectation), the observed information matrix is dependent on the random realisation of sample $\b y$.
+
+<br />
+
+## Variance and Asymptotics
+
+It can be shown through complex math, that the inverse of the fischer information matrix $1/\b{\mathcal I}(\b\theta)$ is the variance of the maximum likelihood estimator.
+
+::: {#thm-mlevariance style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Variance of MLE
+
+The variance of the maximum likelihood estimator (in sufficiently large sample sizes) is:
+
+$$
+\V \hat{\b\theta} = \frac{1}{\b{\mathcal I}(\b\theta)}
+$$
+:::
+
+<br />
+
+You probably have noticed that I stated the variance condition only holds for large sample sizes. This is because the fischer information matrix is under the assumption of an unbiased estimator, which as we will see in the next section, MLE is only unbiased asymptotically.
+
+To estimate the variance for smaller sample sizes, we typically use the observed information matrix instead:
+
+$$
+\V \hat{\b\theta} = \frac{1}{\b I (\hat{\b\theta}; \b y)}
+$$
+
+The Maximum Likelihood Estimator has some desirable asymptotic properties as sample size $n \rightarrow ∞$, that make is a very popular estimator in statistics.
+
+Through central limit theorem (@thm-clt), we know asymptotically that $\hat\theta$ from MLE will be normally distributed. Through quite complex mathematics, we can also show that the MLE is asymptotically consistent (@def-consistency). Finally, in the last section, we determined the asymptotic variance of the MLE (@thm-mlevariance). Thus, we know the asymptotic properties of the MLE.
+
+::: {#thm-mleasymptotics style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Asymptotic Properties of MLE
+
+The maximum likelihood estimator has the following asymptotic distribution:
+
+$$
+\hat{\b\theta} \sim \mathcal N(\b\theta_0, \b{\mathcal I}(\b\theta_0)^{-1} )
+$$
+
+This means that MLE is asymptotically consistent, asymptotically normal, and has an asymptotic variance of $1/\b{\mathcal I}(\b\theta_0)$.
+:::
+
+<br />
+
+Notably, the maximum likelihood estimator is the asymptotically unbiased (consistent) estimator with the lowest variance, which we will prove in the next section on Cramér Rao.
+
+It is important to note that while MLE is asymptotically unbiased (consistent), it can be biased in lower sample sizes (although not always - this depends on the actual data generating process in question). This can have some implications on model selection (specifically fixed effects), that we will cover more in the applied chapters.
+
+<br />
+
+## Cramér-Rao Bound
+
+Let us focus on the asymptotic variance of the maximum likelihood estimator. We see that it is $1/\b{\mathcal I}(\b\theta_0)$. Why is this important? Let us introduce a new theorem: Cramér-Rao.
+
+::: {#thm-cramerrao style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Cramér-Rao
+
+The Cramér-Rao Bound states that for any unbiased estimator, the variance cannot be any lower than the inverse of the fischer information matrix:
+
+$$
+\V \hat{\b\theta} ≥ \frac{1}{\b{\mathcal I}(\b\theta)}
+$$
+
+Since the MLE has that exact variance asymptotically, it is the asymptotically unbiased (consistent) estimator with the least variance.
+:::
+
+<br />
+
+**Proof:** An unbiased estimator $\hat\theta$ of a parameter $\theta$, its estimates are a function of its sample $\b y$, so we will call the unbiased estimator $\hat\theta(\b y)$. We know an unbiased estimator $\hat\theta(\b y)$ should have a expectation equal to true population parameter, which also implies
+
+$$
+\E \hat\theta(\b y) = \theta \quad \implies \quad \E[\hat\theta(\b y) - \theta \ | \ \theta \ ] = 0
+$$
+
+Regardless of the value of $\theta$. We can rewrite expectation with the definition of expectation (@def-exp) to get:
+
+$$
+\int\left( \hat\theta(y) - \theta \right) f_Y(y; \theta)dy = 0
+$$
+
+Since this expectation is independent of $\theta$ (true for all $\theta$), the derivative in respect to $\theta$ should be 0 (since $\theta$ does not cause change in the expectation), and we can compute the derivative with product rule:
+
+$$
+\begin{align}
+0 & = \frac{\partial}{\partial \theta} \int \left(\hat\theta(y) - \theta \right)f_Y(y ; \theta)dy \\
+0 & = \int \left(\hat\theta(y) - \theta \right)\frac{\partial f_Y}{\partial \theta}dy - \int f_Y dy
+\end{align}
+$$
+
+Where I have shortened $f_Y(y; \theta)$ to $f_Y$ for simplicity. Since $f_Y$ is a PDF, $\int f_Y dy = 1$, thus
+
+$$
+\begin{align}
+0 & = \int \left(\hat\theta(y) - \theta \right)\frac{\partial f_Y}{\partial \theta}dy - 1\\
+1 & = \int \left(\hat\theta(y) - \theta \right)\frac{\partial f_Y}{\partial \theta}dy
+\end{align}
+$$
+
+We can substitute $\frac{\partial f_Y}{\partial \theta} = f_y \frac{\partial \log f_Y}{\partial \theta}$. You can prove this is true by using chain rule. Thus,
+
+$$
+1 = \int \left(\hat\theta(y) - \theta \right) f_Y \frac{\partial \log f_Y}{\partial \theta}dy
+$$
+
+We can factor $f_Y$ in half to get:
+
+$$
+1 = \int \left( (\hat\theta(y) - \theta) \sqrt{f_Y} \right) \left(\sqrt{f_Y} \frac{\partial \log f_Y}{\partial \theta} \right)dy
+$$ {#eq-simplifycramer}
+
+We know by the Cauchy-Schwarz inequalty, that this must be true:
+
+$$
+\begin{align}
+\int \left( (\hat\theta(y) - \theta) \sqrt{f_Y} \right)&  \left(\sqrt{f_Y} \frac{\partial \log f_Y}{\partial \theta} \right)dy \\  ≤ \ & \left(\int (\hat\theta(y) - \theta)^2 f_Y dy \right) \left( \int f_Y \left(\frac{\partial \log f_Y}{\partial \theta}\right)^2 dy \right)
+\end{align}
+$$
+
+And we know the left side from @eq-simplifycramer is equal to 1, so we get the inequality:
+
+$$
+1 ≤ \left(\int (\hat\theta(y) - \theta)^2 f_Y dy \right) \left( \int f_Y \left(\frac{\partial \log f_Y}{\partial \theta}\right)^2 dy \right)
+$$
+
+We can see both parts of the right side are in the form of expectations (@def-exp), so let us write them as expectations.
+
+$$
+1 ≤ \color{blue}{\E[(\hat\theta - \theta)^2]} \cdot  \color{purple}{\E\left[ \left(\frac{\partial \log f_Y}{\partial \theta}\right)^2 \right]}
+$$
+
+We can see the blue is the variance (@def-var) of an unbiased estimator (since $\E \hat\theta = \theta$), and the purple part is the fisher information matrix (@def-fischerinfo). Thus, isolating the variance on one side, we get
+
+$$
+\V \hat\theta ≤ \frac{1}{\mathcal I(\theta)}
+$$
+
+This is the lowest bound any unbiased estimator's variance can be, meaning any unbiased estimator who attains this variance is the unbiased estimator with the least variance.
+
+We know that the maximum likelihood estimator is unbiased asymptotically (consistent), and its asymptotic variance is $1/\mathcal I(\theta)$. Thus, the maximum likelihood estimator is the unbiased estimator with the least variance, and is the [best asymptotic unbiased estimator]{.underline}.
+
+<br />
+
+## Newton-Raphson Algorithm
+
+We know that the MLE estimates $\hat\theta$ are obtained by minimising the score function $s(\b\theta, \b y)$. However, in many cases, there exists no closed form-analytical solution. Thus, we have to use iterated algorithms to minimise the score function.
+
+The most common method is the Newton-Raphson algorithm. Suppose $\theta$ is a scalar of potential parameters. For values of $\theta$ that are close to the true population parameter $\theta_0$, the first order taylor series expansion of $s(\theta, \b y)$ about $\theta_0$ states:
+
+$$
+s(\theta; \b y) \approx s(\theta_0, \b y) + s'(\theta_0; \b y)(\theta - \theta_0)
+$$
+
+Where $s'(\theta_0; \b y)$ is the first derivative of the score function $s(\theta_0, \b y)$ at the true population value $\theta_0$. We know from @def-obsinfo that the first derivative of the score function is defined by the negative observed information $-\b I(\theta_0)$. Thus, we get:
+
+$$
+s(\theta; \b y) \approx s(\theta_0, \b y)  - \b I(\theta_0)(\theta - \theta_0)
+$$
+
+Now, we can get our $\theta$ that makes the score function equal 0 by setting $s(\theta; \b y) = 0$, and then solving for $\theta$:
+
+$$
+\begin{align}
+0 &  \approx s(\theta_0, \b y)  - \b I(\theta_0)(\theta - \theta_0) \\
+\b I(\theta_0)(\theta - \theta_0) & \approx s(\theta_0, \b y) \\
+\theta - \theta_0 & \approx \b I(\theta_0)^{-1}  s(\theta_0, \b y) \\
+\theta & \approx \theta_0 + \b I(\theta_0)^{-1} s(\theta_0, \b y)
+\end{align}
+$$ {#eq-nrimpractical}
+
+So know we have identified the $\theta$ that makes our score function equal to 0, which also maximises the log-likelihood $\ell$ and likelihood $L$. However, there is an issue - our solution for $\theta$ includes $\theta_0$, the unknown true population parameter. Since $\theta_0$ is unknown, we cannot use this formula directly.
+
+Instead, we use an iterative procedure. We start with some initial value $\theta^{(0)}$ that is randomly chosen. Then, we use that $\theta^{(0)}$ to "update" to get a new $\theta^{(1)}$, based on @eq-nrimpractical:
+
+$$
+\theta^{(1)} = \theta^{(0)} + \b I(\theta^{(0)})^{-1}s(\theta^{(0)}; \b y)
+$$
+
+Then, with our new $\theta^{(1)}$, we update to get $\theta^{(2)}$:
+
+$$
+\theta^{(2)} = \theta^{(1)} + \b I(\theta^{(1)})^{-1}s(\theta^{(1)}; \b y)
+$$
+
+And we keep doing this using $\theta^{(m)}$ to update to $\theta^{(m+1)}$:
+
+$$
+\theta^{(m+1)} = \theta^{(m)} + \b I(\theta^{(m)})^{-1}s(\theta^{(m)}; \b y)
+$$ {#eq-iterative}
+
+And we keep doing this until the difference between $\theta^{(m+1)}$ and $\theta^{(m)}$ becomes very small (based on some pre-specified threshold). This is because our formula in @eq-nrimpractical is:
+
+$$
+\theta \approx \theta_0 + \b I(\theta_0)^{-1} s(\theta_0, \b y)
+$$
+
+So, if $\theta^{(m+1)}$ is very close to $\theta^{(m)}$ in @eq-iterative, we know that $\theta^{(m+1)}$ is approaching the true value $\theta_0$.
+
+An alternative to the Newton-Raphson algorithm is the **Fisher-scoring algorithm**, which does the same thing, but using the fisher information matrix $\mathcal I(\theta)$ (@def-fischerinfo) instead of the observed information matrix $I(\theta)$, when $\mathcal I (\theta)$ is not too difficult to compute. Fisher-scoring is the method most common for generalised linear models (that we will cover in later chapters).
+
+<br />
+
+## OLS as a Maximum Likelihood
+
+Previously, we discussed the [ordinary least squares estimator](ols.qmd) used on the [classical linear model](ols.qmd#the-classical-linear-model). We can actually show that the OLS estimator is a maximum likelihood estimator when we assume a linear data generating process
+
+$$
+Y_t \sim \mathcal N(\beta_0 + \beta_1 X_{t1} + \dots + \beta_p X_{tp}, \ \sigma^2)
+$$
+
+We will simplify this notation to
+
+$$
+Y_t \sim \mathcal N(\b x_t^\top \b\beta, \ \sigma^2)
+$$
+
+Where $\b x_t$ is a vector $\b x_t = (1, X_{t1}, \dots, X_{tp}$ and $\b\beta$ is a vector $\b\beta = (\beta_0, \dots, \beta_p)$. Using the probability density function of a normal distribution (@def-normalpdf) , we can express the PDF of $Y_i$ as:
+
+$$
+f_{Y_t}(y_t) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{1}{2\sigma^2}(y_t - \b x_t^\top \b\beta)^2}
+$$
+
+Now, that means our log-likelihood $\ell$ (@def-loglike) for our sample $(y_1, \dots, y_n)$ we have is:
+
+$$
+\ell(\b\beta, \sigma^2; \ \b y) = \sum\limits_{t=1}^n \log \left( \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{1}{2\sigma^2}(y_t - \b x_t^\top \b\beta)^2} \right)
+$$
+
+Now, using the property of logarithms, we can get
+
+$$
+\begin{align}
+\ell(\b\beta, \sigma^2; \ \b y) & = \sum\limits_{t=1}^n \left[\log (1) - \log(\sqrt{2 \pi \sigma^2}) + \log \left( e^{-\frac{1}{2\sigma^2}(y_t - \b x_t^\top \b\beta)^2} \right) \right] \\
+& = \sum\limits_{t=1}^n \left[ 0 - \frac{1}{2} \log (2\pi\sigma^2) + \left( -\frac{1}{2\sigma^2}(y_t  - \b x_t^\top \b\beta)^2 \right) \right] \\
+& = \sum\limits_{t=1}^n \left[- \frac{1}{2} \log (2\pi\sigma^2)   -\frac{1}{2\sigma^2}(y_t  - \b x_t^\top \b\beta)^2 \right]
+\end{align}
+$$
+
+Now, using the property of summations, we get
+
+$$
+\ell(\b\beta, \sigma^2; \ \b y) = -\frac{n}{2} \log(2\pi\sigma^2) - \frac{1}{2\sigma^2} \color{blue}{\sum\limits_{t=1}^n (y_t - \b x_t^\top \b\beta)^2}
+$$
+
+If we look at the blue, we can see this is the sum of squared residuals (@def-ssr). Thus,
+
+$$
+\begin{align}
+\ell(\b\beta, \sigma^2; \ \b y) & = -\frac{n}{2} \log(2\pi\sigma^2) - \frac{1}{2\sigma^2}(\b y - \hat{\b y})^\top (\b y - \hat{\b y})\\
+& = -\frac{n}{2} \log(2\pi\sigma^2) - \frac{1}{2\sigma^2}(\b y  - \b{X\beta})^\top (\b y - \b{X\beta})
+\end{align}
+$$
+
+And if we take the gradient of the log-likelihood $\ell$ in resepct to vector $\b\beta$, we get the same first order condition as OLS:
+
+$$
+\frac{\partial \ell}{\partial \b\beta} = -2 \b{X^\top y} + 2 \b{X^\top X\beta} = 0
+$$
+
+With the same first order conditions, we will get the same $\hat{\b\beta}$ estimates as OLS. Thus, we can see under the conditions of the classical linear model, the OLS estimator is a maximum likelihood estimator.
+
+<br />
+
+## Statistical Inference
+
+Under the asymptotic properties of MLE (@thm-mleasymptotics), we know the estimator will be normally distributed. Using this fact, and the variance of MLE (@thm-mlevariance), we can do hypothesis testing with one parameter with the wald test:
+
+::: {#def-waldtest style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Wald Test
+
+The wald test can determine if a parameter estimated by MLE is statistically significant. The wald test statistic is given by
+
+$$
+W = \left( \frac{\hat\theta - H_0}{se(\hat\theta)} \right)^2 = \frac{(\hat\theta - H_0)^2}{\V \hat\theta}
+$$
+
+Where $H_0$ is the value of $\theta$ established by our null hypothesis. We then use a $\chi^2$ distribution with 1 degrees of freedom to obtain the p-value.
+:::
+
+<br />
+
+If our p-value is less than 0.05, we can conclude that our null hypothesis is incorrect. We could also use a z-test, which would produce the exact same result as the wald test:
+
+$$
+z = \frac{\hat\theta - H_0}{se(\hat\theta)}
+$$
+
+And we consult a standard normal distribution $\mathcal N(0, 1)$ to get a p-value, and the interpretation is the same as the wald test.
+
+<br />
+
+For testing multiple coefficients at once, like the f-test for OLS (@def-ftest), we can use the Likelihood Ratio test. Like the f-test, the likelihood ratio test compares two models:
+
+-   $M_0 : Y_t = \beta_0 + \sum\limits_{j=1}^g \beta_j X_{tj} + \eps_i$ (the smaller null model with $g$ parameters).
+-   $M_a : Y_t = \beta_0 + \sum\limits_{j=1}^g \beta_j X_{tj} + \sum\limits_{j=g+1}^p \beta_j X_{tj} \eps_i$ (the bigger model with the original $g$ parameters in the null + additional parameters up to $p$).
+
+In the F-test, we used the $R^2$ metric (@def-rsquared) to compare the two models. However, $R^2$ only exists in OLS, not MLE.
+
+Instead, for MLE, we will use the likelihood function $L$. After all, the likelihood $L$ (@def-likelihood) gives us the probability of observing a sample given parameters $\b\theta$. If the probability is higher, that likely means our model is better. Thus, the likelihood ratio test compares the difference between the likelihoods of two models.
+
+::: {#def-likelihoodratio style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Likelihood Ratio Test
+
+The likelihood ratio test compares a smaller model $M_0$ and larger model $M_a$. The test statistic $L^2$ is given by
+
+$$
+L^2 = 2 \log \left(\frac{L_a}{L_0}\right) = 2 \log (L_a) - 2 \log (L_0)
+$$
+
+Where $L$ is the likelihood of the model given by the likelihood function. Then, we consult a $\chi^2$ distribution with degrees of freedom equal to the number of extra parameters in model $M_a$ compared to $M_0$.
+:::
+
+<br />
+
+If the p-value is less than 0.05, that means our $M_a$ model (and all of its extra coefficients) are statistically significant.
+
+<br />
+
+## Information Criterion Statistics
+
+Recall that in OLS, we had the $R^2$ metric that tells us how "good" the fit of our model is. For MLE, we can also have metrics that tell us the fit of our model, called information criterion statistics.
+
+Recall that likelihood function $L$ (@def-likelihood) is the probability of observing a particular sample given parameters $\b\theta$. If the probability is higher, that likely means our model is better. Thus, likelihood $L$ allows us to compare different models.
+
+However, we often prefer simple models over more complex models. If we have two models with the same likelihood $L$, but one has 40 parameters and the other has 5, you would prefer the one with 5, as it is far more efficient and achieves the same performance.
+
+The information criterion statistics use an adjusted likelihood $L$ accounting for the number of parameters to avoid good models that don't have too many parameters. The most commonly used is the Akaike's Information Criterion.
+
+::: {#def-AIC style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## AIC
+
+Akaike's Information Criterion can be used to measure the fit of models fitted with MLE.
+
+$$
+AIC = -2 \log L + 2p
+$$
+
+Where $L$ is the likelihood of the model, and $p$ is the number of parameters in the model. The lower the AIC is, the better the model is considered.
+:::
+
+<br />
+
+AIC can be used to compare different models, including models that are not nested like in the likelihood ratio test. However, unlike $R^2$, it does not have a real "substantive/real-world" meaning. The value itself means very little. An alternative to AIC is the Bayesian Information Criterion.
+
+::: {#def-bic style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## BIC
+
+Bayesian Information Criterion can be used to measure the fit of models fitted with MLE.
+
+$$
+BIC = p \log n - 2 \log L
+$$
+
+Where $p$ is the number of parameters in the model, $n$ is the number of observations, and $L$ is the likelihood of the given model. The lower the BIC is, the better the model is considered.
+:::
+
+<br />
+
+The BIC tends to penalise extra parameters more strongly than AIC. Generally, when comparing two models, AIC and BIC will agree.

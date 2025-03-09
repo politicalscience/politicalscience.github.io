@@ -1,453 +1,446 @@
----
-title: "Causal Frameworks"
-subtitle: "Chapter 3, Quantitative Methods"
-sidebar: side
----
+# Causal Inference
 
-In the last 2 chapters, we focused on the classical and generalised linear model, and how it can explain relationships (correlations) between variables.
+So far, we have introduced multiple estimators to help estimate parameters that describe the relationships between variables.
 
-This chapter introduces the main **causal** frameworks (potential outcomes, causal graphs), the main causal estimands used in causal inference, and the idea of selection bias and confounders. This chapter is the foundation in which the next set of methods for causal inference will be built on.
+In this chapter, our goal is to go from relationships/correlation to causation. First, we introduce the popular causal frameworks and causal estimands. Then, we discuss the issue with selection bias, and why correlation is not causation. Finally, we discuss randomisation as a method to establish causality.
 
-Use the right sidebar for quick navigation. R-code for causal diagrams is provided at the bottom.
+<br />
 
-------------------------------------------------------------------------
+## Potential Outcomes Framework
 
-# **Potential Outcomes Framework**
-
-### Treatment Variable
-
-In causal inference, we are interested in how treatment $D$ causes outcome variable $Y$. How does a voting system affect voter turnout? How does a minimum wage law affect unemployment?
-
-$D$ is our treatment variable. The indicator of treatment for each unit $i$ is $D_i$.
+A lot of social science and science is about understanding the causes of things. This involves understanding how some treatment variable $D$ causes some outcome variable $Y$. We call our treatment variable $D$. For each unit $t$, they have a treatment status of $D_t$:
 
 $$
-D_i = \begin{cases}
-1 \quad \text{if unit } i \text{ recieved the treatment} \\
-0 \quad \text{if unit } i \text{ did not recieve the treatment}
+D_t = \begin{cases}
+1 & \text{if unit t received the treatment} \\
+0 & \text{if unit t did not receive the treatment}
 \end{cases}
 $$
 
-Causal variables/treatments $D$ must occur before the outcome $Y$. A variable cannot cause something to occur in the past.
+Now, imagine that there are two parallel worlds. In one of these parallel worlds, unit $t$ receives the treatment $D_t = 1$. In the other parallel world, unit $t$ does not receive the treatment $D_t = 0$. Everything about these two parallel worlds besides $D_i$ is identical. The outcome $Y$ value in these two worlds is called the potential outcomes.
 
-Causal variables/treatments must be able to be manipulated (in order to imagine a world where the treatment did not occur). For example, $D$ cannot be sex assigned at birth, ethnicity, etc. For example, major global events (how did 9/11 cause the Arab spring?)
+::: {#def-potoutcomes style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Potential Outcomes
 
-<br />
-
-### Potential Outcomes
-
-Imagine there are two hypothetical parallel worlds - one where unit $i$ receives the treatment $D$, and one where unit $i$ does not receive the treatment $D$. Everything else in these worlds is identical. Unit $i$ has $Y$ values in both of these parallel worlds.
-
-**Potential Outcomes** for unit $i$ are denoted:
+The potential outcomes $Y_t(d)$ for unit $t$ are the $Y$ values in the two identical parallel worlds besides the $D_t$ value.
 
 $$
-Y_{di}, Y_i(d) =\begin{cases}
-& Y_{1i}, \ Y_i(1) \quad \text{Outcome for unit } i \text{ when } D_i = 1 \\
-& Y_{0i}, \ Y_i(0) \quad \text{Outcome for unit } i \text{ when } D_i = 0 \\
+Y_t^{(d)} = \begin{cases}
+\pt & D_t = 1\text{ parallel world outcome Y value for unit t} \\
+\pc & D_t = 0\text{ parallel world outcome Y value for unit t} \\
 \end{cases}
 $$
 
-For example, imagine we are interested in finding the effect of democracy $D$ on GDP growth $Y$. Potential outcome $Y_{1i}$ is the potential GDP growth of country $i$ if they were a democracy, and outcome $Y_{0i}$ is the potential GDP growth of a country $i$ if they were not a democracy.
+To make clear when talking about potential outcomes, I will always highlight them in purple.
+:::
 
-The reason we want hypothetical worlds is that since these two parallel worlds are identical except for treatment $D_i$, then the differences between the two parallel worlds must be caused by the treatment $D_i$.
+::: {.callout-note collapse="true" appearance="simple"}
+## Stable Unit Treatment Value Assumption
 
-Note that these are hypothetical worlds - we will obviously not observe both of them at the same time. The next section discusses this.
+The above mentioned potential outcomes framework depends on the stablue unit treatment value assumption (SUTVA).
+
+It basically says that unit $t$'s potential outcomes $Y_t(1)$ and $Y_{t}(0)$ are not affected in any way by another unit $j$'s treatment status $D_j$. Basically, changing other individual's treatment status has no effect on an individual's own outcomes.
+
+If SUTVA is violated, then our nice two parallel worlds example no longer is accurate. This is because if SUTVA is violated, unit $t$ now has the potential outcomes of themselves receiving $D_t = 1, 0$, but also other people $D_j = 0, 1$. This will make the number of outcomes grow massively (especially if multiply other units affect an individual).
+
+Common causes of SUTVA violations include:
+
+-   Spill-over effects: If we are testing a new curriculum, one student $j$ getting the new curriculum may teach their friend $t$ the new curriculum, which means if student $j$ got or did not get the new curriculum would affect student $t$'s outcomes.
+-   Dilution: For example, in vaccines, there is herd immunity. That means other people getting the vaccines also improves my health outcomes.
+:::
+
+If we know the two hypothetical parallel worlds are identical to each other [except]{.underline} for treatment $D_t$, then we know any difference in $Y$ outcomes between the two worlds must be a result of treatment $D$. This difference in potential outcomes is called the individual treatment effect $\tau$.
+
+::: {#def-ite style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Individual Treatment Effect
+
+The individual treatment effect of treatment $D$ on $Y$, for a specific unit $i$, is given by the difference between the potential outcomes.
+
+$$
+\tau_t = \pt - \pc
+$$
+:::
 
 <br />
 
-### Observed Outcomes and "Missing Data"
+However, there is an issue: in the real world, we obviously do not have two hypothetical parallel worlds. We only have one world - either unit $t$ gets treated $D_t = 1$ or unit $t$ does not get treated $D_t = 0$. The world we actually live in is called the observed outcome, and the parallel world we do not see is called the counterfactual.
 
-Of course, there is not two parallel worlds with 2 potential outcomes. In the real world, each unit $i$ either receives treatment $D$, or does not. We do not observe the other potential outcome.
+::: {#def-observedoutcomes style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Observed Outcomes and Counterfactuals
 
-$Y_i$ is the observed outcome for unit $i$. This is given by formula:
-
-$$
-Y_i = D_i \cdot Y_{1i} + (1-D_i) \cdot Y_{0i}
-$$
-
-If we plug in $D_i = 0, 1$ to the equation above, we get the observed outcomes:
+The observed outcome $Y_t$ that we actually see for a unit $t$ can be given by a function of potential outcomes:
 
 $$
-Y_i = \begin{cases}
-Y_{1i} \quad \text{if } D_i = 1 \\
-Y_{0i} \quad \text{if } D_i = 0 \\
+Y_t = D_t \cdot \pt + (1-D_i) \cdot \pc
+$$
+
+If we plug in the treatment status $D_t = 0, 1$ of unit $t$ into the above equation, we get observed outcomes
+
+$$
+Y_t = \begin{cases}
+\pt & \text{if} D_i = 1 \\
+\pc & \text{if} D_i = 0
 \end{cases}
 $$
 
-Before the treatment (*A priori*), both potential outcomes could be observed. After the treatment, one is **observed**, and the other is **counterfactual**. For any given experiment, only one will ever be seen, and the counterfactual will never be seen. This is a "missing data" problem.
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Neyman Urn Model
-
-Potential Outcomes can be visualised with the Neyman Urn Model.
-
-Before the treatment, we have a box (we cannot see) with both potential outcomes.
-
-![](images/clipboard-802589608.png){fig-align="center" width="55%"}
-
-Then, when we apply treatment, we stick our hand into the box that we cannot see, and pull out one observed outcome.
-
-![](images/clipboard-2975134148.png){fig-align="center" width="60%"}
-
-We are essentially sampling from potential outcomes to get observed outcomes.
+The potential outcome that is not observed is the counterfactual outcome.
 :::
-
-This missing data problem is called the **fundamental problem of causal inference**.
 
 <br />
 
-### Stable Unit Treatment Value Assumption
+The fact that we cannot observe the two parallel worlds, and that the counterfactual is never observable in our real world, is called the **fundamental problem of causal inference**. Our goal in causal inference will be to somehow approximate/estimate these counterfactuals in order to estimate causal effects. To distinguish potential outcomes $\pt, \pc$ from observed outcomes $Y_t$, I will notate potential outcomes in purple.
 
-The above given observed and potential outcome frameworks depends on the Stable Unit Treatment Value Assumption (SUTVA).
+<br />
+
+## Causal Estimands
+
+Earlier, we discussed the individual treatment effect $\tau_t$ from @def-ite. However, because of the fundamental problem of causal inference, we do not know the counterfactuals.
+
+At an individual level, these counterfactuals are almost impossible to estimate, so we typically do not use the individual treatment effect. Instead, we will typically look at the averages of treatment effects. The most common causal estimand (true value in the population) we will use is the average treatment effect.
+
+::: {#def-ate style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Average Treatment Effect
+
+The ATE is the average individual treatment effects $\tau_i$ in the population.
+
+$$
+\tau_{ATE} = \E(\tau_t) \  = \  \E(\pt - \pc)  \ = \  \E \pt - \E \pc
+$$
+:::
+
+<br />
+
+Obviously, we do not observe the counterfactual outcomes. However, at a group level, their averages are more easily estimated, which we will explore later in the chapter.
+
+The ATE is not the only causal estimand. We will often consider a few other causal estimands.
+
+::: {#def-att style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Average Treatment Effect on the Treated
+
+The ATT is the average individual treatment effect $\tau_i$ for only units that were assigned to the treatment group $D_i = 1$:
+
+$$
+\tau_{ATT} = \E(\tau_t | D_t = 1) \ = \ \E(\pt - \pc | D_t = 1)
+$$
+:::
+
+<br />
+
+The ATT is usually not equal to the ATE, but in specific circumstances, they can be equal.
+
+The opposite estimand also exists - the average treatment effect on the untreated (ATU). This is typically not something we calculate, but it is used in some proofs.
+
+Sometimes, we also might believe there are heterogenous treatment effects - i.e. some third variable strengthens or weakens the strength of an estimand. For example, perhaps a policy has more positive effects on females than males. Thus, we can also find the ATE conditional on some third variable.
+
+::: {#def-cate style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Conditional Average Treatment Effect
+
+The CATE is the average treatment effect, conditional on some other characteristic/covariate $X$ value:
+
+$$
+\tau_{CATE}(x) = \E(\tau_t| X = x) \ = \ \E(\pt - \pc|X=x)
+$$
+
+This estimand is also sometimes called the local average treatment effect (LATE).
+:::
+
+<br />
+
+These causal estimands are all estimands - true population parameters. Our goal will be to fill in the missing counterfactuals with some **identification** strategy, in order to estimate these true population estimands.
+
+<br />
+
+## Structural Causal Models
+
+An alternative causal framework, pioneered by Pearl, is called the structural causal models. This framework uses graphical models (called directed acyclic graphs) to illustrate causality.
+
+![](images/clipboard-3021970542.png){fig-align="center" width="35%"}
+
+Every causal graph illustrates how different variables are connected to each other. Each graph contains:
+
+1.  Nodes: These are letters that represent different variables.
+2.  Directed Edges: these are arrows that encode causal theories between the variables. For example, if you believe $Z$ causes $D$, you would draw an arrow $Z \rightarrow D$. These connections are either observable (solid lines) or unobservable (dashed lines).
+
+**Paths** are any route between any two variables, that do not have to follow the direction of the arrows. For example, in the figure above, between $D$ and $Y$, there are 3 paths:
+
+1.  The direct path $D \rightarrow Y$.
+2.  The inderect/backdoor path $D \leftarrow Q \rightarrow Y$.
+3.  The indirect/backdoor path $D \leftarrow Z \leftarrow W \rightarrow Y$.
+
+The goal in causal inference is to get rid of all the indirect/backdoor paths, allowing us to isolate the direct relationship between $D$ and $Y$.
+
+One way to block a path is through an **external intervention**. For example, in the figure below, variable $D$ is directly caused by $M$ and $Z$. This allows indirect paths between $D$ and $Y$ to flow between $M$ and $Z$.
+
+However, if we externally decide the value of $D$ (such as through random assignment of $D$), then we are determining the value of $D$ externally, and $Z$ and $M$ will no longer determine $D$. Thus, the indirect/backdoor paths from $Z$ and $M$ will be eliminated.
+
+![](images/clipboard-3519172210.png){fig-align="center" width="35%"}
+
+On the other hand, we can block indirect/backdoor paths through conditioning on a set of variables/nodes $\set X$. A set of nodes $\cal X$ blocks a path if one of two is true:
+
+1.  A path is blocked if our set of conditioning nodes $\set X$ includes at least one arrow-emitting node within that path.
+2.  A path is blocked if the path contains a collision node (where multiple arrows point into it), and that collision node is not included in our set of conditioning nodes $\set X$.
+
+For example, in the figure above, we can see:
+
+1.  The path $D \rightarrow P \rightarrow Y$ is blocked by a set $\set X = \{P\}$, since $P$ is one arrow emitting node within this path.
+2.  The path $D \leftarrow M \rightarrow Y$ is blocked by a set $\set X = \{M\}$, because $M$ is one arrow emitting node within this path.
+3.  The path $D \leftarrow Z \rightarrow M \rightarrow Y$ is blocked by either $\set X = \{M\}, \{Z\}$ or $\{M, Z\}$.
+4.  The path $D \leftarrow Z \rightarrow M \leftarrow Q \rightarrow Y$ is blocked by an empty set $\set X = \varnothing$, because $M$ is a collider node in this path and we do not need to include it.
+
+We will discuss the idea of blocking paths more in the quasi-experimental research designs covered in Part III.
+
+<br />
+
+## Selection Bias
+
+You always here the saying - correlation is not causation. But what does that actually mean? A simple model of correlation $\rho$ is finding how observed $Y$ changes when $D$ changes. More specifically, we want to find the differences in conditional expectations (given by @def-condexp) of observed $Y_t$ values for when $D_t = 1$ and $D_t = 0$:
+
+$$
+\rho_{D, Y} = \E(Y_t|D_t = 1) - \E (Y_t | D_t = 0)
+$$Now, let us do some algebra. First, we know that $Y_t|D_t = 1$ is the observed potential outcome $\pt$. We also know that $Y_t|D_t = 0$ is the observed potential outcome $\pc$. Thus, we can rewrite the above to
+
+$$
+\rho_{D, Y} = \E(\pt|D_i = 1) - \E(\pc|D_i = 0)
+$$
+
+Now, let us do an algebra trick. We know that adding a zero doesn't change the equality of the equation. Let us add the term $\E(\pc|D_t = 1)$, but then also subtract that term, so we are essentially adding a 0. Then we get
 
 $$
 \begin{align}
-Y_{(D_1, D_2, \dots, D_N)i} & = Y_{(D_1', D_2', \dots, D_N')i} \\
-Y_{di} \text{ under current randomisation} & = Y_{di} \text{ under all other randomisations}
+\rho_{D, Y} = \E(\pt &|D_t = 1) - \E(\pc|D_t = 0) \\ 
+& + \E(\pc|D_t = 1) - \E(\pc|D_t = 1)
 \end{align}
 $$
 
-Or more intuitively, the potential outcomes of unit $i$ only depends on their own treatment status, and no other unit's treatment status. Thus, changing everyone else's treatment status has no effects on unit $i$'s potential outcomes $Y_{di}$. The treatment is also the same for everyone (treatment is stable and consistent)
-
-SUTVA can be violated in many different ways:
-
--   Spill-over effects: If we are testing a new curriculum, one student $j$ getting the new curriculum may teach their friend $i$ the new curriculum, thus affecting the potential outcomes of $i$.
--   Contagion: If we are studying a disease, diseases can spread, so another unit $j$ getting a disease affects the potential outcomes of unit $i$.
--   Dilution: If we are studying vaccines - there is herd immunity - other people getting the vaccine also reduces our chances of getting the disease.
--   Variable levels of treatment: If we are doing a drug trial, if some people got two doses, while others only got one dose. This is not a consistent treatment.
--   Technical errors: If someone who is supposed to be treated accidentally is not treated. This is not a consistent treatment.
-
-When SUTVA is violated, potential outcomes become very messy, and we no longer have the neat framework as before.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-# **Causal Estimands**
-
-### Individual Treatment Effect
-
-Remember the potential outcomes from parallel worlds $Y_{1i}$ and $Y_{0i}$.
-
-Since these two parallel worlds are identical except for the fact one receives the treatment $D$ and the other does not, the causal effect of $D$ should be the difference between the potential outcomes of these two worlds. Thus, the individual treatment effect $\tau$ of a unit $i$ is:
-
-$$
-\tau_i = Y_{1i} - Y_{0i}
-$$
-
-This is the specific treatment effect for a specific unit $i$. This cannot be observed, because we do not see both potential outcomes for the same unit $i$.
-
-This is also very hard to estimate, as we cannot reliably fill in the missing potential outcome for any one unit $i$. Thus, we almost never use individual treatment effects, and use group treatment effects.
-
-<br />
-
-### Average Treatment Effect (ATE)
-
-We have a hard time estimating individual treatment effects. So let us consider another form of causal estimand: group level estimands. Consider a population of units $i = 1, \dots, N$. The population has potential outcomes represented in two (only partially observed) vectors:
-
-$$
-\begin{split}
-& Y_1 = (Y_{11}, Y_{12}, \dots, Y_{1N}) \\
-& Y_0 = (Y_{01}, Y_{02}, \dots, Y_{0N})
-\end{split}
-$$
-
-We compare these two vectors of potential outcomes. The most common way to do this is to use their expected values.
-
-The Average Treatment Effect is defined as:
-
-$$
-\begin{split}
-\tau_{ATE} & = \E(Y_{1i} - Y_{0i}) \\
-& = \underbrace{\frac{1}{N} \sum\limits_{i=1}^N (Y_{1i} - Y_{0i})}_{\text{a formula for average}}
-\end{split}
-$$
-
-We cannot calculate this with observed data - since we need all potential outcomes to do this. However, we can creatively estimate this quantity through a number of research designs and assumptions, which we will explore throughout causal inference.
-
-<br />
-
-### Average Treatment Effect on the Treated (ATT)
-
-An alternative estimand to the ATE is the **Average Treatment Effect on the Treated (ATT)**:
-
-$$
-\begin{split}
-\tau_{ATT} & = \E(Y_{1i} - Y_{0i} \ | \ D_i = 1) \\
-& = \underbrace{\frac{1}{N_1} \sum\limits_{i=1}^N D_i (Y_{1i} - Y_{0i}) \quad  \text{where } N_1 = \sum\limits_{i=1}^ND_i}_{\text{a formula for the average only for treated units}}
-\end{split}
-$$
-
-This is the causal effect of [only units who have received the treatment]{.underline}. Note that frequently the ATT is not equal to the ATE, so be aware of which estimand you are trying to estimate/identify.
-
-Sometimes, $\tau_{ATT} = \tau_{ATE}$. This occurs when the expectation of the potential outcomes of both the treated and control are the same, then the two equal each other.
-
-The opposite is also true: if the expectation of the potential outcomes of both the treated and control are different, then the two are not equal.
-
-The opposite estimand is the **Average Treatment effect on the Untreated (ATU)**, which only measures the causal effect of units who did not recieve the treatment.
-
-This is not used very often, since it is kind of uninituive to think about treatment effects on individuals who did not recieve treatment. However, it can be useful in understanding identification assumptions.
-
-<br />
-
-### Conditional Average Treatment Effect (CATE)
-
-The conditional average treatment effect is any treatment effect where there is a condition on a characteristic/covariate:
-
-$$
-\tau_{CATE}(x) = \E(Y_{1i} - Y_{0i} \ | \ \underbrace{X_i = x)}_{\text{condition}}
-$$
-
-This is the causal effect of only variables who meet the condition of the covariate specified. For example, you could find the conditional average treatment effect of only women (so the covariate which we are conditioning on is *gender*). You can also condition on multiple covariates.
-
-This is often used for tailoring products/medicine/advertising to certain groups of people. It is also frequently used in identification strategies.
-
-This estimand will go by other names, including the **Local Average Treatment Effect (LATE)**.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-# **Selection Bias and Confounders**
-
-### Naive Estimator and Selection Bias
-
-A natural way to estimate the ATE is to use a naive estimator: find the average difference of [**observed**]{.underline} outcomes. This is called the naive estimator:
-
-$$
-\hat\tau_{naive} = \underbrace{\E(Y_i|D_i = 1)}_{\text{for treated}} - \underbrace{\E(Y_i|D_i = 0)}_{\text{for control}}
-$$
-
-However, there is an issue - we can show this with algebra:
+Let us rearrange the order of the terms to get
 
 $$
 \begin{align}
-\hat\tau_{naive} & = \E(Y_i|D_i = 1) - \E(Y_i|D_i = 0) \\
-& = \underbrace{\E(Y_{1i}|D_i = 1) - \E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
-& = \E(Y_{1i}|D_i = 1) - \E(Y_{0i} | D_i = 0) + \underbrace{\E(Y_{0i}|D_i = 1) \color{red}{- \E(Y_{0i}|D_i = 1)}}_{\because \text{ this equals 0, so we can add it}} \\
-& = \underbrace{\E(Y_{1i}|D_i = 1) \color{red}{- \E(Y_{0i}|D_i = 1)}}_{\tau_{ATT}} + \underbrace{\E(Y_{0i}|D_i = 1) - \E(Y_{0i} | D_i = 0)}_{\text{Selection Bias}} \\
+\rho_{D, Y} & = \overbrace{\E(\pt|D_t = 1) - \E(\pc|D_t = 1)}^{\tau_{ATT}} \\
+& \qquad \qquad \qquad \underbrace{+ \E(\pc|D_t = 1) - \E(\pc|D_t = 0)}_{\text{selection bias}}
 \end{align}
-$$
+$$ {#eq-selectionbias}
 
-We can see that our naive estimator produces the $\tau_{ATT}$ **plus** an extra bit (called the selection bias). Thus, our naive estimator is [biased](quant1.qmd#finite-sample-properties-of-estimators), so we should be careful about using this naive estimator (correlation does not equal causation).
+We can see that according to @def-att, the first part of this correlation between $D$ and $Y$ is the ATT, one of the causal estimands. However, the correlation $\rho_{D,Y}$ does not only equal the $\tau_{ATT}$, as there is an extra bit, the *selection bias*. If this selection bias is not 0, then our correlation is clearly not equal to our ATT.
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Naive Estimator Biased for ATU
-
-The proof above shows how the naive estimator is a biased estimator for the $\tau_{ATT}$. We can also prove it is a biased estimator of the ATU:
+Let us look at the selection bias term more carefully:
 
 $$
-\begin{split}
-\hat\tau_{naive} & = \E(Y_i|D_i = 1) - \E(Y_i|D_i = 0) \\
-& = \underbrace{\E(Y_{1i}|D_i = 1) - \E(Y_{0i} | D_i = 0)}_{\because \text{ observed potential outcomes}} \\
-& = \E(Y_{1i}|D_i = 1) - \E(Y_{0i} | D_i = 0) + \underbrace{\E(Y_{1i}|D_i = 0) - \E(Y_{1i}|D_i = 0)}_{\because \text{ this equals 0, so we can add it}} \\
-& = \underbrace{\E(Y_{1i}|D_i = 0)- \E(Y_{0i}|D_i = 0)}_{\tau_{ATU}} + \underbrace{\E(Y_{1i}|D_i = 1) - \E(Y_{1i} | D_i = 0)}_{\text{Selection Bias}} \\
-\end{split}
+\underbrace{+ \E(\pc|D_t = 1) - \E(\pc|D_t = 0)}_{\text{selection bias}}
 $$
+
+The first part is the average potential outcome under parallel world $D_t = 0$ for the units that were assigned to treatment $D_t = 1$. The second part is the average potential outcome under parallel world $D_t = 0$ for units that were assigned to control $D_t = 0$.
+
+If this term is non-zero, that means the control group and treatment group have different average $\pc$ values. That means, before our experiment had even started, the control and treatment groups had different baseline potential outcome $\pc$. If for example, the treatment group $D_t = 1$ initially had a very low $\pc$, even after treatment with true effect $+\tau$, their outcome $Y_t$ may still be lower than people who didn't get the treatment. So, our correlation $\rho_{D,Y}$ would pick up a negative treatment effect, when the actual treatment effect is positive $+\tau$.
+
+A good intuitive example is the question: *does going to the hospital improve your life expectancy*? If we were to just collect correlation data, we would see that actually, people who went to the hospital have lower life expectancy.
+
+But, that is because people who go to the hospital in the first place already have low life expectancy $\pc$ compared to people who didn't go. The hospital will cause these people with low life expectancy to have longer lives (treatment effect $\tau$), but even with $\pc + \tau$, their life expectancy may still be lower than the $\pc$ of the group who never went to the hospital.
+
+Thus, our correlation measure shows a negative effect of going to the hospital on life expectancy, when in reality, going to the hospital does boost life expectancy, its just people who choose to go to the hospital start off with lower life expectancy than those who do not go.
+
+<br />
+
+## Confounders
+
+The reason for this difference in pre-experiment $\pc$ is a third variable $X$ is causing people to go to select treatment $D$ more frequently, and also has some effect on $Y$. $X$ is thus causing **selection bias**. An $X$ that causes selection bias is called a confounder.
+
+::: {#def-confounder style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Confounder
+
+A confounder is a third variable $X$ that causes selection into treatment $D$ and causes changes in outcome $Y$. If there is such a variable, this creates selection bias, and makes correlation not equal causation.
 :::
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Naive Estimator Biased for ATE
+<br />
 
-The proofs above shows how the naive estimator is a biased estimator for the $\tau_{ATT}$ and $\tau_{ATU}$. We can also prove it is a biased estimator of the ATE.
+For example, there is a well known correlation in the real world that *ice cream sales* are strongly correlated with *shark attacks*. So does *ice cream sales* actually cause more *shark attacks*?
 
-Let us first start with the ATE. Let us call $Y_{1i} - Y_{0i} := \tau_i$ for notation simplicity:
+The answer is (likely) no. The reason we see this correlation is because of a third variable - the *weather*. When the *weather* is warm, more people buy ice cream, and more people go to the ocean, hence increasing the amount of shark attacks.
+
+*Weather* is a third variable that we consider a confounder, as it affects both *ice cream sales* and *shark attacks*. There is actually no relationship between *ice cream sales* and *shark attacks* - the perceived correlation is caused by the confounder *weather*.
+
+Our goal in causal inference is to eliminate the effects of the confounders and isolate the effects between treatment and outcome. We can also visualise confounders in a structural causal model:
+
+![](images/clipboard-2044932443.png){fig-align="center" width="35%"}
+
+For example, the figure above, $X$ is confounding the relationship between $D \rightarrow Y$. This is because both $X$ is correlated with $D$ and $Y$. When we naively estimated the correlation $\rho_{D,Y}$, we are estimating the relationship between $D \rightarrow Y$ [and]{.underline} the relationship $D \leftarrow X \rightarrow Y$ . But, the true causal effect is $D \rightarrow Y$, without the other backdoor path. For accurate causal estimation, we need some way to "block" the path through $X$.
+
+Why isn't $V$ a confounder? Well, $V$ does not cause selection into $D$, as the arrow direction shows that $D$ causes $V$. Thus, $V$ is not causing selection bias. We do not care about variables caused by $D$.
+
+<br />
+
+## Randomisation
+
+One way we can eliminate selection bias is through randomly assigning our subjects to either treatment $D_t = 1$ or control $D_t = 0$. Since we are determining (through randomisation) who gets $D$, that means confounder $X$ is no longer determining who gets $D$. This breaks the relationship between $X \rightarrow D$, eliminating the backdoor path and selection bias.
+
+Randomisation implies that the assignment probabilities do not depend on the potential outcomes - the values of $\pc$ and $\pt$ do not affect the probability of a unit $t$ getting put into treatment $D_t = 1$ or control $D_t = 0$.
+
+$$
+\P(D_t = 1 | \pc) = \P(D_t = 1 | \pt)  =  \P(D_t = 1)
+$$
+
+This fact implies the critical assumption of randomisation, independence.
+
+::: {#def-randomisation style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Independence
+
+Randomisation, if done properly, implies independence. Independence, also called unconfoundedness or ignorability, is the statement that potential outcomes are independent of treatment:
+
+$$
+\pc, \pt \ind D_t
+$$
+
+This assumption, and the defintition of independence from @def-independence, implies that $\E Y_{t}(0)$ and $\E Y_{t}(1)$ are equal between treatment and control:
 
 $$
 \begin{align}
-\tau_{ATE} & = \E(Y_{1i} - Y_{0i})  = \E(\tau_i)\\
-& = \underbrace{\E(\tau_i|D_i = 1)\P(D_i = 1) + \E(\tau_i|D_i = 0)\P(D_i = 0)}_{\because \text{ weighted average of ATE and ATU by proportion}} \\
-& = \E(\tau_i|D_i = 1) \underbrace{(1 -\P(D_i = 0))}_{\because \text{ complement prob.}} + \E(\tau_i|D_i = 0)\P(D_i = 0) \\
+& \E(\pc|D_t = 1) \ = \ \E(\pc|D_t = 0) \ = \ \E \pc \\
+& \E(\pt|D_t = 1) \ = \ \E(\pt|D_t = 0) \ = \ \E \pt
+\end{align}
+$$
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Checking if Independence is Met
+
+When we are writing a paper, we might want to convince our readers that randomisation has indeed successfully been implemented, and that the assumption of independence has been met. The most common way to check this is with a **balance** check. We essentially consider a few likely confounders $X$. We then run a regression:
+
+$$
+X_t = \beta_0 + \beta_1 D_t + \eps_t
+$$
+
+$\beta_1$ will show the difference between $\E(X_t | D_t = 1)$ and $\E(X_t|D_t = 0)$. If $\beta_1$ is not statistically significantly different, then we can conclude the treatment and control groups are similar, and that randomisation has suceeded.
+
+Do note that the important thing in randomisation (and the assumption of independence) is not that $X_t$ is random between treatment and control, but rather potential outcomes are random. Although, if $X_t$ is random between treatment and control, that generally implies potential outcomes are also random.
+:::
+
+We can prove that randomisation and the independence assumption allow us to eliminate the selection bias shown in @eq-selectionbias. Let us start with our correlation from @eq-selectionbias:
+
+$$
+\begin{align}
+\rho_{D, Y} & = \overbrace{\E(\pt|D_t = 1)- \E(\pc|D_t = 1)}^{\tau_{ATT}} \\
+& \qquad \qquad \qquad + \underbrace{\E(\pc|D_t = 1) - \E(\pc|D_t = 0)}_{\text{selection bias}}
 \end{align}
 $$
 
-Let us call $\P(D_i = 0) := \pi$ for notation simplicity. Now, continue:
+Using the properties of independence from @def-randomisation, we can get
 
 $$
-\begin{split}
-& = \underbrace{\E(\Delta|D_i = 1) - \pi \E(\Delta|D_i = 1)}_{\because \text{ distribute out}} + \E(\tau_i|D_i = 0)\pi \\
-& = \E(\tau_i|D_i = 1) + \underbrace{\pi[\E(\tau_i|D_i = 0) - \E(\tau_i|D_i = 1)]}_{\because \ \pi \text{ factored out }} \\
-& = \E(Y_{1i} |D_i = 1) - \E(Y_{0i}|D_i = 1) + \pi[\E(\tau_i|D_i = 0) - \E(\tau_i|D_i = 1)] \\
-\end{split}
+\begin{align}
+\rho_{D, Y} & = \underbrace{\E(\pt|D_t = 1)- \E(\pc|D_t = 1)}_{\tau_{ATT}} + \underbrace{\E \pc - \E \pc}_{\text{selection bias}} \\
+& = \underbrace{\E(\pt|D_t = 1)- \E(\pc|D_i = 1)}_{\tau_{ATT}} + 0
+\end{align}
 $$
 
-Let us call the part $\pi[\E(\tau_i|D_i = 0) - \E(\tau_i|D_i = 1)] := \Pi(\tau_i)$. Now, continue to simplify:
+Thus, we can see the assumption of independence has removed our selection bias, and allowed us to accurately calculate our $\tau_{ATT}$ simply by looking at the correlation $\rho_{D,Y}$.
+
+We can also identify the ATE from our correlation $\rho_{D,Y}$, by simplifying once again using the properties implied by the assumption of independence from @def-randomisation:
 
 $$
-\begin{split}
-& = \E(Y_{1i} |D_i = 1) - \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) + \underbrace{\E(Y_{1i} |D_i = 0) - \E(Y_{0i}|D_i = 0)}_{\because \text{ these two cancel out so we add 0}}  \\
-& = \E(Y_{1i} |D_i = 1) - \E(Y_{0i}|D_i = 0) + \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& = \underbrace{\E(Y_i|D_i = 1)}_{\because \text{ observed outcome}} - \underbrace{\E(Y_i|D_i = 0)}_{\because \text{ observed outcome}} + \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& = \underbrace{\E(Y_{i} |D_i = 1) - \E(Y_{i}|D_i = 0)}_{\hat\tau_{naive}} + \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& = \hat\tau_{naive}+ \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i)
-\end{split}
+\begin{align}
+\rho_{D, Y} & = \underbrace{\E(\pt|D_i = 1)- \E(\pc|D_i = 1)}_{\tau_{ATT}} \\
+& = \underbrace{\E \pt - \E \pc}_{\tau_{ATE}}
+\end{align}
 $$
 
-Thus, we can see that $\tau_{ATE}$ is not equivalent to $\hat\tau_{naive}$. Let us isolate $\hat\tau_{naive}$ to identify the selection bias.
+Which according to @def-ate, is the ATE. Thus, under randomisation, our correlation measure $\rho_{D, Y} = \tau_{ATT} = \tau_{ATE}$. Recall our correlation measure again $\rho_{D, Y}$ was simply a comparison of observed outcomes between treatment and control groups:
 
 $$
-\begin{split}
-& \tau_{ATE} = \hat\tau_{naive}+ \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& -\hat\tau_{naive} = -\tau{ATE} + \E(Y_{1i} |D_i = 0)- \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& \hat\tau_{naive} = \tau_{ATE} - \E(Y_{1i} |D_i = 0) + \E(Y_{0i}|D_i = 1) + \Pi(\tau_i) \\
-& \hat\tau_{naive} = \tau_{ATE} + \underbrace{\E(Y_{0i}|D_i = 1)- \E(Y_{1i} |D_i = 0) + \Pi(\tau_i)}_{\text{selection bias}}
-\end{split}
+\rho_{D, Y} = \E(Y_t|D_t = 1) - \E (Y_t | D_t = 0) = \tau_{ATE} = \tau_{ATT}
 $$
-:::
+
+Since $\rho_{D, Y}$ only requires observed outcomes (not potential), we can calculate $\rho_{D, Y}$, which is also equal to the ATE and ATT under randomisation. Thus, we have identified a way to find the ATE and ATT with just observed outcomes.
 
 <br />
 
-### Confounders
+## Randomised Experiments
 
-Take the selection bias formula from above:
+So we have established that randomly assigning treatment and control can allow us to establish that correlation equals causation (under succesfull randomisation only).
 
-$$
-\underbrace{\E(Y_{0i}|D_i = 1)}_{Y_{0i}\text{ (treated)}} - \underbrace{\E(Y_{0i} | D_i = 0)}_{Y_{0i}\text{ (control)}}
-$$
+But how can we actually implement this design? The most simple way is the classic randomisation setup:
 
-If selection bias is non-zero, this essentially states that the expected potential outcome before treatment $Y_{0i}$ between the treatment and control groups is not equal.
+1.  We have $N$ total number of units in our experiment.
+2.  A random subset of $N_1$ will be assigned to treatment, and the remainder are set to control. We can choose $N_1$ to be any number (although 50% of $N$ is the most common).
+3.  We randomly select individuals into $N_1$ or not, until we reach the number $N_1$, where the remainder will be assigned to control.
 
-Or in other words, the treatment and control groups have some other variable causing differences even before treatment has begun. This implies that the differences between the treatment and control group may not be due to treatment $D$, but due to the underlying differences before treatment even occurred.
+However, the downside of this traditional method is that technically not every unit has an equal chance of being assigned to treatment - as after $N_1$ has been reached, all remaining units will go into control.
 
-**Confounders** are variables that cause the differences between treatment and control groups before the treatment has started. [**Confounders correlate with both the treatment variable and the outcome**]{.underline}. If a variable only correlates with $D$ or $Y$, then it is not a confounder. If must correlate with both $D$ **and** $Y$.
-
-This is why correlation does not equal causation - if the treatment and control group are different before we start the experiment, we cannot say the difference between the two is purely a result of treatment $D$.
-
-We can also think about confounders in terms of [omitted variable bias](clm.qmd#omitted-variable-bias). The formula for omitted variable bias is:
-
-$$
-\E\hat{\beta} = \beta + \eta \delta
-$$
-
-Where $\beta$ are the true population parameters, $\eta$ is the relationship between the confounder and treatment, and $\delta$ is the relationship between confounder and outcome.
-
-We can see that if either $\eta = 0$ or $\delta = 0$, then there is 0 omitted variable bias - which implies that a confounder that causes bias must be correlated with both the treatment and outcome.
-
-<br />
-
-### Assignment Mechanism
-
-The Assignment Mechanism is the procedure that determines the treatment status of each unit. In causal inference, we want to restrict the assignment mechanism, in order to remove the effect of selection bias.
-
-There are two types of studies that use different assignment mechanisms:
-
-1.  Randomised Experiments: The assignment mechanism is both known, and controlled by the researcher. Generally, the researcher chooses some type of randomisation.
-2.  Observational Studies: The assignment mechanism is not known to, or not under the control of the researcher. This means that confounders may be driving selection into treatment and control, inducing bias.
-
-Generally, the most credible studies are randomisation studies, since we can control interventions to parse out the effect of confounders. Observational studies generally rely on more assumptions that need to be met, and need to be defended for the study to be credible.
-
-In the next chapter, we will start off with Randomised Controlled Trials, which are a form of randomisation experiment. After that, we will start discusses observational studies, and what assumptions we need in these studies to identify the causal effect without selection bias.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-# **Directed Acyclic Graphs**
-
-### Causal Diagrams
-
-Causal Diagrams are a visual way to represent causal theories and frameworks, which allows us to visualise how variables interact with each other. Each Directed Acyclic Graph (DAG) has the following components:
-
-1.  Nodes: representing variables (which are also called vertices).
-2.  Directed Edges: Arrows that encode one-way causal theories between variables. For example, we might believe $Z$ causes $X$, so we will draw an arrow from $Z$ to $X$. These connections are **observable** (solid) or **unobservable** (dashed).
-
-![](images/clipboard-3648393347.png){fig-align="center" width="35%"}
-
-In the figure above, we have two unobserved variables: $Q$ and $Y$ We have three observed variables: $Z$, $D$, and $Y$. We can see the causal theories represented by arrows.
-
-We can see the causal effec $Z \rightarrow Y$ is confounded by $W$: $W$ is affecting who gets treatment $Z$, and causing $Y$. Thus, $W$ is affecting who gets selected into treatment $Z$, and selecting your potential outcome $Y$. Thus, this is an example of selection bias. $D \rightarrow Y$ is confounded by $Q$. $Z \rightarrow D$ is not confounded, so we can estimate this causal effect.
-
-<br />
-
-### Representing Interventions
-
-Treatments (interventions by the researcher, for example) are when we determine one variable exogenously (such as by randomisation). Or in other words, one variable is determined randomly externally, not caused by any variables within the directed acyclic graphs.
-
-Treatments are represented by the **do()** operator. When the treatment is exogenous, we can break all the connections into that variable's node. This is because we are determining the value of the variable, not any other variables.
-
-![](images/clipboard-1438441757.png){fig-align="center" width="35%"}
-
-An intervention here is on variable $D$. That means the value of $D$ is being chosen outside of this graph (by randomisation, or the researcher). This allows us to delete the arrow between $Q \rightarrow D$ and $Z \rightarrow D$. This is because we are exogenously determining $D$, so $Q$ and $Z$ are not determining the value of $D$.
-
-With exogenously determined variables, we can find the causal effect that variable is causing on another.
-
-<br />
-
-### Blocked Paths
-
-A set of nodes $\{ \mathbf S \}$ blocks a path $p$ if either:
-
-1.  If the path $p$ contains at least one arrow-emitting node included in the set of nodes $S$, or
-2.  The path $p$ contains at least one collision node (multiple arrows point into it) that is outside the set of nodes $S$, and the collision node has no descendant within the set of nodes $S$ (no arrows go out of it to another node).
-
-![](images/clipboard-2373065460.png){fig-align="center" width="40%"}
-
-Take this above causal diagram. We can see the following:
-
-1.  The path $D \rightarrow P \rightarrow Y$ is blocked by set $\{P\}$, because node $P$ is one arrow-emitting node in the path $D \rightarrow P \rightarrow Y$.
-2.  The path $D \leftarrow M \rightarrow Y$ is blocked by set $\{M\}$, because node $M$ is one arrow-emitting node in the path $D \leftarrow M \rightarrow Y$.
-3.  $D \leftarrow Z \rightarrow M \rightarrow Y$ is blocked by $\{M\}$, $\{Z\}$, or $\{M, Z\}$.
-
-Blocking paths is important, since in order to estimate $D \rightarrow Y$, we need to block any other path between $D$ and $Y$ that is not directly $D \rightarrow Y$.
-
-<br />
-
-<br />
-
-------------------------------------------------------------------------
-
-# **Implementation in R**
-
-This section will show how you can create DAGs in R. We will need the *ggdag* and *dagitty* packages.
-
-```{r, eval = FALSE}
-library(ggdag)
-library(dagitty)
-```
+Instead, we can do bernoulli randomisation. In bernoulli randomisation, we have a probability of being assigned to treatment given by the bernoulli distribution. We do not fix $N_1$ before randomisation, so everyone gets the same probability of being assigned to treatment. This does mean that if we run multiple randomisation trials, each will likely have a different amount of units in treatment $N_1$.
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Simple DAGs with Dagify
+## Cluster Randomisation
 
-You can create a very simple DAG with dagify as follows:
+Cluster randomisation is when we randomly assign units (or have individuals naturally) in groups. Every unit within a group (called a cluster) will get the same treatment. We randomly sample the groups to get the treatment or control.
 
-```{r, eval = FALSE}
+For example, we could randomise development treatment at the village level, or randomise treatment of a cirriculum at the school level.
 
-dag_object <- dagify(
-  Y ~ X + D, #Y is caused by X and D
-  D ~ X #D is caused by X
-)
-
-ggdag(dag_object) + theme_dag()
-```
-
-This dag is not very customisable. This can be an issue if you want nodes to be in a specific location. See below for a more customisable DAG.
+The main reason for this is to prevent SUTVA violations. For example, imagine you are testing the effects of a new curriculum. If you randomise by each student, students will talk to their friends, and treated individuals may teach control individuals about the new curriculum. But by randomising by school (either an entire school gets or does not get the new curriculum), this concern is not a huge issue.
 :::
 
 ::: {.callout-note collapse="true" appearance="simple"}
-## Custom DAGs with Dagitty
+## Stratified Randomisation
 
-You can create more complex DAGs with Dagitty. Dagitty allows us to position nodes in a coordinate system, which is useful in some purposes.
+Stratified (also called blocked or conditional) randomisation are when randomisation occurs separately within levels of some covariates(s) $X$. Generally, you separate your sample of $N$ units into $J$ subgroups. For example, you could split people up into male or female, then randomly sample within each group, rather than everyone together.
 
-```{r, eval = FALSE}
+The reason you might want to do this is to ensure that both your treatment and control are balanced. For example, let us say you have 4 subjects, with pre-treatment potential outcomes $\pc = \{2, 2, 8, 8\}$.
 
-dag_object <- dagitty('dag {
-      D [pos = "0, 1"]
-      Y [pos = "2, 1"]
-      X [pos = "1, 2"]
-      
-      D -> Y
-      D <- X -> Y
-  }')
+If you are randomly assigning, you have a 33% chance you end up with an assignment where $\{8, 8\}$ are placed in one group, and $\{2, 2\}$ are placed in another group. In this case, our treatment/control groups would be very different, and this would violate our independence assumption.
 
-ggdag(dag_object) + theme_dag()
-```
-
-The *pos* arguments have the coordinates of where you want to put each node.
-
-Below are the path connections, where you can use -\> and \<- to indicate relationships.
+By stratifying our sample before into two subgroups, with group 1 being $\{2, 2\}$ and group 2 being $\{8,8\}$, and randomly sampling one from each group into treatment, we are guaranteed to have more balance.
 :::
+
+When we are writing a paper, we might want to convince our readers that randomisation has indeed successfully been implemented, and that the assumption of independence has been met. The most common way to check this is with a **balance** check. We essentially consider a few likely confounders $X$. We then run a regression:
+
+$$
+X_t = \underbrace{\beta_0 + \beta_1 D_t}_{\E(X_t|D_t)} + \eps_t
+$$
+
+$\beta_1$ will show the difference between $\E(X_t | D_t = 1)$ and $\E(X_t|D_t = 0)$. If $\beta_1$ is not statistically significantly different, then we can conclude the treatment and control groups are similar, and that randomisation has succeeded.
+
+We can estimate the ATE in a randomisation setting where independence is met simply with a correlation measure, such as a [linear model](ols.qmd#the-classical-linear-model):
+
+$$
+Y_t = \underbrace{\alpha + \tau D_t}_{\E(Y_t | D_t)} + \eps_t
+$$
+
+Where $\tau$ can be estimated with OLS, GLS, or MLE (although OLS with robust standard errors is generally the preferred estimator). A difference-in-means estimator is also possible.
+
+Significance testing will be done with a t-test (@def-ttest) like you do in OLS. [Robust standard errors](gls.qmd#robust-standard-errors) (to account for heteroscedasticity) should be used as a default, unless you can prove homoscedasticity is met. If you are using cluster randomisation, you should use cluster-robust standard errors. [Bootstrap inference](inference.qmd#nonparametric-bootstrap) is also a common choice if your sample size is quite small.
+
+While the linear model is the best way to estimate the ATE specifically, if you are less concerned with the ATE, you can also use other models, such as the logistic model, poisson model, and many more. While the results may not be exactly the ATE, they can be interpreted causally if you are randomising.
+
+<br />
+
+## Randomisation Inference
+
+While you can use a traditional t-test like in OLS, we can also do a different form of inference: randomisation inference. This assumes a certain form of null hypothesis, called the sharp null hypothesis:
+
+$$
+H_0^s: \pt = \pc, \quad H_a^s: \pt ≠ \pc
+$$
+
+This null hypothesis basically asserts that there is no treatment effect $\tau_t$ for any individual $t$ in the study.
+
+Assuming $H_0^s$ is true, we can actually fully construct the potential outcomes $\pc, \pt$, since we know every unit has 0 individual treatment effect. Thus, for any unit $t$, their observed $Y_t = \pc = \pt$ if there is no treatment effect.
+
+Since we can fully construct the potential outcomes, we can recreate the sampling distribution without asymptotic properties of our estimator, as we do not need the central limit theorem (@thm-clt).
+
+First, we want to calculate the total number of randomisations possible. If we have $N$ total units, and $N_1$ in the treatment group and $N_0$ in the control group, we have
+
+$$
+\begin{pmatrix} N \\ N_1 \end{pmatrix} = \frac{N!}{N_1!N_0!}
+$$
+
+number of possible randomisation assignments. Then, for each randomisation assignment, we calculate the $\hat\tau$ of that randomisation.
+
+![](images/clipboard-2586795073.png){fig-align="center" width="70%"}
+
+And now with the $\hat\tau$ of every possible randomisation, we can plot it in a distribution to create the sampling distribution under the null hypothesis:
+
+![](images/clipboard-993993851.png){fig-align="center" width="60%"}
+
+Now, we essentially conduct a hypothesis test on this sampling distribution, and calculate the p-value as normal. If our result is significant, we have evidence to reject our sharp null hypothesis $H_0^s$.
+
+The benefit of randomisation inference is that it is assumption free- we do not rely on asymptotic properties of estimators, which frequently require large sample sizes.
+
+However, the downside of randomisation inference is that it only tests the sharp null hypothesis $H_0^s$. But this might not be the hypothesis we are actually interested in.
