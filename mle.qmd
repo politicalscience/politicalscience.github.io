@@ -1,16 +1,14 @@
 # Maximum Likelihood
 
-In the previous chapters, we have covered estimators that primarily deal with linear models. However, not every model is linear.
+In the previous chapters, we have mostly talked about the theory of random variables and statistical inference.
 
-In this chapter, we cover the Maximum Likelihood Estimator (MLE), the most commonly used estimator in statistics, especially commonly used for non-linear models. We discuss the intuition and mathematics behind the MLE, and how statistical inference is conducted with the MLE.
+In this chapter, we cover the Maximum Likelihood Estimator (MLE), the most commonly used estimator in statistics. We discuss the intuition and mathematics behind the MLE, and how statistical inference is conducted with the MLE.
 
 <br />
 
 ## Likelihood Function
 
-So far, the estimators we have covered can only work with the linear model in the form $\b y = \b{X\beta} + \b\eps$. However, a lot of [data generating processes](inference.qmd#data-generating-process) do not take this form.
-
-The maximum likelihood estimator allows us to estimate parameters $\theta$ that are not in the linear model form - as long as we know the form/probability density function of the data generating process. MLE also does not have to meet spherical errors, and only needs to meet the assumptions of [i.i.d.](ols.qmd#assumption-2-independent-and-identically-distributed-i.i.d.) and [exogeneity](ols.qmd#assumption-4-strict-exogeneity) (proper model specification).
+The maximum likelihood estimator allows us to estimate parameters $\theta$ as long as we know the form/probability density function of the [data generating process](inference.qmd#data-generating-process).
 
 In statistics, to estimate the population parameters $\b\theta$, we gather some sample of observations $(y_1, y_2, \dots, y_n)$. Our random sample $(y_1, y_2, \dots, y_n)$ are each realisations of a random variable (our random selection from the population) $Y_1, Y_2, \dots, Y_n$.
 
@@ -457,67 +455,6 @@ An alternative to the Newton-Raphson algorithm is the **Fisher-scoring algorithm
 
 <br />
 
-## OLS as a Maximum Likelihood
-
-Previously, we discussed the [ordinary least squares estimator](ols.qmd) used on the [classical linear model](ols.qmd#the-classical-linear-model). We can actually show that the OLS estimator is a maximum likelihood estimator when we assume a linear data generating process
-
-$$
-Y_t \sim \mathcal N(\beta_0 + \beta_1 X_{t1} + \dots + \beta_p X_{tp}, \ \sigma^2)
-$$
-
-We will simplify this notation to
-
-$$
-Y_t \sim \mathcal N(\b x_t^\top \b\beta, \ \sigma^2)
-$$
-
-Where $\b x_t$ is a vector $\b x_t = (1, X_{t1}, \dots, X_{tp}$ and $\b\beta$ is a vector $\b\beta = (\beta_0, \dots, \beta_p)$. Using the probability density function of a normal distribution (@def-normalpdf) , we can express the PDF of $Y_i$ as:
-
-$$
-f_{Y_t}(y_t) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{1}{2\sigma^2}(y_t - \b x_t^\top \b\beta)^2}
-$$
-
-Now, that means our log-likelihood $\ell$ (@def-loglike) for our sample $(y_1, \dots, y_n)$ we have is:
-
-$$
-\ell(\b\beta, \sigma^2; \ \b y) = \sum\limits_{t=1}^n \log \left( \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{1}{2\sigma^2}(y_t - \b x_t^\top \b\beta)^2} \right)
-$$
-
-Now, using the property of logarithms, we can get
-
-$$
-\begin{align}
-\ell(\b\beta, \sigma^2; \ \b y) & = \sum\limits_{t=1}^n \left[\log (1) - \log(\sqrt{2 \pi \sigma^2}) + \log \left( e^{-\frac{1}{2\sigma^2}(y_t - \b x_t^\top \b\beta)^2} \right) \right] \\
-& = \sum\limits_{t=1}^n \left[ 0 - \frac{1}{2} \log (2\pi\sigma^2) + \left( -\frac{1}{2\sigma^2}(y_t  - \b x_t^\top \b\beta)^2 \right) \right] \\
-& = \sum\limits_{t=1}^n \left[- \frac{1}{2} \log (2\pi\sigma^2)   -\frac{1}{2\sigma^2}(y_t  - \b x_t^\top \b\beta)^2 \right]
-\end{align}
-$$
-
-Now, using the property of summations, we get
-
-$$
-\ell(\b\beta, \sigma^2; \ \b y) = -\frac{n}{2} \log(2\pi\sigma^2) - \frac{1}{2\sigma^2} \color{blue}{\sum\limits_{t=1}^n (y_t - \b x_t^\top \b\beta)^2}
-$$
-
-If we look at the blue, we can see this is the sum of squared residuals (@def-ssr). Thus,
-
-$$
-\begin{align}
-\ell(\b\beta, \sigma^2; \ \b y) & = -\frac{n}{2} \log(2\pi\sigma^2) - \frac{1}{2\sigma^2}(\b y - \hat{\b y})^\top (\b y - \hat{\b y})\\
-& = -\frac{n}{2} \log(2\pi\sigma^2) - \frac{1}{2\sigma^2}(\b y  - \b{X\beta})^\top (\b y - \b{X\beta})
-\end{align}
-$$
-
-And if we take the gradient of the log-likelihood $\ell$ in resepct to vector $\b\beta$, we get the same first order condition as OLS:
-
-$$
-\frac{\partial \ell}{\partial \b\beta} = -2 \b{X^\top y} + 2 \b{X^\top X\beta} = 0
-$$
-
-With the same first order conditions, we will get the same $\hat{\b\beta}$ estimates as OLS. Thus, we can see under the conditions of the classical linear model, the OLS estimator is a maximum likelihood estimator.
-
-<br />
-
 ## Statistical Inference
 
 Under the asymptotic properties of MLE (@thm-mleasymptotics), we know the estimator will be normally distributed. Using this fact, and the variance of MLE (@thm-mlevariance), we can do hypothesis testing with one parameter with the wald test:
@@ -546,14 +483,12 @@ And we consult a standard normal distribution $\mathcal N(0, 1)$ to get a p-valu
 
 <br />
 
-For testing multiple coefficients at once, like the f-test for OLS (@def-ftest), we can use the Likelihood Ratio test. Like the f-test, the likelihood ratio test compares two models:
+For testing multiple coefficients at once, we can use the Likelihood Ratio test. The likelihood ratio test compares two models:
 
 -   $M_0 : Y_t = \beta_0 + \sum\limits_{j=1}^g \beta_j X_{tj} + \eps_i$ (the smaller null model with $g$ parameters).
 -   $M_a : Y_t = \beta_0 + \sum\limits_{j=1}^g \beta_j X_{tj} + \sum\limits_{j=g+1}^p \beta_j X_{tj} \eps_i$ (the bigger model with the original $g$ parameters in the null + additional parameters up to $p$).
 
-In the F-test, we used the $R^2$ metric (@def-rsquared) to compare the two models. However, $R^2$ only exists in OLS, not MLE.
-
-Instead, for MLE, we will use the likelihood function $L$. After all, the likelihood $L$ (@def-likelihood) gives us the probability of observing a sample given parameters $\b\theta$. If the probability is higher, that likely means our model is better. Thus, the likelihood ratio test compares the difference between the likelihoods of two models.
+To compare the two models, we will use the likelihood function $L$. After all, the likelihood $L$ (@def-likelihood) gives us the probability of observing a sample given parameters $\b\theta$. If the probability is higher, that likely means our model is better. Thus, the likelihood ratio test compares the difference between the likelihoods of two models.
 
 ::: {#def-likelihoodratio style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
 ## Likelihood Ratio Test
@@ -575,7 +510,7 @@ If the p-value is less than 0.05, that means our $M_a$ model (and all of its ext
 
 ## Information Criterion Statistics
 
-Recall that in OLS, we had the $R^2$ metric that tells us how "good" the fit of our model is. For MLE, we can also have metrics that tell us the fit of our model, called information criterion statistics.
+The previously discussed likelihood ratio test (@def-likelihoodratio) allows us to compare bigger models to smaller models, as long as the bigger model has all of the smaller model's parameters. However, what if we want to choose between models with different parameters?
 
 Recall that likelihood function $L$ (@def-likelihood) is the probability of observing a particular sample given parameters $\b\theta$. If the probability is higher, that likely means our model is better. Thus, likelihood $L$ allows us to compare different models.
 
