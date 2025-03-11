@@ -49,9 +49,12 @@ Common causes of SUTVA violations include:
 -   Dilution: For example, in vaccines, there is herd immunity. That means other people getting the vaccines also improves my health outcomes.
 :::
 
-If we know the two hypothetical parallel worlds are identical to each other [except]{.underline} for treatment $D_t$, then we know any difference in $Y$ outcomes between the two worlds must be a result of treatment $D$. This difference in potential outcomes is called the individual treatment effect $\tau$.
+If we know the two hypothetical parallel worlds are identical to each other [except]{.underline} for treatment $D_t$, then we know any difference in $Y$ outcomes between the two worlds must be a result of treatment $D$. This introduces us to the causal estimands - the true causal effects in the population:
 
-::: {#def-ite style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+::: {.panel-tabset .nav-pills}
+## ITE
+
+::: {#def-ite}
 ## Individual Treatment Effect
 
 The individual treatment effect of treatment $D$ on $Y$, for a specific unit $i$, is given by the difference between the potential outcomes.
@@ -61,9 +64,58 @@ $$
 $$
 :::
 
-<br />
+## ATE
 
-However, there is an issue: in the real world, we obviously do not have two hypothetical parallel worlds. We only have one world - either unit $t$ gets treated $D_t = 1$ or unit $t$ does not get treated $D_t = 0$. The world we actually live in is called the observed outcome, and the parallel world we do not see is called the counterfactual.
+::: {#def-ate}
+## Average Treatment Effect
+
+The ATE is the average individual treatment effects $\tau_i$ in the population.
+
+$$
+\tau_{ATE} = \E(\tau_t) \  = \  \E(\pt - \pc)  \ = \  \E \pt - \E \pc
+$$
+:::
+
+## ATT
+
+::: {#def-att}
+## Average Treatment Effect on the Treated
+
+The ATT is the average individual treatment effect $\tau_i$ for only units that were assigned to the treatment group $D_i = 1$:
+
+$$
+\tau_{ATT} = \E(\tau_t | D_t = 1) \ = \ \E(\pt - \pc | D_t = 1)
+$$
+:::
+
+## ATU
+
+::: {#def-atu}
+## Average Treatment Effect on the Untreated
+
+The ATU is the average individual treatment effect $\tau_i$ for only units that were assigned to the control group $D_i = 0$:
+
+$$
+\tau_{ATT} = \E(\tau_t | D_t = 0) \ = \ \E(\pt - \pc | D_t = 0)
+$$
+:::
+
+## CATE
+
+::: {#def-cate}
+## Conditional Average Treatment Effect
+
+The CATE is the average treatment effect, conditional on some other characteristic/covariate $X$ value:
+
+$$
+\tau_{CATE}(x) = \E(\tau_t| X = x) \ = \ \E(\pt - \pc|X=x)
+$$
+
+This estimand is also sometimes called the local average treatment effect (LATE).
+:::
+:::
+
+However, there is an issue: in the real world, we obviously do not have two hypothetical parallel worlds. We only have one world - either unit $t$ gets treated $D_t = 1$ or unit $t$ does not get treated $D_t = 0$. The world we actually live in is called the observed outcome, and the parallel world we do not see is called the counterfactual. The fact we cannot observe the counterfactual is called the **fundamental problem of causal inference**.
 
 ::: {#def-observedoutcomes style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
 ## Observed Outcomes and Counterfactuals
@@ -88,68 +140,6 @@ The potential outcome that is not observed is the counterfactual outcome.
 
 <br />
 
-The fact that we cannot observe the two parallel worlds, and that the counterfactual is never observable in our real world, is called the **fundamental problem of causal inference**. Our goal in causal inference will be to somehow approximate/estimate these counterfactuals in order to estimate causal effects. To distinguish potential outcomes $\pt, \pc$ from observed outcomes $Y_t$, I will notate potential outcomes in purple.
-
-<br />
-
-## Causal Estimands
-
-Earlier, we discussed the individual treatment effect $\tau_t$ from @def-ite. However, because of the fundamental problem of causal inference, we do not know the counterfactuals.
-
-At an individual level, these counterfactuals are almost impossible to estimate, so we typically do not use the individual treatment effect. Instead, we will typically look at the averages of treatment effects. The most common causal estimand (true value in the population) we will use is the average treatment effect.
-
-::: {#def-ate style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
-## Average Treatment Effect
-
-The ATE is the average individual treatment effects $\tau_i$ in the population.
-
-$$
-\tau_{ATE} = \E(\tau_t) \  = \  \E(\pt - \pc)  \ = \  \E \pt - \E \pc
-$$
-:::
-
-<br />
-
-Obviously, we do not observe the counterfactual outcomes. However, at a group level, their averages are more easily estimated, which we will explore later in the chapter.
-
-The ATE is not the only causal estimand. We will often consider a few other causal estimands.
-
-::: {#def-att style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
-## Average Treatment Effect on the Treated
-
-The ATT is the average individual treatment effect $\tau_i$ for only units that were assigned to the treatment group $D_i = 1$:
-
-$$
-\tau_{ATT} = \E(\tau_t | D_t = 1) \ = \ \E(\pt - \pc | D_t = 1)
-$$
-:::
-
-<br />
-
-The ATT is usually not equal to the ATE, but in specific circumstances, they can be equal.
-
-The opposite estimand also exists - the average treatment effect on the untreated (ATU). This is typically not something we calculate, but it is used in some proofs.
-
-Sometimes, we also might believe there are heterogenous treatment effects - i.e. some third variable strengthens or weakens the strength of an estimand. For example, perhaps a policy has more positive effects on females than males. Thus, we can also find the ATE conditional on some third variable.
-
-::: {#def-cate style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
-## Conditional Average Treatment Effect
-
-The CATE is the average treatment effect, conditional on some other characteristic/covariate $X$ value:
-
-$$
-\tau_{CATE}(x) = \E(\tau_t| X = x) \ = \ \E(\pt - \pc|X=x)
-$$
-
-This estimand is also sometimes called the local average treatment effect (LATE).
-:::
-
-<br />
-
-These causal estimands are all estimands - true population parameters. Our goal will be to fill in the missing counterfactuals with some **identification** strategy, in order to estimate these true population estimands.
-
-<br />
-
 ## Structural Causal Models
 
 An alternative causal framework, pioneered by Pearl, is called the structural causal models. This framework uses graphical models (called directed acyclic graphs) to illustrate causality.
@@ -167,18 +157,29 @@ Every causal graph illustrates how different variables are connected to each oth
 2.  The inderect/backdoor path $D \leftarrow Q \rightarrow Y$.
 3.  The indirect/backdoor path $D \leftarrow Z \leftarrow W \rightarrow Y$.
 
-The goal in causal inference is to get rid of all the indirect/backdoor paths, allowing us to isolate the direct relationship between $D$ and $Y$.
+The goal in causal inference is to get rid of all the indirect/backdoor paths, allowing us to isolate the direct relationship between $D$ and $Y$. There are two ways to isolate the direct relationship: external intervention and blocking paths.
 
-One way to block a path is through an **external intervention**. For example, in the figure below, variable $D$ is directly caused by $M$ and $Z$. This allows indirect paths between $D$ and $Y$ to flow between $M$ and $Z$.
+::: {.panel-tabset .nav-pills}
+## External Intervention
 
-However, if we externally decide the value of $D$ (such as through random assignment of $D$), then we are determining the value of $D$ externally, and $Z$ and $M$ will no longer determine $D$. Thus, the indirect/backdoor paths from $Z$ and $M$ will be eliminated.
+One way to isolate a causal path is through an **external intervention**. For example, in the figure below, variable $D$ is directly caused by $Q$ and $Z$. This allows indirect paths between $D$ and $Y$ to flow between $Q$ and $Z$.
 
-![](images/clipboard-3519172210.png){fig-align="center" width="35%"}
+![](images/clipboard-3951308334.png){fig-align="center" width="35%"}
+
+However, by externally determining $D$ (represented with the operator $d_0$), we can break the paths $Q \rightarrow D$ and $Z \rightarrow D$. This is because if we are deciding who gets $D$ (such as by randomisation), that means we are deciding $D$, not $Q$ or $Z$. This will allow us to block backdoor paths, and our new diagram will be:
+
+![](images/clipboard-2834742175.png){fig-align="center" width="35%"}
+
+And thus, we have isolated the causal relationship.
+
+## Blocking Paths
 
 On the other hand, we can block indirect/backdoor paths through conditioning on a set of variables/nodes $\set X$. A set of nodes $\cal X$ blocks a path if one of two is true:
 
 1.  A path is blocked if our set of conditioning nodes $\set X$ includes at least one arrow-emitting node within that path.
 2.  A path is blocked if the path contains a collision node (where multiple arrows point into it), and that collision node is not included in our set of conditioning nodes $\set X$.
+
+![](images/clipboard-3519172210.png){fig-align="center" width="40%"}
 
 For example, in the figure above, we can see:
 
@@ -187,7 +188,8 @@ For example, in the figure above, we can see:
 3.  The path $D \leftarrow Z \rightarrow M \rightarrow Y$ is blocked by either $\set X = \{M\}, \{Z\}$ or $\{M, Z\}$.
 4.  The path $D \leftarrow Z \rightarrow M \leftarrow Q \rightarrow Y$ is blocked by an empty set $\set X = \varnothing$, because $M$ is a collider node in this path and we do not need to include it.
 
-We will discuss the idea of blocking paths more in the quasi-experimental research designs covered in Part III.
+We will discuss the idea of blocking paths more in the next chapter.
+:::
 
 <br />
 

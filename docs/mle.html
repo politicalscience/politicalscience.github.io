@@ -201,13 +201,12 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#likelihood-function" id="toc-likelihood-function" class="nav-link active" data-scroll-target="#likelihood-function"><span class="header-section-number">3.1</span> Likelihood Function</a></li>
   <li><a href="#maximum-likelihood" id="toc-maximum-likelihood" class="nav-link" data-scroll-target="#maximum-likelihood"><span class="header-section-number">3.2</span> Maximum Likelihood</a></li>
-  <li><a href="#score-function" id="toc-score-function" class="nav-link" data-scroll-target="#score-function"><span class="header-section-number">3.3</span> Score Function</a></li>
-  <li><a href="#fisher-information" id="toc-fisher-information" class="nav-link" data-scroll-target="#fisher-information"><span class="header-section-number">3.4</span> Fisher Information</a></li>
-  <li><a href="#variance-and-asymptotics" id="toc-variance-and-asymptotics" class="nav-link" data-scroll-target="#variance-and-asymptotics"><span class="header-section-number">3.5</span> Variance and Asymptotics</a></li>
-  <li><a href="#cramér-rao-bound" id="toc-cramér-rao-bound" class="nav-link" data-scroll-target="#cramér-rao-bound"><span class="header-section-number">3.6</span> Cramér-Rao Bound</a></li>
-  <li><a href="#newton-raphson-algorithm" id="toc-newton-raphson-algorithm" class="nav-link" data-scroll-target="#newton-raphson-algorithm"><span class="header-section-number">3.7</span> Newton-Raphson Algorithm</a></li>
-  <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference"><span class="header-section-number">3.8</span> Statistical Inference</a></li>
-  <li><a href="#information-criterion-statistics" id="toc-information-criterion-statistics" class="nav-link" data-scroll-target="#information-criterion-statistics"><span class="header-section-number">3.9</span> Information Criterion Statistics</a></li>
+  <li><a href="#score-and-fisher-information" id="toc-score-and-fisher-information" class="nav-link" data-scroll-target="#score-and-fisher-information"><span class="header-section-number">3.3</span> Score and Fisher Information</a></li>
+  <li><a href="#variance-and-asymptotics" id="toc-variance-and-asymptotics" class="nav-link" data-scroll-target="#variance-and-asymptotics"><span class="header-section-number">3.4</span> Variance and Asymptotics</a></li>
+  <li><a href="#cramér-rao-bound" id="toc-cramér-rao-bound" class="nav-link" data-scroll-target="#cramér-rao-bound"><span class="header-section-number">3.5</span> Cramér-Rao Bound</a></li>
+  <li><a href="#newton-raphson-algorithm" id="toc-newton-raphson-algorithm" class="nav-link" data-scroll-target="#newton-raphson-algorithm"><span class="header-section-number">3.6</span> Newton-Raphson Algorithm</a></li>
+  <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference"><span class="header-section-number">3.7</span> Statistical Inference</a></li>
+  <li><a href="#information-criterion-statistics" id="toc-information-criterion-statistics" class="nav-link" data-scroll-target="#information-criterion-statistics"><span class="header-section-number">3.8</span> Information Criterion Statistics</a></li>
   </ul>
 </nav>
     </div>
@@ -284,7 +283,7 @@ L(\b\theta; \ \b y) = f_Y(\b y; \b \theta)
 \hat{\b\theta} = \max\limits_{\b\theta} L(\b\theta; \b y)
 \]</span></p>
 <p>However, this maximisation problem is quite difficult, as the likelihood function (<a href="#def-likelihood" class="quarto-xref">definition&nbsp;<span>3.1</span></a>) is a product. Finding the derivative of a product is not straight forward.</p>
-<p>Luckily, we have an alternative, the log-likelihood function <span class="math inline">\(\ell(\b\theta ; \b y)\)</span>, since the same <span class="math inline">\(\b\theta\)</span> values that maximise <span class="math inline">\(L\)</span> will also maximise <span class="math inline">\(\ell\)</span>. The log-likelihood function can be derived by taking the log of the likelihood function</p>
+<p>Luckily, we have an alternative, the log-likelihood function <span class="math inline">\(\ell(\b\theta ; \b y)\)</span>, which is far easier to maximise, and the same <span class="math inline">\(\b\theta\)</span> values that maximise <span class="math inline">\(L\)</span> will also maximise <span class="math inline">\(\ell\)</span>. The log-likelihood function can be derived by taking the log of the likelihood function</p>
 <p><span class="math display">\[
 \begin{align}
 \ell(\b \theta; \b y) &amp; = \log L(\b \theta; \b y) \\
@@ -310,11 +309,9 @@ L(\b\theta; \ \b y) = f_Y(\b y; \b \theta)
 \]</span></p>
 </div>
 <p><br></p>
-<p>The summation notation in the log-likelihood makes it far easier to maximise by finding the derivative. Thus, in most applications, we will deal with the log-likelihood function for estimation purposes.</p>
-<p><br></p>
 </section>
-<section id="score-function" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="score-function"><span class="header-section-number">3.3</span> Score Function</h2>
+<section id="score-and-fisher-information" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="score-and-fisher-information"><span class="header-section-number">3.3</span> Score and Fisher Information</h2>
 <p>The gradient of the log-likelihood <span class="math inline">\(\ell(\b\theta; \b y)\)</span> in respect to vector <span class="math inline">\(\b\theta\)</span> is the score function.</p>
 <div id="def-scorefunc" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
 <p><span class="theorem-title"><strong>Definition 3.3 (Score Function)</strong></span> The score function <span class="math inline">\(s\)</span> is given by:</p>
@@ -330,6 +327,10 @@ s(\b\theta; \b y) = \frac{\partial}{\partial\b\theta} \log(f_Y(\b y; \b\theta))
 <p>As we know through calculus, to maximise a function, we set the gradient equal to zero. Thus, the estimates <span class="math inline">\(\hat{\b\theta}\)</span> of maximum likelihood estimation are the set of <span class="math inline">\(\b\theta\)</span> that make <span class="math inline">\(s(\b\theta; \b y) = 0\)</span>.</p>
 <p>Let us define the true parameter value in the population as <span class="math inline">\(\b\theta_0\)</span>. That means, the true score function of <span class="math inline">\(\b\theta_0\)</span> is <span class="math inline">\(s(\b\theta_0; \b y)\)</span>.</p>
 <p>Vector <span class="math inline">\(\b y\)</span>, our sample, is the reasliation of a set of random variables as we described earlier. Thus, the true population parameter <span class="math inline">\(\b\theta_0\)</span>’s score function <span class="math inline">\(s(\b\theta_0, \b y)\)</span> is actually also a random variable in respect to random <span class="math inline">\(\b y\)</span>. This means the true population parameter score function <span class="math inline">\(s(\b\theta_0, \b y)\)</span> has a expectation and variance.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Expectation</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Variance and Fisher Information</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Observed Information</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="thm-scorezero" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
 <p><span class="theorem-title"><strong>Theorem 3.1</strong></span> The expectation of the true population parameter <span class="math inline">\(\b\theta\)</span>’s score function is 0.</p>
 <p><span class="math display">\[
@@ -360,10 +361,8 @@ s(\b\theta; \b y) = \frac{\partial}{\partial\b\theta} \log(f_Y(\b y; \b\theta))
 \end{align}
 \]</span></p>
 <p>And the last step is because the integral (are under the curve) of a PDF is always 1 (the entire probability space). Thus, we see that the expectation of the score function at true population parameter <span class="math inline">\(\b\theta_0\)</span> in respect to random vector <span class="math inline">\(\b y\)</span> is 0.</p>
-<p><br></p>
-</section>
-<section id="fisher-information" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="fisher-information"><span class="header-section-number">3.4</span> Fisher Information</h2>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <p>We have established the expected value of the score function of the true population parameter <span class="math inline">\(\b\theta_0\)</span>. As a random variable, we can also consider its variance. From the definition of variance (<a href="random.html#def-var" class="quarto-xref">definition&nbsp;<span>1.3</span></a>), we know:</p>
 <p><span class="math display">\[
 \V[s(\b\theta_0; \b y)] = \E[s(\b\theta_0; \b y) - \E(s(\b\theta_0; \b y))]
@@ -391,7 +390,9 @@ s(\b\theta; \b y) = \frac{\partial}{\partial\b\theta} \log(f_Y(\b y; \b\theta))
 </div>
 <p><br></p>
 <p>The fischer information is always positive: <span class="math inline">\(\mathcal I(\theta) ≥ 0\)</span>. Higher fisher information implies that the absolute value of the score is higher. Also importantly, the fisher information does not depend on the random realisation of sample <span class="math inline">\(\b y\)</span>, since the expectation averages it our.</p>
-<p>However, the fischer information matrix can be sometimes difficult to calculate. Thus, we sometimes use what is called the observed information matrix <span class="math inline">\(\b I(\b\theta, \b y)\)</span>, without the expectation.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>The fischer information matrix can be sometimes difficult to calculate. Thus, we sometimes use what is called the observed information matrix <span class="math inline">\(\b I(\b\theta, \b y)\)</span>, without the expectation.</p>
 <div id="def-obsinfo" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
 <p><span class="theorem-title"><strong>Definition 3.5 (Observed Information Matrix)</strong></span> The observed information matrix is defined as</p>
 <p><span class="math display">\[
@@ -401,10 +402,13 @@ s(\b\theta; \b y) = \frac{\partial}{\partial\b\theta} \log(f_Y(\b y; \b\theta))
 </div>
 <p><br></p>
 <p>Unlike the fisher information matrix, which is only dependent on <span class="math inline">\(\b\theta\)</span> and not the realisation of sample <span class="math inline">\(\b y\)</span> (due to expectation), the observed information matrix is dependent on the random realisation of sample <span class="math inline">\(\b y\)</span>.</p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
-<section id="variance-and-asymptotics" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="variance-and-asymptotics"><span class="header-section-number">3.5</span> Variance and Asymptotics</h2>
+<section id="variance-and-asymptotics" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="variance-and-asymptotics"><span class="header-section-number">3.4</span> Variance and Asymptotics</h2>
 <p>It can be shown through complex math, that the inverse of the fischer information matrix <span class="math inline">\(1/\b{\mathcal I}(\b\theta)\)</span> is the variance of the maximum likelihood estimator.</p>
 <div id="thm-mlevariance" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
 <p><span class="theorem-title"><strong>Theorem 3.2 (Variance of MLE)</strong></span> The variance of the maximum likelihood estimator (in sufficiently large sample sizes) is:</p>
@@ -432,8 +436,8 @@ s(\b\theta; \b y) = \frac{\partial}{\partial\b\theta} \log(f_Y(\b y; \b\theta))
 <p>It is important to note that while MLE is asymptotically unbiased (consistent), it can be biased in lower sample sizes (although not always - this depends on the actual data generating process in question). This can have some implications on model selection (specifically fixed effects), that we will cover more in the applied chapters.</p>
 <p><br></p>
 </section>
-<section id="cramér-rao-bound" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="cramér-rao-bound"><span class="header-section-number">3.6</span> Cramér-Rao Bound</h2>
+<section id="cramér-rao-bound" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="cramér-rao-bound"><span class="header-section-number">3.5</span> Cramér-Rao Bound</h2>
 <p>Let us focus on the asymptotic variance of the maximum likelihood estimator. We see that it is <span class="math inline">\(1/\b{\mathcal I}(\b\theta_0)\)</span>. Why is this important? Let us introduce a new theorem: Cramér-Rao.</p>
 <div id="thm-cramerrao" class="theorem" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
 <p><span class="theorem-title"><strong>Theorem 3.4 (Cramér-Rao)</strong></span> The Cramér-Rao Bound states that for any unbiased estimator, the variance cannot be any lower than the inverse of the fischer information matrix:</p>
@@ -495,8 +499,8 @@ s(\b\theta; \b y) = \frac{\partial}{\partial\b\theta} \log(f_Y(\b y; \b\theta))
 <p>We know that the maximum likelihood estimator is unbiased asymptotically (consistent), and its asymptotic variance is <span class="math inline">\(1/\mathcal I(\theta)\)</span>. Thus, the maximum likelihood estimator is the unbiased estimator with the least variance, and is the <u>best asymptotic unbiased estimator</u>.</p>
 <p><br></p>
 </section>
-<section id="newton-raphson-algorithm" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="newton-raphson-algorithm"><span class="header-section-number">3.7</span> Newton-Raphson Algorithm</h2>
+<section id="newton-raphson-algorithm" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="newton-raphson-algorithm"><span class="header-section-number">3.6</span> Newton-Raphson Algorithm</h2>
 <p>We know that the MLE estimates <span class="math inline">\(\hat\theta\)</span> are obtained by minimising the score function <span class="math inline">\(s(\b\theta, \b y)\)</span>. However, in many cases, there exists no closed form-analytical solution. Thus, we have to use iterated algorithms to minimise the score function.</p>
 <p>The most common method is the Newton-Raphson algorithm. Suppose <span class="math inline">\(\theta\)</span> is a scalar of potential parameters. For values of <span class="math inline">\(\theta\)</span> that are close to the true population parameter <span class="math inline">\(\theta_0\)</span>, the first order taylor series expansion of <span class="math inline">\(s(\theta, \b y)\)</span> about <span class="math inline">\(\theta_0\)</span> states:</p>
 <p><span class="math display">\[
@@ -536,8 +540,8 @@ s(\theta; \b y) \approx s(\theta_0, \b y)  - \b I(\theta_0)(\theta - \theta_0)
 <p>An alternative to the Newton-Raphson algorithm is the <strong>Fisher-scoring algorithm</strong>, which does the same thing, but using the fisher information matrix <span class="math inline">\(\mathcal I(\theta)\)</span> (<a href="#def-fischerinfo" class="quarto-xref">definition&nbsp;<span>3.4</span></a>) instead of the observed information matrix <span class="math inline">\(I(\theta)\)</span>, when <span class="math inline">\(\mathcal I (\theta)\)</span> is not too difficult to compute. Fisher-scoring is the method most common for generalised linear models (that we will cover in later chapters).</p>
 <p><br></p>
 </section>
-<section id="statistical-inference" class="level2" data-number="3.8">
-<h2 data-number="3.8" class="anchored" data-anchor-id="statistical-inference"><span class="header-section-number">3.8</span> Statistical Inference</h2>
+<section id="statistical-inference" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="statistical-inference"><span class="header-section-number">3.7</span> Statistical Inference</h2>
 <p>Under the asymptotic properties of MLE (<a href="#thm-mleasymptotics" class="quarto-xref">theorem&nbsp;<span>3.3</span></a>), we know the estimator will be normally distributed. Using this fact, and the variance of MLE (<a href="#thm-mlevariance" class="quarto-xref">theorem&nbsp;<span>3.2</span></a>), we can do hypothesis testing with one parameter with the wald test:</p>
 <div id="def-waldtest" class="theorem definition" style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
 <p><span class="theorem-title"><strong>Definition 3.6 (Wald Test)</strong></span> The wald test can determine if a parameter estimated by MLE is statistically significant. The wald test statistic is given by</p>
@@ -570,8 +574,8 @@ L^2 = 2 \log \left(\frac{L_a}{L_0}\right) = 2 \log (L_a) - 2 \log (L_0)
 <p>If the p-value is less than 0.05, that means our <span class="math inline">\(M_a\)</span> model (and all of its extra coefficients) are statistically significant.</p>
 <p><br></p>
 </section>
-<section id="information-criterion-statistics" class="level2" data-number="3.9">
-<h2 data-number="3.9" class="anchored" data-anchor-id="information-criterion-statistics"><span class="header-section-number">3.9</span> Information Criterion Statistics</h2>
+<section id="information-criterion-statistics" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="information-criterion-statistics"><span class="header-section-number">3.8</span> Information Criterion Statistics</h2>
 <p>The previously discussed likelihood ratio test (<a href="#def-likelihoodratio" class="quarto-xref">definition&nbsp;<span>3.7</span></a>) allows us to compare bigger models to smaller models, as long as the bigger model has all of the smaller model’s parameters. However, what if we want to choose between models with different parameters?</p>
 <p>Recall that likelihood function <span class="math inline">\(L\)</span> (<a href="#def-likelihood" class="quarto-xref">definition&nbsp;<span>3.1</span></a>) is the probability of observing a particular sample given parameters <span class="math inline">\(\b\theta\)</span>. If the probability is higher, that likely means our model is better. Thus, likelihood <span class="math inline">\(L\)</span> allows us to compare different models.</p>
 <p>However, we often prefer simple models over more complex models. If we have two models with the same likelihood <span class="math inline">\(L\)</span>, but one has 40 parameters and the other has 5, you would prefer the one with 5, as it is far more efficient and achieves the same performance.</p>

@@ -8,7 +8,7 @@ In this chapter, we introduce a series of "Least-Squares" estimators, that for a
 
 ## Classical Linear Model
 
-The Maximum Likelihood Estimator is great, however, it can be computationally intensive. A series of estimators called **least squares** is another way to estimate population estimands $\theta$. However, this classs of estimators can only be applied in one specific model: the classical linear model.
+A class of estimators called **least squares** estimators is another way to estimate population parameters $\theta$ besides MLE. However, this class of estimators can only be applied in one specific model: the classical linear model.
 
 Let us say there are individuals $t = 1, 2, \dots, n$ in the population. Each individual's $Y$ value is determined by a set of random variables $Y_1, \dots, Y_n$. Any individual random variable $Y_t$ is data generating process defined as $Y_t \sim \set D(\mu_Y, \sigma^2_Y)$, where $\set D$ represents any distributional form, $\mu_Y$ is the mean of the random variable, and $\sigma^2_Y$ is the variance of the random variable.
 
@@ -18,7 +18,7 @@ $$
 \E(Y_t|\set X_t) = \beta_0 + \beta_1 X_{1t} + \beta_2 X_{2t} + \dots + \beta_p X_{pt}
 $$
 
-Where $\beta_0, \dots, \beta_p$ are a set of population parameters that determine how $\mu_Y$ changes in respect to explanatory variables $\set X$. Our goal with least squares estimation will be to estimate these parameters.
+Where $\beta_0, \dots, \beta_p$ are a set of population parameters (that need to be estimated) that determine how $\mu_Y$ changes in respect to explanatory variables $\set X$.
 
 You will frequently see the linear model represented in another form:
 
@@ -28,7 +28,7 @@ $$
 
 Where the **error term** $\eps_t$ represents the variance/randomness in our data generating process, and the rest of the model represents $\mu_y$.
 
-We know that this data generating process applies for random variables $Y_1, Y_2, \dots, Y_n$. To represent all of these random variables together, we often use the matrix representation of the linear model:
+We know that this data generating process applies for random variables $Y_1, Y_2, \dots, Y_n$. To represent all random variables together, we use the matrix representation of the linear model:
 
 $$
 \b y = \b{X\beta} + \b\eps \iff \begin{pmatrix} y_1 \\ y_2 \\ \vdots \\ y_n\end{pmatrix} = 
@@ -40,9 +40,9 @@ $$
 \begin{pmatrix} \eps_1 \\ \eps_2 \\ \vdots \\ \eps_n \end{pmatrix}
 $$
 
-There are a set of **five** **assumptions** that the above model has to meet to be considered a **classical linear model**.
+The **classical linear model** has a set of **five** **assumptions**:
 
-::: {.panel-tabset .nav-pills}
+::: {#assumptions .panel-tabset .nav-pills}
 ## Linearity
 
 ::: {#def-linearity}
@@ -129,24 +129,17 @@ Cov(\eps_3, \eps_1) & Cov(\eps_3, \eps_2) & \V\eps_3 & \vdots \\
 $$
 :::
 
-Spherical errors implies two things: **No Autocorrelation** means that the covariance of any two error terms $Cov(\eps_i, \eps_j) = 0$. This is reflected in spherical errors with all the 0's in the non-diagonal positions. This assumption is generally met if we meet the [i.i.d.](#assumption-2-independent-and-identically-distributed-i.i.d.) assumption.
+Spherical errors implies two things:
 
-**Homoscedasticity** means that every $\eps_t$ for any observation $t$ has the same variance $\sigma^2$. The variance of the error $\eps_t$ does not depend on the values of $X_1, \dots, X_p$. If this condition is violated, as in each observation $t$ has their own $\sigma^2_t$, we call this homoscedasticity.
+1.  **No Autocorrelation** means that the covariance of any two error terms $Cov(\eps_i, \eps_j) = 0$. This is reflected in spherical errors with all the 0's in the non-diagonal positions.
+2.  **Homoscedasticity** means that every $\eps_t$ for any observation $t$ has the same variance $\sigma^2$. The variance of the error $\eps_t$ does not depend on the values of $X_1, \dots, X_p$. If this condition is violated, as in each observation $t$ has their own $\sigma^2_t$, we call this homoscedasticity.
 :::
-
-<br />
-
-We will first explore the **Ordinary Least Squares Estimator**, the most famous estimator in statistics that is applicable when all 5 of the classical assumptions are met.
-
-Then, we will introduce estimators for when some of the classical conditions are not met. First, we will introduce the **Generalised Least Squares** estimator for when the spherical errors assumption is violated. Then, we will introduce the **Instrumental Variables** estimator for when exogeneity is violated.
 
 <br />
 
 ## Ordinary Least Squares
 
-How can we derive sample estimates $\hat{\b\beta}$ of parameters $\b\beta$? One logical way is to see what values of $\b{\hat\beta}$ will produce the closest predictions of $\b y$ values to the actual sample values. Our predicted $\b y$ values are $\hat{\b y} = \b X \hat{\b\beta}$.
-
-OLS is an estimation process that finds the values $\hat{\b\beta}$ by the $\hat{\b\beta}$ values that minimise the **sum of squared residuals** (SSR), the difference between $\b y$ and predicted $\hat{\b y}$ squared.
+OLS is an estimation process that finds the values $\hat{\b\beta}$ by the $\hat{\b\beta}$ values that minimise the **sum of squared residuals** (SSR) (also called the sum of squared errors), the difference between $\b y$ and predicted $\hat{\b y}$ squared, where $\hat{\b y}$ is defined as $\hat{\b y} = \b X \hat{\b\beta}$.
 
 ::: {#def-ssr style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
 ## Sum of Squared Residuals
@@ -172,20 +165,15 @@ $$
 \begin{align}
 S(\hat{\b\beta}) & = (\b y - \b X \hat{\b\beta})^\top (\b y - \b X \hat{\b\beta}) \\
 & = \b y^\top \b y - \hat{\b\beta}^\top \b X^\top \b y - \b y^\top \b X \hat{\b\beta} +  \hat{\b\beta}^\top \b{X^\top X} \hat{\b\beta} \\
-& =  \b y^\top \b y - 2 \hat{\b\beta}^\top \b{X^\top y} + \underbrace{\hat{\b\beta}^\top \b{X^\top X} \hat{\b\beta}}_{\text{quadratic term}}
+& =  \b y^\top \b y - 2 \hat{\b\beta}^\top \b{X^\top y} + \hat{\b\beta}^\top \b{X^\top X} \hat{\b\beta}
 \end{align}
 $$
 
-Now, we want to maximise in respect to $\hat{\b\beta}$, so let us take the gradient of function $S$ in respect to $\hat{\b\beta}$, and set it equal to 0.
-
-$$
-\frac{\partial S}{\partial \hat{\b\beta}} = -2 \b{X^\top y} + 2 \b{X^\top X} \hat{\b\beta} = 0
-$$
-
-Now, solving for $\hat{\b\beta}$, we can get our OLS estimates:
+Now, we want to maximise in respect to $\hat{\b\beta}$, so let us take the gradient of function $S$ in respect to $\hat{\b\beta}$, and set it equal to 0. Then, we can solve for $\hat{\b\beta}$ to get our parameter estimates:
 
 $$
 \begin{align}
+\frac{\partial S}{\partial \hat{\b\beta}} = -2 \b{X^\top y} + 2 & \b{X^\top X} \hat{\b\beta} = 0 \\
 2 \b{X^\top X}\hat{\b\beta} & = 2 \b{X^\top y} \\
  \hat{\b\beta} & = (2 \b{X^\top X})^{-1}2 \b{X^\top y} \\
 \hat{\b\beta} & =  (2^{-1})2(\b{X^\top X})^{-1}\b{X^\top y} \\
@@ -236,7 +224,11 @@ OLS has some unique properties, that we will explore in the tabs below.
 ::: {.panel-tabset .nav-pills}
 ## P and M Matrix
 
-To understand OLS, let us first define 2 important matrices:
+Recall our predictions $\hat{\b y} = \b X \hat{\b\beta}$. Using our OLS solution, we can find
+
+$$
+\hat{\b y} = \b X (\b{X^\top X})^{-1} \b{X^\top y} = \color{red}{\b P}\color{black}{\b y}
+$$
 
 ::: {#def-projectmatrix}
 ## Projection Matrix
@@ -250,14 +242,15 @@ $$
 Matrix $\color{red}{\b P}$ is symmetrical as in $\b P^\top = \b P$, and is idempotent as in $\b{PP} = \b P$.
 :::
 
-We can prove $\color{red}{\b P}$ is an idempotent matrix.
+We can see that projection matrix $\color{red}{\b P}$ performs a linear mapping of $\b y \rightarrow \hat{\b y}$, hence why it is called the "projection" matrix.
+
+<br />
+
+Now, let us look at our residuals $\hat{\b \eps} = \b y - \hat{\b y}$. By plogging in $\b y = \b{Py}$, we can get:
 
 $$
-\begin{align}
-\b{PP} & = \b X(\b{X^\top X})^{-1} \underbrace{\b X^\top \b X(\b{X^\top X})^{-1}}_{\text{inverses cancel}} \b X^\top \\
-& = \b X(\b{X^\top X})^{-1} \b X^\top = \b P
-\end{align}
-$$
+\hat{\b\eps} = \b y - \color{red}{\b P} \color{black}{\b y} = (\b I - \color{red}{\b P}\color{black})\b y = \color{purple}{\b M} \color{black}{\b y}
+$$ {#eq-calcresiduals}
 
 ::: {#def-residmatrix}
 ## Residual Maker Matrix
@@ -271,44 +264,11 @@ $$
 Matrix $\color{purple}{\b M}$ is symmetrical as in $\b M^\top = \b M$, and is idempotent as in $\b{MM} = \b M$. Residual maker $\b M$ is also orthogonal to $\b P$ and $\b X$, implying $\b{PX} = 0$ and $\b{MX} = 0$.
 :::
 
-We can show $\b M$ and $\b P$ are orthogonal, i.e. $\b{P^\top M} = 0$. First, recall that $\b P$ is a symmetrical matrix, meaning, $\b P^\top = \b P$. Thus,
+We can see that residual maker matrix $\color{purple}{\b M}$ performs a linear mapping of $\b y \rightarrow \hat{\b\eps}$, thus "making" the residuals $\hat{\b\eps}$.
 
-$$
-\b{P^\top M} = \b{PM}
-$$
+## OLS Projection
 
-Now, let us substitute the definition of $\b M$ from (@def-residmatrix), to get :
-
-$$
-\begin{align}
-\b{P^\top M} & = \b P( \b I - \b P) \\
-& = \b P - \b{PP}
-\end{align}
-$$
-
-And since $\b P$ is idempotent, i.e. $\b{PP} = \b P$, then we know that
-
-$$
-\b{P^\top M} = \b P - \b P = 0
-$$
-
-Thus proving $\b P$ and $\b M$ are orthogonal.
-
-## OLS Projection and Fit
-
-Recall our predictions $\hat{\b y} = \b X \hat{\b\beta}$. Using our OLS solution, and the plugging in the definition of projection matrix $\color{red}{\b P}$ (@def-projectmatrix), we can find
-
-$$
-\hat{\b y} = \b X (\b{X^\top X})^{-1} \b{X^\top y} = \color{red}{\b P}\color{black}{\b y}
-$$
-
-Now, let us look at our residuals $\hat{\b \eps} = \b y - \hat{\b y}$. By plogging in $\b y = \b{Py}$ from above, and substituting the definition of $\color{purple}{\b M}$ (@def-residmatrix), we can get:
-
-$$
-\hat{\b\eps} = \b y - \color{red}{\b P} \color{black}{\b y} = (\b I - \color{red}{\b P}\color{black})\b y = \color{purple}{\b M} \color{black}{\b y}
-$$ {#eq-calcresiduals}
-
-We can see that projection matrix $\color{red}{\b P}$ performs a linear mapping of $\b y \rightarrow \hat{\b y}$, hence why it is called the "projection" matrix. We can see that residual maker matrix $\color{purple}{\b M}$ performs a linear mapping of $\b y \rightarrow \hat{\b\eps}$, thus "making" the residuals $\hat{\b\eps}$.
+From the previous tab, we see projection matrix $\color{red}{\b P}$ performs a linear mapping of $\b y \rightarrow \hat{\b y}$, hence why it is called the "projection" matrix. We can see that residual maker matrix $\color{purple}{\b M}$ performs a linear mapping of $\b y \rightarrow \hat{\b\eps}$, thus "making" the residuals $\hat{\b\eps}$.
 
 We know that our predictsion $\hat{\b y}$ are a linear combination of our explanatory variable vectors $X_1, \dots, X_p$, since $\hat{\b y} = \b X \hat{\b\beta}$. This means that projection matrix $\color{red}{\b P}$ projects $\b y$ into $\hat{\b y}$ which is in the space spanned by our $\b X$ (called the column space of $\b X$).
 
@@ -340,26 +300,19 @@ The second definition of $R^2$ works because we know the SSR is the part of $Y$ 
 
 ## Regression Anatomy
 
-To understand the parameter estimates $\hat\beta$ of OLS, we want to study the partitioned regression model. A partitioned regression model is when we split up our matrices/vectors in our classical linear model $\b y = \b{X\beta} + \b\eps$.
-
-Let us say we only care about some of the explanatory variables in our data generating process. We can split matrix $\b X$ into two: $\b X_1$ contains the explanatory variables we care about, and $\b X_2$ contains the other explanatory variables. Similarly, we divide $\b\beta$ into $\b\beta_1$ and $\b\beta_2$ in the same way. We can write our new regression model as:
+A partitioned regression model is when we split up our matrices/vectors in our classical linear model $\b y = \b{X\beta} + \b\eps$. Let us say we only care about some of the explanatory variables in our data generating process. We can split matrix $\b X$ into two: $\b X_1$ contains the explanatory variables we care about, and $\b X_2$ contains the other explanatory variables. Similarly, we divide $\b\beta$. We get:
 
 $$
 \b y = \b X_1 \b\beta_1 + \b X_2 \b\beta_2 + \b\eps
 $$
 
-Recall the residual maker matrix $\b M$ (@def-residmatrix), and recall how $\b M$ is orthogonal to $\b X$, meaning $\b{MX} = 0$.
-
-Now, let us consider only the residual maker matrix of the second part of our partitioned model $\b M_2$, which means $\b M_2 \b X_2 = 0$. Let us take our partitioned regression model, and pre-multiply $\b M_2$ to both sides:
+Recall the residual maker matrix $\b M$ (@def-residmatrix), and recall how $\b M$ is orthogonal to $\b X$, meaning $\b{MX} = 0$. Now, let us consider only the residual maker matrix of the second part of our partitioned model $\b M_2$, which means $\b M_2 \b X_2 = 0$. Let us take our partitioned regression model, and pre-multiply $\b M_2$ to both sides:
 
 $$
-\b M_2 \b y = \b M_2(\b X_1 \b\beta_1 + \b X_2 \b\beta_2 + \b\eps)
-$$
-
-Now, let us distribute out to get
-
-$$
-\b M_2 \b y = \b M_2 \b X_1 \b\beta_1 + \b M_2 \b X_2 \b\beta_2 + \b M_2 \b\eps
+\begin{align}
+\b M_2 \b y & = \b M_2(\b X_1 \b\beta_1 + \b X_2 \b\beta_2 + \b\eps) \\
+\b M_2 \b y & = \b M_2 \b X_1 \b\beta_1 + \b M_2 \b X_2 \b\beta_2 + \b M_2 \b\eps
+\end{align}
 $$
 
 Now recall that $\b M_2 \b X_2 = 0$. That means we can simplify the above to
@@ -374,13 +327,13 @@ $$
 \tilde{\b y} = \tilde{\b X_1}\b\beta_1 + \tilde{\b \eps}
 $$
 
-Remember, since we multiplied $\b M_2$ to both sides, this above model is equivalent to that of our partitioned model and our original regression model. Using @def-ols, we know the OLS estimate of $\hat{\b \beta_1}$ is:
+Using @def-ols, we know the OLS estimate of $\hat{\b \beta_1}$ is:
 
 $$
 \hat{\b\beta}_1 = (\tilde{\b X_1^\top} \tilde{\b X_1}) \tilde{\b X_1^\top} \tilde{\b y}
-$$ {#eq-partiallingout}
+$$
 
-This OLS estimate of $\hat{\b\beta}_1$ is the same as if we had calculated our OLS estimates normally without partitioning the model. What does this tell us? Notice how we have $\tilde{\b X_1} := \b M_2 \b X_1$ in our formula. Well, we know $\b M_2 \b X_2 = 0$. That means that any part of $\b X_1$ that was correlated to $\b X_2$ became 0, after it was multiplied by $\b M_2$. Thus, $\tilde{\b X_1}$ is the part of $\b X_1$ that is uncorrelated with $\b X_2$. We see that our OLS estimates are calculated in respect to $\tilde{\b X_1}$.
+$\hat{\b\beta}_1$ is equal to our normal OLS estimates without partitioning the model. Notice how we have $\tilde{\b X_1} := \b M_2 \b X_1$ in our formula. Well, we know $\b M_2 \b X_2 = 0$. That means that any part of $\b X_1$ that was correlated to $\b X_2$ became 0, after it was multiplied by $\b M_2$. Thus, $\tilde{\b X_1}$ is the part of $\b X_1$ that is uncorrelated with $\b X_2$.
 
 ::: {#thm-regressionanatomy}
 ## Regression Anatomy Theorem
@@ -393,7 +346,7 @@ Our individual parameter estimates $\hat\beta_j \in \{\hat\beta_1, \dots, \hat\b
 
 ## OLS Estimator Properties
 
-We know that an estimator has two finite sample properties: unbiasedness (@def-unbiased) and variance (@def-varest)., and has the asymptotic property of consistency. Before we explore these properties, let us first transform our OLS estimates (@def-ols) into something more easily manipulable.
+We know that an estimator has two finite sample properties: unbiasedness (@def-unbiased) and variance (@def-varest), and has the asymptotic property of consistency (@def-consistency). Before we explore these properties, let us first transform our OLS estimates (@def-ols) into a form more useful for showing these properties of OLS.
 
 Let us start with our OLS solution (@def-ols), and plug in our original model $\b y = \b{X\beta} + \b\eps$ into where $\b y$ is in the OLS solution:
 
@@ -414,13 +367,13 @@ Now, we are ready to explore the properties of the ordinary least squares estima
 ::: {#thm-olsunbiased style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
 ## OLS is an Unbiased Estimator
 
-The Ordinary Least Squares estimator is an unbiased estimator under the assumptions of [linearity](#assumption-1-linearity-in-parameters), [i.i.d.](#assumption-2-independent-and-identically-distributed-i.i.d.), [no perfect multicollinearity](#assumption-3-no-perfect-multicollinearity), and [strict exogeneity](#assumption-4-strict-exogeneity).
+The Ordinary Least Squares estimator is an unbiased estimator under the [assumptions](#assumptions) of linearity, i.i.d., linear independence, and strict exogeneity.
 
 $$
 \E \hat{\b\beta} = \b\beta
 $$
 
-Note that the assumption of [spherical errors](#assumption-5-spherical-errors) is [not]{.underline} needed for the [unbiasedness](#assumption-5-spherical-errors) of OLS.
+Note that the assumption of spherical errors is [not]{.underline} needed for the unbiasedness of OLS.
 :::
 
 <br />
@@ -444,7 +397,7 @@ The final step is because the expectation of a constant $\b\beta$ (the fixed tru
 ::: {#thm-varols style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
 ## Variance of the OLS Estimator
 
-The variance of the OLS estimator under the assumptions of [linearity](#assumption-1-linearity-in-parameters), [i.i.d.](#assumption-2-independent-and-identically-distributed-i.i.d.), [no perfect multicollinearity](#assumption-3-no-perfect-multicollinearity), [strict exogeneity](#assumption-4-strict-exogeneity), and [spherical errors](#assumption-5-spherical-errors), is given by
+The variance of the OLS estimator under the [assumptions](#assumptions) of linearity, i.i.d., linear independence, strict exogeneity, and spherical errors, is given by
 
 $$
 \V(\hat{\b\beta}|\b X) = \sigma^2 (\b{X^\top X})^{-1}
@@ -493,7 +446,7 @@ Thus, we have proved that the variance of the OLS estimator is as the theorem ab
 ::: {#thm-olsconsistent style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
 ## Consistency of OLS
 
-The Ordinary Least Squares estimator is asymptotically consistent (@def-consistency), under the assumptions of [linearity](#assumption-1-linearity-in-parameters), [i.i.d.](#assumption-2-independent-and-identically-distributed-i.i.d.), [no perfect multicollinearity](#assumption-3-no-perfect-multicollinearity), [weak exogeneity](#def-weakexog), and [spherical errors](#assumption-5-spherical-errors). Mathematically:
+The Ordinary Least Squares estimator is asymptotically consistent (@def-consistency), under the [assumptions](#assumptions) of linearity, i.i.d., linear independence, weak exogeneity, and spherical errors. Mathematically:
 
 $$
 \mathrm{plim}\hat{\b\beta} = \b\beta
@@ -532,8 +485,6 @@ $$
 $$
 
 And we know $\E(\b x_t \eps_t) = 0$ because of the condition of **weak** **exogeneity** (@def-weakexog). Thus, we have proved that OLS is asymptotically consistent.
-
-Notice how OLS is asymptotically consistent with just weak exogeneity, without requiring full exogeneity. This implies that if we only meet weak exogeneity, our OLS estimates will be biased according to @thm-olsunbiased (since unbiasedness requires [strict]{.underline} exogeneity). However, under only weak exogeneity, our OLS estimates will still be asymptotically consistent despite being biased in finite samples.
 :::
 
 <br />
@@ -545,7 +496,7 @@ You might ask, what is so special about Ordinary Least Squares, and why should w
 ::: {#thm-gaussmarkov style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
 ## Gauss-Markov
 
-If all of the assumptions of [linearity](#assumption-1-linearity-in-parameters), [i.i.d.](#assumption-2-independent-and-identically-distributed-i.i.d.), [no perfect multicollinearity](#assumption-3-no-perfect-multicollinearity), [strict exogeneity](#assumption-4-strict-exogeneity), and [spherical errors](#assumption-5-spherical-errors) are all met, then the Ordinary Least Squares estimator is the **best linear unbiased estimator** (BLUE) - the unbiased [linear](#assumption-1-linearity-in-parameters) estimator with the lowest variance of any other unbiased estimator.
+If all of the [assumptions](#assumptions) of linearity, i.i.d., no perfect multicollinearity, strict exogeneity, and spherical errors are all met, then the Ordinary Least Squares estimator is the **best linear unbiased estimator** (BLUE) - the unbiased linear estimator with the lowest variance of any other unbiased estimator.
 
 Formally, if $\hat{\b\beta}$ is the OLS estimator, and $\tilde{\b\beta}$ is any other linear unbiased estimator, then
 
@@ -620,13 +571,10 @@ $$
 Now, according to the assumption of spherical errors (@def-sphericalerrors), we know that $\V(\b \eps| \b X) = \sigma^2 \b I_n$. Thus, let us plug that into our equation to get
 
 $$
-\V(\tilde{\b\beta} | \b X) = \b C \sigma^2 \b I_n \b C^\top
-$$
-
-Since $\b I_n$ is the identity matrix, it cancels out. For notation simplicity, we can move the scalar $\sigma^2$ to the front, and simplify:
-
-$$
-\V(\tilde{\b\beta} | \b X) = \sigma^2 \b{CC^\top}
+\begin{align}
+\V(\tilde{\b\beta} | \b X) & = \b C \sigma^2 \b I_n \b C^\top \\
+& = \sigma^2 \b{CC^\top}
+\end{align}
 $$ {#eq-unbiasedlinearvar}
 
 Now we have the variance of estimator $\tilde{\b\beta}$. To prove Gauss-Markov, we need to show that the variance of $\tilde{\b\beta}$ is greater than the variance of $\hat{\b\beta}$. For this to be true,
@@ -638,13 +586,10 @@ $$
 We can plug in the variance of $\tilde{\b\beta}$ from @eq-unbiasedlinearvar, and the variance of OLS $\hat{\b\beta}$ from @thm-varols:
 
 $$
-\sigma^2 \b{CC^\top} - \sigma^2 (\b{X^\top X})^{-1} ≥ 0
-$$
-
-We can factor out the $\sigma^2$ to get
-
-$$
-\sigma^2 (\b{CC^\top} - (\b{X^\top X})^{-1}) ≥ 0
+\begin{align}
+\sigma^2 \b{CC^\top} - \sigma^2 (\b{X^\top X})^{-1} & ≥ 0 \\
+\sigma^2 (\b{CC^\top} - (\b{X^\top X})^{-1}) & ≥ 0
+\end{align}
 $$
 
 We know from @lem-unbiasedlin that $\b{CX} = \b I$, which through the properties of tranposes, also implies that $\b{X^\top C^\top} = (\b{CX})^\top = \b I$. Multipling by $\b I$ doesn't change anything, so we can insert a $\b{CX}$ and $\b{X^\top C^\top}$ into our equation above to get
@@ -688,10 +633,7 @@ This property means that OLS produces the best estimates for any linear model, w
 
 ## OLS and Non-Spherical Errors
 
-For the classical linear model, one of the assumptions was spherical errors (@def-sphericalerrors). This was an assumption made on the variance-covariance matrix of error term $\eps_t$. The assumption was split into two sections:
-
-1.  **No Autocorrelation**: The covariance of any two error terms $Cov(\eps_i, \eps_j) = 0$.
-2.  **Homoscedasticity**: The variance of every error term $\eps_t$ for every observation $t$ is constant with the same variance $\sigma^2$. The variance of $\eps_t$ does not depend on the values of regressors $X_1, \dots, X_p$.
+For the classical linear model, one of the assumptions was spherical errors (@def-sphericalerrors). This was an assumption made on the variance-covariance matrix of error term $\eps_t$.
 
 The spherical errors assumption can thus be violated in two ways. First, is **conditional heteroscedasticity**, where only homoscedasticity is violated, but no autocorrleation still holds. The variance-covariance matrix of errors will take the form:
 
@@ -795,24 +737,12 @@ $$
 \end{pmatrix} \b X(\b{X^\top X})^{-1}
 $$
 
-Where $\b\Sigma_1, \dots \b\Sigma_G$ are intracluster covariance-variance error matrices, that exhibit autocorrelation.
+Where $\b\Sigma_1, \dots \b\Sigma_G$ are intracluster covariance-variance error matrices, that exhibit autocorrelation within each cluster, but the different clusters are not autocorrelated.
 :::
 
 <br />
 
-**Proof:** Let us start where we left off from @eq-olsimplify during the proof of OLS properties. This tells us the variance of the OLS estimator is:
-
-$$
-\V(\hat{\b\beta}|\b X) = \V(\b\beta + (\b{X^\top X})^{-1} \b{X^\top \eps})
-$$
-
-We know that $\b\beta$ is a vector of fixed true population values. $(\b{X^\top X})^{-1} \b X^\top$ can also be considered a fixed constant matrix because we are conditioning our variance on $\b X$. Thus, we can use @thm-variance to rewrite the above as
-
-$$
-\V(\hat{\b\beta}|\b X) = (\b{X^\top X})^{-1}\b X^\top \V(\b\eps| \b X)[(\b{X^\top X})^{-1}\b X^\top]^{-1}
-$$
-
-With the properties of matrix inverses and transposes, we can determine that $[(\b{X^\top X})^{-1}\b X^\top]^{-1}$ is equivalent to $\b X(\b{X^\top X})^{-1}$. Thus, plugging this in, we get
+**Proof:** Let us start off by taking the same steps as the heteroscedasticity proof, until we got to this point:
 
 $$
 \V(\hat{\b\beta}|\b X) = (\b{X^\top X})^{-1}\b X^\top \V(\b\eps| \b X) \b X(\b{X^\top X})^{-1}
@@ -832,6 +762,8 @@ $$
 And thus, we have proven the OLS variance under heteroscedasticity. When we actually write the formula, we will typically replace the matrix with $\b\Omega$.
 
 ## Heteroscedasticity + Autocorrelation
+
+This type of standard errors is quite complicated, so we usually trust the computer to compute it for us.
 
 ::: {#def-hacse}
 ## HAC Variance of OLS
@@ -866,23 +798,15 @@ We will not prove this, as it is a very complicated estimator.
 
 ## Generalised Least Squares
 
-We mentioned that if spherical errors is violated, OLS is no longer the linear unbiased estimator with the least variance. Instead, another estimator, the Generalised Least Squares estimator, is the best linear unbiased estimator.
+We mentioned that if spherical errors (@def-sphericalerrors) is violated, OLS is no longer the linear unbiased estimator with the least variance. Instead, another estimator, the Generalised Least Squares estimator, is the best linear unbiased estimator.
 
-In spherical errors, we assumed that the population variance-covariance matrix of errors had the following form:
-
-$$
-\V(\b\eps | \b X) = \E(\b{\eps\eps^\top}) =  \sigma^2 \b I_n
-$$
-
-And the variance is equivalent to $\E(\b{\eps\eps^\top})$ because we assume by strict exogeneity (@def-strictexog) that $\E(\b\eps) = 0$. So the formula for variance (@def-var) with strict exogeneity equals the variance of the error term.
-
-In the generalised least squares estimator, we assume that the variance-covariance matrix of errors has the form:
+In the generalised least squares estimator, we assume that the variance-covariance is
 
 $$
 \V(\b\eps | \b X) = \E(\b{\eps\eps^\top}) = \sigma^2 \b\Omega
-$$
+$$ {#eq-glsvarform}
 
-Where $\sigma^2$ is an unknown scalar constant, but $\b\Omega$ is a known matrix that is equivalent to the population variance-covariance matrix of errors (up to a scalar factor).
+Where $\sigma^2$ is an unknown scalar constant, but $\b\Omega$ is a known matrix that is equivalent to the population variance-covariance matrix of errors. The variance is equivalent to $\E(\b{\eps\eps^\top})$ because we assume by strict exogeneity (@def-strictexog) that $\E(\b\eps) = 0$.
 
 Let us define a matrix $\b\Omega^{-1/2}$, which will be the inverse of the square root of $\b\Omega$. This means that the following should be true:
 
@@ -890,13 +814,13 @@ $$
 \b\Omega^{-1/2} \ \b\Omega \ {\b\Omega^{-1/2}}^\top = \b I
 $$ {#eq-glsproperty}
 
-We can use $\b\Omega^{-1/2}$ to transform our original model $\b y = \b{X\beta} + \b\eps$ to get:
+We multipy $\b\Omega^{-1/2}$ to all terms of model $\b y = \b{X\beta} + \b\eps$ to get a transformed model
 
 $$
 \underbrace{\b\Omega^{-1/2}}_{\b y^*} \b y = \underbrace{\b\Omega^{-1/2} \b X}_{\b X^*} \b \beta + \underbrace{\b\Omega^{-1/2} \b \eps}_{\b \eps^*}
 $$ {#eq-glstransformation}
 
-This transformed model should have spherical errors. Let us calculate the variance of $\b\eps^*$ by plugging in the definition of $\b\eps^*$:
+This transformed model meets spherical errors, which we can prove by plugging in the definition of $\b\eps^*$ from above, and the definition of $\E(\b{\eps\eps^\top})$ from @eq-glsvarform:
 
 $$
 \begin{align}
@@ -967,9 +891,7 @@ There are a few ways we can go about doings this, including the Cochrane-Orcutt 
 ::: {.panel-tabset .nav-pills}
 ## Cochrane-Orcutt
 
-The Cochrane-Orcutt Estimator is a way to estimate GLS assuming autocorrelation of a specific form (Autoregressive 1).
-
-Let us start off with a linear model, but in time-series form, so instead of observation $i$, each variable/observation will be from a point in time $t$. Our linear model will be
+The Cochrane-Orcutt Estimator is a way to estimate GLS assuming autocorrelation of a specific form (Autoregressive 1). Let us start off with a linear model:
 
 $$
 Y_t = \beta_0 + \beta_1 X_{t}  + \eps_t
@@ -989,7 +911,7 @@ $$
 Y_t = \beta_0 + \beta_1 X_{t} + \rho \eps_{t-1} + u_t
 $$
 
-If we could get the $\rho\eps_{t-1}$ term out of this equation, we will no longer have any autocorrelation, since $u_t$ is not correlated/explained by past error terms. How do we do this?
+If we could get the $\rho\eps_{t-1}$ term out of this equation, we will no longer have any autocorrelation, since $u_t$ is not correlated/explained by past error terms.
 
 Consider the linear model for $Y_{t-1}$:
 
@@ -1030,9 +952,7 @@ Since this model no longer has autocorrelation and now meets spherical errors, w
 
 ## Weighted Least Squares
 
-The weighted least squares (WLS) estimator is a FGLS when we have only conditional heteroscedasticity, and we believe that conditional heteroscedasticity to be in a specific form (a function of some explanatory variables).
-
-Suppose that our heteroscedasticity is of the form:
+The weighted least squares (WLS) estimator is a FGLS when we have only conditional heteroscedasticity, and we believe that conditional heteroscedasticity to be in a specific form:
 
 $$
 \V(\eps_t|\b X) = \sigma^2 \  \Omega(X_t)
@@ -1109,13 +1029,9 @@ For instrument(s) $Z$ to meet the moment condition $\E(\b{Z^\top \eps}) = 0$, th
 3.  $Z$ must meet the exclusions restriction (which is implied by exogenous). This means that $Z$ cannot have an independent effect on $Y$, outside of its impact on $Y$ through $X$.
 :::
 
-![](images/clipboard-4129117926.png){fig-align="center" width="32%"}
+<br />
 
-The classic instrument setup is as above. We want to find the relationship between $D$ and $Y$. However, there is some unobserved variable $U$ that is not in our regression, so it is in our error term $\eps$. But because $U$ is correlated with $D$ and $Y$ and in the error term $\eps$, it implies $D$ is correlated with the error term $\eps$, violating exogeneity.
-
-To solve this, we introduce an instrument $Z$. By using $Z$ to predict $D$, we are only using the part of $D$ that is explained by $Z$. That part of $D$ is not explained by $U$, so that part of $D$ is now exogenous, and we can estimate the relationship between $D$ and $Y$.
-
-Below is the derivation of the instrumenetal variables estimator, and alternative IV estimator (the 2SLS), and some important properties.
+Let us derive the IV estimator (and an alternative IV estimator called 2SLS), and explore the asymptotic properties of this estimator.
 
 ::: {.panel-tabset .nav-pills}
 ## IV Estimator
@@ -1237,7 +1153,18 @@ $$
 
 <br />
 
-**Proof**: Let us start from where we left off in @eq-ivsimplify. We can rewrite our matrices in the form of vectors, scalars, and summation, just as we did in the proof of OLS consistency (@thm-olsconsistent). We thus get
+**Proof**: Let us first re-arrange the IV estimator by plugging in the original model $\b y = \b{X\beta} + \b\eps$, and simplify:
+
+$$
+\begin{align}
+\hat{\b\beta}^* & = (\b{Z^\top X})^{-1} \b{Z^\top y} \\
+& = (\b{Z^\top X})^{-1} \b{Z^\top}(\b{X\beta} + \b \eps) \\
+& = \underbrace{(\b{Z^\top X})^{-1} \b{Z^\top X}}_{\text{inverses cancel}}\b\beta + (\b{Z^\top X})^{-1} \b{Z^\top\eps} \\
+& = \b\beta + (\b{Z^\top X})^{-1} \b{Z^\top\eps}
+\end{align}
+$$
+
+We can rewrite our matrices in the form of vectors, scalars, and summation:
 
 $$
 \begin{align}
@@ -1293,6 +1220,16 @@ However, our estimate $s^2$ and $s_i^2$ has an implication - every estimator has
 
 Under the central limit theorem (@thm-clt), our standardised sampling distribution of $\hat\beta_j$ should be normally distributed. However, because we are estimating $\sigma^2$ with $s^2$, this uncertainty in estimates $s^2$ means we cannot use the normal distribution as given by the central limit theorem. Instead, we use a t-distribution to account for the uncertainty.
 
+Once we have our correct standard errors, we can conduct hypothesis testing. There are two main hypothesis tests: the t-test for single parameters, and the f-test for multiple parameters or comparing models:
+
+::: {.panel-tabset .nav-pills}
+## T-Test
+
+The t-test is a way to test single parameters in our linear model. Typically, our hypothesis are the following:
+
+-   $H_0: \beta_j = 0$, which states that there is no relationship between $X_j$ and $Y$.
+-   $H_1: \beta_j ≠ 0$, which states that there is a relationship between $X_j$ and $Y$.
+
 ::: {#def-ttest style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
 ## T-Test
 
@@ -1308,6 +1245,8 @@ And we will conduct a hypothesis test using the $t$-distribution with *degrees o
 <br />
 
 We then calculate a p-value. The procedure of conducting a hypothesis test was outlined in the [last chapter](#inference.qmd#hypothesis-testing). If our p-value is statistically significant, we can conclude there is a significant relationship between $X_j$ and $Y$.
+
+## F-Test
 
 We can also do a statistical inference test with multiple coefficients at a time with the **F-test**. The F-test compares two different models, a null model with less parameters, and a alternate model with all the parameters in the null and some more parameters:
 
@@ -1336,3 +1275,6 @@ We then consult a F-distribution with $p_1 - p_0$ and $n - p_a - 1$ degrees of f
 We then calculate a p-value. The procedure of conducting a hypothesis test was outlined in the [last chapter](#inference.qmd#hypothesis-testing).
 
 If our result is statistically significant, then the alternative model $M_a$ is a statistically significantly better model than $M_0$, and the extra parameters in $M_a$ are jointly significant.
+:::
+
+<br />

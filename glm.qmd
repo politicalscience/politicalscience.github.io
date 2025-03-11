@@ -2,7 +2,7 @@
 
 This chapter introduces the generalised linear models: linear regression, logistic (binomial, ordinal, and multinomial) and negative binomial regression.
 
-This chapter is meant to be for application purposes. The estimation processes and details are contained in the previous chapters from Part I, and I will provide references to materials in those chapters.
+This chapter is meant to be for application purposes. The estimation processes and details are contained in [chapter 3](mle.qmd) and [chapter 4](ols.qmd).
 
 <br />
 
@@ -22,7 +22,7 @@ Where $\mu$ is the parameter of interest of variable $Y$ (depends on the model) 
 
 All GLMs can accomodate any type of explanatory variable $X_1, \dots, X_p$. The choice of model depends on the type of variable $Y$ is:
 
-::: panel-tabset
+::: {.panel-tabset .nav-pills}
 ## Continuous
 
 Continuous outcome variables $Y$ can only be used with the linear regression model.
@@ -58,7 +58,7 @@ Count outcome variables $Y$ can be used with:
 ## Review of the Types of Variables
 
 | Type        | Description                                                                                              | Example                                                                                   |
-|-------------|----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+|--------------|--------------------------------|---------------------------|
 | Continuous  | Can take any value within an interval $[a, b]$.                                                          | GDP of a country, temperature.                                                            |
 | Binary      | Can only take value 0 or 1.                                                                              | Yes/no, true/false, did/didn't.                                                           |
 | Ordinal     | Can only take a finite set of discrete outcomes $\{a, b, c\}$, but these outcomes can be ordered.        | strongly disagree - disagree - neutral - agree - strongly agree                           |
@@ -78,44 +78,14 @@ $$
 Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{tp}}_{\E(Y_t | \set X_t)} + \eps_t
 $$
 
-Where $\beta_0$ is the intercept, $\beta_1, \dots, \beta_p$ are the parameters that explain the relationship between $X_j$ and $Y$, and $\eps_t$ is the error term that accounts for random variation/noise in $Y$. You will often see the linear model specified in other ways:
-
-::: panel-tabset
-## Conditional Expectation
-
-You will also see the linear regression model frequently defined with regard to the conditional expectation $\E(Y_t | \set X_t)$, which leaves out the random variance/noise term $\eps_t$:
-
-$$
-\E(Y_t | \set X_t) = \beta_0 + \beta_1 X_{t1} + \dots + \beta_p X_{tp}
-$$
-
-## Vector Form
-
-Instead of writing out a long list of explanatory variables, you will see the linear regression model often simplified in vector form:
-
-$$
-Y_t = \b x_t^\top \b\beta + \eps_t
-$$
-
-Where $\b x_t$ is a vector $\b x_t = (1, X_{t1}, X_{t2}, \dots, X_{tp})$, and $\b\beta$ is a vector $\b\beta = (\beta_0, \dots, \beta_p)$. If we multiply the model out, you will see that this is equivalent to the original model.
-
-## Matrix Form
-
-Instead of writing each observation $t$ as their own regression equation, you will see all observations $t$ combined in to matrix form:
-
-$$
-\b y = \b{X\beta} + \b\eps
-$$
-
-More details on this form are provided in @def-linearmodel.
-:::
+Where $\beta_0$ is the intercept, $\beta_1, \dots, \beta_p$ are the parameters that explain the relationship between $X_j$ and $Y$, and $\eps_t$ is the error term that accounts for random variation/noise in $Y$. For more details on the linear model, see [chapter 4](ols.qmd#the-classical-linear-model).
 
 The parameters $\beta_0, \dots, \beta_p$ need to be estimated with sample data to obtain estimates $\hat\beta_0, \dots, \hat\beta_p$. The linear model can be estimated with a variety of estimators:
 
-::: panel-tabset
+::: {.panel-tabset .nav-pills}
 ## OLS
 
-We should use the Ordinary Least Squares estimator (@def-ols) when our model meets all 5 of the classical linear model conditions. If we are not sure spherical errors (@def-sphericalerrors) is met, we should instead use OLS with robust standard errors.
+We should use the Ordinary Least Squares estimator (@def-ols) when our model meets all 5 of the classical linear model [assumptions](ols.qmd#assumptions). If we are not sure spherical errors (@def-sphericalerrors) is met, we should instead use OLS with robust standard errors.
 
 For estimation with OLS (and normal standard errors), the R-code is:
 
@@ -124,9 +94,11 @@ model <- lm(Y ~ X1 + X2 + X3, data = mydata)
 summary(model)
 ```
 
+For mechanical details on OLS, see [here](ols.qmd#ordinary-least-squares).
+
 ## OLS with Robust SE
 
-We should use the Ordinary Least Squares estimator (@def-ols) with robust standard errors (@thm-heterovar) if we believe our model meets all of the classical linear model conditions [except]{.underline} for spherical errors (@def-sphericalerrors), and instead we have conditional heteroscedasticity (@def-heteroscedasticity).
+We should use the Ordinary Least Squares estimator (@def-ols) with robust standard errors (@thm-heterovar) if we believe our model meets all of the classical linear model [assumptions](ols.qmd#assumptions) [except]{.underline} for spherical errors (@def-sphericalerrors), and instead we have conditional heteroscedasticity (@def-heteroscedasticity).
 
 For estimation with OLS and robust standard errors in R, we should use the *fixest* package:
 
@@ -136,21 +108,13 @@ model <- feols(Y ~ X1 + X2 + X3, data = mydata, se = "hetero")
 summary(model)
 ```
 
-We can also use the *estimatr* package:
-
-```{r, eval = FALSE}
-library(estimatr)
-model <- lm_robust(Y ~ X1 + X2 + X3, data = mydata)
-summary(model)
-```
+For mechanical details on robust standard errors, see [here](ols.qmd#ols-and-non-spherical-errors).
 
 ## GLS/WLS
 
 We can use the generalised least squares estimator (@def-gls) if we believe our model meets all of the classical linear model conditions [except]{.underline} for spherical errors (@def-sphericalerrors), and we know the structure of our heteroscedasticity/autocorrelation.
 
-If we do not know the structure of our heteroscedasticity/autocorrelation, we should use the feasible generalised least squares (FGLS) or just OLS with robust standard errors.
-
-I do not recommend using GLS/WLS over OLS with robust standard errors, as the chances of something going wrong are much higher.
+If we do not know the structure of our heteroscedasticity/autocorrelation, we should use the feasible generalised least squares (FGLS) or just OLS with robust standard errors. I do not recommend using GLS/WLS over OLS with robust standard errors, as the chances of something going wrong are much higher.
 
 If we have a weights matrix already, we can implement GLS in R:
 
@@ -161,13 +125,13 @@ model <- lm(Y ~ X1 + X2 + X3,
 summary(model)
 ```
 
+For mechanical details on GLS, see [here](ols.qmd#generalised-least-squares).
+
 ## FGLS
 
-We should use the feasile generalised least squares estimator (@def-fgls) if we believe our model meets all of the classical linear model conditions [except]{.underline} for spherical errors (@def-sphericalerrors), and we do not know the structure of our heteroscedasticity/autocorrelation.
+We should use the feasile generalised least squares estimator if we believe our model meets all of the classical linear model conditions [except]{.underline} for spherical errors (@def-sphericalerrors), and we do not know the structure of our heteroscedasticity/autocorrelation.
 
-If we do know the structure of our heteroscedasticity/autocorrelation, we can use the normal generalised least squares (GLS) estimator.
-
-I do not recommend using FGLS over OLS with robust standard errors, as the chances of something going wrong are much higher.
+If we do know the structure of our heteroscedasticity/autocorrelation, we can use the normal generalised least squares (GLS) estimator. I do not recommend using FGLS over OLS with robust standard errors, as the chances of something going wrong are much higher.
 
 For FGLS in R, we first estimate a normal linear regression with OLS to obtain the estimated residuals, before using them as weights in a second model:
 
@@ -178,6 +142,8 @@ model <- lm(Y ~ X1 + X2 + X3,
             weights = 1/ols$fitted.values^2)
 summary(model)
 ```
+
+For mechanical details on FGLS, see [here](ols.qmd#feasible-generalised-least-squares).
 
 ## IV/2SLS
 
@@ -192,25 +158,25 @@ library(fixest)
 model <- feols(Y ~ 1 | D ~ Z, data = mydata, se = "hetero")
 summary(model)
 ```
+
+For mechanical details on IV/2SLS, see [here](ols.qmd#instrumental-variables-estimator).
 :::
 
 Interpretation of coefficient estimates are as follows (proof from @thm-regressionanatomy). Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence)
 
 |               |                                                                                                                                                  |                                                                                                                                                            |
-|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|--------------|----------------------------|------------------------------|
 |               | **Continuous** $X_{j}$                                                                                                                           | **Binary** $X_{j}$                                                                                                                                         |
 | $\hat\beta_j$ | For every one unit increase in $X_{j}$, there is an expected $\hat\beta_j$ unit change in $Y$, holding all other explanatory variables constant. | There is a $\hat\beta_j$ unit difference in $Y_i$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
 | $\hat\beta_0$ | When all explanatory variables equal 0, the expected value of $Y$ is $\hat\beta_0$.                                                              | For category $X_{j} = 0$, the expected value of $Y$ is $\hat\beta_0$ (when all other explanatory variables equal 0).                                       |
 
-::: panel-tabset
+::: {.panel-tabset .nav-pills}
 ## T-Tests
 
-Hypothesis testing of each coefficient with a t-test (and the p-values) is provided in most regression outputs.
+Hypothesis testing of each coefficient with a t-test (and the p-values) is provided in most regression outputs. The mechanics of t-test were provided in [chapter 4](ols.qmd#statistical-inference).
 
 -   If our coefficient $\hat\beta_j$ is statistically significant, then we can reject that there is no relationship between $X_j$ and $Y$, and conclude there is a relationship between $X_j$ and $Y$.
 -   If our coefficient $\hat\beta_j$ is not statistically significant, then we cannot reject there is no relationship between $X_j$ and $Y$.
-
-The mechanics of t-test were provided in @def-ttest.
 
 ## Standardised Coefficients
 
@@ -228,7 +194,7 @@ Adjusted R-Squared is similar but penalises models for having too many explanato
 
 ## F-Tests
 
-F-tests can test the significance of multiple parameters at once. Details were provided in @def-ftest.
+F-tests can test the significance of multiple parameters at once. The mechanics of F-test were provided in [chapter 4](ols.qmd#statistical-inference).
 
 To conduct a f-test in R, we do the following (where model 0 is the null model, and model 1 is the alternative model):
 
@@ -238,11 +204,6 @@ anova(model0, model1)
 
 If the test is statistically significant, then all the additional parameters in model 1 are jointly significant. If the test is not statistically significant, then all the additional parameters in model 1 are not jointly significant.
 :::
-
-We can also make predictions and present our regression results in a table:
-
-::: panel-tabset
-## Prediction
 
 To predict new values of $Y$ for new observations $t$, we use our fitted values equation:
 
@@ -257,20 +218,5 @@ my_predictions <- predict(model, newdata = my_new_data)
 ```
 
 Where *my_new_data* is a data frame with $X_1, \dots, X_p$ values for all the new observations we want to predict $\hat Y$ for.
-
-## LaTeX Regression Tables
-
-To present our results in a regression table, we can use the *texreg* package to create nice LaTeX regression tables.
-
-```{r, eval = FALSE}
-library(texreg)
-texreg(l = list(model1, model2, model3),
-       custom.model.names = c("model 1", "model 2", "model 3"),
-       custom.coef.names = c("Intercept", "X1", "X2", "X3"),
-       digits = 3)
-```
-
-We can replace the *texreg()* function for *screenreg()* for nicer displays in the R-console.
-:::
 
 For more information on categorical $X$, interactions, polynomial and logarithmic transformations, see the final section on model specification.
