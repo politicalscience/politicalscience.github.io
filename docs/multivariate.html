@@ -212,11 +212,13 @@ window.Quarto = {
    
   <ul class="collapse">
   <li><a href="#principle-components" id="toc-principle-components" class="nav-link active" data-scroll-target="#principle-components"><span class="header-section-number">8.1</span> Principle Components</a></li>
-  <li><a href="#factor-analysis" id="toc-factor-analysis" class="nav-link" data-scroll-target="#factor-analysis"><span class="header-section-number">8.2</span> Factor Analysis</a></li>
-  <li><a href="#latent-trait-models" id="toc-latent-trait-models" class="nav-link" data-scroll-target="#latent-trait-models"><span class="header-section-number">8.3</span> Latent Trait Models</a></li>
-  <li><a href="#latent-class-models" id="toc-latent-class-models" class="nav-link" data-scroll-target="#latent-class-models"><span class="header-section-number">8.4</span> Latent Class Models</a></li>
-  <li><a href="#cluster-analysis" id="toc-cluster-analysis" class="nav-link" data-scroll-target="#cluster-analysis"><span class="header-section-number">8.5</span> Cluster Analysis</a></li>
-  <li><a href="#structural-equation-modelling" id="toc-structural-equation-modelling" class="nav-link" data-scroll-target="#structural-equation-modelling"><span class="header-section-number">8.6</span> Structural Equation Modelling</a></li>
+  <li><a href="#cluster-analysis" id="toc-cluster-analysis" class="nav-link" data-scroll-target="#cluster-analysis"><span class="header-section-number">8.2</span> Cluster Analysis</a></li>
+  <li><a href="#latent-variable-models" id="toc-latent-variable-models" class="nav-link" data-scroll-target="#latent-variable-models"><span class="header-section-number">8.3</span> Latent Variable Models</a></li>
+  <li><a href="#estimation-with-mle" id="toc-estimation-with-mle" class="nav-link" data-scroll-target="#estimation-with-mle"><span class="header-section-number">8.4</span> Estimation with MLE</a></li>
+  <li><a href="#interpretation-of-models" id="toc-interpretation-of-models" class="nav-link" data-scroll-target="#interpretation-of-models"><span class="header-section-number">8.5</span> Interpretation of Models</a></li>
+  <li><a href="#multiple-latent-factors" id="toc-multiple-latent-factors" class="nav-link" data-scroll-target="#multiple-latent-factors"><span class="header-section-number">8.6</span> Multiple Latent Factors</a></li>
+  <li><a href="#confirmatory-analysis" id="toc-confirmatory-analysis" class="nav-link" data-scroll-target="#confirmatory-analysis"><span class="header-section-number">8.7</span> Confirmatory Analysis</a></li>
+  <li><a href="#structural-equation-modelling" id="toc-structural-equation-modelling" class="nav-link" data-scroll-target="#structural-equation-modelling"><span class="header-section-number">8.8</span> Structural Equation Modelling</a></li>
   </ul>
 </nav>
     </div>
@@ -289,75 +291,165 @@ a_{ij} &amp; a_{2j} &amp; \dots &amp; a_{pj} \end{pmatrix}
 <p>We will discuss the practical implementation of PCA in the multivariate methods chapter in the applied section.</p>
 <p><br></p>
 </section>
-<section id="factor-analysis" class="level2" data-number="8.2">
-<h2 data-number="8.2" class="anchored" data-anchor-id="factor-analysis"><span class="header-section-number">8.2</span> Factor Analysis</h2>
-<p>Factor analysis models are latent variable models - they assume that we have a set of observed variables (<strong>items</strong>) <span class="math inline">\(X_1, X_2, \dots, X_p\)</span>, that are all the result of some unobserved (<strong>factor</strong>) variable <span class="math inline">\(\xi\)</span>. For example:</p>
+<section id="cluster-analysis" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="cluster-analysis"><span class="header-section-number">8.2</span> Cluster Analysis</h2>
+<p><br></p>
+</section>
+<section id="latent-variable-models" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="latent-variable-models"><span class="header-section-number">8.3</span> Latent Variable Models</h2>
+<p>Latent variables <span class="math inline">\(\xi\)</span> (also called <strong>factors</strong>) are variables that we cannot directly measure. However, these latent variables <span class="math inline">\(\xi\)</span> can be measured through observed outcome variables <span class="math inline">\(Y_1, \dots, Y_p\)</span>, called <strong>items</strong>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-1663993722.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
 </figure>
 </div>
-<p>The latent factor <span class="math inline">\(\xi\)</span> is assumed to be distributed <span class="math inline">\(\xi \sim \mathcal N(\kappa = 0, \ \phi = 1)\)</span>. We assume that each item <span class="math inline">\(X_i\)</span> is normally distributed, and is related to the latent factor <span class="math inline">\(\xi\)</span> by a linear model:</p>
+<p>For example, the above shows how the latent variable of personality can be measured by 4 observable outcomes <span class="math inline">\(X_1, \dots, X_4\)</span>. This implies that the observed items <span class="math inline">\(Y_1, \dots, Y_p\)</span> have some sort of relationship with the latent factor <span class="math inline">\(\xi\)</span>. Latent variable models aim to model this relationship for us to uncover and measure the normally unobservable latent variable <span class="math inline">\(\xi\)</span>.</p>
+<p>There are a variety of different latent variable models, that deal with different types of items and factors.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Factor Analysis</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Item Response Theory</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Latent Class Models</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>Factor analysis assume that we have a set of continuous observed items <span class="math inline">\(Y_1, Y_2, \dots, Y_p\)</span>, that are all the result of some continuous latent factor variable <span class="math inline">\(\xi\)</span>.</p>
+<div id="def-factoranalysis" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 8.1 (Factor Analysis)</strong></span> The latent factor <span class="math inline">\(\xi\)</span> is assumed to be distributed <span class="math inline">\(\xi \sim \mathcal N(\kappa = 0, \ \phi = 1)\)</span>. We assume that each item <span class="math inline">\(X_i\)</span> is normally distributed, and is related to the latent factor <span class="math inline">\(\xi\)</span> by a linear model:</p>
 <p><span class="math display">\[
-X_i = \tau_i + \lambda_i\xi + \delta_i, \quad \delta_i \sim \mathcal N(0, \theta_{ii})
+Y_i = \tau_i + \lambda_i\xi + \delta_i, \quad \delta_i \sim \mathcal N(0, \theta_{ii})
 \]</span></p>
-<p>Where <span class="math inline">\(\lambda_i\)</span> is the slope (called the <strong>factor loadings</strong>), which determine the relationship between factor <span class="math inline">\(\xi\)</span> and a specific item <span class="math inline">\(X_i\)</span>. <span class="math inline">\(\delta_i\)</span> is the error term, and is called the <strong>unique factor</strong>.</p>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
-Assumptions of the Model
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
+<p>Where <span class="math inline">\(\lambda_i\)</span> is the slope (called the <strong>factor loadings</strong>), which determine the relationship/covariance between factor <span class="math inline">\(\xi\)</span> and a specific item <span class="math inline">\(Y_i\)</span>.</p>
+<p><span class="math inline">\(\delta_i\)</span> is the error term, and is called the <strong>unique factor</strong> - the part of the item not explained by the factor.</p>
 <p>We make a few assumptions on this linear model above.</p>
 <ol type="1">
-<li>Error terms <span class="math inline">\(\delta_i\)</span> for each regression model between <span class="math inline">\(\xi\)</span> and <span class="math inline">\(X_1, \dots, X_p\)</span> is normally distributed with a mean of 0. <span class="math inline">\(\delta_i \sim \mathcal N(0, \theta_{ii})\)</span>.</li>
-<li>Error terms <span class="math inline">\(\delta_1, \dots, \delta_p\)</span> of each model <span class="math inline">\(i\)</span> are uncorrelated with each other. This implies that correlations between <span class="math inline">\(X_1, \dots, X_p\)</span> are entirely explained by the latent factor <span class="math inline">\(\xi\)</span>.</li>
+<li>Error terms <span class="math inline">\(\delta_i\)</span> for each regression model between <span class="math inline">\(\xi\)</span> and <span class="math inline">\(Y_1, \dots, Y_p\)</span> is normally distributed with a mean of 0. <span class="math inline">\(\delta_i \sim \mathcal N(0, \theta_{ii})\)</span>.</li>
+<li>Error terms <span class="math inline">\(\delta_1, \dots, \delta_p\)</span> of each model <span class="math inline">\(i\)</span> are uncorrelated with each other. This implies that correlations between <span class="math inline">\(Y_1, \dots, Y_p\)</span> are entirely explained by the latent factor <span class="math inline">\(\xi\)</span>.</li>
 <li>Factor <span class="math inline">\(\xi\)</span> is uncorrelated with the error term <span class="math inline">\(\delta_i\)</span> (exogeneity).</li>
 </ol>
-</div>
-</div>
-</div>
-<p>Given the linear models between <span class="math inline">\(X_i\)</span> and <span class="math inline">\(\xi\)</span>, we know that <span class="math inline">\(\E(X_i | \xi) = \tau_i + \lambda_i \xi\)</span>. Since <span class="math inline">\(X_i\)</span> is also assumed to be normally distributed, we can determine the distribution of each <span class="math inline">\(X_i\)</span> as</p>
+<p>Given the linear models between <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(\xi\)</span>, we know that <span class="math inline">\(\E(Y_i | \xi) = \tau_i + \lambda_i \xi\)</span>. Since <span class="math inline">\(X_i\)</span> is also assumed to be normally distributed, we can determine the distribution of each <span class="math inline">\(X_i\)</span> as</p>
 <p><span class="math display">\[
-X_i \sim \mathcal N(\tau_i + \lambda_i \xi, \ \ \lambda_i^2 \phi + \theta_{ii})
+Y_i \sim \mathcal N(\tau_i + \lambda_i \xi, \ \ \lambda_i^2 \phi + \theta_{ii})
 \]</span></p>
-<p>Our theoretical variance-covariance matrix between <span class="math inline">\(X_1, \dots, X_p\)</span>, where the diagonals are the variances of <span class="math inline">\(X_1, \dots, X_p\)</span>, and the non-diagonals are <span class="math inline">\(Cov(x_n, x_m)\)</span> will be</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>Item Response Theory (IRT), also called Latent Trait Models, assume that we have at least 3 binary observed items <span class="math inline">\(Y_1, \dots, Y_p\)</span>. We have one continuous latent factor <span class="math inline">\(\xi\)</span>.</p>
+<div id="def-irt" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 8.2 (IRT)</strong></span> We assume the factor <span class="math inline">\(\xi\)</span> be normally distributed <span class="math inline">\(\xi \sim \mathcal N(\kappa = 0, \phi = 1)\)</span>.We assume that the relationship between an observed item <span class="math inline">\(Y_i\)</span> and the latent factor <span class="math inline">\(\xi\)</span> to be of the form of a binary logistic regression:</p>
 <p><span class="math display">\[
-\begin{pmatrix}
+\log\left(\frac{\pr_i(\xi)}{1 - \pr_i(\xi)}\right) = \tau_j + \lambda_j \xi,\quad \pr_i(\xi) = \P(Y_i = 1|\xi)
+\]</span></p>
+</div>
+<p>The intercept parameter <span class="math inline">\(\tau_j\)</span> is known as the <strong>difficult parameter</strong>. It is the probability of a item <span class="math inline">\(Y_i\)</span> equalling 1, when the factor <span class="math inline">\(\xi = 0\)</span>.</p>
+<p>The coefficient <span class="math inline">\(\lambda_i\)</span> is the <strong>factor loading</strong>, which is also known as the discrimination parameter. This explains the relationship between the item <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(\xi\)</span>.</p>
+<p>We can take the above equation, exponenting both sides and solving for <span class="math inline">\(\pr_i(\xi)\)</span>, getting:</p>
+<p><span class="math display">\[
+P(Y_i = 1|\xi) = \pr_i(\xi) = \frac{e^{\tau_i + \lambda_i\xi}}{1+e^{\tau_i + \lambda_i\xi}}
+\]</span></p>
+<p>This allows us to get fitted probabilities of how <span class="math inline">\(\xi\)</span> affects the probability of an item being <span class="math inline">\(Y_i = 1\)</span>. These fitted probabilities are called item response curves.</p>
+<p>IRT can also be applied to items with three or more categories, although this is quite rare. We will use an ordinal logistic regression model (with cumulative probabilities), or a multinomial logistic regression model instead.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>Latent Class Models assume that we have at least 3 categorical observed items <span class="math inline">\(Y_1, \dots, Y_p\)</span>. We have one categorical latent factor <span class="math inline">\(\xi\)</span>.</p>
+<div id="def-latentclass" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 8.3 (Latent Class Models)</strong></span> We assume the items <span class="math inline">\(Y_1, \dots, Y_p\)</span> are observed categorical items, with each item <span class="math inline">\(Y_j\)</span> having <span class="math inline">\(K_j\)</span> number of categories. Let factor <span class="math inline">\(\xi\)</span> be categorical with <span class="math inline">\(C\)</span> categories/classes, where <span class="math inline">\(C\)</span> is chosen by the user.</p>
+<p>Our parameter of interest is the <strong>item response probability</strong>, which is the probability of an item <span class="math inline">\(Y_i\)</span> equals category <span class="math inline">\(k\)</span>, given <span class="math inline">\(\xi\)</span> equals category <span class="math inline">\(c\)</span>:</p>
+<p><span class="math display">\[
+\pr_{ikc} = \P(Y_i = k|\xi = c)
+\]</span></p>
+<p>The model that describes the relationship between item <span class="math inline">\(Y_i\)</span> and factor <span class="math inline">\(\xi\)</span> is given by:</p>
+<p><span class="math display">\[
+\log\left(\frac{\pr_{ikc}}{\pr_{i1c}}\right) = \tau_{ik} + \sum\limits_{d=2}^C \lambda_{ikd}D_d
+\]</span></p>
+<p>Where <span class="math inline">\(\lambda_{ik1} = 0\)</span>, and <span class="math inline">\(D_d\)</span> are dummy variables for latent classes/categories <span class="math inline">\(d = 2, \dots, C\)</span> of <span class="math inline">\(\xi\)</span>.</p>
+</div>
+<p>Unlike the other two models, we cannot assume <span class="math inline">\(\xi\)</span> is normally distributed, since it is categorical. Instead, we assume <span class="math inline">\(\xi\)</span> is categorical with probabilities <span class="math inline">\(\alpha_c = \P(\xi = c)\)</span>.</p>
+</div>
+</div>
+</div>
+<p>We will explore the implementation of these models later in the applied chapter. We discuss the estimation and results of these models below.</p>
+<p><br></p>
+</section>
+<section id="estimation-with-mle" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="estimation-with-mle"><span class="header-section-number">8.4</span> Estimation with MLE</h2>
+<p>We will focus mostly on factor analysis, since the estimation is the most straight forward, but similar principles apply to all three of the latent variable models.</p>
+<p>Given the linear models between <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(\xi\)</span>, we know that <span class="math inline">\(\E(Y_i | \xi) = \tau_i + \lambda_i \xi\)</span> for all latent variable models. In factor analysis (<a href="#def-factoranalysis" class="quarto-xref">definition&nbsp;<span>8.1</span></a>) , since <span class="math inline">\(X_i\)</span> is also assumed to be normally distributed, we can determine the distribution of each <span class="math inline">\(X_i\)</span> as</p>
+<p><span class="math display">\[
+Y_i \sim \mathcal N(\tau_i + \lambda_i \xi, \ \ \lambda_i^2 \phi + \theta_{ii})
+\]</span></p>
+<p>Our theoretical variance-covariance matrix <span class="math inline">\(\b\Sigma\)</span> between <span class="math inline">\(X_1, \dots, X_p\)</span>, where the diagonals are the variances of <span class="math inline">\(X_1, \dots, X_p\)</span>, and the non-diagonals are <span class="math inline">\(Cov(X_n, X_m)\)</span> will be</p>
+<p><span class="math display">\[
+\b\Sigma =\begin{pmatrix}
 \lambda_1^2 \phi + \theta_{11} &amp;  \lambda_1\phi\lambda_2 &amp; \dots &amp;  \lambda_1 \phi \lambda_p \\
 \lambda_2 \phi \lambda_1 &amp; \lambda_2^2 \phi + \theta_{22} &amp; \dots &amp; \lambda_1 \phi \lambda_p \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots \\
 \lambda_p\phi\lambda_1 &amp; \lambda_p \phi \lambda_2 &amp; \dots &amp; \lambda_p^2 \phi + \theta_{pp}
 \end{pmatrix}
 \]</span></p>
-<p>The estimation process is to find the values of <span class="math inline">\(\lambda_i\)</span> and <span class="math inline">\(\theta_{ii}\)</span> that make the above hypothetical covariance matrix (since <span class="math inline">\(\phi\)</span> is assumed to be 1), as close to our observed covariance matrix from our sample data. This is generally done with maximum likelihood estimation.</p>
+<p>The estimation process is to find the values of <span class="math inline">\(\lambda_i\)</span> and <span class="math inline">\(\theta_{ii}\)</span> that make the above hypothetical covariance matrix (since <span class="math inline">\(\phi\)</span> is assumed to be 1), as close to our observed covariance matrix from our sample data.</p>
+<p>We can rewrite our covariance matrix <span class="math inline">\(\b\Sigma\)</span> as:</p>
+<p><span class="math display">\[
+\b\Sigma = \b{\Lambda\Lambda^\top} + \b\Theta, \quad \b\Lambda = (\lambda_1, \dots, \lambda_p)^\top, \ \b\Theta = \theta_{ii} \b I
+\]</span></p>
+<p>Where <span class="math inline">\(\b\Lambda\)</span> is a vector of factor loadings <span class="math inline">\(\lambda_i\)</span>, and <span class="math inline">\(\b\Theta\)</span> is a diagonal matrix with diagonals being <span class="math inline">\(\theta_{ii}\)</span>. Our goal is to find the values of <span class="math inline">\(\b\Lambda\)</span> and <span class="math inline">\(\b\Theta\)</span> that maximise the likelihood of observing the data given the model. Thus, we can use maximum likelihood estimation.</p>
+<p>For simplicity, we will not derive every step in detail. Based on the multivariate normal distribution, we can establish that the log-likelihood funcntion is:</p>
+<p><span class="math display">\[
+\begin{align}
+\ell(\b\Lambda, \b\Theta; \b S) &amp; = -\frac{n}{2}(\log |\b\Sigma| + \mathrm{Tr}(\b{S \Sigma}^{-1}) \\
+&amp; =  -\frac{n}{2}(\log |\b{\Lambda\Lambda^\top} + \b\Theta | + \mathrm{Tr}(\b{S}(\b{\Lambda\Lambda^\top} + \b\Theta )^{-1})
+\end{align}
+\]</span></p>
+<p>Where <span class="math inline">\(\b S\)</span> is the sample covariance matrix, <span class="math inline">\(\b\Sigma\)</span> is still our theoretical-implied covariance matrix from above, and <span class="math inline">\(\mathrm{Tr}(\cdot)\)</span> is the trace of a matrix.</p>
+<p>Under the assumptions we made earlier (standardising <span class="math inline">\(\xi\)</span> to be a standard normal distribution), we can use an iterative algorithm such as Newton-Raphson to estimate this model. At convergence, we will get estimated <span class="math inline">\(\hat{\b\Lambda}\)</span> and <span class="math inline">\(\hat{\b\Theta}\)</span>.</p>
+<p>Since these models are estimated with maximum likelihood estimation, we can use wald and likelihood ratio tests, as well as information criterion statistics.</p>
+<p><br></p>
+</section>
+<section id="interpretation-of-models" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="interpretation-of-models"><span class="header-section-number">8.5</span> Interpretation of Models</h2>
+<p>Our <span class="math inline">\(\hat\lambda_i\)</span> will be the estimated covariances/relationships between any item <span class="math inline">\(X_i\)</span> and the latent factor <span class="math inline">\(\xi\)</span>. We can interpret <span class="math inline">\(\xi\)</span> based on the items <span class="math inline">\(X_i\)</span> that have the largest factor loadings <span class="math inline">\(\hat\lambda_i\)</span>.</p>
+<p>Generally, if the factor <span class="math inline">\(\xi\)</span> has very close to 0 loadings for a certain item <span class="math inline">\(Y_i\)</span>, that factor is probably not measuring that item.</p>
+<p>Once we have estimated the factor analysis model, we can then use <span class="math inline">\(Y_1, \dots, Y_k\)</span> to create values for the latent variable <span class="math inline">\(\tilde\xi_t\)</span> for each observation <span class="math inline">\(t\)</span>, called factor scores. The exact formula differs for the model.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Interpretation</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Multiple Factors</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Confirmatory Analysis</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Factor Analysis</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Item Response Theory</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Latent Class Model</a></li></ul>
 <div class="tab-content nav-pills">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<p>Our <span class="math inline">\(\hat\lambda_i\)</span> will be the estimated covariances between any item <span class="math inline">\(X_i\)</span> and the latent factor <span class="math inline">\(\xi\)</span>. We can interpret <span class="math inline">\(\xi\)</span> based on the items <span class="math inline">\(X_i\)</span> that have the largest factor loadings <span class="math inline">\(\hat\lambda_i\)</span>.</p>
-<p>Recall that when we assumed <span class="math inline">\(\xi\)</span> is standardly normally distributed, the variances of <span class="math inline">\(X_i\)</span> (from the matrix above) become:</p>
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p>The factor scores in factor analysis are given by:</p>
+<p><span class="math display">\[
+\tilde\xi_t = w_0 + w_1 X_{t1} + w_2 X_{t2} + \dots + w_p X_{tp}
+\]</span></p>
+<p>Which are linear combinations of <span class="math inline">\(X_1, \dots, X_p\)</span>, with weights <span class="math inline">\(w_i\)</span> determined by the strength of the relationship between <span class="math inline">\(X_i\)</span> and <span class="math inline">\(\xi\)</span> as estimated by <span class="math inline">\(\hat\lambda_i\)</span> and the unique variance <span class="math inline">\(\theta_{ii}\)</span>.</p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<p>The factor scores in IRT are caculated as the estimated mean of the factor <span class="math inline">\(\xi\)</span>, given the values of items <span class="math inline">\(Y_1, \dots, Y_p\)</span> for observation <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[
+\tilde\xi = \E(\xi | Y_1, \dots, Y_p)
+\]</span></p>
+<p>The scores will be a linear combination of items <span class="math inline">\(Y_1, \dots, Y_p\)</span>:</p>
+<p><span class="math display">\[
+\tilde\xi_t = \hat\lambda_1 Y_{t1} + \hat\lambda_2Y_{t2} + \dots + \hat\lambda_p Y_{tp}
+\]</span></p>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<p>Instead of predicting a value of <span class="math inline">\(\xi\)</span> (since it is categorical in latent class models), we will classify observations <span class="math inline">\(t\)</span> into one of the categories/classes of <span class="math inline">\(\xi\)</span>. We estimate the probability of an observation being in every class <span class="math inline">\(c\)</span>, given their values of <span class="math inline">\(Y_1, \dots, Y_p\)</span>:</p>
+<p><span class="math display">\[
+\hat\P(\xi = c|Y_1 = k_1, Y_2 = k_2, \dots, Y_p = k_p), \quad \forall \ c
+\]</span></p>
+<p>And whichever category <span class="math inline">\(c\)</span> for which the calculated probability is the highest is the category we assign unit <span class="math inline">\(t\)</span> to in <span class="math inline">\(\tilde\xi\)</span>.</p>
+</div>
+</div>
+</div>
+<p>These factor scores will allow us to estimate each individual observation <span class="math inline">\(t\)</span>’s value <span class="math inline">\(\xi_t\)</span>, which will allow us to use the factor in descriptive statistics, or in other statistical models.</p>
+<p>For factor analysis specifically, recall that when we assumed <span class="math inline">\(\xi\)</span> is standardly normally distributed, the variances of <span class="math inline">\(X_i\)</span> (from the matrix above) become:</p>
 <p><span class="math display">\[
 \V X_i = \lambda_i^2 + \theta_{ii}
 \]</span></p>
 <ul>
 <li><span class="math inline">\(\lambda_i^2\)</span> is the part of the variance in <span class="math inline">\(X_i\)</span> explained by the factor <span class="math inline">\(\xi\)</span>. This is known as the <strong>communality</strong> of <span class="math inline">\(X_i\)</span>.</li>
 <li><span class="math inline">\(\theta_{ii}\)</span> is the part of <span class="math inline">\(X_i\)</span> not explained by the factor <span class="math inline">\(\xi\)</span>, and is called the <strong>unique variance</strong>.</li>
-<li>The proportion <span class="math inline">\(\rho_i =\lambda_i^2 / (\lambda_i^2 + \theta_{ii})\)</span> is the proportion of variance in <span class="math inline">\(X_i\)</span> explained by our factor <span class="math inline">\(\xi\)</span>, called the <strong>reliability</strong>. This is the <span class="math inline">\(R^2\)</span> of factor analysis.</li>
+<li>The proportion <span class="math inline">\(\rho_i =\lambda_i^2 / (\lambda_i^2 + \theta_{ii})\)</span> is the proportion of variance in <span class="math inline">\(X_i\)</span> explained by our factor <span class="math inline">\(\xi\)</span>, called the <strong>reliability</strong>. This is the <span class="math inline">\(R^2\)</span> of factor analysis. If our items <span class="math inline">\(Y_i\)</span> are standardised, then <span class="math inline">\(\V Y_i = 1\)</span>, and the reliability can simply be calculated as <span class="math inline">\(1-\theta_{ii}\)</span>.</li>
 </ul>
-<p>Once we have estimated the factor analysis model, we can then use <span class="math inline">\(X_1, \dots, X_k\)</span> to create values for the latent variable <span class="math inline">\(\tilde\xi_t\)</span> for each observation <span class="math inline">\(t\)</span>, called factor scores:</p>
-<p><span class="math display">\[
-\tilde\xi_t = w_0 + w_1 X_{t1} + w_2 X_{t2} + \dots + w_p X_{tp}
-\]</span></p>
-<p>Which are linear combinations of <span class="math inline">\(X_1, \dots, X_p\)</span>, with weights <span class="math inline">\(w_i\)</span> determined by the strength of the relationship between <span class="math inline">\(X_i\)</span> and <span class="math inline">\(\xi\)</span> as estimated by <span class="math inline">\(\hat\lambda_i\)</span> and the unique variance <span class="math inline">\(\theta_{ii}\)</span>.</p>
-</div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>In Item Response Theory, the same ideas do not directly apply. The discrimination parameter <span class="math inline">\(\lambda_i\)</span> can be thought of the part of <span class="math inline">\(Y_i\)</span> that is explained by <span class="math inline">\(\xi\)</span>, and the difficulty parameter <span class="math inline">\(\tau_i\)</span> can be thought of the unique part of the item. However, neither are directly interpretable as variances unlike factor anlaysis.</p>
+<p><br></p>
+</section>
+<section id="multiple-latent-factors" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="multiple-latent-factors"><span class="header-section-number">8.6</span> Multiple Latent Factors</h2>
 <p>We can have more than one latent factor <span class="math inline">\(\b\xi = (\xi_1, \dots, \xi_q)\)</span>. We assume all are standardly normally distributed as before. Each item <span class="math inline">\(X_1, \dots, X_p\)</span> is now related to each factor <span class="math inline">\(\xi_1, \dots, \xi_q\)</span> with a regression:</p>
 <p><span class="math display">\[
 X_i = \tau_i + \lambda_{i1}\xi_1 + \lambda_{i2}\xi_2 + \dots + \lambda_{i1} \xi_q + \delta_i, \quad \delta_i\sim\mathcal N(0, \theta_{ii})
@@ -366,41 +458,46 @@ X_i = \tau_i + \lambda_{i1}\xi_1 + \lambda_{i2}\xi_2 + \dots + \lambda_{i1} \xi_
 <p><span class="math display">\[
 df = \frac{(p-q)^2-(p+1)}{2}≥ 0
 \]</span></p>
-<p>Finally, we have an issue of factor rotation - this is because our different factors can be rotated in infinitely many ways, and still produce the same model fit.</p>
-<p>The default rotation is <strong>orthogonal (perpendicular)</strong>, which means factors are uncorrelated. The result from this estimation is very similar to PCA, and is good for dimensional reduction.</p>
+<p>Finally, we have an issue of factor rotation - this is because our different factors can be rotated in infinitely many ways, and still produce the same model fit. For example, take two factors <span class="math inline">\(\xi_1\)</span> and <span class="math inline">\(\xi_2\)</span>. Let us transform them to 2 new factors with some linear combinations:</p>
+<p><span class="math display">\[
+\begin{align}
+\xi_1^* &amp; = a_{11}\xi_1 + a_{12}\xi_2 \\
+\xi_2^* &amp; = a_{21}\xi_1 + a_{22}\xi_2 \\
+\end{align}
+\]</span></p>
+<p>These transformations can be interpreted as a rotation (change in coordinate axes) of the space of these two factors. However, both <span class="math inline">\((\xi_1, \xi_2)\)</span> and <span class="math inline">\((\xi_1^*, \xi_2^*)\)</span> produce the exact same fit of the model for the observed items. In fact, for any choice of coefficients <span class="math inline">\(a\)</span> (infinitely many choices), the model fit will be the same. This is a unique identification issue.</p>
+<p>The default rotation in many calculations <strong>orthogonal (perpendicular)</strong>, which means factors are uncorrelated. The result from this estimation is very similar to PCA, and is good for dimensional reduction.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-198343310.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
 <p>However, for interpretation ease, it is often useful to use <strong>oblique</strong> rotations, where factors can be correlated. This is because oblique rotations will have more factor loadings of 0, which will allow us to be more clear with what a factor is measuring.</p>
 <p>Also note that in terms of interpretation, <span class="math inline">\(\hat\lambda_{ij}\)</span> is only the covariance between <span class="math inline">\(X_i\)</span> and <span class="math inline">\(\xi_j\)</span> if all factors are uncorrelated. If factors are correlated, we lose this nice interpretation.</p>
-</div>
-<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
-<p>Confirmatory factor analysis is more about using factor analysis to test theories we already have. Instead of letting the estimation process estimate component loadings for all <span class="math inline">\(X_i\)</span> and <span class="math inline">\(\xi_j\)</span>, we might set some component loadings to 0 based on our theoretical beliefs.</p>
-<p>A loading of 0 implies that a factor <span class="math inline">\(\xi_j\)</span> is not being measured by an observed item <span class="math inline">\(X_i\)</span>. Ideally for CFA, we want a structure where each item <span class="math inline">\(X_i\)</span> has only one non-0 loading - thus we know exactly what factor <span class="math inline">\(X_i\)</span> is measuring. Below, we can see half of the items measure <span class="math inline">\(\xi_1\)</span>, and the other half measure <span class="math inline">\(\xi_2\)</span>:</p>
+<p><br></p>
+</section>
+<section id="confirmatory-analysis" class="level2" data-number="8.7">
+<h2 data-number="8.7" class="anchored" data-anchor-id="confirmatory-analysis"><span class="header-section-number">8.7</span> Confirmatory Analysis</h2>
+<p>Confirmatory analysis is more about using our latent variable models to test theories we already have. Instead of letting the estimation process estimate component loadings for all <span class="math inline">\(X_i\)</span> and <span class="math inline">\(\xi_j\)</span>, we might set some component loadings to 0 based on our theoretical beliefs.</p>
+<p>A loading of 0 implies that a factor <span class="math inline">\(\xi_j\)</span> is not being measured by an observed item <span class="math inline">\(X_i\)</span>. Ideally for confirmatory analysis, we want a structure where each item <span class="math inline">\(X_i\)</span> has only one non-0 loading - thus we know exactly what factor <span class="math inline">\(X_i\)</span> is measuring. Below, we can see half of the items measure <span class="math inline">\(\xi_1\)</span>, and the other half measure <span class="math inline">\(\xi_2\)</span>:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-4283247760.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
 </figure>
 </div>
+<p>We can see the factor loadings of this model below. The first two columns are exploratory (normal) analysis, and the right column is confirmatory analysis. Note how each item (the rows) for the CFA has only one non-zero component loading.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2236080857.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
 <p>For model identification to be possible with this structure, we need at least 2 items per factor, and for a 1-factor model, we need 3 items.</p>
 <p>We can use a variety of significance tests (like the wald test with hypothesis <span class="math inline">\(\lambda_i = 0\)</span>) to test if a certain component should be set to 0 or not.</p>
-</div>
-</div>
-</div>
-<p>We will discuss the practical implementation of factor analysis in the multivariate methods chapter in the applied section.</p>
+<p>We will discuss the practical implementation of confirmatory analysis in the multivariate methods chapter in the applied section.</p>
 <p><br></p>
 </section>
-<section id="latent-trait-models" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="latent-trait-models"><span class="header-section-number">8.3</span> Latent Trait Models</h2>
-<p><br></p>
-</section>
-<section id="latent-class-models" class="level2" data-number="8.4">
-<h2 data-number="8.4" class="anchored" data-anchor-id="latent-class-models"><span class="header-section-number">8.4</span> Latent Class Models</h2>
-<p><br></p>
-</section>
-<section id="cluster-analysis" class="level2" data-number="8.5">
-<h2 data-number="8.5" class="anchored" data-anchor-id="cluster-analysis"><span class="header-section-number">8.5</span> Cluster Analysis</h2>
-<p><br></p>
-</section>
-<section id="structural-equation-modelling" class="level2" data-number="8.6">
-<h2 data-number="8.6" class="anchored" data-anchor-id="structural-equation-modelling"><span class="header-section-number">8.6</span> Structural Equation Modelling</h2>
+<section id="structural-equation-modelling" class="level2" data-number="8.8">
+<h2 data-number="8.8" class="anchored" data-anchor-id="structural-equation-modelling"><span class="header-section-number">8.8</span> Structural Equation Modelling</h2>
 
 
 </section>
