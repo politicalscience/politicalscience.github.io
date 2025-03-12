@@ -58,7 +58,7 @@ Count outcome variables $Y$ can be used with:
 ## Review of the Types of Variables
 
 | Type        | Description                                                                                              | Example                                                                                   |
-|-------------|----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+|--------------|--------------------------------|---------------------------|
 | Continuous  | Can take any value within an interval $[a, b]$.                                                          | GDP of a country, temperature.                                                            |
 | Binary      | Can only take value 0 or 1.                                                                              | Yes/no, true/false, did/didn't.                                                           |
 | Ordinal     | Can only take a finite set of discrete outcomes $\{a, b, c\}$, but these outcomes can be ordered.        | strongly disagree - disagree - neutral - agree - strongly agree                           |
@@ -165,7 +165,7 @@ For mechanical details on IV/2SLS, see [here](ols.qmd#instrumental-variables-est
 Interpretation of coefficient estimates are as follows (proof from @thm-regressionanatomy). Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence):
 
 |               |                                                                                                                                                  |                                                                                                                                                            |
-|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|--------------|----------------------------|------------------------------|
 |               | **Continuous** $X_{j}$                                                                                                                           | **Binary** $X_{j}$                                                                                                                                         |
 | $\hat\beta_j$ | For every one unit increase in $X_{j}$, there is an expected $\hat\beta_j$ unit change in $Y$, holding all other explanatory variables constant. | There is a $\hat\beta_j$ unit difference in $Y_i$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
 | $\hat\beta_0$ | When all explanatory variables equal 0, the expected value of $Y$ is $\hat\beta_0$.                                                              | For category $X_{j} = 0$, the expected value of $Y$ is $\hat\beta_0$ (when all other explanatory variables equal 0).                                       |
@@ -227,9 +227,16 @@ $$
 \pr_t = \beta_0 + \beta_1 X_{1t} + \beta_2 X_{2t} + \dots + \beta_p X_{tp}
 $$
 
-Where $\beta_0$ is the intercept, $\beta_1, \dots, \beta_p$ are the parameters that explain the relationship between $X_j$ and $Y$, that need to be estimated with sample data.
+Where $\beta_0$ is the intercept, $\beta_1, \dots, \beta_p$ are the parameters that explain the relationship between $X_j$ and $Y$, that need to be estimated with sample data with one of two estimators:
 
-The model is always estimated with OLS + robust standard errors, as the [bernoulli distribution](random.qmd#bernoulli-and-binomial-distribution)'s variance is inherently heterscedastic. For estimation with OLS and robust standard errors in R, we should use the *fixest* package:
+estimators:
+
+::: {.panel-tabset .nav-pills}
+## OLS with Robust SE
+
+We should use the Ordinary Least Squares estimator (@def-ols) [with]{.underline} robust standard errors (@thm-heterovar) for the linear probability model, because $Y$ is distributed by the bernoulli distribution, which implies heteroscedasticity.
+
+For estimation with OLS and robust standard errors in R, we should use the *fixest* package:
 
 ```{r, eval = FALSE}
 library(fixest)
@@ -237,12 +244,29 @@ model <- feols(Y ~ X1 + X2 + X3, data = mydata, se = "hetero")
 summary(model)
 ```
 
-For mechanical details on least squares and robust standard errors, see [here](ols.qmd#ordinary-least-squares).
+For mechanical details on robust standard errors, see [here](ols.qmd#ols-and-non-spherical-errors).
+
+## IV/2SLS
+
+We should use the instrumental variables estimator (@def-ivestimator)or 2-stage least squares (2SLS) when our model violates exogeneity (@def-weakexog), and we care a lot about accurately estimating the correlation between $X_j$ and $Y$, and we have a suitable instrument $Z$.
+
+You should not use IV/2SLS unless you really only care about the accurate estimation of one $\beta_j$, and do not care about prediction purposes.
+
+For estimation of IV/2SLS, we should use the fixest package:
+
+```{r, eval = FALSE}
+library(fixest)
+model <- feols(Y ~ 1 | D ~ Z, data = mydata, se = "hetero")
+summary(model)
+```
+
+For mechanical details on IV/2SLS, see [here](ols.qmd#instrumental-variables-estimator).
+:::
 
 Interpretation of coefficient estimates are as follows (proof from @thm-regressionanatomy). Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence):
 
 |                     |                                                                                                                                                                                                                         |                                                                                                                                                                                                                                |
-|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|--------------|-----------------------------|------------------------------|
 |                     | **Continuous** $X_{j}$                                                                                                                                                                                                  | **Binary** $X_{j}$                                                                                                                                                                                                             |
 | $\hat\beta_j$       | For every one unit increase in $X_{j}$, there is an expected $\hat\beta_j \times 100$ percentage point change in the probability of a unit being in category $Y_t=1$, holding all other explanatory variables constant. | There is a $\hat\beta_j\times 100$ percentage point difference in the probability of a unit being in category $Y_t=1$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
 | $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $Y_t=1$ is $\hat\beta_0 \times 100$                                                                                        | For category $X_{j} = 0$, the expected probability of a unit being in category $Y_t=1$ is $\hat\beta_j \times 100$ (when all other explanatory variables equal 0).                                                             |
@@ -344,7 +368,7 @@ Thus, $e^{\beta_j}$ is the multiplicative change in the odds of event $Y_t = 1$,
 :::
 
 |               |                                                                                                                                                                                                                |                                                                                                                                                                                                                        |
-|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|--------------|-----------------------------|------------------------------|
 |               | **Continuous** $X_{j}$                                                                                                                                                                                         | **Binary** $X_{j}$                                                                                                                                                                                                     |
 | $\hat\beta_j$ | For every one unit increase in $X_{j}$, there is an expected $\times e^{\hat\beta_j}$ multiplicative change in the odds of a unit being in category $Y_t=1$, holding all other explanatory variables constant. | There is a $\times e^{\hat\beta_j}$ multiplicative difference in the odds of a unit being in category $Y_t=1$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
 | $\hat\beta_0$ | The odds of event $Y_t = 1$ when all explanatory variables equal 0 is $e^{\hat\beta_0}$.                                                                                                                       | The odds of event $Y_t = 1$ for category $X_j = 0$ is $e^{\hat\beta_0}$, when all other explanatory variables equal 0.                                                                                                 |
