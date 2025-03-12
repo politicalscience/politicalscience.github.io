@@ -273,9 +273,7 @@ Why isn't $V$ a confounder? Well, $V$ does not cause selection into $D$, as the 
 
 ## Randomisation
 
-One way we can eliminate selection bias is through randomly assigning our subjects to either treatment $D_t = 1$ or control $D_t = 0$. Since we are determining (through randomisation) who gets $D$, that means confounder $X$ is no longer determining who gets $D$. This breaks the relationship between $X \rightarrow D$, eliminating the backdoor path and selection bias.
-
-Randomisation implies that the assignment probabilities do not depend on the potential outcomes - the values of $\pc$ and $\pt$ do not affect the probability of a unit $t$ getting put into treatment $D_t = 1$ or control $D_t = 0$.
+One way we can eliminate selection bias is through randomly assigning our subjects to either treatment $D_t = 1$ or control $D_t = 0$. Randomisation implies that the assignment probabilities do not depend on the potential outcomes - the values of $\pc$ and $\pt$ do not affect the probability of a unit $t$ getting put into treatment $D_t = 1$ or control $D_t = 0$.
 
 $$
 \P(D_t = 1 | \pc) = \P(D_t = 1 | \pt)  =  \P(D_t = 1)
@@ -351,7 +349,7 @@ $$
 \rho_{D, Y} = \E(Y_t|D_t = 1) - \E (Y_t | D_t = 0) = \tau_{ATE} = \tau_{ATT}
 $$
 
-Since $\rho_{D, Y}$ only requires observed outcomes (not potential), we can calculate $\rho_{D, Y}$, which is also equal to the ATE and ATT under randomisation. Thus, we have identified a way to find the ATE and ATT with just observed outcomes.
+Since $\rho_{D, Y}$ only requires observed outcomes (not potential), we can calculate $\rho_{D, Y}$, which is also equal to the ATE and ATT under randomisation. Thus, we have identified a way to find the ATE and ATT with just observed outcomes. This means that under randomisation, simple correlation models also give us causal effects.
 
 <br />
 
@@ -359,28 +357,36 @@ Since $\rho_{D, Y}$ only requires observed outcomes (not potential), we can calc
 
 So we have established that randomly assigning treatment and control can allow us to establish that correlation equals causation (under succesfull randomisation only).
 
-But how can we actually implement this design? The most simple way is the classic randomisation setup:
+But how can we actually implement this design? There are several different ways to do randomisation:
 
-1.  We have $N$ total number of units in our experiment.
-2.  A random subset of $N_1$ will be assigned to treatment, and the remainder are set to control. We can choose $N_1$ to be any number (although 50% of $N$ is the most common).
-3.  We randomly select individuals into $N_1$ or not, until we reach the number $N_1$, where the remainder will be assigned to control.
+::: {.panel-tabset .nav-pills}
+## Classic
 
-However, the downside of this traditional method is that technically not every unit has an equal chance of being assigned to treatment - as after $N_1$ has been reached, all remaining units will go into control.
+The classic randomisation is the most common form of randomsiation.
 
-Instead, we can do bernoulli randomisation. In bernoulli randomisation, we have a probability of being assigned to treatment given by the bernoulli distribution. We do not fix $N_1$ before randomisation, so everyone gets the same probability of being assigned to treatment. This does mean that if we run multiple randomisation trials, each will likely have a different amount of units in treatment $N_1$.
+We start out with $N$ total number of individuals/observations in our experiment. We first decide the number of individuals we want to assign to treatment, $N_1$. Frequently, $N_1$ is 50% of $N$.
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Cluster Randomisation
+Then, a random set of $N_1$ number individuals is assigned to treatment, and the remainder is sent to control. Now we have randomly assigned treatment and control individuals.
+
+There is an issue: technically, not all units $t$ have an equal chance of being assigned to treatment. This is because once we assign $N_1$ of individuals to treatment, the remaining observations will have 0% chance of being assigned to treatment. Bernoulli Randomisation deals with this.
+
+## Bernoulli
+
+Bernoulli randomisation is another form of randomisation. Instead of specifying before-hand how many treated units $N_1$ you want, we let $N_1$ be un-fixed.
+
+For every unit $t$, they have some probability $p$ of being assigned to treatment. We do this for every unit $t$.
+
+The result is that every unit has an equal chance of being assigned to treatment and control, unlike classic randomisation. The downside is that if we run the procedure multiple times, the number of units treated $N_1$ will differ between each trial.
+
+## Cluster
 
 Cluster randomisation is when we randomly assign units (or have individuals naturally) in groups. Every unit within a group (called a cluster) will get the same treatment. We randomly sample the groups to get the treatment or control.
 
 For example, we could randomise development treatment at the village level, or randomise treatment of a cirriculum at the school level.
 
 The main reason for this is to prevent SUTVA violations. For example, imagine you are testing the effects of a new curriculum. If you randomise by each student, students will talk to their friends, and treated individuals may teach control individuals about the new curriculum. But by randomising by school (either an entire school gets or does not get the new curriculum), this concern is not a huge issue.
-:::
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Stratified Randomisation
+## Stratified
 
 Stratified (also called blocked or conditional) randomisation are when randomisation occurs separately within levels of some covariates(s) $X$. Generally, you separate your sample of $N$ units into $J$ subgroups. For example, you could split people up into male or female, then randomly sample within each group, rather than everyone together.
 

@@ -5,6 +5,7 @@ MathJax = {
         V: "\\mathbb{V}",
         P: "\\mathbb{P}",
         eps: "\\varepsilon",
+        pr: "\\varphi",
         b: "\\boldsymbol",
         ind: "\\perp\\!\\!\\!\\!\\perp",
         pt: "{\\textcolor{purple}{Y_t^{(1)}}}",

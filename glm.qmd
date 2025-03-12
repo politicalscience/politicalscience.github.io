@@ -162,27 +162,37 @@ summary(model)
 For mechanical details on IV/2SLS, see [here](ols.qmd#instrumental-variables-estimator).
 :::
 
-Interpretation of coefficient estimates are as follows (proof from @thm-regressionanatomy). Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence)
+Interpretation of coefficient estimates are as follows (proof from @thm-regressionanatomy). Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence):
 
 |               |                                                                                                                                                  |                                                                                                                                                            |
-|--------------|----------------------------|------------------------------|
+|-----|----------------------------|------------------------------|
 |               | **Continuous** $X_{j}$                                                                                                                           | **Binary** $X_{j}$                                                                                                                                         |
 | $\hat\beta_j$ | For every one unit increase in $X_{j}$, there is an expected $\hat\beta_j$ unit change in $Y$, holding all other explanatory variables constant. | There is a $\hat\beta_j$ unit difference in $Y_i$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
 | $\hat\beta_0$ | When all explanatory variables equal 0, the expected value of $Y$ is $\hat\beta_0$.                                                              | For category $X_{j} = 0$, the expected value of $Y$ is $\hat\beta_0$ (when all other explanatory variables equal 0).                                       |
 
 ::: {.panel-tabset .nav-pills}
+## Prediction
+
+To predict new values of $Y$ for new observations $t$, we use our fitted values equation:
+
+$$
+\hat Y_t = \hat\beta_0 + \hat\beta_1 X_{t1} + \dots + \hat\beta_p X_{tp}
+$$
+
+In R, we can use the predict command:
+
+```{r, eval = FALSE}
+my_predictions <- predict(model, newdata = my_new_data)
+```
+
+Where *my_new_data* is a data frame with $X_1, \dots, X_p$ values for all the new observations we want to predict $\hat Y$ for.
+
 ## T-Tests
 
 Hypothesis testing of each coefficient with a t-test (and the p-values) is provided in most regression outputs. The mechanics of t-test were provided in [chapter 4](ols.qmd#statistical-inference).
 
 -   If our coefficient $\hat\beta_j$ is statistically significant, then we can reject that there is no relationship between $X_j$ and $Y$, and conclude there is a relationship between $X_j$ and $Y$.
 -   If our coefficient $\hat\beta_j$ is not statistically significant, then we cannot reject there is no relationship between $X_j$ and $Y$.
-
-## Standardised Coefficients
-
-Sometimes, unit change is not very useful - as it depends on how the variable is measured. For example, what does a 5 unit change in democracy mean? Is that big, small? It is hard to tell.
-
-Instead, we can look at the change in standard deviations. For a one standard deviation $\sigma_X$ increase in $X_{ij}$, there is an expected $\frac{\beta_j\sigma_X}{\sigma_Y}$-standard deviation change in $Y_i$.
 
 ## R-Squared
 
@@ -205,18 +215,201 @@ anova(model0, model1)
 If the test is statistically significant, then all the additional parameters in model 1 are jointly significant. If the test is not statistically significant, then all the additional parameters in model 1 are not jointly significant.
 :::
 
-To predict new values of $Y$ for new observations $t$, we use our fitted values equation:
+For more information on categorical $X$, interactions, polynomial and logarithmic transformations, see the final section on model specification.
+
+<br />
+
+## Linear Probability Model
+
+The linear probability model is for binary $Y$ ([bernoulli distribution](random.qmd#bernoulli-and-binomial-distribution)). It should generally only be used for interpreting relationships between $X_j$ and binary $Y$, and not for prediction (use binomial logistic instead). The outcome of interest is the $\E(Y_t | \set X_t) = \P (Y_t = 1 | \set X_t)$, which we denote as $\pr_t$.
 
 $$
-\hat Y_t = \hat\beta_0 + \hat\beta_1 X_{t1} + \dots + \hat\beta_p X_{tp}
+\pr_t = \beta_0 + \beta_1 X_{1t} + \beta_2 X_{2t} + \dots + \beta_p X_{tp}
+$$
+
+Where $\beta_0$ is the intercept, $\beta_1, \dots, \beta_p$ are the parameters that explain the relationship between $X_j$ and $Y$, that need to be estimated with sample data.
+
+The model is always estimated with OLS + robust standard errors, as the [bernoulli distribution](random.qmd#bernoulli-and-binomial-distribution)'s variance is inherently heterscedastic. For estimation with OLS and robust standard errors in R, we should use the *fixest* package:
+
+```{r, eval = FALSE}
+library(fixest)
+model <- feols(Y ~ X1 + X2 + X3, data = mydata, se = "hetero")
+summary(model)
+```
+
+For mechanical details on least squares and robust standard errors, see [here](ols.qmd#ordinary-least-squares).
+
+Interpretation of coefficient estimates are as follows (proof from @thm-regressionanatomy). Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence):
+
+|                     |                                                                                                                                                                                                                         |                                                                                                                                                                                                                                |
+|-------|---------------------------|----------------------------|
+|                     | **Continuous** $X_{j}$                                                                                                                                                                                                  | **Binary** $X_{j}$                                                                                                                                                                                                             |
+| $\hat\beta_j$       | For every one unit increase in $X_{j}$, there is an expected $\hat\beta_j \times 100$ percentage point change in the probability of a unit being in category $Y_t=1$, holding all other explanatory variables constant. | There is a $\hat\beta_j\times 100$ percentage point difference in the probability of a unit being in category $Y_t=1$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
+| $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $Y_t=1$ is $\hat\beta_0 \times 100$                                                                                        | For category $X_{j} = 0$, the expected probability of a unit being in category $Y_t=1$ is $\hat\beta_j \times 100$ (when all other explanatory variables equal 0).                                                             |
+
+::: {.panel-tabset .nav-pills}
+## Prediction
+
+You should not use the linear probability model for prediction. This is because the linear probability model can produce probabilities $\pr_t$ that are outside of the range 0 and 1. This violates the axioms of probability, which state any event must have a probability between 0 and 1.
+
+If you are interested in prediction, see the binomial logistic model, which ensures that probabilities $\pr_t$ are always between 0 and 1.
+
+The linear probability model is only useful when we are considering the relationship between $X_j$ and $Y$, since the linear nature of the model makes interpreting parameters $\beta_j$ simple.
+
+## T-Tests
+
+Hypothesis testing of each coefficient with a t-test (and the p-values) is provided in most regression outputs. The mechanics of t-test were provided in [chapter 4](ols.qmd#statistical-inference).
+
+-   If our coefficient $\hat\beta_j$ is statistically significant, then we can reject that there is no relationship between $X_j$ and $Y$, and conclude there is a relationship between $X_j$ and $Y$.
+-   If our coefficient $\hat\beta_j$ is not statistically significant, then we cannot reject there is no relationship between $X_j$ and $Y$.
+
+## R-Squared
+
+R-Squared is provided in the regression output, and was discussed in @def-rsquared.
+
+R-Squared is the percentage of variation in $Y$ our model explains. It is always between 0 and 1. R-squared never decreases as we add more explanatory variables - so it is important not to overly focus on it.
+
+Adjusted R-Squared is similar but penalises models for having too many explanatory variables.
+
+## F-Tests
+
+F-tests can test the significance of multiple parameters at once. The mechanics of F-test were provided in [chapter 4](ols.qmd#statistical-inference).
+
+To conduct a f-test in R, we do the following (where model 0 is the null model, and model 1 is the alternative model):
+
+```{r, eval = FALSE}
+anova(model0, model1)
+```
+
+If the test is statistically significant, then all the additional parameters in model 1 are jointly significant. If the test is not statistically significant, then all the additional parameters in model 1 are not jointly significant.
+:::
+
+<br />
+
+## Binomial Logistic Regression
+
+The linear probability model is for binary $Y$ ([bernoulli distribution](random.qmd#bernoulli-and-binomial-distribution)). The outcome of interest is the $\E(Y_t | \set X_t) = \P (Y_t = 1 | \set X_t)$, which we denote as $\pr_t$. The logistic model applies a link function $g(\cdot)$ to $\pr_t$ to ensure that predicted probabilities are always between 0 and 1. The model is specified as:
+
+$$
+\log\left(\frac{\pr_t}{1 - \pr_t}\right) = \beta_0 + \beta_1X_{t1} + \beta_2X_{t2} + \dots + \beta_pX_{tp}
+$$ {#eq-logodds}
+
+Using the property of logarithms, we can rewrite the model in respect to $\pr_t$:
+
+$$
+\pr_t = \frac{e^{\beta_0 + \beta_1X_{t1} + \beta_2X_{t2} + \dots + \beta_pX_{tp}}}{1+e^{\beta_0 + \beta_1X_{t1} + \beta_2X_{t2} + \dots + \beta_pX_{tp}}}
+$$
+
+Where $\beta_0$ is the intercept, $\beta_1, \dots, \beta_p$ are the parameters that explain the relationship between $X_j$ and $Y$, that need to be estimated with sample data.
+
+The model is always estimated with the maximum likelihood estimator. For estimation with OLS and robust standard errors in R, we should use the *glm()* function:
+
+```{r, eval = FALSE}
+model <- glm(Y ~ X1 + X2 + X3,
+             data = mydata,
+             family = "binomial")
+summary(model)
+```
+
+Interpretation of coefficient estimates are very difficult - instead, we will interpret **odds ratios**, which are $e^{\hat\beta_j}$. Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence):
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Details of Odds Ratios
+
+Odds of an event $A$ is the probability of $A$ occuring divided by the probability of event $A$ not occuring. We can apply the same logic to $\P(Y_t = 1) = \pr_t$:
+
+$$
+\mathrm{odds}_A = \frac{\P(A)}{1 - \P(A)} \quad \implies \quad \mathrm{odds}_{Y_t = 1} = \frac{\pr_t}{1-\pr_t}
+$$
+
+From @eq-logodds, if we exponent both sides, we can get the odds of $Y_t = 1$ from the logistic regression:
+
+$$
+\frac{\pr_t}{1-\pr_t} = e^{\beta_0 + \beta_1X_{t1} + \beta_2X_{t2} + \dots + \beta_pX_{tp}}
+$$
+
+An **odds ratio** is a ratio of two odds. For the odds of event $A$ and $B$, the odds ratio is:
+
+$$
+OR = \frac{\mathrm{odds}_A}{\mathrm{odds}_B} = \frac{\P A / ( 1 - \P A)}{\P B / (1 - \P B)}
+$$
+
+We can apply the same to the logistic regression. We can find the odds of $\pr_t | X_j = x+1$ and $\pr_t | X_j = x$:
+
+$$
+OR = \frac{\mathrm{odds}_{\pr_t | X_j = x+1}}{\mathrm{odds}_{\pr_t | X_j = x}} = e^{\beta_j}
+$$
+
+Thus, $e^{\beta_j}$ is the multiplicative change in the odds of event $Y_t = 1$, for every one unit increase in $X_j$.
+:::
+
+|               |                                                                                                                                                                                                                |                                                                                                                                                                                                                        |
+|--------|----------------------------|-----------------------------|
+|               | **Continuous** $X_{j}$                                                                                                                                                                                         | **Binary** $X_{j}$                                                                                                                                                                                                     |
+| $\hat\beta_j$ | For every one unit increase in $X_{j}$, there is an expected $\times e^{\hat\beta_j}$ multiplicative change in the odds of a unit being in category $Y_t=1$, holding all other explanatory variables constant. | There is a $\times e^{\hat\beta_j}$ multiplicative difference in the odds of a unit being in category $Y_t=1$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
+| $\hat\beta_0$ | The odds of event $Y_t = 1$ when all explanatory variables equal 0 is $e^{\hat\beta_0}$.                                                                                                                       | The odds of event $Y_t = 1$ for category $X_j = 0$ is $e^{\hat\beta_0}$, when all other explanatory variables equal 0.                                                                                                 |
+
+::: {.panel-tabset .nav-pills}
+## Prediction
+
+To predict probabilities $\pr_t = \P(Y_t = 1)$ for new observations $t$, we use our fitted values equation:
+
+$$
+\hat\pr_t = \frac{e^{\hat\beta_0 + \hat\beta_1X_{t1} + \hat\beta_2X_{t2} + \dots + \hat\beta_pX_{tp}}}{1+e^{\hat\beta_0 + \hat\beta_1X_{t1} + \hat\beta_2X_{t2} + \dots + \hat\beta_pX_{tp}}}
 $$
 
 In R, we can use the predict command:
 
 ```{r, eval = FALSE}
-my_predictions <- predict(model, newdata = my_new_data)
+my_predictions <- predict(model,
+                          newdata = my_new_data,
+                          type = "response")
 ```
 
 Where *my_new_data* is a data frame with $X_1, \dots, X_p$ values for all the new observations we want to predict $\hat Y$ for.
 
-For more information on categorical $X$, interactions, polynomial and logarithmic transformations, see the final section on model specification.
+We can also do classification, which is not about predicting the probability $\pr_t$, but instead predicting if $\hat Y = 1$ or $\hat Y = 0$. We generally assign units $\pr_t > 0.5$ to $\hat Y = 1$, and others to $\hat Y = 0$.
+
+## Wald Tests
+
+Hypothesis testing of each coefficient with a wald test (and the p-values) is provided in most regression outputs. The mechanics of wald test were provided in [chapter 3](mle.qmd#statistical-inference).
+
+-   If our coefficient $\hat\beta_j$ is statistically significant, then we can reject that there is no relationship between $X_j$ and $Y$, and conclude there is a relationship between $X_j$ and $Y$.
+-   If our coefficient $\hat\beta_j$ is not statistically significant, then we cannot reject there is no relationship between $X_j$ and $Y$.
+
+## Likelihood Ratio Tests
+
+Likelihood Ratio tests can test the significance of multiple parameters at once. The mechanics of Likelihood Ratio test were provided in [chapter 3](mle.qmd#statistical-inference).
+
+To conduct a Likelihood Ratio test in R, we do the following (where model 0 is the null model, and model 1 is the alternative model):
+
+```{r, eval = FALSE}
+anova(model0, model1, test = "LRT")
+```
+
+If the test is statistically significant, then all the additional parameters in model 1 are jointly significant. If the test is not statistically significant, then all the additional parameters in model 1 are not jointly significant.
+
+## AIC/BIC
+
+AIC and BIC are model fit metrics (information criterion statistics) that are provided in the regression output, and was discussed in [chapter 3](mle.qmd#information-criterion-statistics).
+
+AIC and BIC can be used to compare how good different models are, which allows us to choose which model we want to use. Both metrics reward better explanatory power, and punish complexity (more parameters). Lower values of AIC and BIC indicate better model fits.
+
+The BIC tends to penalise extra parameters more strongly than AIC. Generally, when comparing two models, AIC and BIC will agree.
+:::
+
+<br />
+
+## Ordinal Logistic Regression
+
+<br />
+
+## Multinomial Logistic Regression
+
+<br />
+
+## Negative Binomial Regression
+
+<br />
+
+## Model Specification Issues

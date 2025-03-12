@@ -235,6 +235,12 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">7.1</span> Overview</a></li>
   <li><a href="#linear-regression-model" id="toc-linear-regression-model" class="nav-link" data-scroll-target="#linear-regression-model"><span class="header-section-number">7.2</span> Linear Regression Model</a></li>
+  <li><a href="#linear-probability-model" id="toc-linear-probability-model" class="nav-link" data-scroll-target="#linear-probability-model"><span class="header-section-number">7.3</span> Linear Probability Model</a></li>
+  <li><a href="#binomial-logistic-regression" id="toc-binomial-logistic-regression" class="nav-link" data-scroll-target="#binomial-logistic-regression"><span class="header-section-number">7.4</span> Binomial Logistic Regression</a></li>
+  <li><a href="#ordinal-logistic-regression" id="toc-ordinal-logistic-regression" class="nav-link" data-scroll-target="#ordinal-logistic-regression"><span class="header-section-number">7.5</span> Ordinal Logistic Regression</a></li>
+  <li><a href="#multinomial-logistic-regression" id="toc-multinomial-logistic-regression" class="nav-link" data-scroll-target="#multinomial-logistic-regression"><span class="header-section-number">7.6</span> Multinomial Logistic Regression</a></li>
+  <li><a href="#negative-binomial-regression" id="toc-negative-binomial-regression" class="nav-link" data-scroll-target="#negative-binomial-regression"><span class="header-section-number">7.7</span> Negative Binomial Regression</a></li>
+  <li><a href="#model-specification-issues" id="toc-model-specification-issues" class="nav-link" data-scroll-target="#model-specification-issues"><span class="header-section-number">7.8</span> Model Specification Issues</a></li>
   </ul>
 </nav>
     </div>
@@ -435,12 +441,12 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </div>
 </div>
 </div>
-<p>Interpretation of coefficient estimates are as follows (proof from <a href="ols.html#thm-regressionanatomy" class="quarto-xref">theorem&nbsp;<span>4.1</span></a>). Remember that these interpretations are <u>not</u> causal <u>unless</u> our <span class="math inline">\(X_j\)</span> has been randomly assigned and meets the condition of independence (<a href="random.html#def-independence" class="quarto-xref">definition&nbsp;<span>1.6</span></a>)</p>
+<p>Interpretation of coefficient estimates are as follows (proof from <a href="ols.html#thm-regressionanatomy" class="quarto-xref">theorem&nbsp;<span>4.1</span></a>). Remember that these interpretations are <u>not</u> causal <u>unless</u> our <span class="math inline">\(X_j\)</span> has been randomly assigned and meets the condition of independence (<a href="random.html#def-independence" class="quarto-xref">definition&nbsp;<span>1.6</span></a>):</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 19%">
-<col style="width: 38%">
-<col style="width: 41%">
+<col style="width: 7%">
+<col style="width: 44%">
+<col style="width: 47%">
 </colgroup>
 <tbody>
 <tr class="odd">
@@ -461,18 +467,25 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </tbody>
 </table>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">T-Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Standardised Coefficients</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">R-Squared</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false">F-Tests</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Prediction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">T-Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">R-Squared</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false">F-Tests</a></li></ul>
 <div class="tab-content nav-pills">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p>To predict new values of <span class="math inline">\(Y\)</span> for new observations <span class="math inline">\(t\)</span>, we use our fitted values equation:</p>
+<p><span class="math display">\[
+\hat Y_t = \hat\beta_0 + \hat\beta_1 X_{t1} + \dots + \hat\beta_p X_{tp}
+\]</span></p>
+<p>In R, we can use the predict command:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>my_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, <span class="at">newdata =</span> my_new_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Where <em>my_new_data</em> is a data frame with <span class="math inline">\(X_1, \dots, X_p\)</span> values for all the new observations we want to predict <span class="math inline">\(\hat Y\)</span> for.</p>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <p>Hypothesis testing of each coefficient with a t-test (and the p-values) is provided in most regression outputs. The mechanics of t-test were provided in <a href="./ols.html#statistical-inference">chapter 4</a>.</p>
 <ul>
 <li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is statistically significant, then we can reject that there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, and conclude there is a relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
 <li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is not statistically significant, then we cannot reject there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
 </ul>
-</div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
-<p>Sometimes, unit change is not very useful - as it depends on how the variable is measured. For example, what does a 5 unit change in democracy mean? Is that big, small? It is hard to tell.</p>
-<p>Instead, we can look at the change in standard deviations. For a one standard deviation <span class="math inline">\(\sigma_X\)</span> increase in <span class="math inline">\(X_{ij}\)</span>, there is an expected <span class="math inline">\(\frac{\beta_j\sigma_X}{\sigma_Y}\)</span>-standard deviation change in <span class="math inline">\(Y_i\)</span>.</p>
 </div>
 <div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
 <p>R-Squared is provided in the regression output, and was discussed in <a href="ols.html#def-rsquared" class="quarto-xref">definition&nbsp;<span>4.11</span></a>.</p>
@@ -483,22 +496,216 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 <p>F-tests can test the significance of multiple parameters at once. The mechanics of F-test were provided in <a href="./ols.html#statistical-inference">chapter 4</a>.</p>
 <p>To conduct a f-test in R, we do the following (where model 0 is the null model, and model 1 is the alternative model):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model0, model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model0, model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If the test is statistically significant, then all the additional parameters in model 1 are jointly significant. If the test is not statistically significant, then all the additional parameters in model 1 are not jointly significant.</p>
 </div>
 </div>
 </div>
-<p>To predict new values of <span class="math inline">\(Y\)</span> for new observations <span class="math inline">\(t\)</span>, we use our fitted values equation:</p>
+<p>For more information on categorical <span class="math inline">\(X\)</span>, interactions, polynomial and logarithmic transformations, see the final section on model specification.</p>
+<p><br></p>
+</section>
+<section id="linear-probability-model" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="linear-probability-model"><span class="header-section-number">7.3</span> Linear Probability Model</h2>
+<p>The linear probability model is for binary <span class="math inline">\(Y\)</span> (<a href="./random.html#bernoulli-and-binomial-distribution">bernoulli distribution</a>). It should generally only be used for interpreting relationships between <span class="math inline">\(X_j\)</span> and binary <span class="math inline">\(Y\)</span>, and not for prediction (use binomial logistic instead). The outcome of interest is the <span class="math inline">\(\E(Y_t | \set X_t) = \P (Y_t = 1 | \set X_t)\)</span>, which we denote as <span class="math inline">\(\pr_t\)</span>.</p>
 <p><span class="math display">\[
-\hat Y_t = \hat\beta_0 + \hat\beta_1 X_{t1} + \dots + \hat\beta_p X_{tp}
+\pr_t = \beta_0 + \beta_1 X_{1t} + \beta_2 X_{2t} + \dots + \beta_p X_{tp}
+\]</span></p>
+<p>Where <span class="math inline">\(\beta_0\)</span> is the intercept, <span class="math inline">\(\beta_1, \dots, \beta_p\)</span> are the parameters that explain the relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, that need to be estimated with sample data.</p>
+<p>The model is always estimated with OLS + robust standard errors, as the <a href="./random.html#bernoulli-and-binomial-distribution">bernoulli distribution</a>’s variance is inherently heterscedastic. For estimation with OLS and robust standard errors in R, we should use the <em>fixest</em> package:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">feols</span>(Y <span class="sc">~</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> X3, <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For mechanical details on least squares and robust standard errors, see <a href="./ols.html#ordinary-least-squares">here</a>.</p>
+<p>Interpretation of coefficient estimates are as follows (proof from <a href="ols.html#thm-regressionanatomy" class="quarto-xref">theorem&nbsp;<span>4.1</span></a>). Remember that these interpretations are <u>not</u> causal <u>unless</u> our <span class="math inline">\(X_j\)</span> has been randomly assigned and meets the condition of independence (<a href="random.html#def-independence" class="quarto-xref">definition&nbsp;<span>1.6</span></a>):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 43%">
+<col style="width: 45%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><strong>Continuous</strong> <span class="math inline">\(X_{j}\)</span></td>
+<td><strong>Binary</strong> <span class="math inline">\(X_{j}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat\beta_j\)</span></td>
+<td>For every one unit increase in <span class="math inline">\(X_{j}\)</span>, there is an expected <span class="math inline">\(\hat\beta_j \times 100\)</span> percentage point change in the probability of a unit being in category <span class="math inline">\(Y_t=1\)</span>, holding all other explanatory variables constant.</td>
+<td>There is a <span class="math inline">\(\hat\beta_j\times 100\)</span> percentage point difference in the probability of a unit being in category <span class="math inline">\(Y_t=1\)</span> between category <span class="math inline">\(X_{j} = 1\)</span> and category <span class="math inline">\(X_{j} = 0\)</span>, holding all other explanatory variables constant.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\widehat{\beta_0}\)</span></td>
+<td>When all explanatory variables equal 0, the expected probability of a unit being in category <span class="math inline">\(Y_t=1\)</span> is <span class="math inline">\(\hat\beta_0 \times 100\)</span></td>
+<td>For category <span class="math inline">\(X_{j} = 0\)</span>, the expected probability of a unit being in category <span class="math inline">\(Y_t=1\)</span> is <span class="math inline">\(\hat\beta_j \times 100\)</span> (when all other explanatory variables equal 0).</td>
+</tr>
+</tbody>
+</table>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Prediction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">T-Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">R-Squared</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-4" role="tab" aria-controls="tabset-4-4" aria-selected="false">F-Tests</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<p>You should not use the linear probability model for prediction. This is because the linear probability model can produce probabilities <span class="math inline">\(\pr_t\)</span> that are outside of the range 0 and 1. This violates the axioms of probability, which state any event must have a probability between 0 and 1.</p>
+<p>If you are interested in prediction, see the binomial logistic model, which ensures that probabilities <span class="math inline">\(\pr_t\)</span> are always between 0 and 1.</p>
+<p>The linear probability model is only useful when we are considering the relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, since the linear nature of the model makes interpreting parameters <span class="math inline">\(\beta_j\)</span> simple.</p>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<p>Hypothesis testing of each coefficient with a t-test (and the p-values) is provided in most regression outputs. The mechanics of t-test were provided in <a href="./ols.html#statistical-inference">chapter 4</a>.</p>
+<ul>
+<li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is statistically significant, then we can reject that there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, and conclude there is a relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
+<li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is not statistically significant, then we cannot reject there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
+</ul>
+</div>
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<p>R-Squared is provided in the regression output, and was discussed in <a href="ols.html#def-rsquared" class="quarto-xref">definition&nbsp;<span>4.11</span></a>.</p>
+<p>R-Squared is the percentage of variation in <span class="math inline">\(Y\)</span> our model explains. It is always between 0 and 1. R-squared never decreases as we add more explanatory variables - so it is important not to overly focus on it.</p>
+<p>Adjusted R-Squared is similar but penalises models for having too many explanatory variables.</p>
+</div>
+<div id="tabset-4-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-4-tab">
+<p>F-tests can test the significance of multiple parameters at once. The mechanics of F-test were provided in <a href="./ols.html#statistical-inference">chapter 4</a>.</p>
+<p>To conduct a f-test in R, we do the following (where model 0 is the null model, and model 1 is the alternative model):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model0, model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If the test is statistically significant, then all the additional parameters in model 1 are jointly significant. If the test is not statistically significant, then all the additional parameters in model 1 are not jointly significant.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="binomial-logistic-regression" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="binomial-logistic-regression"><span class="header-section-number">7.4</span> Binomial Logistic Regression</h2>
+<p>The linear probability model is for binary <span class="math inline">\(Y\)</span> (<a href="./random.html#bernoulli-and-binomial-distribution">bernoulli distribution</a>). The outcome of interest is the <span class="math inline">\(\E(Y_t | \set X_t) = \P (Y_t = 1 | \set X_t)\)</span>, which we denote as <span class="math inline">\(\pr_t\)</span>. The logistic model applies a link function <span class="math inline">\(g(\cdot)\)</span> to <span class="math inline">\(\pr_t\)</span> to ensure that predicted probabilities are always between 0 and 1. The model is specified as:</p>
+<p><span id="eq-logodds"><span class="math display">\[
+\log\left(\frac{\pr_t}{1 - \pr_t}\right) = \beta_0 + \beta_1X_{t1} + \beta_2X_{t2} + \dots + \beta_pX_{tp}
+\tag{7.1}\]</span></span></p>
+<p>Using the property of logarithms, we can rewrite the model in respect to <span class="math inline">\(\pr_t\)</span>:</p>
+<p><span class="math display">\[
+\pr_t = \frac{e^{\beta_0 + \beta_1X_{t1} + \beta_2X_{t2} + \dots + \beta_pX_{tp}}}{1+e^{\beta_0 + \beta_1X_{t1} + \beta_2X_{t2} + \dots + \beta_pX_{tp}}}
+\]</span></p>
+<p>Where <span class="math inline">\(\beta_0\)</span> is the intercept, <span class="math inline">\(\beta_1, \dots, \beta_p\)</span> are the parameters that explain the relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, that need to be estimated with sample data.</p>
+<p>The model is always estimated with the maximum likelihood estimator. For estimation with OLS and robust standard errors in R, we should use the <em>glm()</em> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> X3,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> mydata,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Interpretation of coefficient estimates are very difficult - instead, we will interpret <strong>odds ratios</strong>, which are <span class="math inline">\(e^{\hat\beta_j}\)</span>. Remember that these interpretations are <u>not</u> causal <u>unless</u> our <span class="math inline">\(X_j\)</span> has been randomly assigned and meets the condition of independence (<a href="random.html#def-independence" class="quarto-xref">definition&nbsp;<span>1.6</span></a>):</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Details of Odds Ratios
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Odds of an event <span class="math inline">\(A\)</span> is the probability of <span class="math inline">\(A\)</span> occuring divided by the probability of event <span class="math inline">\(A\)</span> not occuring. We can apply the same logic to <span class="math inline">\(\P(Y_t = 1) = \pr_t\)</span>:</p>
+<p><span class="math display">\[
+\mathrm{odds}_A = \frac{\P(A)}{1 - \P(A)} \quad \implies \quad \mathrm{odds}_{Y_t = 1} = \frac{\pr_t}{1-\pr_t}
+\]</span></p>
+<p>From <a href="#eq-logodds" class="quarto-xref">eq.&nbsp;<span>7.1</span></a>, if we exponent both sides, we can get the odds of <span class="math inline">\(Y_t = 1\)</span> from the logistic regression:</p>
+<p><span class="math display">\[
+\frac{\pr_t}{1-\pr_t} = e^{\beta_0 + \beta_1X_{t1} + \beta_2X_{t2} + \dots + \beta_pX_{tp}}
+\]</span></p>
+<p>An <strong>odds ratio</strong> is a ratio of two odds. For the odds of event <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, the odds ratio is:</p>
+<p><span class="math display">\[
+OR = \frac{\mathrm{odds}_A}{\mathrm{odds}_B} = \frac{\P A / ( 1 - \P A)}{\P B / (1 - \P B)}
+\]</span></p>
+<p>We can apply the same to the logistic regression. We can find the odds of <span class="math inline">\(\pr_t | X_j = x+1\)</span> and <span class="math inline">\(\pr_t | X_j = x\)</span>:</p>
+<p><span class="math display">\[
+OR = \frac{\mathrm{odds}_{\pr_t | X_j = x+1}}{\mathrm{odds}_{\pr_t | X_j = x}} = e^{\beta_j}
+\]</span></p>
+<p>Thus, <span class="math inline">\(e^{\beta_j}\)</span> is the multiplicative change in the odds of event <span class="math inline">\(Y_t = 1\)</span>, for every one unit increase in <span class="math inline">\(X_j\)</span>.</p>
+</div>
+</div>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 43%">
+<col style="width: 44%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><strong>Continuous</strong> <span class="math inline">\(X_{j}\)</span></td>
+<td><strong>Binary</strong> <span class="math inline">\(X_{j}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat\beta_j\)</span></td>
+<td>For every one unit increase in <span class="math inline">\(X_{j}\)</span>, there is an expected <span class="math inline">\(\times e^{\hat\beta_j}\)</span> multiplicative change in the odds of a unit being in category <span class="math inline">\(Y_t=1\)</span>, holding all other explanatory variables constant.</td>
+<td>There is a <span class="math inline">\(\times e^{\hat\beta_j}\)</span> multiplicative difference in the odds of a unit being in category <span class="math inline">\(Y_t=1\)</span> between category <span class="math inline">\(X_{j} = 1\)</span> and category <span class="math inline">\(X_{j} = 0\)</span>, holding all other explanatory variables constant.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\hat\beta_0\)</span></td>
+<td>The odds of event <span class="math inline">\(Y_t = 1\)</span> when all explanatory variables equal 0 is <span class="math inline">\(e^{\hat\beta_0}\)</span>.</td>
+<td>The odds of event <span class="math inline">\(Y_t = 1\)</span> for category <span class="math inline">\(X_j = 0\)</span> is <span class="math inline">\(e^{\hat\beta_0}\)</span>, when all other explanatory variables equal 0.</td>
+</tr>
+</tbody>
+</table>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Prediction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Wald Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false">Likelihood Ratio Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false">AIC/BIC</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<p>To predict probabilities <span class="math inline">\(\pr_t = \P(Y_t = 1)\)</span> for new observations <span class="math inline">\(t\)</span>, we use our fitted values equation:</p>
+<p><span class="math display">\[
+\hat\pr_t = \frac{e^{\hat\beta_0 + \hat\beta_1X_{t1} + \hat\beta_2X_{t2} + \dots + \hat\beta_pX_{tp}}}{1+e^{\hat\beta_0 + \hat\beta_1X_{t1} + \hat\beta_2X_{t2} + \dots + \hat\beta_pX_{tp}}}
 \]</span></p>
 <p>In R, we can use the predict command:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>my_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, <span class="at">newdata =</span> my_new_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>my_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">newdata =</span> my_new_data,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">type =</span> <span class="st">"response"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Where <em>my_new_data</em> is a data frame with <span class="math inline">\(X_1, \dots, X_p\)</span> values for all the new observations we want to predict <span class="math inline">\(\hat Y\)</span> for.</p>
-<p>For more information on categorical <span class="math inline">\(X\)</span>, interactions, polynomial and logarithmic transformations, see the final section on model specification.</p>
+<p>We can also do classification, which is not about predicting the probability <span class="math inline">\(\pr_t\)</span>, but instead predicting if <span class="math inline">\(\hat Y = 1\)</span> or <span class="math inline">\(\hat Y = 0\)</span>. We generally assign units <span class="math inline">\(\pr_t &gt; 0.5\)</span> to <span class="math inline">\(\hat Y = 1\)</span>, and others to <span class="math inline">\(\hat Y = 0\)</span>.</p>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<p>Hypothesis testing of each coefficient with a wald test (and the p-values) is provided in most regression outputs. The mechanics of wald test were provided in <a href="./mle.html#statistical-inference">chapter 3</a>.</p>
+<ul>
+<li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is statistically significant, then we can reject that there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, and conclude there is a relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
+<li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is not statistically significant, then we cannot reject there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
+</ul>
+</div>
+<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
+<p>Likelihood Ratio tests can test the significance of multiple parameters at once. The mechanics of Likelihood Ratio test were provided in <a href="./mle.html#statistical-inference">chapter 3</a>.</p>
+<p>To conduct a Likelihood Ratio test in R, we do the following (where model 0 is the null model, and model 1 is the alternative model):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model0, model1, <span class="at">test =</span> <span class="st">"LRT"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If the test is statistically significant, then all the additional parameters in model 1 are jointly significant. If the test is not statistically significant, then all the additional parameters in model 1 are not jointly significant.</p>
+</div>
+<div id="tabset-5-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-4-tab">
+<p>AIC and BIC are model fit metrics (information criterion statistics) that are provided in the regression output, and was discussed in <a href="./mle.html#information-criterion-statistics">chapter 3</a>.</p>
+<p>AIC and BIC can be used to compare how good different models are, which allows us to choose which model we want to use. Both metrics reward better explanatory power, and punish complexity (more parameters). Lower values of AIC and BIC indicate better model fits.</p>
+<p>The BIC tends to penalise extra parameters more strongly than AIC. Generally, when comparing two models, AIC and BIC will agree.</p>
+</div>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="ordinal-logistic-regression" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="ordinal-logistic-regression"><span class="header-section-number">7.5</span> Ordinal Logistic Regression</h2>
+<p><br></p>
+</section>
+<section id="multinomial-logistic-regression" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="multinomial-logistic-regression"><span class="header-section-number">7.6</span> Multinomial Logistic Regression</h2>
+<p><br></p>
+</section>
+<section id="negative-binomial-regression" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="negative-binomial-regression"><span class="header-section-number">7.7</span> Negative Binomial Regression</h2>
+<p><br></p>
+</section>
+<section id="model-specification-issues" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="model-specification-issues"><span class="header-section-number">7.8</span> Model Specification Issues</h2>
 
 
 </section>
