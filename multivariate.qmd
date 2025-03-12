@@ -1,0 +1,186 @@
+# Multivariate Statistics
+
+So far, we have focused on models with one outcome variable $Y$. However, in many statistical situations, we have multiple outcome variables.
+
+In this chapter, we start by discussing dimensional reduction through principle components analysis. Then, we discuss a series of latent variable models. Finally, we conclude with clustering and structural equation models.
+
+<br />
+
+## Principle Components
+
+Principle components analysis (PCA) is a way to combine multiple observed variables into fewer variables, which is a process called dimensional reduction. We start off with a set of observed variables $\b x_t = (x_1, x_2, \dots, x_p)_t$ for each observation $t$. Each observed variable $x_i$ has a variance $\V x_i$, and their total variance is $\V x_1 + \dots + \V x_p$.
+
+PCA takes these $p$ number of original variables $\b x_t$, and calculates a set of $p$ new variables called principle components $y_1, \dots, y_p$. Each principle component $y_j$ is made up a linear combination of the original variables:
+
+$$
+\begin{align}
+y_1 = & \ a_{11}x_1 + a_{21}x_2 + \dots + a_{p1}x_p \\
+y_2 = & \ a_{12}x_1 + a_{22}x_2 + \dots + a_{p2}x_p \\
+& \qquad \vdots \\
+y_p = & \ a_{1p}x_1 + a_{2p}x_2 + \dots + a_{pp}x_p \\
+\end{align}
+$$
+
+With $a_{ij}$ being the weights of the linear combinations. The larger a weight is for a specific $x_i$ in a specific principle component $y_j$, the more that principle component is measuring that $x_i$. We can look at which weights are larger for which variables in a specific $y_j$ to see and interpret what any $y_j$ is measuring. The sum of all the weights for each principle component $y_j$ should be 1. We can rewrite the above in terms of linear algebra:
+
+$$
+y_j = \b a^\top_j \b x \quad \iff \quad y_j = \begin{pmatrix}
+a_{ij} & a_{2j} & \dots & a_{pj} \end{pmatrix}
+\begin{pmatrix} x_1 \\ x_2 \\ \vdots \\ x_p
+\end{pmatrix}
+$$
+
+And all the principle components $\b y = (y_1, \dots, y_p)$ can be expressed as
+
+$$
+\b y = \b A^\top \b x , \quad \b A = \begin{pmatrix}
+\b a_1 & \b a_2 & \dots & \b a_p \end{pmatrix}
+$$ {#eq-pca}
+
+All of the principle components together have the same variance as the original variables: $\sum \V y_j = \sum \V x_i$. Thus, the new principle components carry the same information/variation as the original variables, just with a different distribution between each variable. Each principle component is uncorrelated with the next principle component - thus each PC conveys distinct aspects of the data.
+
+The weights $a_{ij}$ of the PCs are calculated from eigenvalue decomposition of the covariance matrix $\b\Sigma$ of observed variables $x_1, \dots, x_p$. We assume that $\b\Sigma$ has $p$ distinct positive eigenvalues, denoted $\lambda_1 > \lambda_2 > \dots > \lambda_p > 0$. Each eigenvalue $\lambda_j$ corresponds to an eigenvector $\b a_j$, which is the weights vector of the $j$th principle component:
+
+By applying eigenvalue decomposition to matrix $\b\Sigma$, we get a matrix $\b A$ made up of eigenvectors of $\b\Sigma$, and a diagonal matrix $\b D$ with eigenvalues $\lambda$ on its diagonal:
+
+$$
+\b\Sigma = \b{ADA}^{-1}, \quad \b D = \begin{pmatrix}
+\lambda_1 & & \\
+& \lambda_2  & \\
+& & \ddots
+\end{pmatrix}, \quad \b A = \begin{pmatrix}
+\b a_1 & \b a_2 & \dots & \b a_p \end{pmatrix}
+$$
+
+The matrix $\b A$ is the same as from @eq-pca, and each column are the weights of a principle components. The variance of each PC $y_j$ is equivalent to $\lambda_j$, the $j$th eigenvalue.
+
+Principle components are labelled in order of the variance they contain. So, principle component $y_1$ will have more variance than principle component $y_2$, and so on. The proportion of total variance in all of the $x_1, \dots, x_p$ the first $q$ principle components will explain is
+
+$$
+\frac{\sum_{j=1}^q \V y_j}{\sum_{i=1}^p \V x_i} = \frac{\lambda_1 + \lambda_2 + \dots + \lambda_q}{\lambda_1 + \lambda_2 + \dots + \lambda_1 + \dots + \lambda_p}
+$$
+
+Frequently, the first few principle components will explain around 70-80% of the total variation in all of $x_1, \dots, x_p$. Thus, we can reduce the number of variables from $p$ to just 2-3 principle components. This can be very useful when we want to reduce the computation power needed to estimate models, or to reduce multicollinearity issues (since each principle component is uncorrelated with each other).
+
+We will discuss the practical implementation of PCA in the multivariate methods chapter in the applied section.
+
+<br />
+
+## Factor Analysis
+
+Factor analysis models are latent variable models - they assume that we have a set of observed variables (**items**) $X_1, X_2, \dots, X_p$, that are all the result of some unobserved (**factor**) variable $\xi$. For example:
+
+![](images/clipboard-1663993722.png){fig-align="center" width="50%"}
+
+The latent factor $\xi$ is assumed to be distributed $\xi \sim \mathcal N(\kappa = 0, \ \phi = 1)$. We assume that each item $X_i$ is normally distributed, and is related to the latent factor $\xi$ by a linear model:
+
+$$
+X_i = \tau_i + \lambda_i\xi + \delta_i, \quad \delta_i \sim \mathcal N(0, \theta_{ii})
+$$
+
+Where $\lambda_i$ is the slope (called the **factor loadings**), which determine the relationship between factor $\xi$ and a specific item $X_i$. $\delta_i$ is the error term, and is called the **unique factor**.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Assumptions of the Model
+
+We make a few assumptions on this linear model above.
+
+1.  Error terms $\delta_i$ for each regression model between $\xi$ and $X_1, \dots, X_p$ is normally distributed with a mean of 0. $\delta_i \sim \mathcal N(0, \theta_{ii})$.
+2.  Error terms $\delta_1, \dots, \delta_p$ of each model $i$ are uncorrelated with each other. This implies that correlations between $X_1, \dots, X_p$ are entirely explained by the latent factor $\xi$.
+3.  Factor $\xi$ is uncorrelated with the error term $\delta_i$ (exogeneity).
+:::
+
+Given the linear models between $X_i$ and $\xi$, we know that $\E(X_i | \xi) = \tau_i + \lambda_i \xi$. Since $X_i$ is also assumed to be normally distributed, we can determine the distribution of each $X_i$ as
+
+$$
+X_i \sim \mathcal N(\tau_i + \lambda_i \xi, \ \ \lambda_i^2 \phi + \theta_{ii})
+$$
+
+Our theoretical variance-covariance matrix between $X_1, \dots, X_p$, where the diagonals are the variances of $X_1, \dots, X_p$, and the non-diagonals are $Cov(x_n, x_m)$ will be
+
+$$
+\begin{pmatrix}
+\lambda_1^2 \phi + \theta_{11} &  \lambda_1\phi\lambda_2 & \dots &  \lambda_1 \phi \lambda_p \\
+\lambda_2 \phi \lambda_1 & \lambda_2^2 \phi + \theta_{22} & \dots & \lambda_1 \phi \lambda_p \\
+\vdots & \dots & \ddots & \vdots \\
+\lambda_p\phi\lambda_1 & \lambda_p \phi \lambda_2 & \dots & \lambda_p^2 \phi + \theta_{pp}
+\end{pmatrix}
+$$
+
+The estimation process is to find the values of $\lambda_i$ and $\theta_{ii}$ that make the above hypothetical covariance matrix (since $\phi$ is assumed to be 1), as close to our observed covariance matrix from our sample data. This is generally done with maximum likelihood estimation.
+
+::: {.panel-tabset .nav-pills}
+## Interpretation
+
+Our $\hat\lambda_i$ will be the estimated covariances between any item $X_i$ and the latent factor $\xi$. We can interpret $\xi$ based on the items $X_i$ that have the largest factor loadings $\hat\lambda_i$.
+
+Recall that when we assumed $\xi$ is standardly normally distributed, the variances of $X_i$ (from the matrix above) become:
+
+$$
+\V X_i = \lambda_i^2 + \theta_{ii}
+$$
+
+-   $\lambda_i^2$ is the part of the variance in $X_i$ explained by the factor $\xi$. This is known as the **communality** of $X_i$.
+-   $\theta_{ii}$ is the part of $X_i$ not explained by the factor $\xi$, and is called the **unique variance**.
+-   The proportion $\rho_i =\lambda_i^2 / (\lambda_i^2 + \theta_{ii})$ is the proportion of variance in $X_i$ explained by our factor $\xi$, called the **reliability**. This is the $R^2$ of factor analysis.
+
+Once we have estimated the factor analysis model, we can then use $X_1, \dots, X_k$ to create values for the latent variable $\tilde\xi_t$ for each observation $t$, called factor scores:
+
+$$
+\tilde\xi_t = w_0 + w_1 X_{t1} + w_2 X_{t2} + \dots + w_p X_{tp}
+$$
+
+Which are linear combinations of $X_1, \dots, X_p$, with weights $w_i$ determined by the strength of the relationship between $X_i$ and $\xi$ as estimated by $\hat\lambda_i$ and the unique variance $\theta_{ii}$.
+
+## Multiple Factors
+
+We can have more than one latent factor $\b\xi = (\xi_1, \dots, \xi_q)$. We assume all are standardly normally distributed as before. Each item $X_1, \dots, X_p$ is now related to each factor $\xi_1, \dots, \xi_q$ with a regression:
+
+$$
+X_i = \tau_i + \lambda_{i1}\xi_1 + \lambda_{i2}\xi_2 + \dots + \lambda_{i1} \xi_q + \delta_i, \quad \delta_i\sim\mathcal N(0, \theta_{ii})
+$$
+
+Each factor can be correlated with each other - which means $Cov(\xi_j, \xi_k) = \phi_{jk}$ must be estimated as well. Because of the additional parameters, identification becomes more tricky. The number of factors $q$ must be small enough given the number of items $p$ in order for our model to be identified:
+
+$$
+df = \frac{(p-q)^2-(p+1)}{2}≥ 0
+$$
+
+Finally, we have an issue of factor rotation - this is because our different factors can be rotated in infinitely many ways, and still produce the same model fit.
+
+The default rotation is **orthogonal (perpendicular)**, which means factors are uncorrelated. The result from this estimation is very similar to PCA, and is good for dimensional reduction.
+
+However, for interpretation ease, it is often useful to use **oblique** rotations, where factors can be correlated. This is because oblique rotations will have more factor loadings of 0, which will allow us to be more clear with what a factor is measuring.
+
+Also note that in terms of interpretation, $\hat\lambda_{ij}$ is only the covariance between $X_i$ and $\xi_j$ if all factors are uncorrelated. If factors are correlated, we lose this nice interpretation.
+
+## Confirmatory Analysis
+
+Confirmatory factor analysis is more about using factor analysis to test theories we already have. Instead of letting the estimation process estimate component loadings for all $X_i$ and $\xi_j$, we might set some component loadings to 0 based on our theoretical beliefs.
+
+A loading of 0 implies that a factor $\xi_j$ is not being measured by an observed item $X_i$. Ideally for CFA, we want a structure where each item $X_i$ has only one non-0 loading - thus we know exactly what factor $X_i$ is measuring. Below, we can see half of the items measure $\xi_1$, and the other half measure $\xi_2$:
+
+![](images/clipboard-4283247760.png){fig-align="center" width="70%"}
+
+For model identification to be possible with this structure, we need at least 2 items per factor, and for a 1-factor model, we need 3 items.
+
+We can use a variety of significance tests (like the wald test with hypothesis $\lambda_i = 0$) to test if a certain component should be set to 0 or not.
+:::
+
+We will discuss the practical implementation of factor analysis in the multivariate methods chapter in the applied section.
+
+<br />
+
+## Latent Trait Models
+
+<br />
+
+## Latent Class Models
+
+<br />
+
+## Cluster Analysis
+
+<br />
+
+## Structural Equation Modelling

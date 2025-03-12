@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>8&nbsp; Multivariate Statistics – Statistics for Political Science</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<link href="./glm.html" rel="next">
+<link href="./stochastic.html" rel="prev">
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="mathjax-config.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./random.html">Part I: Theoretical Statistics</a></li><li class="breadcrumb-item"><a href="./multivariate.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Multivariate Statistics</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Statistics for Political Science</a> 
+    </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Theoretical Statistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./random.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Random Variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical Inference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Maximum Likelihood</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ols.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Least Squares Theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./causal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Causal Inference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./identify.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Causal Identification</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stochastic.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Stochastic Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./multivariate.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Multivariate Statistics</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Applied Statistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./glm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Generalised Linear Model</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#principle-components" id="toc-principle-components" class="nav-link active" data-scroll-target="#principle-components"><span class="header-section-number">8.1</span> Principle Components</a></li>
+  <li><a href="#factor-analysis" id="toc-factor-analysis" class="nav-link" data-scroll-target="#factor-analysis"><span class="header-section-number">8.2</span> Factor Analysis</a></li>
+  <li><a href="#latent-trait-models" id="toc-latent-trait-models" class="nav-link" data-scroll-target="#latent-trait-models"><span class="header-section-number">8.3</span> Latent Trait Models</a></li>
+  <li><a href="#latent-class-models" id="toc-latent-class-models" class="nav-link" data-scroll-target="#latent-class-models"><span class="header-section-number">8.4</span> Latent Class Models</a></li>
+  <li><a href="#cluster-analysis" id="toc-cluster-analysis" class="nav-link" data-scroll-target="#cluster-analysis"><span class="header-section-number">8.5</span> Cluster Analysis</a></li>
+  <li><a href="#structural-equation-modelling" id="toc-structural-equation-modelling" class="nav-link" data-scroll-target="#structural-equation-modelling"><span class="header-section-number">8.6</span> Structural Equation Modelling</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./random.html">Part I: Theoretical Statistics</a></li><li class="breadcrumb-item"><a href="./multivariate.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Multivariate Statistics</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Multivariate Statistics</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>So far, we have focused on models with one outcome variable <span class="math inline">\(Y\)</span>. However, in many statistical situations, we have multiple outcome variables.</p>
+<p>In this chapter, we start by discussing dimensional reduction through principle components analysis. Then, we discuss a series of latent variable models. Finally, we conclude with clustering and structural equation models.</p>
+<p><br></p>
+<section id="principle-components" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="principle-components"><span class="header-section-number">8.1</span> Principle Components</h2>
+<p>Principle components analysis (PCA) is a way to combine multiple observed variables into fewer variables, which is a process called dimensional reduction. We start off with a set of observed variables <span class="math inline">\(\b x_t = (x_1, x_2, \dots, x_p)_t\)</span> for each observation <span class="math inline">\(t\)</span>. Each observed variable <span class="math inline">\(x_i\)</span> has a variance <span class="math inline">\(\V x_i\)</span>, and their total variance is <span class="math inline">\(\V x_1 + \dots + \V x_p\)</span>.</p>
+<p>PCA takes these <span class="math inline">\(p\)</span> number of original variables <span class="math inline">\(\b x_t\)</span>, and calculates a set of <span class="math inline">\(p\)</span> new variables called principle components <span class="math inline">\(y_1, \dots, y_p\)</span>. Each principle component <span class="math inline">\(y_j\)</span> is made up a linear combination of the original variables:</p>
+<p><span class="math display">\[
+\begin{align}
+y_1 = &amp; \ a_{11}x_1 + a_{21}x_2 + \dots + a_{p1}x_p \\
+y_2 = &amp; \ a_{12}x_1 + a_{22}x_2 + \dots + a_{p2}x_p \\
+&amp; \qquad \vdots \\
+y_p = &amp; \ a_{1p}x_1 + a_{2p}x_2 + \dots + a_{pp}x_p \\
+\end{align}
+\]</span></p>
+<p>With <span class="math inline">\(a_{ij}\)</span> being the weights of the linear combinations. The larger a weight is for a specific <span class="math inline">\(x_i\)</span> in a specific principle component <span class="math inline">\(y_j\)</span>, the more that principle component is measuring that <span class="math inline">\(x_i\)</span>. We can look at which weights are larger for which variables in a specific <span class="math inline">\(y_j\)</span> to see and interpret what any <span class="math inline">\(y_j\)</span> is measuring. The sum of all the weights for each principle component <span class="math inline">\(y_j\)</span> should be 1. We can rewrite the above in terms of linear algebra:</p>
+<p><span class="math display">\[
+y_j = \b a^\top_j \b x \quad \iff \quad y_j = \begin{pmatrix}
+a_{ij} &amp; a_{2j} &amp; \dots &amp; a_{pj} \end{pmatrix}
+\begin{pmatrix} x_1 \\ x_2 \\ \vdots \\ x_p
+\end{pmatrix}
+\]</span></p>
+<p>And all the principle components <span class="math inline">\(\b y = (y_1, \dots, y_p)\)</span> can be expressed as</p>
+<p><span id="eq-pca"><span class="math display">\[
+\b y = \b A^\top \b x , \quad \b A = \begin{pmatrix}
+\b a_1 &amp; \b a_2 &amp; \dots &amp; \b a_p \end{pmatrix}
+\tag{8.1}\]</span></span></p>
+<p>All of the principle components together have the same variance as the original variables: <span class="math inline">\(\sum \V y_j = \sum \V x_i\)</span>. Thus, the new principle components carry the same information/variation as the original variables, just with a different distribution between each variable. Each principle component is uncorrelated with the next principle component - thus each PC conveys distinct aspects of the data.</p>
+<p>The weights <span class="math inline">\(a_{ij}\)</span> of the PCs are calculated from eigenvalue decomposition of the covariance matrix <span class="math inline">\(\b\Sigma\)</span> of observed variables <span class="math inline">\(x_1, \dots, x_p\)</span>. We assume that <span class="math inline">\(\b\Sigma\)</span> has <span class="math inline">\(p\)</span> distinct positive eigenvalues, denoted <span class="math inline">\(\lambda_1 &gt; \lambda_2 &gt; \dots &gt; \lambda_p &gt; 0\)</span>. Each eigenvalue <span class="math inline">\(\lambda_j\)</span> corresponds to an eigenvector <span class="math inline">\(\b a_j\)</span>, which is the weights vector of the <span class="math inline">\(j\)</span>th principle component:</p>
+<p>By applying eigenvalue decomposition to matrix <span class="math inline">\(\b\Sigma\)</span>, we get a matrix <span class="math inline">\(\b A\)</span> made up of eigenvectors of <span class="math inline">\(\b\Sigma\)</span>, and a diagonal matrix <span class="math inline">\(\b D\)</span> with eigenvalues <span class="math inline">\(\lambda\)</span> on its diagonal:</p>
+<p><span class="math display">\[
+\b\Sigma = \b{ADA}^{-1}, \quad \b D = \begin{pmatrix}
+\lambda_1 &amp; &amp; \\
+&amp; \lambda_2  &amp; \\
+&amp; &amp; \ddots
+\end{pmatrix}, \quad \b A = \begin{pmatrix}
+\b a_1 &amp; \b a_2 &amp; \dots &amp; \b a_p \end{pmatrix}
+\]</span></p>
+<p>The matrix <span class="math inline">\(\b A\)</span> is the same as from <a href="#eq-pca" class="quarto-xref">eq.&nbsp;<span>8.1</span></a>, and each column are the weights of a principle components. The variance of each PC <span class="math inline">\(y_j\)</span> is equivalent to <span class="math inline">\(\lambda_j\)</span>, the <span class="math inline">\(j\)</span>th eigenvalue.</p>
+<p>Principle components are labelled in order of the variance they contain. So, principle component <span class="math inline">\(y_1\)</span> will have more variance than principle component <span class="math inline">\(y_2\)</span>, and so on. The proportion of total variance in all of the <span class="math inline">\(x_1, \dots, x_p\)</span> the first <span class="math inline">\(q\)</span> principle components will explain is</p>
+<p><span class="math display">\[
+\frac{\sum_{j=1}^q \V y_j}{\sum_{i=1}^p \V x_i} = \frac{\lambda_1 + \lambda_2 + \dots + \lambda_q}{\lambda_1 + \lambda_2 + \dots + \lambda_1 + \dots + \lambda_p}
+\]</span></p>
+<p>Frequently, the first few principle components will explain around 70-80% of the total variation in all of <span class="math inline">\(x_1, \dots, x_p\)</span>. Thus, we can reduce the number of variables from <span class="math inline">\(p\)</span> to just 2-3 principle components. This can be very useful when we want to reduce the computation power needed to estimate models, or to reduce multicollinearity issues (since each principle component is uncorrelated with each other).</p>
+<p>We will discuss the practical implementation of PCA in the multivariate methods chapter in the applied section.</p>
+<p><br></p>
+</section>
+<section id="factor-analysis" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="factor-analysis"><span class="header-section-number">8.2</span> Factor Analysis</h2>
+<p>Factor analysis models are latent variable models - they assume that we have a set of observed variables (<strong>items</strong>) <span class="math inline">\(X_1, X_2, \dots, X_p\)</span>, that are all the result of some unobserved (<strong>factor</strong>) variable <span class="math inline">\(\xi\)</span>. For example:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1663993722.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
+</figure>
+</div>
+<p>The latent factor <span class="math inline">\(\xi\)</span> is assumed to be distributed <span class="math inline">\(\xi \sim \mathcal N(\kappa = 0, \ \phi = 1)\)</span>. We assume that each item <span class="math inline">\(X_i\)</span> is normally distributed, and is related to the latent factor <span class="math inline">\(\xi\)</span> by a linear model:</p>
+<p><span class="math display">\[
+X_i = \tau_i + \lambda_i\xi + \delta_i, \quad \delta_i \sim \mathcal N(0, \theta_{ii})
+\]</span></p>
+<p>Where <span class="math inline">\(\lambda_i\)</span> is the slope (called the <strong>factor loadings</strong>), which determine the relationship between factor <span class="math inline">\(\xi\)</span> and a specific item <span class="math inline">\(X_i\)</span>. <span class="math inline">\(\delta_i\)</span> is the error term, and is called the <strong>unique factor</strong>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Assumptions of the Model
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We make a few assumptions on this linear model above.</p>
+<ol type="1">
+<li>Error terms <span class="math inline">\(\delta_i\)</span> for each regression model between <span class="math inline">\(\xi\)</span> and <span class="math inline">\(X_1, \dots, X_p\)</span> is normally distributed with a mean of 0. <span class="math inline">\(\delta_i \sim \mathcal N(0, \theta_{ii})\)</span>.</li>
+<li>Error terms <span class="math inline">\(\delta_1, \dots, \delta_p\)</span> of each model <span class="math inline">\(i\)</span> are uncorrelated with each other. This implies that correlations between <span class="math inline">\(X_1, \dots, X_p\)</span> are entirely explained by the latent factor <span class="math inline">\(\xi\)</span>.</li>
+<li>Factor <span class="math inline">\(\xi\)</span> is uncorrelated with the error term <span class="math inline">\(\delta_i\)</span> (exogeneity).</li>
+</ol>
+</div>
+</div>
+</div>
+<p>Given the linear models between <span class="math inline">\(X_i\)</span> and <span class="math inline">\(\xi\)</span>, we know that <span class="math inline">\(\E(X_i | \xi) = \tau_i + \lambda_i \xi\)</span>. Since <span class="math inline">\(X_i\)</span> is also assumed to be normally distributed, we can determine the distribution of each <span class="math inline">\(X_i\)</span> as</p>
+<p><span class="math display">\[
+X_i \sim \mathcal N(\tau_i + \lambda_i \xi, \ \ \lambda_i^2 \phi + \theta_{ii})
+\]</span></p>
+<p>Our theoretical variance-covariance matrix between <span class="math inline">\(X_1, \dots, X_p\)</span>, where the diagonals are the variances of <span class="math inline">\(X_1, \dots, X_p\)</span>, and the non-diagonals are <span class="math inline">\(Cov(x_n, x_m)\)</span> will be</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+\lambda_1^2 \phi + \theta_{11} &amp;  \lambda_1\phi\lambda_2 &amp; \dots &amp;  \lambda_1 \phi \lambda_p \\
+\lambda_2 \phi \lambda_1 &amp; \lambda_2^2 \phi + \theta_{22} &amp; \dots &amp; \lambda_1 \phi \lambda_p \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots \\
+\lambda_p\phi\lambda_1 &amp; \lambda_p \phi \lambda_2 &amp; \dots &amp; \lambda_p^2 \phi + \theta_{pp}
+\end{pmatrix}
+\]</span></p>
+<p>The estimation process is to find the values of <span class="math inline">\(\lambda_i\)</span> and <span class="math inline">\(\theta_{ii}\)</span> that make the above hypothetical covariance matrix (since <span class="math inline">\(\phi\)</span> is assumed to be 1), as close to our observed covariance matrix from our sample data. This is generally done with maximum likelihood estimation.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Interpretation</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Multiple Factors</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Confirmatory Analysis</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>Our <span class="math inline">\(\hat\lambda_i\)</span> will be the estimated covariances between any item <span class="math inline">\(X_i\)</span> and the latent factor <span class="math inline">\(\xi\)</span>. We can interpret <span class="math inline">\(\xi\)</span> based on the items <span class="math inline">\(X_i\)</span> that have the largest factor loadings <span class="math inline">\(\hat\lambda_i\)</span>.</p>
+<p>Recall that when we assumed <span class="math inline">\(\xi\)</span> is standardly normally distributed, the variances of <span class="math inline">\(X_i\)</span> (from the matrix above) become:</p>
+<p><span class="math display">\[
+\V X_i = \lambda_i^2 + \theta_{ii}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\lambda_i^2\)</span> is the part of the variance in <span class="math inline">\(X_i\)</span> explained by the factor <span class="math inline">\(\xi\)</span>. This is known as the <strong>communality</strong> of <span class="math inline">\(X_i\)</span>.</li>
+<li><span class="math inline">\(\theta_{ii}\)</span> is the part of <span class="math inline">\(X_i\)</span> not explained by the factor <span class="math inline">\(\xi\)</span>, and is called the <strong>unique variance</strong>.</li>
+<li>The proportion <span class="math inline">\(\rho_i =\lambda_i^2 / (\lambda_i^2 + \theta_{ii})\)</span> is the proportion of variance in <span class="math inline">\(X_i\)</span> explained by our factor <span class="math inline">\(\xi\)</span>, called the <strong>reliability</strong>. This is the <span class="math inline">\(R^2\)</span> of factor analysis.</li>
+</ul>
+<p>Once we have estimated the factor analysis model, we can then use <span class="math inline">\(X_1, \dots, X_k\)</span> to create values for the latent variable <span class="math inline">\(\tilde\xi_t\)</span> for each observation <span class="math inline">\(t\)</span>, called factor scores:</p>
+<p><span class="math display">\[
+\tilde\xi_t = w_0 + w_1 X_{t1} + w_2 X_{t2} + \dots + w_p X_{tp}
+\]</span></p>
+<p>Which are linear combinations of <span class="math inline">\(X_1, \dots, X_p\)</span>, with weights <span class="math inline">\(w_i\)</span> determined by the strength of the relationship between <span class="math inline">\(X_i\)</span> and <span class="math inline">\(\xi\)</span> as estimated by <span class="math inline">\(\hat\lambda_i\)</span> and the unique variance <span class="math inline">\(\theta_{ii}\)</span>.</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>We can have more than one latent factor <span class="math inline">\(\b\xi = (\xi_1, \dots, \xi_q)\)</span>. We assume all are standardly normally distributed as before. Each item <span class="math inline">\(X_1, \dots, X_p\)</span> is now related to each factor <span class="math inline">\(\xi_1, \dots, \xi_q\)</span> with a regression:</p>
+<p><span class="math display">\[
+X_i = \tau_i + \lambda_{i1}\xi_1 + \lambda_{i2}\xi_2 + \dots + \lambda_{i1} \xi_q + \delta_i, \quad \delta_i\sim\mathcal N(0, \theta_{ii})
+\]</span></p>
+<p>Each factor can be correlated with each other - which means <span class="math inline">\(Cov(\xi_j, \xi_k) = \phi_{jk}\)</span> must be estimated as well. Because of the additional parameters, identification becomes more tricky. The number of factors <span class="math inline">\(q\)</span> must be small enough given the number of items <span class="math inline">\(p\)</span> in order for our model to be identified:</p>
+<p><span class="math display">\[
+df = \frac{(p-q)^2-(p+1)}{2}≥ 0
+\]</span></p>
+<p>Finally, we have an issue of factor rotation - this is because our different factors can be rotated in infinitely many ways, and still produce the same model fit.</p>
+<p>The default rotation is <strong>orthogonal (perpendicular)</strong>, which means factors are uncorrelated. The result from this estimation is very similar to PCA, and is good for dimensional reduction.</p>
+<p>However, for interpretation ease, it is often useful to use <strong>oblique</strong> rotations, where factors can be correlated. This is because oblique rotations will have more factor loadings of 0, which will allow us to be more clear with what a factor is measuring.</p>
+<p>Also note that in terms of interpretation, <span class="math inline">\(\hat\lambda_{ij}\)</span> is only the covariance between <span class="math inline">\(X_i\)</span> and <span class="math inline">\(\xi_j\)</span> if all factors are uncorrelated. If factors are correlated, we lose this nice interpretation.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>Confirmatory factor analysis is more about using factor analysis to test theories we already have. Instead of letting the estimation process estimate component loadings for all <span class="math inline">\(X_i\)</span> and <span class="math inline">\(\xi_j\)</span>, we might set some component loadings to 0 based on our theoretical beliefs.</p>
+<p>A loading of 0 implies that a factor <span class="math inline">\(\xi_j\)</span> is not being measured by an observed item <span class="math inline">\(X_i\)</span>. Ideally for CFA, we want a structure where each item <span class="math inline">\(X_i\)</span> has only one non-0 loading - thus we know exactly what factor <span class="math inline">\(X_i\)</span> is measuring. Below, we can see half of the items measure <span class="math inline">\(\xi_1\)</span>, and the other half measure <span class="math inline">\(\xi_2\)</span>:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-4283247760.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+<p>For model identification to be possible with this structure, we need at least 2 items per factor, and for a 1-factor model, we need 3 items.</p>
+<p>We can use a variety of significance tests (like the wald test with hypothesis <span class="math inline">\(\lambda_i = 0\)</span>) to test if a certain component should be set to 0 or not.</p>
+</div>
+</div>
+</div>
+<p>We will discuss the practical implementation of factor analysis in the multivariate methods chapter in the applied section.</p>
+<p><br></p>
+</section>
+<section id="latent-trait-models" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="latent-trait-models"><span class="header-section-number">8.3</span> Latent Trait Models</h2>
+<p><br></p>
+</section>
+<section id="latent-class-models" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="latent-class-models"><span class="header-section-number">8.4</span> Latent Class Models</h2>
+<p><br></p>
+</section>
+<section id="cluster-analysis" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="cluster-analysis"><span class="header-section-number">8.5</span> Cluster Analysis</h2>
+<p><br></p>
+</section>
+<section id="structural-equation-modelling" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="structural-equation-modelling"><span class="header-section-number">8.6</span> Structural Equation Modelling</h2>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./stochastic.html" class="pagination-link" aria-label="Stochastic Processes">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Stochastic Processes</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./glm.html" class="pagination-link" aria-label="Generalised Linear Model">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Generalised Linear Model</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
