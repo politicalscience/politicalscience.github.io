@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Kevin Lingfeng Li">
 
-<title>Statistics for Political Science</title>
+<title>7&nbsp; Non-Linear Methods – Statistics for Political Science</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -26,7 +25,8 @@ ul.task-list li input[type="checkbox"] {
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
-<link href="./random.html" rel="next">
+<link href="./identify.html" rel="next">
+<link href="./glm.html" rel="prev">
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -54,35 +54,6 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <script src="mathjax-config.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -96,7 +67,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Preface</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Part II: Applied Statistics</a></li><li class="breadcrumb-item"><a href="./nonlinear.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Non-Linear Methods</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -115,7 +86,7 @@ window.Quarto = {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Preface</span></a>
   </div>
 </li>
@@ -177,7 +148,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nonlinear.html" class="sidebar-item-text sidebar-link">
+  <a href="./nonlinear.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Non-Linear Methods</span></span></a>
   </div>
 </li>
@@ -217,30 +188,29 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#preface" id="toc-preface" class="nav-link active" data-scroll-target="#preface">Preface</a></li>
-  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation">Notation</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">7.1</span> Overview</a></li>
+  <li><a href="#stepwise-and-splines" id="toc-stepwise-and-splines" class="nav-link" data-scroll-target="#stepwise-and-splines"><span class="header-section-number">7.2</span> Stepwise and Splines</a></li>
+  <li><a href="#local-linear-regression" id="toc-local-linear-regression" class="nav-link" data-scroll-target="#local-linear-regression"><span class="header-section-number">7.3</span> Local Linear Regression</a></li>
+  <li><a href="#naive-bayes-classifier" id="toc-naive-bayes-classifier" class="nav-link" data-scroll-target="#naive-bayes-classifier"><span class="header-section-number">7.4</span> Naive Bayes Classifier</a></li>
+  <li><a href="#regression-trees" id="toc-regression-trees" class="nav-link" data-scroll-target="#regression-trees"><span class="header-section-number">7.5</span> Regression Trees</a></li>
+  <li><a href="#random-forests" id="toc-random-forests" class="nav-link" data-scroll-target="#random-forests"><span class="header-section-number">7.6</span> Random Forests</a></li>
+  <li><a href="#ridge-regression" id="toc-ridge-regression" class="nav-link" data-scroll-target="#ridge-regression"><span class="header-section-number">7.7</span> Ridge Regression</a></li>
+  <li><a href="#lasso-regression" id="toc-lasso-regression" class="nav-link" data-scroll-target="#lasso-regression"><span class="header-section-number">7.8</span> Lasso Regression</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Part II: Applied Statistics</a></li><li class="breadcrumb-item"><a href="./nonlinear.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Non-Linear Methods</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Statistics for Political Science</h1>
-<p class="subtitle lead">Kevin’s Collection on PSPE Methodology</p>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Non-Linear Methods</span></h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Kevin Lingfeng Li </p>
-          </div>
-  </div>
     
   
     
@@ -251,34 +221,29 @@ window.Quarto = {
 </header>
 
 
-
-<section id="preface" class="level1 unnumbered">
-<h1 class="unnumbered">Preface</h1><p><img src="lse.png" title="Statistics for Political Science" class="quarto-cover-image img-fluid"></p>
-<p>This is a collection of resources and notes on statistics for political science that I have collected throughout my undergraduate and postgraduate degrees.</p>
-<p>The first part of this collection is regarding statistical theory of inference and estimators. We start with the some basic statistics in the form of distributions and random variables, as well as the basics of statistical inference. Then, we cover a series of estimators and the theory behind them. Finally, we discuss the basics of causality in statistics.</p>
-<p>The second part of the collection is more applied - showing how methods can be implemented for prediction and causal inference. We introduce different types of models, and how we can implement them with R code. If you are already comfortable with statistical theory, you can probably skip ahead to these applied chapters, and refer to the statistical theory chapters as references.</p>
-<p>For the content in this guide, I assume some experience with basic statistics, such as a basic idea of sampling and statistical inference. I will review many of these concepts in the first two chapters. I also assume strong mathematical fundamentals, including calculus, linear algebra, and basic probability. There is some supplementary material provided in the appendix.</p>
-<p>I am continuously adding more to this collection as a learn more. Some parts may be incomplete, and you may see some changes in existing parts.</p>
-<p><br></p>
+<section id="overview" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">7.1</span> Overview</h2>
 </section>
-<section id="notation" class="level1">
-<h1>Notation</h1>
-<p>I will use a variety of notation in this guide. I will do my best to remain consistent with the notation throughout all chapters.</p>
-<p>For common statistical operators, I denote them as following:</p>
-<ul>
-<li>Probability <span class="math inline">\(\P(\cdot)\)</span>.</li>
-<li>Expectation <span class="math inline">\(\E(\cdot)\)</span>.</li>
-<li>Variance <span class="math inline">\(\V(\cdot)\)</span>.</li>
-<li>Covariance <span class="math inline">\(Cov(\cdot, \cdot)\)</span>.</li>
-</ul>
-<p>Random variables will typically be denoted by an uppercase letter, for example <span class="math inline">\(X\)</span>. A realisation of this variable (for example, in a sample), will be denoted with lowercase <span class="math inline">\(x\)</span>.</p>
-<p>I will use matrices and vectors frequently in this guide. Matrices are denoted with a bold capital letter <span class="math inline">\(\b X\)</span>, and vectors are denoted with a bold lowercase letter <span class="math inline">\(\b x\)</span>. Transposes will be denoted <span class="math inline">\(\b X^\top\)</span>.</p>
-<p>To be very clear regarding probability density functions and cumulative density functions, I will always specify the variable in question as a subscript, for example, <span class="math inline">\(f_Y(y)\)</span> and <span class="math inline">\(F_Y(y)\)</span>.</p>
-<p>For indexes related to random variables and samples, I have made a few notational choices.</p>
-<ul>
-<li>For observation of a sample/population, I will use index <span class="math inline">\(t\)</span> to refer to a specific observation (Ex. <span class="math inline">\(Y_t\)</span>), no matter if it is cross-sectional or time series data. This choice is consistent with Amemiya’s notation.</li>
-<li>For number of parameters in a model, I will use <span class="math inline">\(p\)</span> (ex. <span class="math inline">\(X_p\)</span>), which is the standard in statistics. However, econometricians will often use <span class="math inline">\(k\)</span> to refer to the number of parameters.</li>
-</ul>
+<section id="stepwise-and-splines" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="stepwise-and-splines"><span class="header-section-number">7.2</span> Stepwise and Splines</h2>
+</section>
+<section id="local-linear-regression" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="local-linear-regression"><span class="header-section-number">7.3</span> Local Linear Regression</h2>
+</section>
+<section id="naive-bayes-classifier" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="naive-bayes-classifier"><span class="header-section-number">7.4</span> Naive Bayes Classifier</h2>
+</section>
+<section id="regression-trees" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="regression-trees"><span class="header-section-number">7.5</span> Regression Trees</h2>
+</section>
+<section id="random-forests" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="random-forests"><span class="header-section-number">7.6</span> Random Forests</h2>
+</section>
+<section id="ridge-regression" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="ridge-regression"><span class="header-section-number">7.7</span> Ridge Regression</h2>
+</section>
+<section id="lasso-regression" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="lasso-regression"><span class="header-section-number">7.8</span> Lasso Regression</h2>
 
 
 </section>
@@ -706,10 +671,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="./glm.html" class="pagination-link" aria-label="Generalised Linear Model">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Generalised Linear Model</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./random.html" class="pagination-link" aria-label="Random Variables">
-        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Random Variables</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./identify.html" class="pagination-link" aria-label="Quasi-Experimental Methods">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quasi-Experimental Methods</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

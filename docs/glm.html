@@ -59,7 +59,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
-<link href="./identify.html" rel="next">
+<link href="./nonlinear.html" rel="next">
 <link href="./causal.html" rel="prev">
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
@@ -211,20 +211,26 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./identify.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Quasi-Experimental Methods</span></span></a>
+  <a href="./nonlinear.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Non-Linear Methods</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./stochastic.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Stochastic Processes</span></span></a>
+  <a href="./identify.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quasi-Experimental Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./time.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Time Series Methods</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./multivariate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Multivariate Methods</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Multivariate Methods</span></span></a>
   </div>
 </li>
       </ul>
@@ -251,8 +257,9 @@ window.Quarto = {
   <li><a href="#binomial-logistic-regression" id="toc-binomial-logistic-regression" class="nav-link" data-scroll-target="#binomial-logistic-regression"><span class="header-section-number">6.4</span> Binomial Logistic Regression</a></li>
   <li><a href="#ordinal-logistic-regression" id="toc-ordinal-logistic-regression" class="nav-link" data-scroll-target="#ordinal-logistic-regression"><span class="header-section-number">6.5</span> Ordinal Logistic Regression</a></li>
   <li><a href="#multinomial-logistic-regression" id="toc-multinomial-logistic-regression" class="nav-link" data-scroll-target="#multinomial-logistic-regression"><span class="header-section-number">6.6</span> Multinomial Logistic Regression</a></li>
-  <li><a href="#negative-binomial-regression" id="toc-negative-binomial-regression" class="nav-link" data-scroll-target="#negative-binomial-regression"><span class="header-section-number">6.7</span> Negative Binomial Regression</a></li>
-  <li><a href="#model-specification-issues" id="toc-model-specification-issues" class="nav-link" data-scroll-target="#model-specification-issues"><span class="header-section-number">6.8</span> Model Specification Issues</a></li>
+  <li><a href="#poisson-regression" id="toc-poisson-regression" class="nav-link" data-scroll-target="#poisson-regression"><span class="header-section-number">6.7</span> Poisson Regression</a></li>
+  <li><a href="#negative-binomial-regression" id="toc-negative-binomial-regression" class="nav-link" data-scroll-target="#negative-binomial-regression"><span class="header-section-number">6.8</span> Negative Binomial Regression</a></li>
+  <li><a href="#model-specification-issues" id="toc-model-specification-issues" class="nav-link" data-scroll-target="#model-specification-issues"><span class="header-section-number">6.9</span> Model Specification Issues</a></li>
   </ul>
 </nav>
     </div>
@@ -278,7 +285,7 @@ window.Quarto = {
 </header>
 
 
-<p>This chapter introduces the generalised linear models: linear regression, logistic (binomial, ordinal, and multinomial) and negative binomial regression.</p>
+<p>This chapter introduces the generalised linear models: linear regression, logistic (binomial, ordinal, and multinomial), poisson, and negative binomial regression.</p>
 <p>This chapter is meant to be for application purposes. The estimation processes and details are contained in <a href="./mle.html">chapter 3</a> and <a href="./ols.html">chapter 4</a>.</p>
 <p><br></p>
 <section id="overview" class="level2" data-number="6.1">
@@ -291,41 +298,53 @@ window.Quarto = {
 <p><span class="math display">\[
 g(\mu) = \beta_0 + \beta_1 X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{tp}
 \]</span></p>
-<p>Where <span class="math inline">\(\mu\)</span> is the parameter of interest of variable <span class="math inline">\(Y\)</span> (depends on the model) and <span class="math inline">\(g(\cdot)\)</span> is some link-function that allows the GLM to be applied to a variety of different types of <span class="math inline">\(Y\)</span>. <span class="math inline">\(\beta_0, \dots, \beta_p\)</span> are the parameters of the model that need to be estimated, that explain the relationship between <span class="math inline">\(X_1, \dots, X_p\)</span> and <span class="math inline">\(Y\)</span>.</p>
-<p>All GLMs can accomodate any type of explanatory variable <span class="math inline">\(X_1, \dots, X_p\)</span>. The choice of model depends on the type of variable <span class="math inline">\(Y\)</span> is:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Continuous</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Binary</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Ordinal</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">Categorical</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false">Count</a></li></ul>
-<div class="tab-content nav-pills">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<p>Continuous outcome variables <span class="math inline">\(Y\)</span> can only be used with the linear regression model.</p>
-</div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<p>Binary outcome variables <span class="math inline">\(Y\)</span> can be used with:</p>
-<ul>
-<li>Binomial Logistic Regression: Good for prediction, but can be harder to interpret relationships between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
-<li>Linear Probability Model: For interpretation of relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span> only. Do not use for prediction.</li>
-</ul>
-</div>
-<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
-<p>Ordinal outcome variables <span class="math inline">\(Y\)</span> can be used with:</p>
-<ul>
-<li>Linear Regression Model: Good for interpreting relationships between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>. Do not use for prediction.</li>
-<li>Ordinal Logistic Regression: Okay for interpreteting relationships between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>. Can impose more strict assumptions for prediction.</li>
-<li>Multinomial Logistic Regression: Not useful for interpretation, but the best for prediction.</li>
-</ul>
-</div>
-<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
-<p>Categorical outcome variables <span class="math inline">\(Y\)</span> can only be used with multinomial logistic regression.</p>
-</div>
-<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
-<p>Count outcome variables <span class="math inline">\(Y\)</span> can be used with:</p>
-<ul>
-<li>Linear Regression Model: Good for interpreting relationships between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>. Okay for prediction but not the best.</li>
-<li>Negative Binomial Model: Great for prediction. Harder to interpret relationships between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
-</ul>
-</div>
-</div>
-</div>
+<p>Where <span class="math inline">\(\mu\)</span> is the parameter of interest of variable <span class="math inline">\(Y\)</span> (depends on the model) and <span class="math inline">\(g(\cdot)\)</span> is some link-function that allows the GLM to be applied to a variety of different types of <span class="math inline">\(Y\)</span>. <span class="math inline">\(\beta_0, \dots, \beta_p\)</span> are the parameters of the model that need to be estimated.</p>
+<p>GLMs have two main purposes. First, they can be used for <strong>predicting</strong> new values of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X_1, \dots, X_p\)</span> values. Second, they can be used to understand the <strong>correlation</strong> between <span class="math inline">\(X_1, \dots, X_p\)</span> and <span class="math inline">\(Y\)</span>. The choice of model depends on your purpose (prediction or correlation), and the type of outcome <span class="math inline">\(Y\)</span> you have:</p>
+<table class="table-bordered caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>When to Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#linear-regression-model">Linear Regression</a></td>
+<td><p><strong>Continuous</strong> <span class="math inline">\(Y\)</span> for both <em>prediction</em> and <em>correlation</em>.</p>
+<p><em>Correlation</em> with <strong>count</strong> <span class="math inline">\(Y\)</span>, and <em>prediction</em> (but can produce poor predictions, so use poisson or negative binomial).</p>
+<p><em>Correlation</em> with <strong>ordinal</strong> <span class="math inline">\(Y\)</span> (not good for prediction, use ordinal or multinomial logistic).</p></td>
+</tr>
+<tr class="even">
+<td><a href="#linear-probability-model">Linear Probability</a></td>
+<td><em>Correlation</em> with <strong>binary</strong> <span class="math inline">\(Y\)</span> (do not use for prediction, use binomial logistic).</td>
+</tr>
+<tr class="odd">
+<td><a href="#binomial-logistic-regression">Binomial Logistic</a></td>
+<td><strong>Binary</strong> <span class="math inline">\(Y\)</span> <em>prediction</em>, but can be used for <em>correlation</em> as well (but harder correlation interpretation than linear probability).</td>
+</tr>
+<tr class="even">
+<td><a href="#ordinal-logistic-regression">Ordinal Logistic</a></td>
+<td><em>Correlation</em> or <em>prediction</em> with <strong>ordinal</strong> <span class="math inline">\(Y\)</span> (but prediction may be better/more flexible with multinomial logistic).</td>
+</tr>
+<tr class="odd">
+<td><a href="#multinomial-logistic-regression">Multinomial Logistic</a></td>
+<td><p><em>Correlation</em> and <em>prediction</em> with <strong>categorical</strong> <span class="math inline">\(Y\)</span>.</p>
+<p><em>Prediction</em> with <strong>ordinal</strong> <span class="math inline">\(Y\)</span>.</p></td>
+</tr>
+<tr class="even">
+<td><a href="#poisson-regression">Poisson</a></td>
+<td><em>Prediction</em> and <em>correlation</em> with <strong>count</strong> <span class="math inline">\(Y\)</span> (Use only if <span class="math inline">\(\V Y &lt; \E Y\)</span>, if not, use negative binomial).</td>
+</tr>
+<tr class="odd">
+<td><a href="#negative-binomial-regression">Negative Binomial</a></td>
+<td><em>Prediction</em> and <em>correlation</em> with <strong>count</strong> <span class="math inline">\(Y\)</span> (Works no matter what type of <span class="math inline">\(Y\)</span>, but poisson may be more efficient if <span class="math inline">\(\V Y &lt; \E Y\)</span>).</td>
+</tr>
+</tbody>
+</table>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -342,7 +361,7 @@ Review of the Types of Variables
 <colgroup>
 <col style="width: 6%">
 <col style="width: 50%">
-<col style="width: 43%">
+<col style="width: 42%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -382,7 +401,7 @@ Review of the Types of Variables
 </div>
 </div>
 </div>
-<p>Below, I will introduce each of these models, their specification, their estimation process (with R-code), their interpretations, and how to predict with them. The last section of this chapter relates to common model specification issues that apply to all models, such as different types of explanatory variables and functional form/transformations.</p>
+<p>The final section on <a href="#model-specification-issues">model specification issues</a> introduces a few different topics (categorical explanatory variables, transformations, interactions) that can be applied to all of the models.</p>
 <p><br></p>
 </section>
 <section id="linear-regression-model" class="level2" data-number="6.2">
@@ -394,9 +413,9 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 <p>Where <span class="math inline">\(\beta_0\)</span> is the intercept, <span class="math inline">\(\beta_1, \dots, \beta_p\)</span> are the parameters that explain the relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, and <span class="math inline">\(\eps_t\)</span> is the error term that accounts for random variation/noise in <span class="math inline">\(Y\)</span>. For more details on the linear model, see <a href="./ols.html#the-classical-linear-model">chapter 4</a>.</p>
 <p>The parameters <span class="math inline">\(\beta_0, \dots, \beta_p\)</span> need to be estimated with sample data to obtain estimates <span class="math inline">\(\hat\beta_0, \dots, \hat\beta_p\)</span>. The linear model can be estimated with a variety of estimators:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">OLS</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">OLS with Robust SE</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">WLS</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" role="tab" aria-controls="tabset-2-4" aria-selected="false">GLS</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" role="tab" aria-controls="tabset-2-5" aria-selected="false">IV/2SLS</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">OLS</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">OLS with Robust SE</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">WLS</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">GLS</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false">IV/2SLS</a></li></ul>
 <div class="tab-content nav-pills">
-<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <p>We should use the Ordinary Least Squares estimator (<a href="ols.html#def-ols" class="quarto-xref">definition&nbsp;<span>4.8</span></a>) when our model meets all 5 of the classical linear model <a href="./ols.html#assumptions">assumptions</a>. If we are not sure spherical errors (<a href="ols.html#def-sphericalerrors" class="quarto-xref">definition&nbsp;<span>4.6</span></a>) is met, we should instead use OLS with robust standard errors.</p>
 <p>For estimation with OLS (and normal standard errors), the R-code is:</p>
 <div class="cell">
@@ -405,7 +424,7 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </div>
 <p>For mechanical details on OLS, see <a href="./ols.html#ordinary-least-squares">here</a>.</p>
 </div>
-<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <p>We should use the Ordinary Least Squares estimator (<a href="ols.html#def-ols" class="quarto-xref">definition&nbsp;<span>4.8</span></a>) with robust standard errors (<a href="ols.html#thm-heterovar" class="quarto-xref">theorem&nbsp;<span>4.6</span></a>) if we believe our model meets all of the classical linear model <a href="./ols.html#assumptions">assumptions</a> <u>except</u> for spherical errors (<a href="ols.html#def-sphericalerrors" class="quarto-xref">definition&nbsp;<span>4.6</span></a>), and instead we have conditional heteroscedasticity (<span class="quarto-unresolved-ref">?def-heteroscedasticity</span>).</p>
 <p>For estimation with OLS and robust standard errors in R, we should use the <em>fixest</em> package:</p>
 <div class="cell">
@@ -416,7 +435,7 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </div>
 <p>For mechanical details on robust standard errors, see <a href="./ols.html#ols-and-non-spherical-errors">here</a>.</p>
 </div>
-<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <p>We can use the weighted least squares estimator (<a href="ols.html#def-gls" class="quarto-xref">definition&nbsp;<span>4.14</span></a>) if we believe our model meets all of the classical linear model conditions <u>except</u> for spherical errors (<a href="ols.html#def-sphericalerrors" class="quarto-xref">definition&nbsp;<span>4.6</span></a>), and we have conditional heteroscedasticity.</p>
 <p>For WLS in R, we first estimate a normal linear regression with OLS to obtain the estimated residuals, then estmiate a model between residuals and <span class="math inline">\(X\)</span>, before using them as weights in a final model:</p>
 <div class="cell">
@@ -442,7 +461,7 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </div>
 <p>For mechanical details on WLS (GLS), see <a href="./ols.html#generalised-least-squares">here</a>.</p>
 </div>
-<div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
 <p>We should use the generalised least squares estimator if we believe our model meets all of the classical linear model conditions <u>except</u> for spherical errors (<a href="ols.html#def-sphericalerrors" class="quarto-xref">definition&nbsp;<span>4.6</span></a>), and we have autocorrelation.</p>
 <p>I do not recommend using GLS over OLS with robust standard errors, as the chances of something going wrong are much higher.</p>
 <p>For (Feasible) GLS in R, we can use the <em>nlme</em> package:</p>
@@ -462,7 +481,7 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </div>
 <p>For mechanical details on FGLS, see <a href="./ols.html#feasible-generalised-least-squares">here</a>.</p>
 </div>
-<div id="tabset-2-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-5-tab">
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
 <p>We should use the instrumental variables estimator (<a href="ols.html#def-ivestimator" class="quarto-xref">definition&nbsp;<span>4.16</span></a>)or 2-stage least squares (2SLS) when our model violates exogeneity (<a href="ols.html#def-weakexog" class="quarto-xref">definition&nbsp;<span>4.5</span></a>), and we care a lot about accurately estimating the correlation between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, and we have a suitable instrument <span class="math inline">\(Z\)</span>.</p>
 <p>You should not use IV/2SLS unless you really only care about the accurate estimation of one <span class="math inline">\(\beta_j\)</span>, and do not care about prediction purposes.</p>
 <p>For estimation of IV/2SLS, we should use the fixest package:</p>
@@ -476,11 +495,11 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </div>
 </div>
 <p>Interpretation of coefficient estimates are as follows (proof from <a href="ols.html#thm-regressionanatomy" class="quarto-xref">theorem&nbsp;<span>4.1</span></a>). Remember that these interpretations are <u>not</u> causal <u>unless</u> our <span class="math inline">\(X_j\)</span> has been randomly assigned and meets the condition of independence (<a href="random.html#def-independence" class="quarto-xref">definition&nbsp;<span>1.6</span></a>):</p>
-<table class="caption-top table">
+<table class="table-bordered caption-top table">
 <colgroup>
 <col style="width: 4%">
-<col style="width: 46%">
-<col style="width: 49%">
+<col style="width: 45%">
+<col style="width: 48%">
 </colgroup>
 <tbody>
 <tr class="odd">
@@ -501,9 +520,9 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </tbody>
 </table>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Prediction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">T-Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">R-Squared</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false">F-Tests</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Prediction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">T-Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">R-Squared</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" role="tab" aria-controls="tabset-2-4" aria-selected="false">F-Tests</a></li></ul>
 <div class="tab-content nav-pills">
-<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <p>To predict new values of <span class="math inline">\(Y\)</span> for new observations <span class="math inline">\(t\)</span>, we use our fitted values equation:</p>
 <p><span class="math display">\[
 \hat Y_t = \hat\beta_0 + \hat\beta_1 X_{t1} + \dots + \hat\beta_p X_{tp}
@@ -514,19 +533,19 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </div>
 <p>Where <em>my_new_data</em> is a data frame with <span class="math inline">\(X_1, \dots, X_p\)</span> values for all the new observations we want to predict <span class="math inline">\(\hat Y\)</span> for. If you only want to predict for your existing data on which the model was fitted on, you do not need the <em>newdata</em> argument.</p>
 </div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <p>Hypothesis testing of each coefficient with a t-test (and the p-values) is provided in most regression outputs. The mechanics of t-test were provided in <a href="./ols.html#statistical-inference">chapter 4</a>.</p>
 <ul>
 <li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is statistically significant, then we can reject that there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, and conclude there is a relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
 <li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is not statistically significant, then we cannot reject there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
 </ul>
 </div>
-<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
 <p>R-Squared is provided in the regression output, and was discussed in <a href="ols.html#def-rsquared" class="quarto-xref">definition&nbsp;<span>4.11</span></a>.</p>
 <p>R-Squared is the percentage of variation in <span class="math inline">\(Y\)</span> our model explains. It is always between 0 and 1. R-squared never decreases as we add more explanatory variables - so it is important not to overly focus on it.</p>
 <p>Adjusted R-Squared is similar but penalises models for having too many explanatory variables.</p>
 </div>
-<div id="tabset-3-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-4-tab">
+<div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
 <p>F-tests can test the significance of multiple parameters at once. The mechanics of F-test were provided in <a href="./ols.html#statistical-inference">chapter 4</a>.</p>
 <p>To conduct a f-test in R, we do the following (where model 0 is the null model, and model 1 is the alternative model):</p>
 <div class="cell">
@@ -546,11 +565,10 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 \pr_t = \beta_0 + \beta_1 X_{1t} + \beta_2 X_{2t} + \dots + \beta_p X_{tp}
 \]</span></p>
 <p>Where <span class="math inline">\(\beta_0\)</span> is the intercept, <span class="math inline">\(\beta_1, \dots, \beta_p\)</span> are the parameters that explain the relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, that need to be estimated with sample data with one of two estimators:</p>
-<p>estimators:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">OLS with Robust SE</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">IV/2SLS</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">OLS with Robust SE</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">IV/2SLS</a></li></ul>
 <div class="tab-content nav-pills">
-<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p>We should use the Ordinary Least Squares estimator (<a href="ols.html#def-ols" class="quarto-xref">definition&nbsp;<span>4.8</span></a>) <u>with</u> robust standard errors (<a href="ols.html#thm-heterovar" class="quarto-xref">theorem&nbsp;<span>4.6</span></a>) for the linear probability model, because <span class="math inline">\(Y\)</span> is distributed by the bernoulli distribution, which implies heteroscedasticity.</p>
 <p>For estimation with OLS and robust standard errors in R, we should use the <em>fixest</em> package:</p>
 <div class="cell">
@@ -561,7 +579,7 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </div>
 <p>For mechanical details on robust standard errors, see <a href="./ols.html#ols-and-non-spherical-errors">here</a>.</p>
 </div>
-<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <p>We should use the instrumental variables estimator (<a href="ols.html#def-ivestimator" class="quarto-xref">definition&nbsp;<span>4.16</span></a>) or 2-stage least squares (2SLS) when our model violates exogeneity (<a href="ols.html#def-weakexog" class="quarto-xref">definition&nbsp;<span>4.5</span></a>), and we care a lot about accurately estimating the correlation between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, and we have a suitable instrument <span class="math inline">\(Z\)</span>.</p>
 <p>You should not use IV/2SLS unless you really only care about the accurate estimation of one <span class="math inline">\(\beta_j\)</span>, and do not care about prediction purposes.</p>
 <p>For estimation of IV/2SLS, we should use the fixest package:</p>
@@ -576,7 +594,7 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </div>
 </div>
 <p>Interpretation of coefficient estimates are as follows (proof from <a href="ols.html#thm-regressionanatomy" class="quarto-xref">theorem&nbsp;<span>4.1</span></a>). Remember that these interpretations are <u>not</u> causal <u>unless</u> our <span class="math inline">\(X_j\)</span> has been randomly assigned and meets the condition of independence (<a href="random.html#def-independence" class="quarto-xref">definition&nbsp;<span>1.6</span></a>):</p>
-<table class="caption-top table">
+<table class="table-bordered caption-top table">
 <colgroup>
 <col style="width: 4%">
 <col style="width: 46%">
@@ -601,26 +619,26 @@ Y_t = \underbrace{\beta_0 + \beta_1X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{
 </tbody>
 </table>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Prediction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">T-Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false">R-Squared</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false">F-Tests</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Prediction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">T-Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">R-Squared</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-4" role="tab" aria-controls="tabset-4-4" aria-selected="false">F-Tests</a></li></ul>
 <div class="tab-content nav-pills">
-<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <p>You should not use the linear probability model for prediction. This is because the linear probability model can produce probabilities <span class="math inline">\(\pr_t\)</span> that are outside of the range 0 and 1. This violates the axioms of probability, which state any event must have a probability between 0 and 1.</p>
 <p>If you are interested in prediction, see the binomial logistic model, which ensures that probabilities <span class="math inline">\(\pr_t\)</span> are always between 0 and 1.</p>
 <p>The linear probability model is only useful when we are considering the relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, since the linear nature of the model makes interpreting parameters <span class="math inline">\(\beta_j\)</span> simple.</p>
 </div>
-<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <p>Hypothesis testing of each coefficient with a t-test (and the p-values) is provided in most regression outputs. The mechanics of t-test were provided in <a href="./ols.html#statistical-inference">chapter 4</a>.</p>
 <ul>
 <li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is statistically significant, then we can reject that there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, and conclude there is a relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
 <li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is not statistically significant, then we cannot reject there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
 </ul>
 </div>
-<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
 <p>R-Squared is provided in the regression output, and was discussed in <a href="ols.html#def-rsquared" class="quarto-xref">definition&nbsp;<span>4.11</span></a>.</p>
 <p>R-Squared is the percentage of variation in <span class="math inline">\(Y\)</span> our model explains. It is always between 0 and 1. R-squared never decreases as we add more explanatory variables - so it is important not to overly focus on it.</p>
 <p>Adjusted R-Squared is similar but penalises models for having too many explanatory variables.</p>
 </div>
-<div id="tabset-5-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-4-tab">
+<div id="tabset-4-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-4-tab">
 <p>F-tests can test the significance of multiple parameters at once. The mechanics of F-test were provided in <a href="./ols.html#statistical-inference">chapter 4</a>.</p>
 <p>To conduct a f-test in R, we do the following (where model 0 is the null model, and model 1 is the alternative model):</p>
 <div class="cell">
@@ -683,11 +701,11 @@ OR = \frac{\mathrm{odds}_{\pr_t | X_j = x+1}}{\mathrm{odds}_{\pr_t | X_j = x}} =
 </div>
 </div>
 </div>
-<table class="caption-top table">
+<table class="table-bordered caption-top table">
 <colgroup>
 <col style="width: 3%">
 <col style="width: 47%">
-<col style="width: 49%">
+<col style="width: 48%">
 </colgroup>
 <tbody>
 <tr class="odd">
@@ -708,9 +726,9 @@ OR = \frac{\mathrm{odds}_{\pr_t | X_j = x+1}}{\mathrm{odds}_{\pr_t | X_j = x}} =
 </tbody>
 </table>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Prediction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Wald Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false">Likelihood Ratio Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-4" role="tab" aria-controls="tabset-6-4" aria-selected="false">AIC/BIC</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Prediction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Wald Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false">Likelihood Ratio Tests</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false">AIC/BIC</a></li></ul>
 <div class="tab-content nav-pills">
-<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <p>To predict probabilities <span class="math inline">\(\pr_t = \P(Y_t = 1)\)</span> for new observations <span class="math inline">\(t\)</span>, we use our fitted values equation:</p>
 <p><span class="math display">\[
 \hat\pr_t = \frac{e^{\hat\beta_0 + \hat\beta_1X_{t1} + \hat\beta_2X_{t2} + \dots + \hat\beta_pX_{tp}}}{1+e^{\hat\beta_0 + \hat\beta_1X_{t1} + \hat\beta_2X_{t2} + \dots + \hat\beta_pX_{tp}}}
@@ -724,14 +742,14 @@ OR = \frac{\mathrm{odds}_{\pr_t | X_j = x+1}}{\mathrm{odds}_{\pr_t | X_j = x}} =
 <p>Where <em>my_new_data</em> is a data frame with <span class="math inline">\(X_1, \dots, X_p\)</span> values for all the new observations we want to predict <span class="math inline">\(\hat Y\)</span> for. If you only want to predict for your existing data on which the model was fitted on, you do not need the <em>newdata</em> argument.</p>
 <p>We can also do classification, which is not about predicting the probability <span class="math inline">\(\pr_t\)</span>, but instead predicting if <span class="math inline">\(\hat Y = 1\)</span> or <span class="math inline">\(\hat Y = 0\)</span>. We generally assign units <span class="math inline">\(\pr_t &gt; 0.5\)</span> to <span class="math inline">\(\hat Y = 1\)</span>, and others to <span class="math inline">\(\hat Y = 0\)</span>.</p>
 </div>
-<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <p>Hypothesis testing of each coefficient with a wald test (and the p-values) is provided in most regression outputs. The mechanics of wald test were provided in <a href="./mle.html#statistical-inference">chapter 3</a>.</p>
 <ul>
 <li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is statistically significant, then we can reject that there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>, and conclude there is a relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
 <li>If our coefficient <span class="math inline">\(\hat\beta_j\)</span> is not statistically significant, then we cannot reject there is no relationship between <span class="math inline">\(X_j\)</span> and <span class="math inline">\(Y\)</span>.</li>
 </ul>
 </div>
-<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
 <p>Likelihood Ratio tests can test the significance of multiple parameters at once. The mechanics of Likelihood Ratio test were provided in <a href="./mle.html#statistical-inference">chapter 3</a>.</p>
 <p>To conduct a Likelihood Ratio test in R, we do the following (where model 0 is the null model, and model 1 is the alternative model):</p>
 <div class="cell">
@@ -739,7 +757,7 @@ OR = \frac{\mathrm{odds}_{\pr_t | X_j = x+1}}{\mathrm{odds}_{\pr_t | X_j = x}} =
 </div>
 <p>If the test is statistically significant, then all the additional parameters in model 1 are jointly significant. If the test is not statistically significant, then all the additional parameters in model 1 are not jointly significant.</p>
 </div>
-<div id="tabset-6-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
+<div id="tabset-5-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-4-tab">
 <p>AIC and BIC are model fit metrics (information criterion statistics) that are provided in the regression output, and was discussed in <a href="./mle.html#information-criterion-statistics">chapter 3</a>.</p>
 <p>AIC and BIC can be used to compare how good different models are, which allows us to choose which model we want to use. Both metrics reward better explanatory power, and punish complexity (more parameters). Lower values of AIC and BIC indicate better model fits.</p>
 <p>The BIC tends to penalise extra parameters more strongly than AIC. Generally, when comparing two models, AIC and BIC will agree.</p>
@@ -756,12 +774,16 @@ OR = \frac{\mathrm{odds}_{\pr_t | X_j = x+1}}{\mathrm{odds}_{\pr_t | X_j = x}} =
 <h2 data-number="6.6" class="anchored" data-anchor-id="multinomial-logistic-regression"><span class="header-section-number">6.6</span> Multinomial Logistic Regression</h2>
 <p><br></p>
 </section>
-<section id="negative-binomial-regression" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="negative-binomial-regression"><span class="header-section-number">6.7</span> Negative Binomial Regression</h2>
+<section id="poisson-regression" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="poisson-regression"><span class="header-section-number">6.7</span> Poisson Regression</h2>
 <p><br></p>
 </section>
-<section id="model-specification-issues" class="level2" data-number="6.8">
-<h2 data-number="6.8" class="anchored" data-anchor-id="model-specification-issues"><span class="header-section-number">6.8</span> Model Specification Issues</h2>
+<section id="negative-binomial-regression" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="negative-binomial-regression"><span class="header-section-number">6.8</span> Negative Binomial Regression</h2>
+<p><br></p>
+</section>
+<section id="model-specification-issues" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="model-specification-issues"><span class="header-section-number">6.9</span> Model Specification Issues</h2>
 
 
 </section>
@@ -1194,8 +1216,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./identify.html" class="pagination-link" aria-label="Quasi-Experimental Methods">
-        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Quasi-Experimental Methods</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./nonlinear.html" class="pagination-link" aria-label="Non-Linear Methods">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Non-Linear Methods</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

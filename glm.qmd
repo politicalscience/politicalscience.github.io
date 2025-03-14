@@ -1,6 +1,6 @@
 # Generalised Linear Model
 
-This chapter introduces the generalised linear models: linear regression, logistic (binomial, ordinal, and multinomial) and negative binomial regression.
+This chapter introduces the generalised linear models: linear regression, logistic (binomial, ordinal, and multinomial), poisson, and negative binomial regression.
 
 This chapter is meant to be for application purposes. The estimation processes and details are contained in [chapter 3](mle.qmd) and [chapter 4](ols.qmd).
 
@@ -18,59 +18,59 @@ $$
 g(\mu) = \beta_0 + \beta_1 X_{t1} + \beta_2 X_{t2} + \dots + \beta_p X_{tp}
 $$
 
-Where $\mu$ is the parameter of interest of variable $Y$ (depends on the model) and $g(\cdot)$ is some link-function that allows the GLM to be applied to a variety of different types of $Y$. $\beta_0, \dots, \beta_p$ are the parameters of the model that need to be estimated, that explain the relationship between $X_1, \dots, X_p$ and $Y$.
+Where $\mu$ is the parameter of interest of variable $Y$ (depends on the model) and $g(\cdot)$ is some link-function that allows the GLM to be applied to a variety of different types of $Y$. $\beta_0, \dots, \beta_p$ are the parameters of the model that need to be estimated.
 
-All GLMs can accomodate any type of explanatory variable $X_1, \dots, X_p$. The choice of model depends on the type of variable $Y$ is:
+GLMs have two main purposes. First, they can be used for **predicting** new values of $Y$ given $X_1, \dots, X_p$ values. Second, they can be used to understand the **correlation** between $X_1, \dots, X_p$ and $Y$. The choice of model depends on your purpose (prediction or correlation), and the type of outcome $Y$ you have:
 
-::: {.panel-tabset .nav-pills}
-## Continuous
++----------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| Model                                                    | When to Use                                                                                                                               |
++==========================================================+===========================================================================================================================================+
+| [Linear Regression](#linear-regression-model)            | **Continuous** $Y$ for both *prediction* and *correlation*.                                                                               |
+|                                                          |                                                                                                                                           |
+|                                                          | *Correlation* with **count** $Y$, and *prediction* (but can produce poor predictions, so use poisson or negative binomial).               |
+|                                                          |                                                                                                                                           |
+|                                                          | *Correlation* with **ordinal** $Y$ (not good for prediction, use ordinal or multinomial logistic).                                        |
++----------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| [Linear Probability](#linear-probability-model)          | *Correlation* with **binary** $Y$ (do not use for prediction, use binomial logistic).                                                     |
++----------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| [Binomial Logistic](#binomial-logistic-regression)       | **Binary** $Y$ *prediction*, but can be used for *correlation* as well (but harder correlation interpretation than linear probability).   |
++----------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| [Ordinal Logistic](#ordinal-logistic-regression)         | *Correlation* or *prediction* with **ordinal** $Y$ (but prediction may be better/more flexible with multinomial logistic).                |
++----------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| [Multinomial Logistic](#multinomial-logistic-regression) | *Correlation* and *prediction* with **categorical** $Y$.                                                                                  |
+|                                                          |                                                                                                                                           |
+|                                                          | *Prediction* with **ordinal** $Y$.                                                                                                        |
++----------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| [Poisson](#poisson-regression)                           | *Prediction* and *correlation* with **count** $Y$ (Use only if $\V Y < \E Y$, if not, use negative binomial).                             |
++----------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| [Negative Binomial](#negative-binomial-regression)       | *Prediction* and *correlation* with **count** $Y$ (Works no matter what type of $Y$, but poisson may be more efficient if $\V Y < \E Y$). |
++----------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
 
-Continuous outcome variables $Y$ can only be used with the linear regression model.
-
-## Binary
-
-Binary outcome variables $Y$ can be used with:
-
--   Binomial Logistic Regression: Good for prediction, but can be harder to interpret relationships between $X_j$ and $Y$.
--   Linear Probability Model: For interpretation of relationship between $X_j$ and $Y$ only. Do not use for prediction.
-
-## Ordinal
-
-Ordinal outcome variables $Y$ can be used with:
-
--   Linear Regression Model: Good for interpreting relationships between $X_j$ and $Y$. Do not use for prediction.
--   Ordinal Logistic Regression: Okay for interpreteting relationships between $X_j$ and $Y$. Can impose more strict assumptions for prediction.
--   Multinomial Logistic Regression: Not useful for interpretation, but the best for prediction.
-
-## Categorical
-
-Categorical outcome variables $Y$ can only be used with multinomial logistic regression.
-
-## Count
-
-Count outcome variables $Y$ can be used with:
-
--   Linear Regression Model: Good for interpreting relationships between $X_j$ and $Y$. Okay for prediction but not the best.
--   Negative Binomial Model: Great for prediction. Harder to interpret relationships between $X_j$ and $Y$.
-:::
+: {.bordered tbl-colwidths="\[20,80\]"}
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Review of the Types of Variables
 
++-------------+----------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
 | Type        | Description                                                                                              | Example                                                                                   |
-|-------------|----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
++=============+==========================================================================================================+===========================================================================================+
 | Continuous  | Can take any value within an interval $[a, b]$.                                                          | GDP of a country, temperature.                                                            |
++-------------+----------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
 | Binary      | Can only take value 0 or 1.                                                                              | Yes/no, true/false, did/didn't.                                                           |
++-------------+----------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
 | Ordinal     | Can only take a finite set of discrete outcomes $\{a, b, c\}$, but these outcomes can be ordered.        | strongly disagree - disagree - neutral - agree - strongly agree                           |
++-------------+----------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
 | Categorical | Can only take a finite set of discrete outcomes $\{a, b, c\}$, and these outcomes have no natural order. | Country of birth.                                                                         |
++-------------+----------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
 | Count       | Can only take an integer value $\{0, 1, 2, \dots\}$.                                                     | Number of cases of a disease, number of phone calls received at a call centre in an hour. |
++-------------+----------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
 :::
 
-Below, I will introduce each of these models, their specification, their estimation process (with R-code), their interpretations, and how to predict with them. The last section of this chapter relates to common model specification issues that apply to all models, such as different types of explanatory variables and functional form/transformations.
+The final section on [model specification issues](#model-specification-issues) introduces a few different topics (categorical explanatory variables, transformations, interactions) that can be applied to all of the models.
 
 <br />
 
-## Linear Regression Model
+## Linear Regression Model {#linear-regression-model}
 
 The linear regression model is used for continuous outcome variables $Y$, and a set of explanatory variables $\set X = \{X_1, \dots, X_p\}$ for observations $t = 1, \dots, n$:
 
@@ -190,11 +190,15 @@ For mechanical details on IV/2SLS, see [here](ols.qmd#instrumental-variables-est
 
 Interpretation of coefficient estimates are as follows (proof from @thm-regressionanatomy). Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence):
 
-|               |                                                                                                                                                  |                                                                                                                                                            |
-|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |               | **Continuous** $X_{j}$                                                                                                                           | **Binary** $X_{j}$                                                                                                                                         |
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_j$ | For every one unit increase in $X_{j}$, there is an expected $\hat\beta_j$ unit change in $Y$, holding all other explanatory variables constant. | There is a $\hat\beta_j$ unit difference in $Y_i$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_0$ | When all explanatory variables equal 0, the expected value of $Y$ is $\hat\beta_0$.                                                              | For category $X_{j} = 0$, the expected value of $Y$ is $\hat\beta_0$ (when all other explanatory variables equal 0).                                       |
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+: {.bordered}
 
 ::: {.panel-tabset .nav-pills}
 ## Prediction
@@ -245,7 +249,7 @@ For more information on categorical $X$, interactions, polynomial and logarithmi
 
 <br />
 
-## Linear Probability Model
+## Linear Probability Model {#linear-probability-model}
 
 The linear probability model is for binary $Y$ ([bernoulli distribution](random.qmd#bernoulli-and-binomial-distribution)). It should generally only be used for interpreting relationships between $X_j$ and binary $Y$, and not for prediction (use binomial logistic instead). The outcome of interest is the $\E(Y_t | \set X_t) = \P (Y_t = 1 | \set X_t)$, which we denote as $\pr_t$.
 
@@ -254,8 +258,6 @@ $$
 $$
 
 Where $\beta_0$ is the intercept, $\beta_1, \dots, \beta_p$ are the parameters that explain the relationship between $X_j$ and $Y$, that need to be estimated with sample data with one of two estimators:
-
-estimators:
 
 ::: {.panel-tabset .nav-pills}
 ## OLS with Robust SE
@@ -293,11 +295,15 @@ For mechanical details on IV/2SLS, see [here](ols.qmd#instrumental-variables-est
 
 Interpretation of coefficient estimates are as follows (proof from @thm-regressionanatomy). Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence):
 
-|                     |                                                                                                                                                                                                                         |                                                                                                                                                                                                                                |
-|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
++---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |                     | **Continuous** $X_{j}$                                                                                                                                                                                                  | **Binary** $X_{j}$                                                                                                                                                                                                             |
++---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_j$       | For every one unit increase in $X_{j}$, there is an expected $\hat\beta_j \times 100$ percentage point change in the probability of a unit being in category $Y_t=1$, holding all other explanatory variables constant. | There is a $\hat\beta_j\times 100$ percentage point difference in the probability of a unit being in category $Y_t=1$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
++---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $Y_t=1$ is $\hat\beta_0 \times 100$                                                                                        | For category $X_{j} = 0$, the expected probability of a unit being in category $Y_t=1$ is $\hat\beta_j \times 100$ (when all other explanatory variables equal 0).                                                             |
++---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+: {.bordered}
 
 ::: {.panel-tabset .nav-pills}
 ## Prediction
@@ -338,7 +344,7 @@ If the test is statistically significant, then all the additional parameters in 
 
 <br />
 
-## Binomial Logistic Regression
+## Binomial Logistic Regression {#binomial-logistic-regression}
 
 The linear probability model is for binary $Y$ ([bernoulli distribution](random.qmd#bernoulli-and-binomial-distribution)). The outcome of interest is the $\E(Y_t | \set X_t) = \P (Y_t = 1 | \set X_t)$, which we denote as $\pr_t$. The logistic model applies a link function $g(\cdot)$ to $\pr_t$ to ensure that predicted probabilities are always between 0 and 1. The model is specified as:
 
@@ -395,11 +401,15 @@ $$
 Thus, $e^{\beta_j}$ is the multiplicative change in the odds of event $Y_t = 1$, for every one unit increase in $X_j$.
 :::
 
-|               |                                                                                                                                                                                                                |                                                                                                                                                                                                                        |
-|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
++---------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |               | **Continuous** $X_{j}$                                                                                                                                                                                         | **Binary** $X_{j}$                                                                                                                                                                                                     |
++---------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_j$ | For every one unit increase in $X_{j}$, there is an expected $\times e^{\hat\beta_j}$ multiplicative change in the odds of a unit being in category $Y_t=1$, holding all other explanatory variables constant. | There is a $\times e^{\hat\beta_j}$ multiplicative difference in the odds of a unit being in category $Y_t=1$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
++---------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | $\hat\beta_0$ | The odds of event $Y_t = 1$ when all explanatory variables equal 0 is $e^{\hat\beta_0}$.                                                                                                                       | The odds of event $Y_t = 1$ for category $X_j = 0$ is $e^{\hat\beta_0}$, when all other explanatory variables equal 0.                                                                                                 |
++---------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+: {.bordered}
 
 ::: {.panel-tabset .nav-pills}
 ## Prediction
@@ -452,16 +462,20 @@ The BIC tends to penalise extra parameters more strongly than AIC. Generally, wh
 
 <br />
 
-## Ordinal Logistic Regression
+## Ordinal Logistic Regression {#ordinal-logistic-regression}
 
 <br />
 
-## Multinomial Logistic Regression
+## Multinomial Logistic Regression {#multinomial-logistic-regression}
 
 <br />
 
-## Negative Binomial Regression
+## Poisson Regression {#poisson-regression}
 
 <br />
 
-## Model Specification Issues
+## Negative Binomial Regression {#negative-binomial-regression}
+
+<br />
+
+## Model Specification Issues {#model-specification-issues}
