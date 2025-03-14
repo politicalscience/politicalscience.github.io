@@ -25,7 +25,7 @@ ul.task-list li input[type="checkbox"] {
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
-<link href="./identify.html" rel="next">
+<link href="./glm.html" rel="next">
 <link href="./ols.html" rel="prev">
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
@@ -158,24 +158,6 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Causal Inference</span></span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./identify.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Causal Identification</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./stochastic.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Stochastic Processes</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./multivariate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Multivariate Statistics</span></span></a>
-  </div>
-</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -190,7 +172,25 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./glm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Generalised Linear Model</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Generalised Linear Model</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./identify.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Quasi-Experimental Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stochastic.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Stochastic Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./multivariate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Multivariate Statistics</span></span></a>
   </div>
 </li>
       </ul>
@@ -218,6 +218,7 @@ window.Quarto = {
   <li><a href="#randomisation" id="toc-randomisation" class="nav-link" data-scroll-target="#randomisation"><span class="header-section-number">5.5</span> Randomisation</a></li>
   <li><a href="#randomised-experiments" id="toc-randomised-experiments" class="nav-link" data-scroll-target="#randomised-experiments"><span class="header-section-number">5.6</span> Randomised Experiments</a></li>
   <li><a href="#randomisation-inference" id="toc-randomisation-inference" class="nav-link" data-scroll-target="#randomisation-inference"><span class="header-section-number">5.7</span> Randomisation Inference</a></li>
+  <li><a href="#quasi-experiments" id="toc-quasi-experiments" class="nav-link" data-scroll-target="#quasi-experiments"><span class="header-section-number">5.8</span> Quasi-Experiments</a></li>
   </ul>
 </nav>
     </div>
@@ -613,6 +614,20 @@ H_0^s: \pt = \pc, \quad H_a^s: \pt ≠ \pc
 <p>Now, we essentially conduct a hypothesis test on this sampling distribution, and calculate the p-value as normal. If our result is significant, we have evidence to reject our sharp null hypothesis <span class="math inline">\(H_0^s\)</span>.</p>
 <p>The benefit of randomisation inference is that it is assumption free- we do not rely on asymptotic properties of estimators, which frequently require large sample sizes.</p>
 <p>However, the downside of randomisation inference is that it only tests the sharp null hypothesis <span class="math inline">\(H_0^s\)</span>. But this might not be the hypothesis we are actually interested in.</p>
+<p><br></p>
+</section>
+<section id="quasi-experiments" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="quasi-experiments"><span class="header-section-number">5.8</span> Quasi-Experiments</h2>
+<p>Randomised experiments are the “gold standard” of causal inference. However, in many social science contexts, we do not have the ability to run randomised trials. For example, if our goal is to study the effect of democracy vs.&nbsp;authoritarianism on economic growth, we cannot really randomly assign countries to be democracies or dictatorships. This is simply not possible.</p>
+<p>A new set of methods for causal inference has been developed for these observational research settings where treatment assignment is not in control. These methods are often referred to as quasi-experiments, as they aim to “mimick” randomisation through a set of clever assumptions.</p>
+<p>The common methods in this group include:</p>
+<ol type="1">
+<li><strong>Regression Discontinuity Designs</strong>: these study treatments that are assigned by a cutoff at some certain variable value, for example, getting a scholarship for having a certain SAT score or above, or being able to drive at 16. In theory, units right above and below the cutoff should be very similar to each other, so we can use the units right above the cutoff as treatment units, and units right below the cutoff as control units, and find the causal effects.</li>
+<li><strong>Differences-in-Differences Designs</strong>: these study treatments when some areas/units get a treatment, and others don’t. For example, in many federal countries, some states will pass a new programme that nearby states will not. If we meet a set of assumptions, we can try to compare the differences between the area that got treated, and the area that did not get treated.</li>
+<li><strong>Instrumental Variables Designs</strong>: We know the issue with causal identification is confounders <span class="math inline">\(X\)</span> affecting both treatment <span class="math inline">\(D\)</span> and outcome <span class="math inline">\(Y\)</span>. The idea of an IV design is to find another variable <span class="math inline">\(Z\)</span>, that is not affected by confounder <span class="math inline">\(X\)</span>, but is associated with <span class="math inline">\(D\)</span>. By using <span class="math inline">\(Z\)</span> to predict <span class="math inline">\(D\)</span>, the part of <span class="math inline">\(D\)</span> predicted by <span class="math inline">\(Z\)</span> should not be associated with confounder <span class="math inline">\(X\)</span>, since <span class="math inline">\(Z\)</span> is not associated with confounder <span class="math inline">\(X\)</span>.</li>
+<li><strong>Selection on Observables</strong>: We might not have control of the treatment assignment - however, we might know how in the real world treatment is assigned. Perhaps people with less income are more likely to be treated. Perhaps older people are more likely to be treated. By accounting for these real-world factors affecting treatment assignment, we can isolate the effect of our treatment.</li>
+</ol>
+<p>We will cover each of these designs, how they work, and how we can estimate causal effects with them, in the later chapter on quasi-experiments.</p>
 
 
 </section>
@@ -1045,8 +1060,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./identify.html" class="pagination-link" aria-label="Causal Identification">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Causal Identification</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./glm.html" class="pagination-link" aria-label="Generalised Linear Model">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Generalised Linear Model</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

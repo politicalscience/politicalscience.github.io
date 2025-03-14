@@ -1,109 +1,14 @@
-# Causal Identification
+# Quasi-Experimental Methods
 
-In the last chapter, we introduced the frameworks of causal inference, and how randomisation can establish causality.
+In the [chapter 5](causal.qmd), we introduced the frameworks of causal inference, and how randomisation can establish causality.
 
 However, in the social sciences, we cannot always run randomised experiments where we control the assignment of treatment. In fact, in most scenarios, we have to rely on observational data. In this chapter, we introduce methods to identify causal effects when randomisation is not possible.
 
 <br />
 
-## Selection on Observables
+## Overview
 
-Randomisation is not always feasible. Selection on Observables is an alternative way to get rid of the selection bias problem by [controlling for a set of confounders](causal.qmd#confounders) $\mathcal X$ to [block backdoor paths](causal.qmd#structural-causal-models) and isolate the relationship between $D \rightarrow Y$. We will have controlled for the correct set of confounders $\mathcal X$, when we have eliminated all variables causing selection bias, and we meet the following assumptions:
-
-::: {#def-selectiononobservables style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
-## Selection on Observables
-
-2 assumptions are needed for identification:
-
-**Conditional Ignorability** (also called conditional independence) means that among units $i$ with identical confounder values $\mathcal X_i$, treatment $D_i$ is as-if randomly assigned. Potential outcomes are independent from treatment within each specific confounder value $\mathcal X_i = x$.
-
-$$
-(\pc, \pt) \ind D_t \ | \ \set X_t = x, \ \forall \ x \in \set X
-$$
-
-This assumption implies that given any value of confounders $\set X_t = x$, potential outcomes are equivalent between treatment and control groups:
-
-$$
-\begin{align}
-& \E(\pc|D_t = 1, \set X_t = x) \ = \ \E(\pc|D_t = 0, \set X_t = x) \ = \ \E(\pc|\set X_t = x) \\
-& \E(\pt|D_t = 1, \set X_t = x) \ = \ \E(\pt|D_t = 0, \set X_t = x) \ = \ \E(\pt|\set X_t = x)
-\end{align}
-$$
-
-**Common Support** is the second assumption, and it states for any unit $t$ with any value of $\mathcal X_t$, they have a non-zero probability they can be assigned to both control and treatment.
-:::
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Good and Bad Controls
-
-Good controls are confounders $X$ who cause $D$ (i.e. $X \rightarrow D$), and cause/caused by $Y$. They must be linked to both $D$ and $Y$.
-
-Bad controls are any variable $W$ that is caused by $D$, i.e. $D \rightarrow W$. We do not need to control for this because $W$ isn't causing selection into $D$, it is actually itself caused by $D$.
-
-Another bad control is a variable $Z$ that only causes $D$, and not $Y$. This reduces the variation in $D$ (since we are now only using the part of $D$ caused by $Y$), which may amplify any other confounders unaccounted for.
-
-Neutral controls are variables that only cause $Y$ and are not associated with $D$. They do not affect the causal identification, but can reduce our standard errors of our estimates.
-:::
-
-Using these two assumptions, we can first identify the CATE, which will allow us to identify the ATE and ATT. Let us first start with the definition of CATE (@def-cate):
-
-$$
-\begin{align}
-\tau_{CATE}(x) & = \E(\pt - \pc \ | \ \set X_t = x) \\
-& = \E(\pt | \set X_t = x) - \E(\pc|\set X_t = x) \\
-\end{align}
-$$
-
-Now, from the properties implied by conditional ignorability given in @def-selectiononobservables, we get
-
-$$
-\begin{align}
-\tau_{CATE}(x) & = \E(\pt|D_i = 1, \set X_t = x) - \E(\pc|D_i = 0, \set X_t = x) \\
-& = \E(Y_{t}|D_t = 1, \mathcal X_t = x) - \E(Y_{t}|D_t = 0, \set X_t = x) \\
-\end{align}
-$$ {#eq-soocate}
-
-And the second step above is because $\pt|D_i = 1$ and $\pc|D_i = 0$ are observable outcomes (@def-observedoutcomes). Thus, with independence, we can identify the CATE with just observed outcomes. With the CATE identified, we can now identify both the ATE and ATT.
-
-::: {.panel-tabset .nav-pills}
-## ATE Identification
-
-Let us consider the definition of the ATE, which is $\E(\pt - \pc)$. From the definition of a continuous random variable's expectation given in @def-exp, we can rewrite the ATE as
-
-$$
-\tau_{ATE} = \int\tau_{CATE}(x) \P(\mathcal x) dy
-$$
-
-Which is a weighted average. We established in @eq-soocate that we can identify the CATE. Thus, we can plug @eq-soocate into the ATE to get our identified ATE:
-
-$$
-\tau_{ATE} = \int [\E(Y_{t}|D_t = 1, \set X_t = x) - \E(Y_{t}|D_t = 0, \set X_t = x)] \P(x) dy
-$$
-
-And all the values in this equation are observed outcomes $Y_t$, meaning if we control for set of confounders $\mathcal X$, our correlation becomes a causal effect.
-
-## ATT Identification
-
-Let us consider the definition of the ATT, which is $\E(\pc = \pt | D_i = 1)$. From the definition of a continuous random variable's expectation given in @def-exp, we can rewrite the ATT as
-
-$$
-\tau_{ATT} = \int \tau_{CATE}(x) \P(x|D_t = 1) dy
-$$
-
-Which is a weighted average. We established in @eq-soocate that we can identify the CATE. Thus, we can plug @eq-soocate into the ATE to get our identified ATT:
-
-$$
-\tau_{ATT} = \int [\E(Y_{t}|D_t = 1, \set X_t = x) - \E(Y_{t}|D_t = 0, \mathcal X_t = x)] \P(x|D_t = 1) dy
-$$
-
-And all the values in this equation are observed outcomes $Y_t$, meaning if we control for set of confounders $\mathcal X$, our correlation becomes a causal effect.
-:::
-
-Assuming we meet the assumptions given in @def-selectiononobservables, there are multiple estimators, including regression, matching, and weighting, which we will discuss in more detail in the chapter on causal estimation.
-
-<br />
-
-## Non-Compliance Instruments
+## Non-Compliance Designs
 
 When we assign individuals to treatment/control in [randomised experiments](causal.qmd#randomised-experiments), we often cannot guarantee that individuals will actually follow through with treatment. Let us assume an **encouragement** $Z_t \in \{0, 1\}$, which is our treatment assignment. Then, we have the **treatment** variable $D_t \in \{0,1\}$, which is someone who actually took the treatment or not. Given this framework, we can divide all units $i$ into 4 categories:
 
@@ -124,62 +29,49 @@ We can visually show what will happen with all 4 types of people in a table, cal
 | $D_i = 0$ | Defier/Never-Taker    | Complier/Never-Taker |
 :::
 
-The idea of the non-compliance designs is to use our encouragement/treatment assignment $Z$ as an [instrument](ols.qmd#instrumental-variables-estimator) for $D$ - actually taking the treatment. Our causal estimands are:
+The idea of the non-compliance designs is to use our encouragement/treatment assignment $Z$ as an [instrument](ols.qmd#instrumental-variables-estimator) for $D$ - actually taking the treatment.
 
 ::: {.panel-tabset .nav-pills}
-## Intent to Treat (ITT)
+## Assumptions
 
-One causal estimand that we can estimate is the **Intent To Treat (ITT)**, which is essentially the ATE of $Z$ on $Y$, ignoring if people actually took the treatment or not. This is essentially the affect of encouragement. If there is any non-compliance, then the ITT will not equal the ATE.
+There are 4 assumptions to the non-compliance designs:
+
+1.  **Relevance**: $Z$ must be correlated to $D$, i.e. $Cov(Z,D)≠0$. Or in other words, compilers must exist, or else, encouragement $Z$ would not affect treatment $D$.
+2.  **Ignorability/Exogneity**: There is no backdoor path between $Z$ and $D$, and no backdoor path between $Z$ and $Y$ (we can do controls/selection on observables to account for this). This is generally met if our $Z$ in our non-compliance design is randomly assigned.
+3.  **Exclusions Restriction**: $Z$ must only have an effect on $Y$ through $D$. $Z$ must not have any independent effect on $Y$.
+4.  **Monotonicity**: There are no defiers - people who do the opposite of their encouragement $Z$, no matter what $Z$ they get.
+
+We have two estimands of interest. The **Intent to Treat (ITT)** is the ATE of $Z$ on $Y$. This is the effect of encouragement:
 
 $$
 \tau_{ITT} = \E(Y_t|Z_t = 1) - \E(Y_t | Z_t = 0)
 $$
 
-As long as $Z$ is randomly assigned (as should be the case in a non-compliance design), we can identify the ITT. However, the ITT does not tell us anything about the effect of $D$ (the treatment), only $Z$ (the encouragement).
-
-## Local Average Treatment Effect (LATE)
-
-The ITT only provides the effect for the encouragement $Z$. The LATE instead provides the effect of the treatment $D$ on $Y$ for compliers (so the ITT or ATE for compliers):
+However, the ITT does not tell us anything about the effect of $D$ (the treatment), only $Z$ (the encouragement). The **Local Average Treamtment Effect (LATE)** provides the effect of the treatment $D$ on $Y$ for compliers (so the ITT or ATE for compliers):
 
 $$
 \tau_{LATE} = \E(\tau_t | \mathrm{compliers})
 $$
 
-The LATE is generally not equivalent to the ATT or the ATE, unless everyone is a complier in the experiment. Thus, we must be careful when interpreting the LATE - it is only the treatment effect for compliers, and we might not know who the compliers are.
-:::
+The LATE is generally not equivalent to the ATT or the ATE.
 
-::: {#def-noncomplianceiv style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
-## Non-Compliance IV
+## Identification
 
-There are 4 assumptions to identify the causal estimands:
+The ITT itself is identifiable under exogeneity/ignorability alone, since $Z$ is randomly assigned in non-compliance designs.
 
-1.  **Relevance**: $Z$ must be correlated to $D$. Or in other words, compilers must exist, or else, encouragement would not affect treatment.
-2.  **Ignorability/Exogneity**: There is no backdoor path between $Z$ and $D$, and no backdoor path between $Z$ and $Y$ (we can do controls/selection on observables to account for this).
-3.  **Exclusions Restriction**: $Z$ must only have an effect on $Y$ through $D$. $Z$ must not have any independent effect on $Y$.
-4.  **Monotonicity**: There are no defiers.
-:::
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Visual Examples of Violations
-
-The figure below contains some visual examples of violations of the above to faciliate understanding of these assumptions:
-
-![](images/clipboard-390858332.png){fig-align="center" width="60%"}
-:::
-
-Let us show how we can prove the LATE is identifiable under these assumptions. First, the ITT itself is identifiable under exogeneity/ignorability alone. Now, let us define $c$ as compliers, $a$ as always-takers, $n$ as never-takers, and $d$ as defiers. We can break down the ITT into a weighted average:
+To identify the LATE, we will need all 4 assumptions. Let us define $c$ as compliers, $a$ as always-takers, $n$ as never-takers, and $d$ as defiers. We can break down the ITT into a weighted average:
 
 $$
 \tau_{ITT} = \tau_{ITT}^c \P(c) + \tau_{ITT}^a \P(a) + \tau_{ITT}^n \P(n) + \tau_{ITT}^d \P(d)
 $$
 
-We know that under our assumption of monotonicity, we assume no defiers, so $\P(d) = 0$:
+We know that under our assumption of monotonicity, we assume no defiers, so the probability of a defier is $\P(d) = 0$:
 
 $$
 \tau_{ITT} = \tau_{ITT}^c \P(c) + \tau_{ITT}^a \P(a) + \tau_{ITT}^n \P(n) 
 $$
 
-Our exclusions restriction says that $Z$ has no affect on $Y$. The ITT is the relationship between $Z$ and $Y$. But since always-takers and never-takers ignore $Z$ when deciding treatment, $Z$ has no effect of them on $Y$. Thus, we can further simplify:
+Our exclusions restriction says that $Z$ has no independent effect on $Y$. The ITT is the relationship between $Z$ and $Y$. But since always-takers and never-takers ignore $Z$ when deciding treatment, $Z$ has no effect of them on $Y$. Thus, we can further simplify:
 
 $$
 \tau_{ITT} = \tau_{ITT}^c \P(c)
@@ -191,24 +83,295 @@ $$
 \tau_{LATE} = \frac{\tau_{ITT}}{\P(c)} \ = \ \frac{\E(Y_i | Z_i = 1) - \E(Y_i | Z_i = 0)}{\E(D_i | Z_i = 1) - \E(D_i | Z_i = 0)}
 $$
 
-Thus, we have identified the LATE under the assumptions from @def-noncomplianceiv. We will generally estimate the LATE with the 2-stage-least-squares (2SLS) estimator.
+For estimation, we could our sample equivalents in. Alternatively, we can use 2SLS (shown below), which produces equivalent estimates.
+
+## Graphical Identification
+
+The typical $Z$ setup in instrumental variables (and the non-compliance design) is:
+
+![](images/clipboard-1350479199.png){fig-align="center" width="35%"}
+
+Since we use only the compliers (the part of $D$ that is explained by $Z$) for the LATE, $Z$ determines $D$, and not $U$. Thus, we have broken the link $U \rightarrow D$, thus eliminating our confounder problem. The weaknesses of the design are the numerous possible violations:
+
+![](images/clipboard-390858332.png){fig-align="center" width="60%"}
+
+In a non-compliance design, since $Z$ is randomly assigned, ignorability is generally not a huge concern. Relevance is generally met assuming we have compliers. Our main concern is the exclusions restriction.
+:::
+
+To estimate the LATE in a non-compliance design, we typically use the 2-stage least squares estimator, as was detailed [previously](ols.qmd#instrumental-variables-estimator).
+
+```{r, eval = FALSE}
+late <- fixest::feols(Y ~ 1 | D ~ Z, data = mydata, se = "hetero")
+```
+
+The 2SLS estimator (and IV estimator) are biased in small sample sizes, but asymptotically consistent, so we should be more careful when dealing with small samples.
+
+When interpreting the LATE, we must be careful. The LATE is only the causal effect of taking the treatment for compliers. However, we cannot say anything about non-compliers, and we must be careful about generalising. We generally do not know who the compliers are as well, and different $Z$ can result in different compliers.
 
 <br />
 
-## Examiner Instruments
-
-<br />
+## Examiner Designs
 
 ## Shift-Share Instruments
 
-<br />
-
 ## Sharp Regression Discontinuity
-
-<br />
 
 ## Fuzzy Regression Discontinuity
 
+## Differences-in-Differences
+
 <br />
 
-## Differences-in-Differences
+## Selection on Observables
+
+Selection on Observables is an way to get rid of the selection bias problem by [controlling for a set of confounders](causal.qmd#confounders) $\mathcal X$ to [block backdoor paths](causal.qmd#structural-causal-models) and isolate the relationship between $D \rightarrow Y$.
+
+::: {.panel-tabset .nav-pills}
+## Assumptions
+
+There are two assumptions for selection on observables:
+
+**Conditional Ignorability** (also called conditional independence) means that among units $i$ with identical confounder values $\mathcal X_i$, treatment $D_i$ is as-if randomly assigned. Potential outcomes are independent from treatment within each specific confounder value $\mathcal X_i = x$.
+
+$$
+(\pc, \pt) \ind D_t \ | \ \set X_t = x, \ \forall \ x \in \set X
+$$
+
+This assumption implies that given any value of confounders $\set X_t = x$, potential outcomes are equivalent between treatment and control groups:
+
+$$
+\begin{align}
+& \E(\pc|D_t = 1, \set X_t = x) \ = \ \E(\pc|D_t = 0, \set X_t = x) \ = \ \E(\pc|\set X_t = x) \\
+& \E(\pt|D_t = 1, \set X_t = x) \ = \ \E(\pt|D_t = 0, \set X_t = x) \ = \ \E(\pt|\set X_t = x)
+\end{align}
+$$ {#eq-selectiononobservables}
+
+**Common Support** is the second assumption, and it states for any unit $t$ with any value of $\mathcal X_t$, they have a non-zero probability they can be assigned to both control and treatment.
+
+A few tips for selection controls in set $\set X$:
+
+-   Good controls are confounders $X$ who cause $D$ (i.e. $X \rightarrow D$), and are associated with $Y$. We want to control for all of these.
+-   Bad controls include any variable that is caused by $D$, i.e. $D \rightarrow W$. We do not need to control for this because $W$ isn't causing selection into $D$, it is actually itself caused by $D$. Another bad control is a variable $Z$ that only causes $D$, and not $Y$. This reduces the variation in $D$, which may amplify any other confounders unaccounted for.
+-   Neutral controls are variables that only cause $Y$ and are not associated with $D$. They do not affect the causal identification, but can reduce our standard errors.
+
+## Identification of ATE
+
+Using these assumptions, we can first identify the CATE, which will allow us to identify the ATE. Let us first start with the definition of CATE (@def-cate):
+
+$$
+\begin{align}
+\tau_{CATE}(x) & = \E(\pt - \pc \ | \ \set X_t = x) \\
+& = \E(\pt | \set X_t = x) - \E(\pc|\set X_t = x) \\
+\end{align}
+$$
+
+Now, from the properties implied by conditional ignorability given in @eq-selectiononobservables, we get
+
+$$
+\begin{align}
+\tau_{CATE}(x) & = \E(\pt|D_i = 1, \set X_t = x) - \E(\pc|D_i = 0, \set X_t = x) \\
+& = \E(Y_{t}|D_t = 1, \mathcal X_t = x) - \E(Y_{t}|D_t = 0, \set X_t = x) \\
+\end{align}
+$$
+
+And the second step above is because $\pt|D_i = 1$ and $\pc|D_i = 0$ are observable outcomes (@def-observedoutcomes). Thus, with independence, we can identify the CATE with just observed outcomes.
+
+Let us consider the definition of the ATE, which is $\E(\pt - \pc)$. From the definition of expectation given in @def-exp, we can rewrite the ATE as
+
+$$
+\tau_{ATE} = \int\tau_{CATE}(x) \P(\mathcal x) dy
+$$
+
+Which is a weighted average. We established above that we can identify the CATE. Thus, we can plug the CATE into the ATE to get our identified ATE:
+
+$$
+\tau_{ATE} = \int [\E(Y_{t}|D_t = 1, \set X_t = x) - \E(Y_{t}|D_t = 0, \set X_t = x)] \P(x) dy
+$$
+
+And all the values in this equation are observed outcomes $Y_t$, meaning if we control for set of confounders $\mathcal X$, our correlation becomes a causal effect.
+
+## Identification of ATT
+
+Using these assumptions, we can first identify the CATE, which will allow us to identify the ATT. Let us first start with the definition of CATE (@def-cate):
+
+$$
+\begin{align}
+\tau_{CATE}(x) & = \E(\pt - \pc \ | \ \set X_t = x) \\
+& = \E(\pt | \set X_t = x) - \E(\pc|\set X_t = x) \\
+\end{align}
+$$
+
+Now, from the properties implied by conditional ignorability given in @eq-selectiononobservables, we get
+
+$$
+\begin{align}
+\tau_{CATE}(x) & = \E(\pt|D_i = 1, \set X_t = x) - \E(\pc|D_i = 0, \set X_t = x) \\
+& = \E(Y_{t}|D_t = 1, \mathcal X_t = x) - \E(Y_{t}|D_t = 0, \set X_t = x) \\
+\end{align}
+$$
+
+And the second step above is because $\pt|D_i = 1$ and $\pc|D_i = 0$ are observable outcomes (@def-observedoutcomes). Thus, with independence, we can identify the CATE with just observed outcomes.
+
+Let us consider the definition of the ATT, which is $\E(\pc = \pt | D_i = 1)$. From the definition expectation given in @def-exp, we can rewrite the ATT as
+
+$$
+\tau_{ATT} = \int \tau_{CATE}(x) \P(x|D_t = 1) dy
+$$
+
+Which is a weighted average. We established above that we can identify the CATE. Thus, we can plug CATE into the ATE to get our identified ATT:
+
+$$
+\tau_{ATT} = \int [\E(Y_{t}|D_t = 1, \set X_t = x) - \E(Y_{t}|D_t = 0, \mathcal X_t = x)] \P(x|D_t = 1) dy
+$$
+
+And all the values in this equation are observed outcomes $Y_t$, meaning if we control for set of confounders $\mathcal X$, our correlation becomes a causal effect.
+:::
+
+Assuming we meet the assumptions, there are multiple estimators, including regression, matching, propensity score matching, and weighting.
+
+::: {.panel-tabset .nav-pills}
+## Regression
+
+Regression is the most popular estimator for selection on observables. There are two types of regression estimators.
+
+**Classical linear regression** with OLS and robust standard errors is used to estimate the ATE when we believe we have [constant treatment effects]{.underline} for all units (where each unit $t$ has the same $\tau$ effect):
+
+$$
+\textcolor{purple}{Y_t^{(d)}} = \alpha + D_t\tau + \b x_t \b\gamma + \eps_t
+$$
+
+```{r, eval = FALSE}
+ate <- fixest::feols(Y ~ D + X1 + X2 + X3,
+                     data = mydata, se = "hetero")
+summary(ate)
+```
+
+However, classical linear regression is **biased** for the ATE if we have heterogenous treatment effects (different units have different $\tau$). It actually is an unbiased estimator for a weighted average of the ATT and ATU, not the ATE.
+
+Instead, with heterogeneity, we should use the **Fully Interacted Estimator**:
+
+$$
+\textcolor{purple}{Y_t^{(d)}} = \alpha + D_t \tau + (\b x_t - \bar{\b x})\b\beta + D_t(\b x_t - \bar{\b x})\b\gamma + \eps_t
+$$
+
+```{r, eval = FALSE}
+ate <- estimatr::lm_lin(Y ~ D, covariates = ~ X1 + X2 + X3,
+                        data = my_data)
+summary(ate)
+```
+
+The fully interacted estimator is slightly biased when estimating $\tau_{ATE}$, but the bias is arbitrarily small in large sample sizes. When we have a good amount of data, we tend to default to this estimator.
+
+## Matching
+
+Matching estimates missing potential outcomes/counterfactuals for each observation in the treated group, by matching an untreated observation to that treated observation. The matching process is done by similarity on covariates $\set X$. Matching estimates the ATT:
+
+$$
+\hat\tau_{ATT} = \frac{1}{N_1} \sum\limits_{t:D_i = 1}^{N_1}(Y_t - \tilde Y_t)
+$$
+
+Where $N_1$ is the number of observations of units in the treatment group, $Y_i$ is the observed $Y$ of unit $t$ in the treated group, and $\tilde Y_i$ is the observed $Y$ value of the control unit matched to unit $t$. Matching takes an average difference of the matched pairs.
+
+We can also match multiple control units $\tilde Y_t$ to one treated unit $t$, and average the value of those control units to create a closer match with the treated unit $t$.
+
+To determine what units are "closest" to each other in similarity of covariates $\set X$ for matching, the typical choice is mahalanobis distance, which calculates the distance between a unit $i$ and $j$:
+
+$$
+D_M(i,j) = \sqrt{(\b x_i - \b x_j)^\top \b\Sigma_x^{-1}(\b x_i - \b x_j)}
+$$
+
+Where $\b\Sigma_x$ is the covariance matrix of confounders $\set X$. The units in treatment and control that have the smallest distances are matched. Matching is done in R:
+
+```{r, eval = FALSE}
+#matching units
+match_obj <- MatchIt::matchit(D ~ X1 + X2 + X3, data = my_data,
+                              method = "nearest", distance = "mahalanobis")
+match_data <- MatchIt::match.data(match_obj, weights = "nn_weights")
+#estimate
+att <- estimatr::lm_robust(Y ~ D, data = match_data, weights = nn_weights)
+summary(att)
+```
+
+The matching estimator is prone to bias/poor-matches as the number of covariates you have increases. Generally, with many covaraites, propensity scores are more popular.
+
+## Propensity Scores
+
+Propensity score matching is similar to matching, and also estimates the ATT.
+
+However, instead of matching on covariates, it matches on the likelihood of a unit $t$ receiving treatment $D_t = 1$, based on their covariate $\set X_t$ values. This likelihood/probability is called the propensity score.
+
+$$
+\pr_t(\set X_t) = \P(D_t = 1 | \set X_t)
+$$
+
+However, we do not actually observe $\pr_t(\set X_t)$. We can estimate $\pr_t(\set X_t)$ with a binary response model with outcome $D_t$, and explanatory variables $\set X$. Then using the fitted probabilities $\P(D_t = 1) = \hat\pr_t(\set X_t)$, we can conduct matching based on these estimates.
+
+To implement propensity score matching in R, we start with our binary response variable. The most common choice is logistic regression, but random forest is also possible:
+
+```{r, eval = FALSE}
+# logistic model
+ps_model <- glm(D ~ X1 + X2, data = my_data, family = "binomial")
+# rf model
+ps_model <- randomForest::randomForest(D ~ X1 + X2,
+                                       data = my_data,
+                                       na.action = na.omit)
+# estimate propensity scores
+my_data$ps <- predict(ps_model, type = "response")
+```
+
+Then, we conduct matching with the estimated propensity scores:
+
+```{r, eval = FALSE}
+#matching units
+match_obj <- MatchIt::matchit(D ~ ps, data = my_data,
+                              method = "nearest", distance = "mahalanobis")
+match_data <- MatchIt::match.data(match_obj, weights = "pscore_weights")
+#estimate
+att <- estimatr::lm_robust(Y ~ D, data = match_data,
+                           weights = pscore_weights)
+summary(att)
+```
+
+## Weighting
+
+Matching only recovers the ATT. However, if we want the ATE, we can use propensity scores in a inverse probability weighting (IPW) estimator. It can be shown with math that the ATE with propensity scores $\pr_t(\set X_t)$ can be identified as:
+
+$$
+\tau_{ATE} = \E\left[ Y_t \cdot \frac{D_t - \pr_t(\set X_t)}{\pr_t(\set X_t)(1-\pr_t(\set X_t))} \right]
+$$
+
+We can use our sample equivalents to estimate the ATE:
+
+$$
+\begin{align}
+\hat\tau_{ATE} & = \frac{1}{N}\sum\limits_{i=1}^N\left(Y_t \cdot \frac{D_t - \hat\pr_t(\set X_t)}{\hat\pr_t(\set X_t)(1-\hat\pr_t(\set X_t))} \right) \\
+& = \frac{1}{N} \sum\limits_{i=1}^N\left( Y_tD_t\frac{1}{\hat\pr_t(\set X_t)} - Y_t(1-D_t)\frac{1}{1 - \hat\pr_t(\set X_t)}\right)
+\end{align}
+$$
+
+We see that units who are unlikely to recieve treatment (low propensity scores) that actually get treated get weighted more, and units who are likely to be treated (high propensity scores) but don't get treated also get weighted more.
+
+We first estimate the propensity scores with either logistic or random forest:
+
+```{r, eval = FALSE}
+# logistic model
+ps_model <- glm(D ~ X1 + X2, data = my_data, family = "binomial")
+# rf model
+ps_model <- randomForest::randomForest(D ~ X1 + X2,
+                                       data = my_data,
+                                       na.action = na.omit)
+# estimate propensity scores
+my_data$ps <- predict(ps_model, type = "response")
+```
+
+Then, we calculate the weights and estimate:
+
+```{r, eval = FALSE}
+my_data$ipw <- ifelse(mydata$D == 1, 1/my_data$ps, 1/(1-my_data$ps))
+ate <- estimatr::lm_robust(Y~D, data = my_data, weights = ipw)
+```
+
+The IPW estimator is asymptotically consistent, but has poor small sample properties, and are sensitive to extreme values of $\hat\pr_t(\set X_t)$.
+:::
+
+We should generally be careful with selection on observables, as it is considered to be the least robust of the quasi-experimental designs. This is particularly the case in the social sciences, when there are tons and tons of unobservable confounders which are nearly impossible to control for.

@@ -58,7 +58,7 @@ Count outcome variables $Y$ can be used with:
 ## Review of the Types of Variables
 
 | Type        | Description                                                                                              | Example                                                                                   |
-|--------------|--------------------------------|---------------------------|
+|-------------|----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
 | Continuous  | Can take any value within an interval $[a, b]$.                                                          | GDP of a country, temperature.                                                            |
 | Binary      | Can only take value 0 or 1.                                                                              | Yes/no, true/false, did/didn't.                                                           |
 | Ordinal     | Can only take a finite set of discrete outcomes $\{a, b, c\}$, but these outcomes can be ordered.        | strongly disagree - disagree - neutral - agree - strongly agree                           |
@@ -103,44 +103,69 @@ We should use the Ordinary Least Squares estimator (@def-ols) with robust standa
 For estimation with OLS and robust standard errors in R, we should use the *fixest* package:
 
 ```{r, eval = FALSE}
-library(fixest)
-model <- feols(Y ~ X1 + X2 + X3, data = mydata, se = "hetero")
+model <- fixest::feols(Y ~ X1 + X2 + X3,
+                       data = mydata,
+                       se = "hetero")
 summary(model)
 ```
 
 For mechanical details on robust standard errors, see [here](ols.qmd#ols-and-non-spherical-errors).
 
-## GLS/WLS
+## WLS
 
-We can use the generalised least squares estimator (@def-gls) if we believe our model meets all of the classical linear model conditions [except]{.underline} for spherical errors (@def-sphericalerrors), and we know the structure of our heteroscedasticity/autocorrelation.
+We can use the weighted least squares estimator (@def-gls) if we believe our model meets all of the classical linear model conditions [except]{.underline} for spherical errors (@def-sphericalerrors), and we have conditional heteroscedasticity.
 
-If we do not know the structure of our heteroscedasticity/autocorrelation, we should use the feasible generalised least squares (FGLS) or just OLS with robust standard errors. I do not recommend using GLS/WLS over OLS with robust standard errors, as the chances of something going wrong are much higher.
-
-If we have a weights matrix already, we can implement GLS in R:
+For WLS in R, we first estimate a normal linear regression with OLS to obtain the estimated residuals, then estmiate a model between residuals and $X$, before using them as weights in a final model:
 
 ```{r, eval = FALSE}
-model <- lm(Y ~ X1 + X2 + X3,
-            data = mydata,
-            weights = weightsmatrix)
+#function
+wls <- function(y, x, data) {
+  y <- rlang::enquo(y)
+  x <- rlang::enquo(x)
+  formula <- as.formula(paste(rlang::as_label(y), "~", rlang::as_label(x)))
+  ols <- lm(formula, data = data) #estimate lm
+  res_sq <- residuals(ols)^2   #residuals
+  log_res_sq <- log(res_sq) #log trans for stability
+  formula2 <- as.formula(paste("log_res_sq", "~", rlang::as_label(x)))
+  var_model <- lm(formula2, data = data) # model for variance
+  hat_sigma <- exp(predict(var_model))
+  weights <- 1 / hat_sigma # weights
+  mod <- fixest::feols(formula, weights = weights, data = data) # WLS
+  return(mod)
+}
+```
+
+Once you have copied the function and ran it, a WLS model is run by:
+
+```{r, eval = FALSE}
+wls(y, x1 + x2 + x3, data = mydata)
+```
+
+For mechanical details on WLS (GLS), see [here](ols.qmd#generalised-least-squares).
+
+## GLS
+
+We should use the generalised least squares estimator if we believe our model meets all of the classical linear model conditions [except]{.underline} for spherical errors (@def-sphericalerrors), and we have autocorrelation.
+
+I do not recommend using GLS over OLS with robust standard errors, as the chances of something going wrong are much higher.
+
+For (Feasible) GLS in R, we can use the *nlme* package:
+
+```{r, eval = FALSE}
+model <- nlme::gls(y ~ x1 + x2 + x3,
+                   data = mydata,
+                   correlation = corAR1(form = ~ time))
 summary(model)
 ```
 
-For mechanical details on GLS, see [here](ols.qmd#generalised-least-squares).
-
-## FGLS
-
-We should use the feasile generalised least squares estimator if we believe our model meets all of the classical linear model conditions [except]{.underline} for spherical errors (@def-sphericalerrors), and we do not know the structure of our heteroscedasticity/autocorrelation.
-
-If we do know the structure of our heteroscedasticity/autocorrelation, we can use the normal generalised least squares (GLS) estimator. I do not recommend using FGLS over OLS with robust standard errors, as the chances of something going wrong are much higher.
-
-For FGLS in R, we first estimate a normal linear regression with OLS to obtain the estimated residuals, before using them as weights in a second model:
+We can also choose other autocorrelation structures by replacing *corAR1()*:
 
 ```{r, eval = FALSE}
-ols <- lm(Y ~ X1 + X2 + X3, data = mydata)
-model <- lm(Y ~ X1 + X2 + X3,
-            data = mydata,
-            weights = 1/ols$fitted.values^2)
-summary(model)
+corAR1(form = ~ time) #AR 1 autocorrelation
+corARMA(p = 1, q = 1, form ~ time) #ARMA(p, q) autocorrelation
+corExp(form = ~lat + long) #spatial exp decay autocorrelation
+corGaus(form = ~lat + long) # spatial gaussian decy autocorr
+corSpher(form = ~lat + long) #spatial spherical(linear) autocorr
 ```
 
 For mechanical details on FGLS, see [here](ols.qmd#feasible-generalised-least-squares).
@@ -154,10 +179,11 @@ You should not use IV/2SLS unless you really only care about the accurate estima
 For estimation of IV/2SLS, we should use the fixest package:
 
 ```{r, eval = FALSE}
-library(fixest)
-model <- feols(Y ~ 1 | D ~ Z, data = mydata, se = "hetero")
+model <- fixest::feols(Y ~ 1 | X ~ Z, data = mydata, se = "hetero")
 summary(model)
 ```
+
+You can replace the *1* with covariates that will be included in both stages of the regression.
 
 For mechanical details on IV/2SLS, see [here](ols.qmd#instrumental-variables-estimator).
 :::
@@ -165,7 +191,7 @@ For mechanical details on IV/2SLS, see [here](ols.qmd#instrumental-variables-est
 Interpretation of coefficient estimates are as follows (proof from @thm-regressionanatomy). Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence):
 
 |               |                                                                                                                                                  |                                                                                                                                                            |
-|--------------|----------------------------|------------------------------|
+|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |               | **Continuous** $X_{j}$                                                                                                                           | **Binary** $X_{j}$                                                                                                                                         |
 | $\hat\beta_j$ | For every one unit increase in $X_{j}$, there is an expected $\hat\beta_j$ unit change in $Y$, holding all other explanatory variables constant. | There is a $\hat\beta_j$ unit difference in $Y_i$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
 | $\hat\beta_0$ | When all explanatory variables equal 0, the expected value of $Y$ is $\hat\beta_0$.                                                              | For category $X_{j} = 0$, the expected value of $Y$ is $\hat\beta_0$ (when all other explanatory variables equal 0).                                       |
@@ -185,7 +211,7 @@ In R, we can use the predict command:
 my_predictions <- predict(model, newdata = my_new_data)
 ```
 
-Where *my_new_data* is a data frame with $X_1, \dots, X_p$ values for all the new observations we want to predict $\hat Y$ for.
+Where *my_new_data* is a data frame with $X_1, \dots, X_p$ values for all the new observations we want to predict $\hat Y$ for. If you only want to predict for your existing data on which the model was fitted on, you do not need the *newdata* argument.
 
 ## T-Tests
 
@@ -239,8 +265,9 @@ We should use the Ordinary Least Squares estimator (@def-ols) [with]{.underline}
 For estimation with OLS and robust standard errors in R, we should use the *fixest* package:
 
 ```{r, eval = FALSE}
-library(fixest)
-model <- feols(Y ~ X1 + X2 + X3, data = mydata, se = "hetero")
+model <- fixest::feols(Y ~ X1 + X2 + X3,
+                       data = mydata,
+                       se = "hetero")
 summary(model)
 ```
 
@@ -248,15 +275,16 @@ For mechanical details on robust standard errors, see [here](ols.qmd#ols-and-non
 
 ## IV/2SLS
 
-We should use the instrumental variables estimator (@def-ivestimator)or 2-stage least squares (2SLS) when our model violates exogeneity (@def-weakexog), and we care a lot about accurately estimating the correlation between $X_j$ and $Y$, and we have a suitable instrument $Z$.
+We should use the instrumental variables estimator (@def-ivestimator) or 2-stage least squares (2SLS) when our model violates exogeneity (@def-weakexog), and we care a lot about accurately estimating the correlation between $X_j$ and $Y$, and we have a suitable instrument $Z$.
 
 You should not use IV/2SLS unless you really only care about the accurate estimation of one $\beta_j$, and do not care about prediction purposes.
 
 For estimation of IV/2SLS, we should use the fixest package:
 
 ```{r, eval = FALSE}
-library(fixest)
-model <- feols(Y ~ 1 | D ~ Z, data = mydata, se = "hetero")
+model <- fixest::feols(Y ~ 1 | D ~ Z,
+                       data = mydata,
+                       se = "hetero")
 summary(model)
 ```
 
@@ -266,7 +294,7 @@ For mechanical details on IV/2SLS, see [here](ols.qmd#instrumental-variables-est
 Interpretation of coefficient estimates are as follows (proof from @thm-regressionanatomy). Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence):
 
 |                     |                                                                                                                                                                                                                         |                                                                                                                                                                                                                                |
-|--------------|-----------------------------|------------------------------|
+|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |                     | **Continuous** $X_{j}$                                                                                                                                                                                                  | **Binary** $X_{j}$                                                                                                                                                                                                             |
 | $\hat\beta_j$       | For every one unit increase in $X_{j}$, there is an expected $\hat\beta_j \times 100$ percentage point change in the probability of a unit being in category $Y_t=1$, holding all other explanatory variables constant. | There is a $\hat\beta_j\times 100$ percentage point difference in the probability of a unit being in category $Y_t=1$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
 | $\widehat{\beta_0}$ | When all explanatory variables equal 0, the expected probability of a unit being in category $Y_t=1$ is $\hat\beta_0 \times 100$                                                                                        | For category $X_{j} = 0$, the expected probability of a unit being in category $Y_t=1$ is $\hat\beta_j \times 100$ (when all other explanatory variables equal 0).                                                             |
@@ -324,9 +352,7 @@ $$
 \pr_t = \frac{e^{\beta_0 + \beta_1X_{t1} + \beta_2X_{t2} + \dots + \beta_pX_{tp}}}{1+e^{\beta_0 + \beta_1X_{t1} + \beta_2X_{t2} + \dots + \beta_pX_{tp}}}
 $$
 
-Where $\beta_0$ is the intercept, $\beta_1, \dots, \beta_p$ are the parameters that explain the relationship between $X_j$ and $Y$, that need to be estimated with sample data.
-
-The model is always estimated with the maximum likelihood estimator. For estimation with OLS and robust standard errors in R, we should use the *glm()* function:
+Where $\beta_0$ is the intercept, $\beta_1, \dots, \beta_p$ are the parameters that explain the relationship between $X_j$ and $Y$, that need to be estimated with sample data. The model is always estimated with the maximum likelihood estimator.
 
 ```{r, eval = FALSE}
 model <- glm(Y ~ X1 + X2 + X3,
@@ -334,6 +360,8 @@ model <- glm(Y ~ X1 + X2 + X3,
              family = "binomial")
 summary(model)
 ```
+
+Details on the maximum likelihood estimator are provided [here](mle.qmd).
 
 Interpretation of coefficient estimates are very difficult - instead, we will interpret **odds ratios**, which are $e^{\hat\beta_j}$. Remember that these interpretations are [not]{.underline} causal [unless]{.underline} our $X_j$ has been randomly assigned and meets the condition of independence (@def-independence):
 
@@ -368,7 +396,7 @@ Thus, $e^{\beta_j}$ is the multiplicative change in the odds of event $Y_t = 1$,
 :::
 
 |               |                                                                                                                                                                                                                |                                                                                                                                                                                                                        |
-|--------------|-----------------------------|------------------------------|
+|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |               | **Continuous** $X_{j}$                                                                                                                                                                                         | **Binary** $X_{j}$                                                                                                                                                                                                     |
 | $\hat\beta_j$ | For every one unit increase in $X_{j}$, there is an expected $\times e^{\hat\beta_j}$ multiplicative change in the odds of a unit being in category $Y_t=1$, holding all other explanatory variables constant. | There is a $\times e^{\hat\beta_j}$ multiplicative difference in the odds of a unit being in category $Y_t=1$ between category $X_{j} = 1$ and category $X_{j} = 0$, holding all other explanatory variables constant. |
 | $\hat\beta_0$ | The odds of event $Y_t = 1$ when all explanatory variables equal 0 is $e^{\hat\beta_0}$.                                                                                                                       | The odds of event $Y_t = 1$ for category $X_j = 0$ is $e^{\hat\beta_0}$, when all other explanatory variables equal 0.                                                                                                 |
@@ -390,7 +418,7 @@ my_predictions <- predict(model,
                           type = "response")
 ```
 
-Where *my_new_data* is a data frame with $X_1, \dots, X_p$ values for all the new observations we want to predict $\hat Y$ for.
+Where *my_new_data* is a data frame with $X_1, \dots, X_p$ values for all the new observations we want to predict $\hat Y$ for. If you only want to predict for your existing data on which the model was fitted on, you do not need the *newdata* argument.
 
 We can also do classification, which is not about predicting the probability $\pr_t$, but instead predicting if $\hat Y = 1$ or $\hat Y = 0$. We generally assign units $\pr_t > 0.5$ to $\hat Y = 1$, and others to $\hat Y = 0$.
 
