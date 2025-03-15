@@ -22,7 +22,7 @@ As a result, a series of quasi-experimental designs have been developed in order
 | [Differences-in-Differences](#differences-in-differences)         | When there is variation in time of implementation of treatments between areas/units.                                                                             | ATT       |
 | [Selection on Observables](#selection-on-observables)             | When treatment is believed to be assigned based on a set of variables (covariates) that we can observe.                                                          | ATE, ATT  |
 
-: {.bordered tbl-colwidths="\[20,65,15\]"}
+: {.bordered tbl-colwidths="\[25,60,15\]"}
 
 We will explore each of these designs in more details below.
 
@@ -136,13 +136,148 @@ When interpreting the LATE, we must be careful. The LATE is only the causal effe
 
 <br />
 
-## Fuzzy Regression Discontinuity {#fuzzy-regression-discontinuity}
+## Fuzzy and Kink Discontinuity {#fuzzy-regression-discontinuity}
 
 <br />
 
 ## Examiner Designs {#examiner-designs}
 
+Examiner designs are used in settings where individuals $t$ are assigned to evaluators/examiners, who have some discretion in assigning treatment.
+
+The classic example is judges and sentencing. We want to study the effect of incarceration on an outcome. Individuals prosecuted of a crime are first randomly assigned to courtrooms, and those courtrooms decide if these individuals will be incarcerated. However, courtrooms differ in the propensity for defendants to be incracerated. Other common set-ups include asylum decisions assigned to officers, healthcare diagnoses assigned to doctors, and so on.
+
+More generally, we have $n$ units, and $K$ examiners $1, \dots, K$ who have control over treatment status $D_t$. Each unit $t$ is assigned to an examiner $k$ in a known way. The examiner $k$ unit $t$ is assigned to is stored in a categorical variable $Q_t = k$.
+
+Our assumptions for the examiner design are as follows:
+
+1.  Relevance: Each examiner $k$ should have a different propensity to assign treatment $D$.
+2.  Exogeneity/Ignorability: Assignment to examiners should be as-if random. There should be no backdoor paths between assignment to examiner and $Y$.
+3.  Exclusions Restriction: No direct relationship between assignment to examiner and $Y$, that is not through $D$. Exclusions restrictions can actually be allowed, as long as they occur randomly.
+4.  Monotonicity: Examiner behaviour must be ordered. This means that if examiner $k$ has a property, they should apply it to all subjects $t$. For example, if $k$ is more likely in assigning $D$, it must be more likely for every unit $t$ (this is an issue if an examiner has racial or gender biases for example).
+
+If these assumptions are met, we can use two estimation methods for our instrument - which is the propensity of an examiner $k$ assigning a treatment $D_t = 1$.
+
+::: {.panel-tabset .nav-pills}
+## Examiner Fixed-Effects
+
+The propensity of an examiner assigning treatment is also a time-invariant property - it does not change over time. Thus, we can use fixed effects for examiners to control for these propensities.
+
+Thus, our instruments will be dummy variables $Z_1, \dots, Z_{K-1}$ (The $k-1$ is because we have to leave one category out). Any specific $Z_k$ takes a value $Z_{tk} = 1$ if unit $t$ was assigned to that specific examiner $k$, and $Z_{tk} = 0$ if unit $t$ was not assigned to that specific examiner $k$.
+
+These dummy instruments will be included in the first stage to estimate $\hat D_t$, then in the second stage, use $\hat D_t$ as an explanatory variable for $Y_t$.
+
+In R, the implementation is as follows:
+
+```{r, eval = FALSE}
+fixest::feols(Y ~ 1 | D ~ as.factor(Z),
+              data = my_data, se = "hetero")
+```
+
+## Latent Instrument
+
+We want to use the fact that different examiners are different - that is, variation in treatment assignment propensity to examiners. Thus, we need to estimate the latent (unobserved) propensity of each examiner $k$.
+
+We do this by finding the probability of being assigned to treatment $D_t = 1$ for examiner $k$, but ignoring unit $t$ themselves:
+
+$$
+\hat L_t^{(k)} = \frac{\overbrace{\sum_{j≠t} \mathbb I[Q_j = Q_t]D_j}^{\text{num of treated for examiner k }}}{\underbrace{\sum_{j≠t} \mathbb I[Q_j = Q_t]}_{\text{total num assigned to examiner k}}}
+$$
+
+Where $\mathbb I[Q_j = Q_t]$ is an indicator function that only takes the value of 1 if the examiner of unit $j$ is the same as the examiner of unit $t$. We leave $t$ out in the sum because you do not want to use $D$ to measure the instrument, to avoid ignorability violations. We can estimate this in R:
+
+```{r, eval = FALSE}
+my_data$L <- ave(my_data$D, my_data$Q, FUN = mean)
+```
+
+Where D is the treatment variable, and Q is the assigned examiner variable.
+
+We then use $\hat L_t^{(k)}$ as an instrument for $D_t$, and use a instrumental variables/2-stage-least-squares estimator.
+
+```{r, eval = FALSE}
+fixest::feols(Y ~ 1 | D ~ L, data = my_data, se = "hetero")
+```
+:::
+
+<br />
+
 ## Shift-Share Instruments {#shift-share-instruments}
+
+Shift-share instruments, also called Bartik Instruments, are a way to explore the impacts of exposure (shares) to exogenous-random shocks (shifts). Let us say we are interested in some effect of variable $X$ in some city/region/market $\ell$.
+
+$$
+Y_\ell = \alpha + \beta X_\ell + \eps_\ell
+$$
+
+Where we assume there is endogeneity/confounders, such that $\E(X_\ell \eps_\ell) ≠ 0$. Now, imagine we have a second dimension of observations called types $k = 1, \dots, K$. That means for every area/region $\ell$ can be observed for all types $k$, meaning we can have $Y_{\ell k}, X_{\ell k}$. For example, you could say $Y$ is the observed value in the city $\ell$ for an industry/group $k$.
+
+Given $Y_{\ell k}, X_{\ell k}$, we have two potential sources of variation:
+
+1.  **Shares**: A unit and type varying $Z_{\ell k}$, that varies for both type $k$ and city/region $\ell$.
+2.  **Shifts**: A type-varying change variable $G_k$, that varies based on type $k$, but applies to all cities/regions $\ell$ equally. This is a shock that affects all cities/regions $\ell$.
+
+Interacting shifts and shares gets us $S_\ell = \sum_k Z_{\ell k} \cdot G_k$, called a **shift-share**, that only varies at the city/region level $\ell$. The share measures the exposure (share) to the shock (shift). Our idea is to use $S_\ell$ to instrument for $X_\ell$ from the original endogenous model.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Example: Great Migration
+
+Fouka, Mazumder, and Tabellin (2022) want to study how migration of new minority groups affects the social position of pre-existing minority groups. Specifically, they want to study how the great migration of Blacks from the south to northern states affected white American's view on previous European immigrants.
+
+In this example, $\ell$ is the unit for cities, and $k$ is the unit for Blacks from state $k$. The shares $Z_{\ell k}$ are the number of Black migrants born in state $k$ living in city $\ell$ prior to the shock. The shift (shock) $G_k$ is the number of blacks born in state $k$, who left that state during the great migration.
+
+The shift-share $S_\ell$ is the exposure $Z_{\ell k}$, the pre-shock number of blacks from state $k$, multiplied to the $G_k$, the number of blacks who left state $k$. The expectation is that blacks are more likely to move to a city $\ell$ that already has a strong Black community from their home state $k$.
+
+This $S_\ell$ captures the predicted level of Black migration in a MSA, based on the timing of out-migration $G_k$ from different states $k$. Thus, $S_\ell$ (as the predicted number of Black migration) should be correlated with $X_\ell$, the amount of Black migrants in city $\ell$.
+:::
+
+There are two perspectives of assumptions for Shift-Share designs - making assumptions on the shares (which is more common with less types $k$), and making assumptions on the shifts:
+
+::: {.panel-tabset .nav-pills}
+## Shares
+
+The assumptions based on the shares (also called exposure mapping), are:
+
+1.  The share $Z_{\ell k}$ must be relevant. For all $k$, $Z_{\ell k}$ must predict $X_\ell$.
+2.  Strict exogeneity: $\E(Z_{\ell k} \eps_\ell) = 0$. This means the share $Z_{\ell k}$ must be both ignorable/exogenous, and have no direct effect on $Y_\ell$ that is not through $X_\ell$.
+
+With these two assumptions, 2SLS with the shift-share instrument is consistent, (we do not need any assumptions on $G_k$) and we can estimate the average causal response (notes provided on the third tab).
+
+However, shares are often not exogenous. Thus, the shift perspective (next tab) provides an alternative framework.
+
+## Shifts
+
+Shares are often not exogenous. The shifts (shocks) perspective, which assumes endogenous shares, are:
+
+1.  Exogeneity of the shocks to confounding in the shares: $\E(G_k | \eps_\ell Z_{\ell k})= \mu$. This basically says that every shock has the same mean $\mu$, regardless of observable confounders in $\eps$ or shares $Z_{\ell k}$.
+2.  Many uncorrelated shocks: This means the correlation between shocks of type $k$ and $k'$ is 0: $Cov(G_k, G_{k'}) = 0$. The idea is that with many exogenous shocks, residual confounding bias from shares averages out.
+
+With these two assumptions, 2SLS with the shift-share instrument is consistent, and we can estimate the average causal response (notes provided on the third tab).
+
+## Average Causal Response
+
+In Shift-Share instruments, we tend to deal with continuous treatment variables. Thus, instead of the average treatment effect (or local average treatment effect), we are concerned with the average causal response (ACR).
+
+$$
+\tau_{ACR} = \frac{\E(Y_i|Z_i = 1) - \E(Y_i | Z_i = 0)}{\E(X_i | Z_i = 1) - \E(X_i | Z_i = 0)}
+$$
+
+Under our IV assumptions, we can show this equals:
+
+$$
+\sum\limits_x w_x \times \E(Y_t^{(x)} - Y_t^{(x-1)})
+$$
+
+Where we can see the ACR is a weighted average of causal responses, with the weights $w_x$ are determined by the compliance at $X = x$.
+:::
+
+To estimate, we use the two-stage-least-squares estimator, as was detailed [previously](ols.qmd#instrumental-variables-estimator).
+
+```{r, eval = FALSE}
+late <- fixest::feols(Y ~ 1 | D ~ S, data = mydata, se = "hetero")
+```
+
+The 2SLS estimator (and IV estimator) are biased in small sample sizes, but asymptotically consistent, so we should be more careful when dealing with small samples.
+
+<br />
 
 ## Differences-in-Differences {#differences-in-differences}
 
