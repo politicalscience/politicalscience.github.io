@@ -257,11 +257,7 @@ window.Quarto = {
   <li><a href="#factor-analysis" id="toc-factor-analysis" class="nav-link" data-scroll-target="#factor-analysis"><span class="header-section-number">10.4</span> Factor Analysis</a></li>
   <li><a href="#item-response-theory" id="toc-item-response-theory" class="nav-link" data-scroll-target="#item-response-theory"><span class="header-section-number">10.5</span> Item Response Theory</a></li>
   <li><a href="#latent-class-models" id="toc-latent-class-models" class="nav-link" data-scroll-target="#latent-class-models"><span class="header-section-number">10.6</span> Latent Class Models</a></li>
-  <li><a href="#estimation-with-mle" id="toc-estimation-with-mle" class="nav-link" data-scroll-target="#estimation-with-mle"><span class="header-section-number">10.7</span> Estimation with MLE</a></li>
-  <li><a href="#interpretation-of-models" id="toc-interpretation-of-models" class="nav-link" data-scroll-target="#interpretation-of-models"><span class="header-section-number">10.8</span> Interpretation of Models</a></li>
-  <li><a href="#multiple-latent-factors" id="toc-multiple-latent-factors" class="nav-link" data-scroll-target="#multiple-latent-factors"><span class="header-section-number">10.9</span> Multiple Latent Factors</a></li>
-  <li><a href="#confirmatory-analysis" id="toc-confirmatory-analysis" class="nav-link" data-scroll-target="#confirmatory-analysis"><span class="header-section-number">10.10</span> Confirmatory Analysis</a></li>
-  <li><a href="#structural-equation-modelling" id="toc-structural-equation-modelling" class="nav-link" data-scroll-target="#structural-equation-modelling"><span class="header-section-number">10.11</span> Structural Equation Modelling</a></li>
+  <li><a href="#structural-equation-modelling" id="toc-structural-equation-modelling" class="nav-link" data-scroll-target="#structural-equation-modelling"><span class="header-section-number">10.7</span> Structural Equation Modelling</a></li>
   </ul>
 </nav>
     </div>
@@ -298,18 +294,45 @@ window.Quarto = {
 <p><img src="images/clipboard-1663993722.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
 </figure>
 </div>
-<p>These multiple observed indicator variables <span class="math inline">\(x_1, \dots, x_p\)</span> themselves are not that interesting for us - however, when combined together, they can be used as measures of some concept of interest to us. There are two main approaches to multivariate analysis:</p>
-<ol type="1">
-<li><strong>Unsupervised Learning</strong> methods: these are methods to take our existing data of multiple observed variables, and find interesting relationships between them. These methods include principle components analysis (PCA) and cluster analysis.</li>
-<li><strong>Model-Based</strong> (Latent Variable) methods: these methods specify some theoretical relationship in the population between our multiple observed variables and some unobserved latent factor, and our goal is to estimate the population parameters of this data. The methods included in this section are factor anlaysis, item response theory (IRT), and latent class models.</li>
-</ol>
-<p>Choosing between the methods depends on your goals. If your goal is to simply learn something about your observed data without any previous hypothesis/modelling goals, you should use unsupervised learning. PCA is good for reducing the dimensionality of your data, while cluster anlaysis is good for learning more about patterns in your data.</p>
-<p>If your goal is to measure some theoretical construct that you believe your observed variables are measuring, you should use model-based methods.</p>
-<ul>
-<li>If both your observed variables and unobserved factor are continuous, you should use factor anlaysis.</li>
-<li>If you observed variables are categorical/binary but your unobserved factor is continuous, you should use Item Response Theory.</li>
-<li>If your observed variables and unobserved factors are both categorical, you should use latent class models.</li>
-</ul>
+<p>These multiple observed indicator variables <span class="math inline">\(x_1, \dots, x_p\)</span> themselves are not that interesting for us - however, when combined together, they can be used to create interesting results, or as measures of some concept of interest to us. The main multivariate approaches include:</p>
+<table class="table-bordered caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 74%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Uses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Principle Components Analysis</td>
+<td>For dimensional reduction and interpreting the main drivers of variation in observed variables.</td>
+</tr>
+<tr class="even">
+<td>Cluster Anlaysis</td>
+<td>For understanding hidden patterns and structures within our observed variables.</td>
+</tr>
+<tr class="odd">
+<td>Factor Analysis</td>
+<td>For measuring continuous latent variables with continuous observed variables.</td>
+</tr>
+<tr class="even">
+<td>Item Response Theory</td>
+<td>For measuring continuous latent variables with binary/categorical observed variables.</td>
+</tr>
+<tr class="odd">
+<td>Latent Class Models</td>
+<td>For measuring categorical latent variables with categorical observed variables.</td>
+</tr>
+<tr class="even">
+<td>Structural Equation Models</td>
+<td>To link latent variable models together through larger models of relationships.</td>
+</tr>
+</tbody>
+</table>
 <p><br></p>
 </section>
 <section id="principle-components-analysis" class="level2" data-number="10.2">
@@ -592,14 +615,63 @@ df = \frac{(p-q)^2-(p+1)}{2}≥ 0
 <p><span class="math display">\[
 \log\left(\frac{\pr_i(\xi)}{1 - \pr_i(\xi)}\right) = \tau_j + \lambda_j \xi,\quad \pr_i(\xi) = \P(Y_i = 1|\xi)
 \]</span></p>
-<p>The intercept parameter <span class="math inline">\(\tau_j\)</span> is known as the <strong>difficult parameter</strong>. It is the probability of a item <span class="math inline">\(Y_i\)</span> equalling 1, when the factor <span class="math inline">\(\xi = 0\)</span>.</p>
-<p>The coefficient <span class="math inline">\(\lambda_i\)</span> is the <strong>factor loading</strong>, which is also known as the discrimination parameter. This explains the relationship between the item <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(\xi\)</span>.</p>
+<p>The intercept parameter <span class="math inline">\(\tau_j\)</span> is known as the <strong>difficult parameter</strong>. It is the probability of a item <span class="math inline">\(Y_i\)</span> equalling 1, when the factor <span class="math inline">\(\xi = 0\)</span>. The coefficient <span class="math inline">\(\lambda_i\)</span> is the <strong>factor loading</strong>, which is also known as the discrimination parameter. This explains the relationship between the item <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(\xi\)</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+More Details
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>We can take the above equation, exponenting both sides and solving for <span class="math inline">\(\pr_i(\xi)\)</span>, getting:</p>
 <p><span class="math display">\[
 P(Y_i = 1|\xi) = \pr_i(\xi) = \frac{e^{\tau_i + \lambda_i\xi}}{1+e^{\tau_i + \lambda_i\xi}}
 \]</span></p>
 <p>This allows us to get fitted probabilities of how <span class="math inline">\(\xi\)</span> affects the probability of an item being <span class="math inline">\(Y_i = 1\)</span>. These fitted probabilities are called item response curves.</p>
 <p>IRT can also be applied to items with three or more categories, although this is quite rare. We will use an ordinal logistic regression model (with cumulative probabilities), or a multinomial logistic regression model instead.</p>
+</div>
+</div>
+</div>
+<p>The estimation of this model involves maximum likelihood estimation:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Estimation in R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Mechanics</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+
+</div>
+</div>
+</div>
+<p>We can interpret our item response theory model in a few ways:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Factor Loadings</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Factor Scores</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false">Model Fit</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<p>The discrimination parameter <span class="math inline">\(\lambda_i\)</span> can be thought of the part of <span class="math inline">\(Y_i\)</span> that is explained by <span class="math inline">\(\xi\)</span>, and the difficulty parameter <span class="math inline">\(\tau_i\)</span> can be thought of the unique part of the item. However, neither are directly interpretable as variances unlike factor anlaysis.</p>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<p>Once we have estimated our model, we can predict the latent factor <span class="math inline">\(\xi\)</span> value for any individual <span class="math inline">\(t\)</span> in our data. The factor scores in IRT are caculated as the estimated mean of the factor <span class="math inline">\(\xi\)</span>, given the values of items <span class="math inline">\(Y_1, \dots, Y_p\)</span> for observation <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[
+\tilde\xi = \E(\xi | Y_1, \dots, Y_p)
+\]</span></p>
+<p>The scores will be a linear combination of items <span class="math inline">\(Y_1, \dots, Y_p\)</span>:</p>
+<p><span class="math display">\[
+\tilde\xi_t = \hat\lambda_1 Y_{t1} + \hat\lambda_2Y_{t2} + \dots + \hat\lambda_p Y_{tp}
+\]</span></p>
+<p>Factor scores are estimated with the model, and can be accessed with</p>
+</div>
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="latent-class-models" class="level2" data-number="10.6">
@@ -615,76 +687,41 @@ P(Y_i = 1|\xi) = \pr_i(\xi) = \frac{e^{\tau_i + \lambda_i\xi}}{1+e^{\tau_i + \la
 \log\left(\frac{\pr_{ikc}}{\pr_{i1c}}\right) = \tau_{ik} + \sum\limits_{d=2}^C \lambda_{ikd}D_d
 \]</span></p>
 <p>Where <span class="math inline">\(\lambda_{ik1} = 0\)</span>, and <span class="math inline">\(D_d\)</span> are dummy variables for latent classes/categories <span class="math inline">\(d = 2, \dots, C\)</span> of <span class="math inline">\(\xi\)</span>. Unlike the other two models, we cannot assume <span class="math inline">\(\xi\)</span> is normally distributed, since it is categorical. Instead, we assume <span class="math inline">\(\xi\)</span> is categorical with probabilities <span class="math inline">\(\alpha_c = \P(\xi = c)\)</span>.</p>
-<p><br></p>
-</section>
-<section id="estimation-with-mle" class="level2" data-number="10.7">
-<h2 data-number="10.7" class="anchored" data-anchor-id="estimation-with-mle"><span class="header-section-number">10.7</span> Estimation with MLE</h2>
-<p>We will focus mostly on factor analysis, since the estimation is the most straight forward, but similar principles apply to all three of the latent variable models.</p>
-<p>Given the linear models between <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(\xi\)</span>, we know that <span class="math inline">\(\E(Y_i | \xi) = \tau_i + \lambda_i \xi\)</span> for all latent variable models. In factor analysis (<span class="quarto-unresolved-ref">?def-factoranalysis</span>) , since <span class="math inline">\(X_i\)</span> is also assumed to be normally distributed, we can determine the distribution of each <span class="math inline">\(X_i\)</span> as</p>
-<p><span class="math display">\[
-Y_i \sim \mathcal N(\tau_i + \lambda_i \xi, \ \ \lambda_i^2 \phi + \theta_{ii})
-\]</span></p>
-<p>Since these models are estimated with maximum likelihood estimation, we can use wald and likelihood ratio tests, as well as information criterion statistics.</p>
-<p><br></p>
-</section>
-<section id="interpretation-of-models" class="level2" data-number="10.8">
-<h2 data-number="10.8" class="anchored" data-anchor-id="interpretation-of-models"><span class="header-section-number">10.8</span> Interpretation of Models</h2>
-<p>Once we have estimated the factor analysis model, we can then use <span class="math inline">\(Y_1, \dots, Y_k\)</span> to create values for the latent variable <span class="math inline">\(\tilde\xi_t\)</span> for each observation <span class="math inline">\(t\)</span>, called factor scores. The exact formula differs for the model.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Factor Analysis</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Item Response Theory</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false">Latent Class Model</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Estimation in R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Mechanics</a></li></ul>
 <div class="tab-content nav-pills">
-<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 
 </div>
-<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
-<p>The factor scores in IRT are caculated as the estimated mean of the factor <span class="math inline">\(\xi\)</span>, given the values of items <span class="math inline">\(Y_1, \dots, Y_p\)</span> for observation <span class="math inline">\(t\)</span>:</p>
-<p><span class="math display">\[
-\tilde\xi = \E(\xi | Y_1, \dots, Y_p)
-\]</span></p>
-<p>The scores will be a linear combination of items <span class="math inline">\(Y_1, \dots, Y_p\)</span>:</p>
-<p><span class="math display">\[
-\tilde\xi_t = \hat\lambda_1 Y_{t1} + \hat\lambda_2Y_{t2} + \dots + \hat\lambda_p Y_{tp}
-\]</span></p>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+
 </div>
-<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
-<p>Instead of predicting a value of <span class="math inline">\(\xi\)</span> (since it is categorical in latent class models), we will classify observations <span class="math inline">\(t\)</span> into one of the categories/classes of <span class="math inline">\(\xi\)</span>. We estimate the probability of an observation being in every class <span class="math inline">\(c\)</span>, given their values of <span class="math inline">\(Y_1, \dots, Y_p\)</span>:</p>
+</div>
+</div>
+<p>We can interpret our latent class models in a few ways:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Factor Loadings</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Factor Scores</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-3" role="tab" aria-controls="tabset-8-3" aria-selected="false">Model Fit</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
+
+</div>
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<p>Once we have estimated our model, we can predict the latent factor <span class="math inline">\(\xi\)</span> value for any individual <span class="math inline">\(t\)</span> in our data. Instead of predicting a value of <span class="math inline">\(\xi\)</span> (since it is categorical in latent class models), we will classify observations <span class="math inline">\(t\)</span> into one of the categories/classes of <span class="math inline">\(\xi\)</span>. We estimate the probability of an observation being in every class <span class="math inline">\(c\)</span>, given their values of <span class="math inline">\(Y_1, \dots, Y_p\)</span>:</p>
 <p><span class="math display">\[
 \hat\P(\xi = c|Y_1 = k_1, Y_2 = k_2, \dots, Y_p = k_p), \quad \forall \ c
 \]</span></p>
 <p>And whichever category <span class="math inline">\(c\)</span> for which the calculated probability is the highest is the category we assign unit <span class="math inline">\(t\)</span> to in <span class="math inline">\(\tilde\xi\)</span>.</p>
+<p>Factor scores are estimated with the model, and can be accessed with</p>
+</div>
+<div id="tabset-8-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
+
 </div>
 </div>
 </div>
-<p>These factor scores will allow us to estimate each individual observation <span class="math inline">\(t\)</span>’s value <span class="math inline">\(\xi_t\)</span>, which will allow us to use the factor in descriptive statistics, or in other statistical models.</p>
-<p>In Item Response Theory, the same ideas do not directly apply. The discrimination parameter <span class="math inline">\(\lambda_i\)</span> can be thought of the part of <span class="math inline">\(Y_i\)</span> that is explained by <span class="math inline">\(\xi\)</span>, and the difficulty parameter <span class="math inline">\(\tau_i\)</span> can be thought of the unique part of the item. However, neither are directly interpretable as variances unlike factor anlaysis.</p>
 <p><br></p>
 </section>
-<section id="multiple-latent-factors" class="level2" data-number="10.9">
-<h2 data-number="10.9" class="anchored" data-anchor-id="multiple-latent-factors"><span class="header-section-number">10.9</span> Multiple Latent Factors</h2>
-<p><br></p>
-</section>
-<section id="confirmatory-analysis" class="level2" data-number="10.10">
-<h2 data-number="10.10" class="anchored" data-anchor-id="confirmatory-analysis"><span class="header-section-number">10.10</span> Confirmatory Analysis</h2>
-<p>Confirmatory analysis is more about using our latent variable models to test theories we already have. Instead of letting the estimation process estimate component loadings for all <span class="math inline">\(X_i\)</span> and <span class="math inline">\(\xi_j\)</span>, we might set some component loadings to 0 based on our theoretical beliefs.</p>
-<p>A loading of 0 implies that a factor <span class="math inline">\(\xi_j\)</span> is not being measured by an observed item <span class="math inline">\(X_i\)</span>. Ideally for confirmatory analysis, we want a structure where each item <span class="math inline">\(X_i\)</span> has only one non-0 loading - thus we know exactly what factor <span class="math inline">\(X_i\)</span> is measuring. Below, we can see half of the items measure <span class="math inline">\(\xi_1\)</span>, and the other half measure <span class="math inline">\(\xi_2\)</span>:</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/clipboard-4283247760.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
-</figure>
-</div>
-<p>We can see the factor loadings of this model below. The first two columns are exploratory (normal) analysis, and the right column is confirmatory analysis. Note how each item (the rows) for the CFA has only one non-zero component loading.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/clipboard-2236080857.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
-</figure>
-</div>
-<p>For model identification to be possible with this structure, we need at least 2 items per factor, and for a 1-factor model, we need 3 items.</p>
-<p>We can use a variety of significance tests (like the wald test with hypothesis <span class="math inline">\(\lambda_i = 0\)</span>) to test if a certain component should be set to 0 or not.</p>
-<p>We will discuss the practical implementation of confirmatory analysis in the multivariate methods chapter in the applied section.</p>
-<p><br></p>
-</section>
-<section id="structural-equation-modelling" class="level2" data-number="10.11">
-<h2 data-number="10.11" class="anchored" data-anchor-id="structural-equation-modelling"><span class="header-section-number">10.11</span> Structural Equation Modelling</h2>
+<section id="structural-equation-modelling" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="structural-equation-modelling"><span class="header-section-number">10.7</span> Structural Equation Modelling</h2>
 
 
 </section>
