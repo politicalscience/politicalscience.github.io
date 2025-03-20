@@ -13,7 +13,7 @@ In [chapter 5](causal.qmd), we discussed how randomised experiments can establis
 As a result, a series of quasi-experimental designs have been developed in order to estimate causal effects. These designs range in terms of credibility, and can generally only be implemented in certain scenarios where the real-world aligns with the specific design. The main designs, in order of credibility, are:
 
 | Design                                                            | When to Use                                                                                                                                                      | Estimands |
-|-------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
+|----------------|-------------------------------------------|--------------|
 | [Non-Compliance Designs](#non-compliance-designs)                 | When we have a randomised experiment, but some individuals do not comply with the treatment we assigned with them.                                               | LATE, ITT |
 | [Sharp Regression Discontinuity](#sharp-regression-discontinuity) | When treatment is assigned in the real-world by some cut-off value of some variable.                                                                             | LATE      |
 | [Fuzzy Regression Discontinuity](#fuzzy-regression-discontinuity) | When treatment is assigned in the real-world by some cut-off value of some variable, but there is some non-compliance.                                           | LATE      |
@@ -132,11 +132,203 @@ When interpreting the LATE, we must be careful. The LATE is only the causal effe
 
 <br />
 
-## Sharp Regression Discontinuity {#sharp-regression-discontinuity}
+## Regression Discontinuity {#sharp-regression-discontinuity}
 
-<br />
+Regression discontinuity designs are used when treatment is assigned based on some cutoff. For example, perhaps students only get scholarships if they get a certain score or above, or people get something after a certain age.
 
-## Fuzzy and Kink Discontinuity {#fuzzy-regression-discontinuity}
+We have some treatment $D_t$. There is some **forcing variable** $X_t$ that perfectly determines $D_t$ at some cutoff point $X_t = c$.
+
+$$
+D_t = \begin{cases}
+1 & \text{if } X_t > c \\
+0 & \text{if } X_t ≤ c
+\end{cases}
+$$
+
+The idea is that right below and above the cutoff, individuals $t$ are very similar. Thus, we have quasi-random variation and comparable treatment-control groups at the cutoff which we can use to find the treatment effect at the cutoff point.
+
+::: {.panel-tabset .nav-pills}
+## Assumptions
+
+There are 2 main assumptions for sharp regression discontinuity:
+
+1.  **Continuity**: the potential outcomes $\pt$ and $\pc$'s averages are continuous at cutoff $X_t = c$. There can be no breaks or jumps in potential outcomes:
+
+$$
+\begin{align}
+& \lim\limits_{\epsilon \rightarrow 0} \E (\pt | X_t = c + \epsilon) = \E (\pt | X_t = c) \\
+& \lim\limits_{\epsilon \rightarrow 0} \E (\pc | X_t = c + \epsilon) = \E (\pc | X_t = c) \\
+\end{align}
+$$
+
+2.  **Perfect Compliance**: The cutoff $X_t = c$ perfectly decides who gets the treatment and who does not get the treatment.
+
+Our estimand is the **Local Average Treatment Effect (LATE)** at the cutoff point $X_t = c$:
+
+$$
+\tau_{LATE} = \E(\pt - \pc | X_t = c)
+$$
+
+## Identification
+
+We can identify the LATE with the continuity assumption. We start with the LATE:
+
+$$
+\tau_{LATE} = \E(\pt | X_t = c) - \E(\pc | X_t = c)
+$$
+
+And using the assumption of continuity, we can substitute the expectations at $X_t = c$ with limits. We also know that if a limit exists, then both one-sided limits must be equal:
+
+$$
+\begin{align}
+\tau_{LATE} & = \lim\limits_{\epsilon \rightarrow 0} \E (\pt | X_t = c + \epsilon) - \lim\limits_{\epsilon \rightarrow 0} \E (\pc | X_t = c + \epsilon) \\
+& = \lim\limits_{\epsilon \rightarrow 0^+} \E (\pt | X_t = c + \epsilon) - \lim\limits_{\epsilon \rightarrow 0^-} \E (\pc | X_t = c + \epsilon)
+\end{align}
+$$
+
+And we know we that individuals above the cutoff are assigned to treatment, and individuals below are assigned to control, so we can observe both of the above terms, and get:
+
+$$
+\tau_{LATE} = \lim\limits_{\epsilon \rightarrow 0^+} \E (Y_t | X_t = c + \epsilon) - \lim\limits_{\epsilon \rightarrow 0^-} \E (Y_t | X_t = c + \epsilon)
+$$
+
+## Graphical Example
+
+The idea of regression discontinuity is shown below. The Red is the potential outcomes $\pt$, and the red is the potential outcomes $\pc$.
+
+![](images/clipboard-3203444067.png){fig-align="center" width="50%"}
+
+Any difference in observed outcomes at the cutoff $X_t = c$ should be the treatment effect $\tau_{LATE}$ at the cutoff.
+:::
+
+To estimate a regression discontinuity, we model of potential outcomes $\pt$ and $\pc$, and find the "discontinuity" at the cutoff.
+
+::: {.panel-tabset .nav-pills}
+## Nonparametric
+
+The current "state of the art" RDD is to assume $\pt$ and $\pc$ are nonparametric (no functional form), and use a non-linear method to model them.
+
+First, We need to recenter our forcing variable $X_t$ so that the cutoff $c = 0$.
+
+```{r, eval = FALSE}
+my_data$X <- my_data$X - c
+```
+
+Then, we should filter our data such that only observations within our bandwidth are included (so observations between $c - h ≤ X_t ≤ c + h$). Selecting a bandwidth will be discussed in the next tab:
+
+```{r, eval = FALSE}
+library(tidyverse)
+my_data <- mydata %>%
+  select(X <= h) %>%
+  select(X >= -h)
+```
+
+Then, we can estimate the LATE with the *rdrobust* package:
+
+## Parameters
+
+We need to make 3 choices when fitting nonparametric models: polynomial $p$, kernel $K(\cdot)$, and bandwidth $h$.
+
+-   $p$ is the flexibility of the model. We generally just use $p = 1$.
+-   $K(\cdot)$ is how we weight each observation $t$. We usually default to a *triangular kernel* (linearly decreases weight as distance to $c$ increases).
+
+$h$ is the bandwidth - how much data around $X_t = c$ to consider in our model. $h$ is the most important parameter. The figure below shows how changing cutoffs changes our results:
+
+When $h$ is larger, bias increases, but variance decreases. When $h$ is smaller, bias decreases, but variance increases. This is because we ideally want to only have points very close to cutoff $c$, but limiting your observations increases variance.
+
+Cattaneo et al (2020) have proposed a optimal bandwidth formula that minimises the Mean Squared Error, which is Bias plus Variance. The standard errors are an issue, so there are undersmoothing and robust bias correction methods.
+
+We can show robustness of our results by just reporting different estimates from different choices of bandwidth $h$.
+
+## Parametric
+
+We can also assume $\pt$ and $\pc$ take some functional form, for example - linear:
+
+![](images/clipboard-2514976826.png){fig-align="center" width="50%"}
+
+For linear models with different slopes, we estimate the regression:
+
+$$
+Y_t = \gamma + \tau D_t + \alpha X_t + \beta(X_tD_t)
+$$
+
+```{r, eval = FALSE}
+late <- fixest::feols(Y ~ D*X, data = my_data, se = "hetero")
+summary(late)
+```
+
+## Falsification
+
+One concern is that there is manipulation around the threshold $X_t = c$. For example, welfare programmes might have a maximum income cutoff, so individuals will intentionally forgo job opportunities to select into treatment. McCray (2008) has a density test that can be implemented:
+
+Another concern is that we might have mistakenly concluded a treatment effect, when our actual function is not plotted correct. In the figure below, we fit linear models for $\pt$ and $\pc$ (in black), which estimates a positive $\tau_{LATE}$, but when visually inspecting, this is clear it is not the case:
+
+![](images/clipboard-1094811301.png){fig-align="center" width="60%"}
+
+The way to test for this is to simply visualise using *rdplot*:
+:::
+
+An extension to the regression discontinuity design is the **fuzzy-regression discontinuity design**, when treatment is assigned based on some cutoff, but there is some non-compliance. Some people over the cutoff may on average be treated, but compliance is not perfect.
+
+::: {.panel-tabset .nav-pills}
+## Setup
+
+In a fuzzy regression discontinuity, we will have an encouragement variable $Z_t$, and a treatment variable $D_t$ that is associated with $Z_t$. The forcing variable $X_t$ perfectly determines encouragement $Z_t$ at cutoff $X_t = c$:
+
+$$
+Z_t = \begin{cases}
+1 & \text{if } X_t > c \\
+0 & \text{if } X_t ≤ c
+\end{cases}
+$$
+
+The assumptions are:
+
+1.  **Augmeneted Continuity**: Potential outcomes $\E(\pt, \pc | X_i = x)$ are continuous.
+2.  Our instrumental variable assumptions of Monotonicity, exclusions restriction, and relevance of $Z_t$ must be met.
+
+## Estimands
+
+Our estimands are the **Local Intent to Treat (LITT)**, the effect of encouragement $Z_t$ at the threshold:
+
+$$
+\tau_{LITT} = \E(\pt - \pc | X_i = c)
+$$
+
+And the **Local Average Treatment Effect (LATE)** for compliers at the threshold:
+
+$$
+\tau_{LATE} = \E(\pt - \pc | X_i = c, \ \mathrm {complier})
+$$
+
+A complier is a unit $t$ who has $D_t = 1$ if above the cutoff $X_t = c$, and $D_t = 0$ if not. Note that this is only the treatment effect at the cutoff for compliers - and is not generally generalisable.
+
+## Identification
+
+The LITT is essentially the sharp regression discontinuity of $Z_t$ on $Y_t$, so it is identified as:
+
+$$
+\tau_{LITT} = \lim\limits_{\epsilon \rightarrow 0^+} \E (Y_t | X_t = c + \epsilon) - \lim\limits_{\epsilon \rightarrow 0^-} \E (Y_t | X_t = c + \epsilon)
+$$
+
+The LATE is the LITT for compliers (based on the IV non-compliance identification), so it is identified as:
+
+$$
+\tau_{LATE} = \frac{\tau_{LITT}}{Pr(\mathrm{compliers}|X_t = c)}
+$$
+
+## Estimation
+
+To estimate the LATE, first we estimate the $\tau_{LITT}$ from a sharp regression discontinuity with treatment of $Z_t$, forcing variable $X_t$, and outcome $Y_t$.
+
+Then, we can estimate the proportion of compliers at the cutoff $X_t = c$, by running a sharp regression discontinuity with treatment of $Z_t$, forcing variable $X_t$, and outcome $D_t$.
+
+Then, we can calculate the $\tau_{LATE}$ as:
+
+$$
+\tau_{LATE} = \frac{\tau_{LITT}}{Pr(\mathrm{compliers}|X_t = c)}
+$$
+:::
 
 <br />
 

@@ -253,12 +253,11 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">9.1</span> Overview</a></li>
   <li><a href="#non-compliance-designs" id="toc-non-compliance-designs" class="nav-link" data-scroll-target="#non-compliance-designs"><span class="header-section-number">9.2</span> Non-Compliance Designs</a></li>
-  <li><a href="#sharp-regression-discontinuity" id="toc-sharp-regression-discontinuity" class="nav-link" data-scroll-target="#sharp-regression-discontinuity"><span class="header-section-number">9.3</span> Sharp Regression Discontinuity</a></li>
-  <li><a href="#fuzzy-regression-discontinuity" id="toc-fuzzy-regression-discontinuity" class="nav-link" data-scroll-target="#fuzzy-regression-discontinuity"><span class="header-section-number">9.4</span> Fuzzy and Kink Discontinuity</a></li>
-  <li><a href="#examiner-designs" id="toc-examiner-designs" class="nav-link" data-scroll-target="#examiner-designs"><span class="header-section-number">9.5</span> Examiner Designs</a></li>
-  <li><a href="#shift-share-instruments" id="toc-shift-share-instruments" class="nav-link" data-scroll-target="#shift-share-instruments"><span class="header-section-number">9.6</span> Shift-Share Instruments</a></li>
-  <li><a href="#differences-in-differences" id="toc-differences-in-differences" class="nav-link" data-scroll-target="#differences-in-differences"><span class="header-section-number">9.7</span> Differences-in-Differences</a></li>
-  <li><a href="#selection-on-observables" id="toc-selection-on-observables" class="nav-link" data-scroll-target="#selection-on-observables"><span class="header-section-number">9.8</span> Selection on Observables</a></li>
+  <li><a href="#sharp-regression-discontinuity" id="toc-sharp-regression-discontinuity" class="nav-link" data-scroll-target="#sharp-regression-discontinuity"><span class="header-section-number">9.3</span> Regression Discontinuity</a></li>
+  <li><a href="#examiner-designs" id="toc-examiner-designs" class="nav-link" data-scroll-target="#examiner-designs"><span class="header-section-number">9.4</span> Examiner Designs</a></li>
+  <li><a href="#shift-share-instruments" id="toc-shift-share-instruments" class="nav-link" data-scroll-target="#shift-share-instruments"><span class="header-section-number">9.5</span> Shift-Share Instruments</a></li>
+  <li><a href="#differences-in-differences" id="toc-differences-in-differences" class="nav-link" data-scroll-target="#differences-in-differences"><span class="header-section-number">9.6</span> Differences-in-Differences</a></li>
+  <li><a href="#selection-on-observables" id="toc-selection-on-observables" class="nav-link" data-scroll-target="#selection-on-observables"><span class="header-section-number">9.7</span> Selection on Observables</a></li>
   </ul>
 </nav>
     </div>
@@ -457,15 +456,177 @@ Principle Strata
 <p><br></p>
 </section>
 <section id="sharp-regression-discontinuity" class="level2" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="sharp-regression-discontinuity"><span class="header-section-number">9.3</span> Sharp Regression Discontinuity</h2>
+<h2 data-number="9.3" class="anchored" data-anchor-id="sharp-regression-discontinuity"><span class="header-section-number">9.3</span> Regression Discontinuity</h2>
+<p>Regression discontinuity designs are used when treatment is assigned based on some cutoff. For example, perhaps students only get scholarships if they get a certain score or above, or people get something after a certain age.</p>
+<p>We have some treatment <span class="math inline">\(D_t\)</span>. There is some <strong>forcing variable</strong> <span class="math inline">\(X_t\)</span> that perfectly determines <span class="math inline">\(D_t\)</span> at some cutoff point <span class="math inline">\(X_t = c\)</span>.</p>
+<p><span class="math display">\[
+D_t = \begin{cases}
+1 &amp; \text{if } X_t &gt; c \\
+0 &amp; \text{if } X_t ≤ c
+\end{cases}
+\]</span></p>
+<p>The idea is that right below and above the cutoff, individuals <span class="math inline">\(t\)</span> are very similar. Thus, we have quasi-random variation and comparable treatment-control groups at the cutoff which we can use to find the treatment effect at the cutoff point.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Assumptions</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Identification</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Graphical Example</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p>There are 2 main assumptions for sharp regression discontinuity:</p>
+<ol type="1">
+<li><strong>Continuity</strong>: the potential outcomes <span class="math inline">\(\pt\)</span> and <span class="math inline">\(\pc\)</span>’s averages are continuous at cutoff <span class="math inline">\(X_t = c\)</span>. There can be no breaks or jumps in potential outcomes:</li>
+</ol>
+<p><span class="math display">\[
+\begin{align}
+&amp; \lim\limits_{\epsilon \rightarrow 0} \E (\pt | X_t = c + \epsilon) = \E (\pt | X_t = c) \\
+&amp; \lim\limits_{\epsilon \rightarrow 0} \E (\pc | X_t = c + \epsilon) = \E (\pc | X_t = c) \\
+\end{align}
+\]</span></p>
+<ol start="2" type="1">
+<li><strong>Perfect Compliance</strong>: The cutoff <span class="math inline">\(X_t = c\)</span> perfectly decides who gets the treatment and who does not get the treatment.</li>
+</ol>
+<p>Our estimand is the <strong>Local Average Treatment Effect (LATE)</strong> at the cutoff point <span class="math inline">\(X_t = c\)</span>:</p>
+<p><span class="math display">\[
+\tau_{LATE} = \E(\pt - \pc | X_t = c)
+\]</span></p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<p>We can identify the LATE with the continuity assumption. We start with the LATE:</p>
+<p><span class="math display">\[
+\tau_{LATE} = \E(\pt | X_t = c) - \E(\pc | X_t = c)
+\]</span></p>
+<p>And using the assumption of continuity, we can substitute the expectations at <span class="math inline">\(X_t = c\)</span> with limits. We also know that if a limit exists, then both one-sided limits must be equal:</p>
+<p><span class="math display">\[
+\begin{align}
+\tau_{LATE} &amp; = \lim\limits_{\epsilon \rightarrow 0} \E (\pt | X_t = c + \epsilon) - \lim\limits_{\epsilon \rightarrow 0} \E (\pc | X_t = c + \epsilon) \\
+&amp; = \lim\limits_{\epsilon \rightarrow 0^+} \E (\pt | X_t = c + \epsilon) - \lim\limits_{\epsilon \rightarrow 0^-} \E (\pc | X_t = c + \epsilon)
+\end{align}
+\]</span></p>
+<p>And we know we that individuals above the cutoff are assigned to treatment, and individuals below are assigned to control, so we can observe both of the above terms, and get:</p>
+<p><span class="math display">\[
+\tau_{LATE} = \lim\limits_{\epsilon \rightarrow 0^+} \E (Y_t | X_t = c + \epsilon) - \lim\limits_{\epsilon \rightarrow 0^-} \E (Y_t | X_t = c + \epsilon)
+\]</span></p>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<p>The idea of regression discontinuity is shown below. The Red is the potential outcomes <span class="math inline">\(\pt\)</span>, and the red is the potential outcomes <span class="math inline">\(\pc\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3203444067.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
+</figure>
+</div>
+<p>Any difference in observed outcomes at the cutoff <span class="math inline">\(X_t = c\)</span> should be the treatment effect <span class="math inline">\(\tau_{LATE}\)</span> at the cutoff.</p>
+</div>
+</div>
+</div>
+<p>To estimate a regression discontinuity, we model of potential outcomes <span class="math inline">\(\pt\)</span> and <span class="math inline">\(\pc\)</span>, and find the “discontinuity” at the cutoff.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Nonparametric</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Parameters</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">Parametric</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false">Falsification</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p>The current “state of the art” RDD is to assume <span class="math inline">\(\pt\)</span> and <span class="math inline">\(\pc\)</span> are nonparametric (no functional form), and use a non-linear method to model them.</p>
+<p>First, We need to recenter our forcing variable <span class="math inline">\(X_t\)</span> so that the cutoff <span class="math inline">\(c = 0\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>my_data<span class="sc">$</span>X <span class="ot">&lt;-</span> my_data<span class="sc">$</span>X <span class="sc">-</span> c</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, we should filter our data such that only observations within our bandwidth are included (so observations between <span class="math inline">\(c - h ≤ X_t ≤ c + h\)</span>). Selecting a bandwidth will be discussed in the next tab:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>my_data <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(X <span class="sc">&lt;=</span> h) <span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(X <span class="sc">&gt;=</span> <span class="sc">-</span>h)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, we can estimate the LATE with the <em>rdrobust</em> package:</p>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p>We need to make 3 choices when fitting nonparametric models: polynomial <span class="math inline">\(p\)</span>, kernel <span class="math inline">\(K(\cdot)\)</span>, and bandwidth <span class="math inline">\(h\)</span>.</p>
+<ul>
+<li><span class="math inline">\(p\)</span> is the flexibility of the model. We generally just use <span class="math inline">\(p = 1\)</span>.</li>
+<li><span class="math inline">\(K(\cdot)\)</span> is how we weight each observation <span class="math inline">\(t\)</span>. We usually default to a <em>triangular kernel</em> (linearly decreases weight as distance to <span class="math inline">\(c\)</span> increases).</li>
+</ul>
+<p><span class="math inline">\(h\)</span> is the bandwidth - how much data around <span class="math inline">\(X_t = c\)</span> to consider in our model. <span class="math inline">\(h\)</span> is the most important parameter. The figure below shows how changing cutoffs changes our results:</p>
+<p>When <span class="math inline">\(h\)</span> is larger, bias increases, but variance decreases. When <span class="math inline">\(h\)</span> is smaller, bias decreases, but variance increases. This is because we ideally want to only have points very close to cutoff <span class="math inline">\(c\)</span>, but limiting your observations increases variance.</p>
+<p>Cattaneo et al (2020) have proposed a optimal bandwidth formula that minimises the Mean Squared Error, which is Bias plus Variance. The standard errors are an issue, so there are undersmoothing and robust bias correction methods.</p>
+<p>We can show robustness of our results by just reporting different estimates from different choices of bandwidth <span class="math inline">\(h\)</span>.</p>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<p>We can also assume <span class="math inline">\(\pt\)</span> and <span class="math inline">\(\pc\)</span> take some functional form, for example - linear:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2514976826.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
+</figure>
+</div>
+<p>For linear models with different slopes, we estimate the regression:</p>
+<p><span class="math display">\[
+Y_t = \gamma + \tau D_t + \alpha X_t + \beta(X_tD_t)
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>late <span class="ot">&lt;-</span> fixest<span class="sc">::</span><span class="fu">feols</span>(Y <span class="sc">~</span> D<span class="sc">*</span>X, <span class="at">data =</span> my_data, <span class="at">se =</span> <span class="st">"hetero"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(late)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-3-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-4-tab">
+<p>One concern is that there is manipulation around the threshold <span class="math inline">\(X_t = c\)</span>. For example, welfare programmes might have a maximum income cutoff, so individuals will intentionally forgo job opportunities to select into treatment. McCray (2008) has a density test that can be implemented:</p>
+<p>Another concern is that we might have mistakenly concluded a treatment effect, when our actual function is not plotted correct. In the figure below, we fit linear models for <span class="math inline">\(\pt\)</span> and <span class="math inline">\(\pc\)</span> (in black), which estimates a positive <span class="math inline">\(\tau_{LATE}\)</span>, but when visually inspecting, this is clear it is not the case:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1094811301.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
+</figure>
+</div>
+<p>The way to test for this is to simply visualise using <em>rdplot</em>:</p>
+</div>
+</div>
+</div>
+<p>An extension to the regression discontinuity design is the <strong>fuzzy-regression discontinuity design</strong>, when treatment is assigned based on some cutoff, but there is some non-compliance. Some people over the cutoff may on average be treated, but compliance is not perfect.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Setup</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Estimands</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Identification</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-4" role="tab" aria-controls="tabset-4-4" aria-selected="false">Estimation</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<p>In a fuzzy regression discontinuity, we will have an encouragement variable <span class="math inline">\(Z_t\)</span>, and a treatment variable <span class="math inline">\(D_t\)</span> that is associated with <span class="math inline">\(Z_t\)</span>. The forcing variable <span class="math inline">\(X_t\)</span> perfectly determines encouragement <span class="math inline">\(Z_t\)</span> at cutoff <span class="math inline">\(X_t = c\)</span>:</p>
+<p><span class="math display">\[
+Z_t = \begin{cases}
+1 &amp; \text{if } X_t &gt; c \\
+0 &amp; \text{if } X_t ≤ c
+\end{cases}
+\]</span></p>
+<p>The assumptions are:</p>
+<ol type="1">
+<li><strong>Augmeneted Continuity</strong>: Potential outcomes <span class="math inline">\(\E(\pt, \pc | X_i = x)\)</span> are continuous.</li>
+<li>Our instrumental variable assumptions of Monotonicity, exclusions restriction, and relevance of <span class="math inline">\(Z_t\)</span> must be met.</li>
+</ol>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<p>Our estimands are the <strong>Local Intent to Treat (LITT)</strong>, the effect of encouragement <span class="math inline">\(Z_t\)</span> at the threshold:</p>
+<p><span class="math display">\[
+\tau_{LITT} = \E(\pt - \pc | X_i = c)
+\]</span></p>
+<p>And the <strong>Local Average Treatment Effect (LATE)</strong> for compliers at the threshold:</p>
+<p><span class="math display">\[
+\tau_{LATE} = \E(\pt - \pc | X_i = c, \ \mathrm {complier})
+\]</span></p>
+<p>A complier is a unit <span class="math inline">\(t\)</span> who has <span class="math inline">\(D_t = 1\)</span> if above the cutoff <span class="math inline">\(X_t = c\)</span>, and <span class="math inline">\(D_t = 0\)</span> if not. Note that this is only the treatment effect at the cutoff for compliers - and is not generally generalisable.</p>
+</div>
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<p>The LITT is essentially the sharp regression discontinuity of <span class="math inline">\(Z_t\)</span> on <span class="math inline">\(Y_t\)</span>, so it is identified as:</p>
+<p><span class="math display">\[
+\tau_{LITT} = \lim\limits_{\epsilon \rightarrow 0^+} \E (Y_t | X_t = c + \epsilon) - \lim\limits_{\epsilon \rightarrow 0^-} \E (Y_t | X_t = c + \epsilon)
+\]</span></p>
+<p>The LATE is the LITT for compliers (based on the IV non-compliance identification), so it is identified as:</p>
+<p><span class="math display">\[
+\tau_{LATE} = \frac{\tau_{LITT}}{Pr(\mathrm{compliers}|X_t = c)}
+\]</span></p>
+</div>
+<div id="tabset-4-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-4-tab">
+<p>To estimate the LATE, first we estimate the <span class="math inline">\(\tau_{LITT}\)</span> from a sharp regression discontinuity with treatment of <span class="math inline">\(Z_t\)</span>, forcing variable <span class="math inline">\(X_t\)</span>, and outcome <span class="math inline">\(Y_t\)</span>.</p>
+<p>Then, we can estimate the proportion of compliers at the cutoff <span class="math inline">\(X_t = c\)</span>, by running a sharp regression discontinuity with treatment of <span class="math inline">\(Z_t\)</span>, forcing variable <span class="math inline">\(X_t\)</span>, and outcome <span class="math inline">\(D_t\)</span>.</p>
+<p>Then, we can calculate the <span class="math inline">\(\tau_{LATE}\)</span> as:</p>
+<p><span class="math display">\[
+\tau_{LATE} = \frac{\tau_{LITT}}{Pr(\mathrm{compliers}|X_t = c)}
+\]</span></p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
-<section id="fuzzy-regression-discontinuity" class="level2" data-number="9.4">
-<h2 data-number="9.4" class="anchored" data-anchor-id="fuzzy-regression-discontinuity"><span class="header-section-number">9.4</span> Fuzzy and Kink Discontinuity</h2>
-<p><br></p>
-</section>
-<section id="examiner-designs" class="level2" data-number="9.5">
-<h2 data-number="9.5" class="anchored" data-anchor-id="examiner-designs"><span class="header-section-number">9.5</span> Examiner Designs</h2>
+<section id="examiner-designs" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="examiner-designs"><span class="header-section-number">9.4</span> Examiner Designs</h2>
 <p>Examiner designs are used in settings where individuals <span class="math inline">\(t\)</span> are assigned to evaluators/examiners, who have some discretion in assigning treatment.</p>
 <p>The classic example is judges and sentencing. We want to study the effect of incarceration on an outcome. Individuals prosecuted of a crime are first randomly assigned to courtrooms, and those courtrooms decide if these individuals will be incarcerated. However, courtrooms differ in the propensity for defendants to be incracerated. Other common set-ups include asylum decisions assigned to officers, healthcare diagnoses assigned to doctors, and so on.</p>
 <p>More generally, we have <span class="math inline">\(n\)</span> units, and <span class="math inline">\(K\)</span> examiners <span class="math inline">\(1, \dots, K\)</span> who have control over treatment status <span class="math inline">\(D_t\)</span>. Each unit <span class="math inline">\(t\)</span> is assigned to an examiner <span class="math inline">\(k\)</span> in a known way. The examiner <span class="math inline">\(k\)</span> unit <span class="math inline">\(t\)</span> is assigned to is stored in a categorical variable <span class="math inline">\(Q_t = k\)</span>.</p>
@@ -478,19 +639,19 @@ Principle Strata
 </ol>
 <p>If these assumptions are met, we can use two estimation methods for our instrument - which is the propensity of an examiner <span class="math inline">\(k\)</span> assigning a treatment <span class="math inline">\(D_t = 1\)</span>.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Examiner Fixed-Effects</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Latent Instrument</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Examiner Fixed-Effects</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Latent Instrument</a></li></ul>
 <div class="tab-content nav-pills">
-<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <p>The propensity of an examiner assigning treatment is also a time-invariant property - it does not change over time. Thus, we can use fixed effects for examiners to control for these propensities.</p>
 <p>Thus, our instruments will be dummy variables <span class="math inline">\(Z_1, \dots, Z_{K-1}\)</span> (The <span class="math inline">\(k-1\)</span> is because we have to leave one category out). Any specific <span class="math inline">\(Z_k\)</span> takes a value <span class="math inline">\(Z_{tk} = 1\)</span> if unit <span class="math inline">\(t\)</span> was assigned to that specific examiner <span class="math inline">\(k\)</span>, and <span class="math inline">\(Z_{tk} = 0\)</span> if unit <span class="math inline">\(t\)</span> was not assigned to that specific examiner <span class="math inline">\(k\)</span>.</p>
 <p>These dummy instruments will be included in the first stage to estimate <span class="math inline">\(\hat D_t\)</span>, then in the second stage, use <span class="math inline">\(\hat D_t\)</span> as an explanatory variable for <span class="math inline">\(Y_t\)</span>.</p>
 <p>In R, the implementation is as follows:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fixest<span class="sc">::</span><span class="fu">feols</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> D <span class="sc">~</span> <span class="fu">as.factor</span>(Z),</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> my_data, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fixest<span class="sc">::</span><span class="fu">feols</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> D <span class="sc">~</span> <span class="fu">as.factor</span>(Z),</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> my_data, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <p>We want to use the fact that different examiners are different - that is, variation in treatment assignment propensity to examiners. Thus, we need to estimate the latent (unobserved) propensity of each examiner <span class="math inline">\(k\)</span>.</p>
 <p>We do this by finding the probability of being assigned to treatment <span class="math inline">\(D_t = 1\)</span> for examiner <span class="math inline">\(k\)</span>, but ignoring unit <span class="math inline">\(t\)</span> themselves:</p>
 <p><span class="math display">\[
@@ -498,20 +659,20 @@ Principle Strata
 \]</span></p>
 <p>Where <span class="math inline">\(\mathbb I[Q_j = Q_t]\)</span> is an indicator function that only takes the value of 1 if the examiner of unit <span class="math inline">\(j\)</span> is the same as the examiner of unit <span class="math inline">\(t\)</span>. We leave <span class="math inline">\(t\)</span> out in the sum because you do not want to use <span class="math inline">\(D\)</span> to measure the instrument, to avoid ignorability violations. We can estimate this in R:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>my_data<span class="sc">$</span>L <span class="ot">&lt;-</span> <span class="fu">ave</span>(my_data<span class="sc">$</span>D, my_data<span class="sc">$</span>Q, <span class="at">FUN =</span> mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>my_data<span class="sc">$</span>L <span class="ot">&lt;-</span> <span class="fu">ave</span>(my_data<span class="sc">$</span>D, my_data<span class="sc">$</span>Q, <span class="at">FUN =</span> mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Where D is the treatment variable, and Q is the assigned examiner variable.</p>
 <p>We then use <span class="math inline">\(\hat L_t^{(k)}\)</span> as an instrument for <span class="math inline">\(D_t\)</span>, and use a instrumental variables/2-stage-least-squares estimator.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fixest<span class="sc">::</span><span class="fu">feols</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> D <span class="sc">~</span> L, <span class="at">data =</span> my_data, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fixest<span class="sc">::</span><span class="fu">feols</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> D <span class="sc">~</span> L, <span class="at">data =</span> my_data, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
 <p><br></p>
 </section>
-<section id="shift-share-instruments" class="level2" data-number="9.6">
-<h2 data-number="9.6" class="anchored" data-anchor-id="shift-share-instruments"><span class="header-section-number">9.6</span> Shift-Share Instruments</h2>
+<section id="shift-share-instruments" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="shift-share-instruments"><span class="header-section-number">9.5</span> Shift-Share Instruments</h2>
 <p>Shift-share instruments, also called Bartik Instruments, are a way to explore the impacts of exposure (shares) to exogenous-random shocks (shifts). Let us say we are interested in some effect of variable <span class="math inline">\(X\)</span> in some city/region/market <span class="math inline">\(\ell\)</span>.</p>
 <p><span class="math display">\[
 Y_\ell = \alpha + \beta X_\ell + \eps_\ell
@@ -544,9 +705,9 @@ Example: Great Migration
 </div>
 <p>There are two perspectives of assumptions for Shift-Share designs - making assumptions on the shares (which is more common with less types <span class="math inline">\(k\)</span>), and making assumptions on the shifts:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Shares</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Shifts</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">Average Causal Response</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Shares</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Shifts</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false">Average Causal Response</a></li></ul>
 <div class="tab-content nav-pills">
-<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <p>The assumptions based on the shares (also called exposure mapping), are:</p>
 <ol type="1">
 <li>The share <span class="math inline">\(Z_{\ell k}\)</span> must be relevant. For all <span class="math inline">\(k\)</span>, <span class="math inline">\(Z_{\ell k}\)</span> must predict <span class="math inline">\(X_\ell\)</span>.</li>
@@ -555,7 +716,7 @@ Example: Great Migration
 <p>With these two assumptions, 2SLS with the shift-share instrument is consistent, (we do not need any assumptions on <span class="math inline">\(G_k\)</span>) and we can estimate the average causal response (notes provided on the third tab).</p>
 <p>However, shares are often not exogenous. Thus, the shift perspective (next tab) provides an alternative framework.</p>
 </div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <p>Shares are often not exogenous. The shifts (shocks) perspective, which assumes endogenous shares, are:</p>
 <ol type="1">
 <li>Exogeneity of the shocks to confounding in the shares: <span class="math inline">\(\E(G_k | \eps_\ell Z_{\ell k})= \mu\)</span>. This basically says that every shock has the same mean <span class="math inline">\(\mu\)</span>, regardless of observable confounders in <span class="math inline">\(\eps\)</span> or shares <span class="math inline">\(Z_{\ell k}\)</span>.</li>
@@ -563,7 +724,7 @@ Example: Great Migration
 </ol>
 <p>With these two assumptions, 2SLS with the shift-share instrument is consistent, and we can estimate the average causal response (notes provided on the third tab).</p>
 </div>
-<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
 <p>In Shift-Share instruments, we tend to deal with continuous treatment variables. Thus, instead of the average treatment effect (or local average treatment effect), we are concerned with the average causal response (ACR).</p>
 <p><span class="math display">\[
 \tau_{ACR} = \frac{\E(Y_i|Z_i = 1) - \E(Y_i | Z_i = 0)}{\E(X_i | Z_i = 1) - \E(X_i | Z_i = 0)}
@@ -578,22 +739,22 @@ Example: Great Migration
 </div>
 <p>To estimate, we use the two-stage-least-squares estimator, as was detailed <a href="./ols.html#instrumental-variables-estimator">previously</a>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>late <span class="ot">&lt;-</span> fixest<span class="sc">::</span><span class="fu">feols</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> D <span class="sc">~</span> S, <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>late <span class="ot">&lt;-</span> fixest<span class="sc">::</span><span class="fu">feols</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> D <span class="sc">~</span> S, <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The 2SLS estimator (and IV estimator) are biased in small sample sizes, but asymptotically consistent, so we should be more careful when dealing with small samples.</p>
 <p><br></p>
 </section>
-<section id="differences-in-differences" class="level2" data-number="9.7">
-<h2 data-number="9.7" class="anchored" data-anchor-id="differences-in-differences"><span class="header-section-number">9.7</span> Differences-in-Differences</h2>
+<section id="differences-in-differences" class="level2" data-number="9.6">
+<h2 data-number="9.6" class="anchored" data-anchor-id="differences-in-differences"><span class="header-section-number">9.6</span> Differences-in-Differences</h2>
 <p><br></p>
 </section>
-<section id="selection-on-observables" class="level2" data-number="9.8">
-<h2 data-number="9.8" class="anchored" data-anchor-id="selection-on-observables"><span class="header-section-number">9.8</span> Selection on Observables</h2>
+<section id="selection-on-observables" class="level2" data-number="9.7">
+<h2 data-number="9.7" class="anchored" data-anchor-id="selection-on-observables"><span class="header-section-number">9.7</span> Selection on Observables</h2>
 <p>Selection on Observables is an way to get rid of the selection bias problem by <a href="./causal.html#confounders">controlling for a set of confounders</a> <span class="math inline">\(\mathcal X\)</span> to <a href="./causal.html#structural-causal-models">block backdoor paths</a> and isolate the relationship between <span class="math inline">\(D \rightarrow Y\)</span>.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Assumptions</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Identification of ATE</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Identification of ATT</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Assumptions</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Identification of ATE</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false">Identification of ATT</a></li></ul>
 <div class="tab-content nav-pills">
-<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <p>There are two assumptions for selection on observables:</p>
 <p><strong>Conditional Ignorability</strong> (also called conditional independence) means that among units <span class="math inline">\(i\)</span> with identical confounder values <span class="math inline">\(\mathcal X_i\)</span>, treatment <span class="math inline">\(D_i\)</span> is as-if randomly assigned. Potential outcomes are independent from treatment within each specific confounder value <span class="math inline">\(\mathcal X_i = x\)</span>.</p>
 <p><span class="math display">\[
@@ -614,7 +775,7 @@ Example: Great Migration
 <li>Neutral controls are variables that only cause <span class="math inline">\(Y\)</span> and are not associated with <span class="math inline">\(D\)</span>. They do not affect the causal identification, but can reduce our standard errors.</li>
 </ul>
 </div>
-<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <p>Using these assumptions, we can first identify the CATE, which will allow us to identify the ATE. Let us first start with the definition of CATE (<a href="causal.html#def-cate" class="quarto-xref">definition&nbsp;<span>5.6</span></a>):</p>
 <p><span class="math display">\[
 \begin{align}
@@ -640,7 +801,7 @@ Example: Great Migration
 \]</span></p>
 <p>And all the values in this equation are observed outcomes <span class="math inline">\(Y_t\)</span>, meaning if we control for set of confounders <span class="math inline">\(\mathcal X\)</span>, our correlation becomes a causal effect.</p>
 </div>
-<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
 <p>Using these assumptions, we can first identify the CATE, which will allow us to identify the ATT. Let us first start with the definition of CATE (<a href="causal.html#def-cate" class="quarto-xref">definition&nbsp;<span>5.6</span></a>):</p>
 <p><span class="math display">\[
 \begin{align}
@@ -670,18 +831,18 @@ Example: Great Migration
 </div>
 <p>Assuming we meet the assumptions, there are multiple estimators, including regression, matching, propensity score matching, and weighting.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Regression</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Matching</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false">Propensity Scores</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false">Weighting</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Regression</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Matching</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-3" role="tab" aria-controls="tabset-8-3" aria-selected="false">Propensity Scores</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-4" role="tab" aria-controls="tabset-8-4" aria-selected="false">Weighting</a></li></ul>
 <div class="tab-content nav-pills">
-<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <p>Regression is the most popular estimator for selection on observables. There are two types of regression estimators.</p>
 <p><strong>Classical linear regression</strong> with OLS and robust standard errors is used to estimate the ATE when we believe we have <u>constant treatment effects</u> for all units (where each unit <span class="math inline">\(t\)</span> has the same <span class="math inline">\(\tau\)</span> effect):</p>
 <p><span class="math display">\[
 \textcolor{purple}{Y_t^{(d)}} = \alpha + D_t\tau + \b x_t \b\gamma + \eps_t
 \]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ate <span class="ot">&lt;-</span> fixest<span class="sc">::</span><span class="fu">feols</span>(Y <span class="sc">~</span> D <span class="sc">+</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> X3,</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ate <span class="ot">&lt;-</span> fixest<span class="sc">::</span><span class="fu">feols</span>(Y <span class="sc">~</span> D <span class="sc">+</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> X3,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">data =</span> mydata, <span class="at">se =</span> <span class="st">"hetero"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>However, classical linear regression is <strong>biased</strong> for the ATE if we have heterogenous treatment effects (different units have different <span class="math inline">\(\tau\)</span>). It actually is an unbiased estimator for a weighted average of the ATT and ATU, not the ATE.</p>
 <p>Instead, with heterogeneity, we should use the <strong>Fully Interacted Estimator</strong>:</p>
@@ -689,13 +850,13 @@ Example: Great Migration
 \textcolor{purple}{Y_t^{(d)}} = \alpha + D_t \tau + (\b x_t - \bar{\b x})\b\beta + D_t(\b x_t - \bar{\b x})\b\gamma + \eps_t
 \]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ate <span class="ot">&lt;-</span> estimatr<span class="sc">::</span><span class="fu">lm_lin</span>(Y <span class="sc">~</span> D, <span class="at">covariates =</span> <span class="sc">~</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> X3,</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> my_data)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ate <span class="ot">&lt;-</span> estimatr<span class="sc">::</span><span class="fu">lm_lin</span>(Y <span class="sc">~</span> D, <span class="at">covariates =</span> <span class="sc">~</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> X3,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> my_data)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The fully interacted estimator is slightly biased when estimating <span class="math inline">\(\tau_{ATE}\)</span>, but the bias is arbitrarily small in large sample sizes. When we have a good amount of data, we tend to default to this estimator.</p>
 </div>
-<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <p>Matching estimates missing potential outcomes/counterfactuals for each observation in the treated group, by matching an untreated observation to that treated observation. The matching process is done by similarity on covariates <span class="math inline">\(\set X\)</span>. Matching estimates the ATT:</p>
 <p><span class="math display">\[
 \hat\tau_{ATT} = \frac{1}{N_1} \sum\limits_{t:D_i = 1}^{N_1}(Y_t - \tilde Y_t)
@@ -708,17 +869,17 @@ D_M(i,j) = \sqrt{(\b x_i - \b x_j)^\top \b\Sigma_x^{-1}(\b x_i - \b x_j)}
 \]</span></p>
 <p>Where <span class="math inline">\(\b\Sigma_x\)</span> is the covariance matrix of confounders <span class="math inline">\(\set X\)</span>. The units in treatment and control that have the smallest distances are matched. Matching is done in R:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#matching units</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>match_obj <span class="ot">&lt;-</span> MatchIt<span class="sc">::</span><span class="fu">matchit</span>(D <span class="sc">~</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> X3, <span class="at">data =</span> my_data,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">method =</span> <span class="st">"nearest"</span>, <span class="at">distance =</span> <span class="st">"mahalanobis"</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>match_data <span class="ot">&lt;-</span> MatchIt<span class="sc">::</span><span class="fu">match.data</span>(match_obj, <span class="at">weights =</span> <span class="st">"nn_weights"</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#estimate</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>att <span class="ot">&lt;-</span> estimatr<span class="sc">::</span><span class="fu">lm_robust</span>(Y <span class="sc">~</span> D, <span class="at">data =</span> match_data, <span class="at">weights =</span> nn_weights)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(att)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#matching units</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>match_obj <span class="ot">&lt;-</span> MatchIt<span class="sc">::</span><span class="fu">matchit</span>(D <span class="sc">~</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> X3, <span class="at">data =</span> my_data,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">method =</span> <span class="st">"nearest"</span>, <span class="at">distance =</span> <span class="st">"mahalanobis"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>match_data <span class="ot">&lt;-</span> MatchIt<span class="sc">::</span><span class="fu">match.data</span>(match_obj, <span class="at">weights =</span> <span class="st">"nn_weights"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#estimate</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>att <span class="ot">&lt;-</span> estimatr<span class="sc">::</span><span class="fu">lm_robust</span>(Y <span class="sc">~</span> D, <span class="at">data =</span> match_data, <span class="at">weights =</span> nn_weights)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(att)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The matching estimator is prone to bias/poor-matches as the number of covariates you have increases. Generally, with many covaraites, propensity scores are more popular.</p>
 </div>
-<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
+<div id="tabset-8-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
 <p>Propensity score matching is similar to matching, and also estimates the ATT.</p>
 <p>However, instead of matching on covariates, it matches on the likelihood of a unit <span class="math inline">\(t\)</span> receiving treatment <span class="math inline">\(D_t = 1\)</span>, based on their covariate <span class="math inline">\(\set X_t\)</span> values. This likelihood/probability is called the propensity score.</p>
 <p><span class="math display">\[
@@ -727,28 +888,28 @@ D_M(i,j) = \sqrt{(\b x_i - \b x_j)^\top \b\Sigma_x^{-1}(\b x_i - \b x_j)}
 <p>However, we do not actually observe <span class="math inline">\(\pr_t(\set X_t)\)</span>. We can estimate <span class="math inline">\(\pr_t(\set X_t)\)</span> with a binary response model with outcome <span class="math inline">\(D_t\)</span>, and explanatory variables <span class="math inline">\(\set X\)</span>. Then using the fitted probabilities <span class="math inline">\(\P(D_t = 1) = \hat\pr_t(\set X_t)\)</span>, we can conduct matching based on these estimates.</p>
 <p>To implement propensity score matching in R, we start with our binary response variable. The most common choice is logistic regression, but random forest is also possible:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># logistic model</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(D <span class="sc">~</span> X1 <span class="sc">+</span> X2, <span class="at">data =</span> my_data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># rf model</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> randomForest<span class="sc">::</span><span class="fu">randomForest</span>(D <span class="sc">~</span> X1 <span class="sc">+</span> X2,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">data =</span> my_data,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">na.action =</span> na.omit)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate propensity scores</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>my_data<span class="sc">$</span>ps <span class="ot">&lt;-</span> <span class="fu">predict</span>(ps_model, <span class="at">type =</span> <span class="st">"response"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># logistic model</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(D <span class="sc">~</span> X1 <span class="sc">+</span> X2, <span class="at">data =</span> my_data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># rf model</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> randomForest<span class="sc">::</span><span class="fu">randomForest</span>(D <span class="sc">~</span> X1 <span class="sc">+</span> X2,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">data =</span> my_data,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">na.action =</span> na.omit)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate propensity scores</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>my_data<span class="sc">$</span>ps <span class="ot">&lt;-</span> <span class="fu">predict</span>(ps_model, <span class="at">type =</span> <span class="st">"response"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then, we conduct matching with the estimated propensity scores:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#matching units</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>match_obj <span class="ot">&lt;-</span> MatchIt<span class="sc">::</span><span class="fu">matchit</span>(D <span class="sc">~</span> ps, <span class="at">data =</span> my_data,</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">method =</span> <span class="st">"nearest"</span>, <span class="at">distance =</span> <span class="st">"mahalanobis"</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>match_data <span class="ot">&lt;-</span> MatchIt<span class="sc">::</span><span class="fu">match.data</span>(match_obj, <span class="at">weights =</span> <span class="st">"pscore_weights"</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#estimate</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>att <span class="ot">&lt;-</span> estimatr<span class="sc">::</span><span class="fu">lm_robust</span>(Y <span class="sc">~</span> D, <span class="at">data =</span> match_data,</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                           <span class="at">weights =</span> pscore_weights)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(att)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#matching units</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>match_obj <span class="ot">&lt;-</span> MatchIt<span class="sc">::</span><span class="fu">matchit</span>(D <span class="sc">~</span> ps, <span class="at">data =</span> my_data,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">method =</span> <span class="st">"nearest"</span>, <span class="at">distance =</span> <span class="st">"mahalanobis"</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>match_data <span class="ot">&lt;-</span> MatchIt<span class="sc">::</span><span class="fu">match.data</span>(match_obj, <span class="at">weights =</span> <span class="st">"pscore_weights"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#estimate</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>att <span class="ot">&lt;-</span> estimatr<span class="sc">::</span><span class="fu">lm_robust</span>(Y <span class="sc">~</span> D, <span class="at">data =</span> match_data,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                           <span class="at">weights =</span> pscore_weights)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(att)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-5-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-4-tab">
+<div id="tabset-8-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-4-tab">
 <p>Matching only recovers the ATT. However, if we want the ATE, we can use propensity scores in a inverse probability weighting (IPW) estimator. It can be shown with math that the ATE with propensity scores <span class="math inline">\(\pr_t(\set X_t)\)</span> can be identified as:</p>
 <p><span class="math display">\[
 \tau_{ATE} = \E\left[ Y_t \cdot \frac{D_t - \pr_t(\set X_t)}{\pr_t(\set X_t)(1-\pr_t(\set X_t))} \right]
@@ -763,19 +924,19 @@ D_M(i,j) = \sqrt{(\b x_i - \b x_j)^\top \b\Sigma_x^{-1}(\b x_i - \b x_j)}
 <p>We see that units who are unlikely to recieve treatment (low propensity scores) that actually get treated get weighted more, and units who are likely to be treated (high propensity scores) but don’t get treated also get weighted more.</p>
 <p>We first estimate the propensity scores with either logistic or random forest:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># logistic model</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(D <span class="sc">~</span> X1 <span class="sc">+</span> X2, <span class="at">data =</span> my_data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># rf model</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> randomForest<span class="sc">::</span><span class="fu">randomForest</span>(D <span class="sc">~</span> X1 <span class="sc">+</span> X2,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">data =</span> my_data,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">na.action =</span> na.omit)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate propensity scores</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>my_data<span class="sc">$</span>ps <span class="ot">&lt;-</span> <span class="fu">predict</span>(ps_model, <span class="at">type =</span> <span class="st">"response"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># logistic model</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(D <span class="sc">~</span> X1 <span class="sc">+</span> X2, <span class="at">data =</span> my_data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># rf model</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>ps_model <span class="ot">&lt;-</span> randomForest<span class="sc">::</span><span class="fu">randomForest</span>(D <span class="sc">~</span> X1 <span class="sc">+</span> X2,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">data =</span> my_data,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">na.action =</span> na.omit)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate propensity scores</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>my_data<span class="sc">$</span>ps <span class="ot">&lt;-</span> <span class="fu">predict</span>(ps_model, <span class="at">type =</span> <span class="st">"response"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then, we calculate the weights and estimate:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>my_data<span class="sc">$</span>ipw <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(mydata<span class="sc">$</span>D <span class="sc">==</span> <span class="dv">1</span>, <span class="dv">1</span><span class="sc">/</span>my_data<span class="sc">$</span>ps, <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>my_data<span class="sc">$</span>ps))</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ate <span class="ot">&lt;-</span> estimatr<span class="sc">::</span><span class="fu">lm_robust</span>(Y<span class="sc">~</span>D, <span class="at">data =</span> my_data, <span class="at">weights =</span> ipw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>my_data<span class="sc">$</span>ipw <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(mydata<span class="sc">$</span>D <span class="sc">==</span> <span class="dv">1</span>, <span class="dv">1</span><span class="sc">/</span>my_data<span class="sc">$</span>ps, <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>my_data<span class="sc">$</span>ps))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ate <span class="ot">&lt;-</span> estimatr<span class="sc">::</span><span class="fu">lm_robust</span>(Y<span class="sc">~</span>D, <span class="at">data =</span> my_data, <span class="at">weights =</span> ipw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The IPW estimator is asymptotically consistent, but has poor small sample properties, and are sensitive to extreme values of <span class="math inline">\(\hat\pr_t(\set X_t)\)</span>.</p>
 </div>
