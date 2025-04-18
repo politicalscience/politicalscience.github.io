@@ -1,8 +1,8 @@
-# Causal Inference
+# Theoretical Causal Inference
 
 So far, we have introduced multiple estimators to help estimate parameters that describe the relationships between variables.
 
-In this chapter, our goal is to go from relationships/correlation to causation. First, we introduce the popular causal frameworks and causal estimands. Then, we discuss the issue with selection bias, and why correlation is not causation. Finally, we discuss randomisation as a method to establish causality.
+In this chapter, our goal is to go from relationships/correlation to causation. First, we introduce the popular causal frameworks and causal estimands. Then, we discuss the issue with selection bias, and why correlation is not causation. Finally, we discuss ways to identify the treatment effects and overcome selection bias.
 
 <br />
 
@@ -300,20 +300,6 @@ $$
 $$
 :::
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Checking if Independence is Met
-
-When we are writing a paper, we might want to convince our readers that randomisation has indeed successfully been implemented, and that the assumption of independence has been met. The most common way to check this is with a **balance** check. We essentially consider a few likely confounders $X$. We then run a regression:
-
-$$
-X_t = \beta_0 + \beta_1 D_t + \eps_t
-$$
-
-$\beta_1$ will show the difference between $\E(X_t | D_t = 1)$ and $\E(X_t|D_t = 0)$. If $\beta_1$ is not statistically significantly different, then we can conclude the treatment and control groups are similar, and that randomisation has suceeded.
-
-Do note that the important thing in randomisation (and the assumption of independence) is not that $X_t$ is random between treatment and control, but rather potential outcomes are random. Although, if $X_t$ is random between treatment and control, that generally implies potential outcomes are also random.
-:::
-
 We can prove that randomisation and the independence assumption allow us to eliminate the selection bias shown in @eq-selectionbias. Let us start with our correlation from @eq-selectionbias:
 
 $$
@@ -353,119 +339,264 @@ Since $\rho_{D, Y}$ only requires observed outcomes (not potential), we can calc
 
 <br />
 
-## Randomised Experiments
+## Selection on Observables
 
-So we have established that randomly assigning treatment and control can allow us to establish that correlation equals causation (under succesfull randomisation only).
+Selection on Observables is an way to get rid of the selection bias problem by [controlling for a set of confounders](causal.qmd#confounders) $\mathcal X$ to [block backdoor paths](causal.qmd#structural-causal-models) and isolate the relationship between $D \rightarrow Y$.
 
-But how can we actually implement this design? There are several different ways to do randomisation:
+There are two assumptions for selection on observables:
 
-::: {.panel-tabset .nav-pills}
-## Classic
+::: {#def-sooassumptions style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Selection on Observables
 
-The classic randomisation is the most common form of randomsiation.
+**Conditional Ignorability** (also called conditional independence) means that among units $i$ with identical confounder values $\mathcal X_i$, treatment $D_i$ is as-if randomly assigned. Potential outcomes are independent from treatment within each specific confounder value $\mathcal X_i = x$.
 
-We start out with $N$ total number of individuals/observations in our experiment. We first decide the number of individuals we want to assign to treatment, $N_1$. Frequently, $N_1$ is 50% of $N$.
+$$
+(\pc, \pt) \ind D_t \ | \ \set X_t = x, \ \forall \ x \in \set X
+$$
 
-Then, a random set of $N_1$ number individuals is assigned to treatment, and the remainder is sent to control. Now we have randomly assigned treatment and control individuals.
+This assumption implies that given any value of confounders $\set X_t = x$, potential outcomes are equivalent between treatment and control groups:
 
-There is an issue: technically, not all units $t$ have an equal chance of being assigned to treatment. This is because once we assign $N_1$ of individuals to treatment, the remaining observations will have 0% chance of being assigned to treatment. Bernoulli Randomisation deals with this.
+$$
+\begin{align}
+& \E(\pc|D_t = 1, \set X_t = x) \ = \ \E(\pc|D_t = 0, \set X_t = x) \ = \ \E(\pc|\set X_t = x) \\
+& \E(\pt|D_t = 1, \set X_t = x) \ = \ \E(\pt|D_t = 0, \set X_t = x) \ = \ \E(\pt|\set X_t = x)
+\end{align}
+$$
 
-## Bernoulli
-
-Bernoulli randomisation is another form of randomisation. Instead of specifying before-hand how many treated units $N_1$ you want, we let $N_1$ be un-fixed.
-
-For every unit $t$, they have some probability $p$ of being assigned to treatment. We do this for every unit $t$.
-
-The result is that every unit has an equal chance of being assigned to treatment and control, unlike classic randomisation. The downside is that if we run the procedure multiple times, the number of units treated $N_1$ will differ between each trial.
-
-## Cluster
-
-Cluster randomisation is when we randomly assign units (or have individuals naturally) in groups. Every unit within a group (called a cluster) will get the same treatment. We randomly sample the groups to get the treatment or control.
-
-For example, we could randomise development treatment at the village level, or randomise treatment of a cirriculum at the school level.
-
-The main reason for this is to prevent SUTVA violations. For example, imagine you are testing the effects of a new curriculum. If you randomise by each student, students will talk to their friends, and treated individuals may teach control individuals about the new curriculum. But by randomising by school (either an entire school gets or does not get the new curriculum), this concern is not a huge issue.
-
-## Stratified
-
-Stratified (also called blocked or conditional) randomisation are when randomisation occurs separately within levels of some covariates(s) $X$. Generally, you separate your sample of $N$ units into $J$ subgroups. For example, you could split people up into male or female, then randomly sample within each group, rather than everyone together.
-
-The reason you might want to do this is to ensure that both your treatment and control are balanced. For example, let us say you have 4 subjects, with pre-treatment potential outcomes $\pc = \{2, 2, 8, 8\}$.
-
-If you are randomly assigning, you have a 33% chance you end up with an assignment where $\{8, 8\}$ are placed in one group, and $\{2, 2\}$ are placed in another group. In this case, our treatment/control groups would be very different, and this would violate our independence assumption.
-
-By stratifying our sample before into two subgroups, with group 1 being $\{2, 2\}$ and group 2 being $\{8,8\}$, and randomly sampling one from each group into treatment, we are guaranteed to have more balance.
+**Common Support** is the second assumption, and it states for any unit $t$ with any value of $\mathcal X_t$, they have a non-zero probability they can be assigned to both control and treatment.
 :::
 
-When we are writing a paper, we might want to convince our readers that randomisation has indeed successfully been implemented, and that the assumption of independence has been met. The most common way to check this is with a **balance** check. We essentially consider a few likely confounders $X$. We then run a regression:
+If these two assumptions are met, we can identify the ATE and ATT. The proofs are provided below:
+
+::: {.panel-tabset .nav-pills}
+## Identification of ATE
+
+Using these assumptions, we can first identify the CATE, which will allow us to identify the ATE. Let us first start with the definition of CATE (@def-cate):
 
 $$
-X_t = \underbrace{\beta_0 + \beta_1 D_t}_{\E(X_t|D_t)} + \eps_t
+\begin{align}
+\tau_{CATE}(x) & = \E(\pt - \pc \ | \ \set X_t = x) \\
+& = \E(\pt | \set X_t = x) - \E(\pc|\set X_t = x) \\
+\end{align}
 $$
 
-$\beta_1$ will show the difference between $\E(X_t | D_t = 1)$ and $\E(X_t|D_t = 0)$. If $\beta_1$ is not statistically significantly different, then we can conclude the treatment and control groups are similar, and that randomisation has succeeded.
-
-We can estimate the ATE in a randomisation setting where independence is met simply with a correlation measure, such as a [linear model](ols.qmd#the-classical-linear-model):
+Now, from the properties implied by conditional ignorability given in @eq-selectiononobservables, we get
 
 $$
-Y_t = \underbrace{\alpha + \tau D_t}_{\E(Y_t | D_t)} + \eps_t
+\begin{align}
+\tau_{CATE}(x) & = \E(\pt|D_i = 1, \set X_t = x) - \E(\pc|D_i = 0, \set X_t = x) \\
+& = \E(Y_{t}|D_t = 1, \mathcal X_t = x) - \E(Y_{t}|D_t = 0, \set X_t = x) \\
+\end{align}
 $$
 
-Where $\tau$ can be estimated with OLS, GLS, or MLE (although OLS with robust standard errors is generally the preferred estimator). A difference-in-means estimator is also possible.
+And the second step above is because $\pt|D_i = 1$ and $\pc|D_i = 0$ are observable outcomes (@def-observedoutcomes). Thus, with independence, we can identify the CATE with just observed outcomes.
 
-Significance testing will be done with a t-test (@def-ttest) like you do in OLS. [Robust standard errors](gls.qmd#robust-standard-errors) (to account for heteroscedasticity) should be used as a default, unless you can prove homoscedasticity is met. If you are using cluster randomisation, you should use cluster-robust standard errors. [Bootstrap inference](inference.qmd#nonparametric-bootstrap) is also a common choice if your sample size is quite small.
+Let us consider the definition of the ATE, which is $\E(\pt - \pc)$. From the definition of expectation given in @def-exp, we can rewrite the ATE as
 
-While the linear model is the best way to estimate the ATE specifically, if you are less concerned with the ATE, you can also use other models, such as the logistic model, poisson model, and many more. While the results may not be exactly the ATE, they can be interpreted causally if you are randomising.
+$$
+\tau_{ATE} = \int\tau_{CATE}(x) \P(\mathcal x) dy
+$$
+
+Which is a weighted average. We established above that we can identify the CATE. Thus, we can plug the CATE into the ATE to get our identified ATE:
+
+$$
+\tau_{ATE} = \int [\E(Y_{t}|D_t = 1, \set X_t = x) - \E(Y_{t}|D_t = 0, \set X_t = x)] \P(x) dy
+$$
+
+And all the values in this equation are observed outcomes $Y_t$, meaning if we control for set of confounders $\mathcal X$, our correlation becomes a causal effect.
+
+## Identification of ATT
+
+Using these assumptions, we can first identify the CATE, which will allow us to identify the ATT. Let us first start with the definition of CATE (@def-cate):
+
+$$
+\begin{align}
+\tau_{CATE}(x) & = \E(\pt - \pc \ | \ \set X_t = x) \\
+& = \E(\pt | \set X_t = x) - \E(\pc|\set X_t = x) \\
+\end{align}
+$$
+
+Now, from the properties implied by conditional ignorability given in @eq-selectiononobservables, we get
+
+$$
+\begin{align}
+\tau_{CATE}(x) & = \E(\pt|D_i = 1, \set X_t = x) - \E(\pc|D_i = 0, \set X_t = x) \\
+& = \E(Y_{t}|D_t = 1, \mathcal X_t = x) - \E(Y_{t}|D_t = 0, \set X_t = x) \\
+\end{align}
+$$
+
+And the second step above is because $\pt|D_i = 1$ and $\pc|D_i = 0$ are observable outcomes (@def-observedoutcomes). Thus, with independence, we can identify the CATE with just observed outcomes.
+
+Let us consider the definition of the ATT, which is $\E(\pc = \pt | D_i = 1)$. From the definition expectation given in @def-exp, we can rewrite the ATT as
+
+$$
+\tau_{ATT} = \int \tau_{CATE}(x) \P(x|D_t = 1) dy
+$$
+
+Which is a weighted average. We established above that we can identify the CATE. Thus, we can plug CATE into the ATE to get our identified ATT:
+
+$$
+\tau_{ATT} = \int [\E(Y_{t}|D_t = 1, \set X_t = x) - \E(Y_{t}|D_t = 0, \mathcal X_t = x)] \P(x|D_t = 1) dy
+$$
+
+And all the values in this equation are observed outcomes $Y_t$, meaning if we control for set of confounders $\mathcal X$, our correlation becomes a causal effect.
+:::
+
+This means that if we condition on the necessary covariates to meet the identification assumptions, we can derive the causal effect.
 
 <br />
 
-## Randomisation Inference
+## Instrumental Variables
 
-While you can use a traditional t-test like in OLS, we can also do a different form of inference: randomisation inference. This assumes a certain form of null hypothesis, called the sharp null hypothesis:
+Let us assume an **encouragement** $Z_t \in \{0, 1\}$, which is our treatment assignment/encouragement. Then, we have the **treatment** variable $D_t \in \{0,1\}$, which is someone who actually took the treatment or not. Given this framework, we can divide all units $i$ into 4 categories:
+
+1.  Compliers: People who comply with encouragement $Z_i$. Their $Z_i = D_i$.
+2.  Always-takers: People who no matter what encouragement $Z_i$ is, always take treatment.
+3.  Never-takers: People who no matter their encouragement $Z_i$ is, never take treatment.
+4.  Defiers: People who do the opposite of encouragement $Z_i$, so always $D_i ≠ Z_i$.
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Principle Strata
+
+We can visually show what will happen with all 4 types of people in a table, called the principal strata:
+
+|           |                       |                      |
+|-----------|-----------------------|----------------------|
+|           | $Z_i = 1$             | $Z_i = 0$            |
+| $D_i = 1$ | Complier/Always-Taker | Defier/Always-Taker  |
+| $D_i = 0$ | Defier/Never-Taker    | Complier/Never-Taker |
+
+: {.bordered}
+:::
+
+The idea of the non-compliance designs is to use our encouragement/treatment assignment $Z$ as an [instrument](ols.qmd#instrumental-variables-estimator) for $D$ - actually taking the treatment. There are 4 assumptions to the non-compliance designs:
+
+::: {#def-ivnoncomplianceassumptions style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Instrumental Variables Assumptions
+
+1.  **Relevance**: $Z$ must be correlated to $D$, i.e. $Cov(Z,D)≠0$. Or in other words, compilers must exist, or else, encouragement $Z$ would not affect treatment $D$.
+2.  **Ignorability/Exogneity**: There is no backdoor path between $Z$ and $D$, and no backdoor path between $Z$ and $Y$ (we can do controls/selection on observables to account for this). This is generally met if our $Z$ in our non-compliance design is randomly assigned.
+3.  **Exclusions Restriction**: $Z$ must only have an effect on $Y$ through $D$. $Z$ must not have any independent effect on $Y$.
+4.  **Monotonicity**: There are no defiers - people who do the opposite of their encouragement $Z$, no matter what $Z$ they get.
+:::
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Visualisation of IV Assumption Violations
+
+![](images/clipboard-390858332.png){fig-align="center" width="60%"}
+:::
+
+We have two estimands of interest. The **Intent to Treat (ITT)** is the ATE of $Z$ on $Y$. This is the effect of encouragement:
 
 $$
-H_0^s: \pt = \pc, \quad H_a^s: \pt ≠ \pc
+\tau_{ITT} = \E(Y_t|Z_t = 1) - \E(Y_t | Z_t = 0)
 $$
 
-This null hypothesis basically asserts that there is no treatment effect $\tau_t$ for any individual $t$ in the study.
-
-Assuming $H_0^s$ is true, we can actually fully construct the potential outcomes $\pc, \pt$, since we know every unit has 0 individual treatment effect. Thus, for any unit $t$, their observed $Y_t = \pc = \pt$ if there is no treatment effect.
-
-Since we can fully construct the potential outcomes, we can recreate the sampling distribution without asymptotic properties of our estimator, as we do not need the central limit theorem (@thm-clt).
-
-First, we want to calculate the total number of randomisations possible. If we have $N$ total units, and $N_1$ in the treatment group and $N_0$ in the control group, we have
+However, the ITT does not tell us anything about the effect of $D$ (the treatment), only $Z$ (the encouragement). The **Local Average Treamtment Effect (LATE)** provides the effect of the treatment $D$ on $Y$ for compliers (so the ITT or ATE for compliers):
 
 $$
-\begin{pmatrix} N \\ N_1 \end{pmatrix} = \frac{N!}{N_1!N_0!}
+\tau_{LATE} = \E(\tau_t | \mathrm{compliers})
 $$
 
-number of possible randomisation assignments. Then, for each randomisation assignment, we calculate the $\hat\tau$ of that randomisation.
+The ITT itself is identifiable under exogeneity/ignorability alone. To identify the LATE, we will need all 4 assumptions. Let us define $c$ as compliers, $a$ as always-takers, $n$ as never-takers, and $d$ as defiers. We can break down the ITT into a weighted average:
 
-![](images/clipboard-2586795073.png){fig-align="center" width="70%"}
+$$
+\tau_{ITT} = \tau_{ITT}^c \P(c) + \tau_{ITT}^a \P(a) + \tau_{ITT}^n \P(n) + \tau_{ITT}^d \P(d)
+$$
 
-And now with the $\hat\tau$ of every possible randomisation, we can plot it in a distribution to create the sampling distribution under the null hypothesis:
+We know that under our assumption of monotonicity, we assume no defiers, so the probability of a defier is $\P(d) = 0$:
 
-![](images/clipboard-993993851.png){fig-align="center" width="60%"}
+$$
+\tau_{ITT} = \tau_{ITT}^c \P(c) + \tau_{ITT}^a \P(a) + \tau_{ITT}^n \P(n) 
+$$
 
-Now, we essentially conduct a hypothesis test on this sampling distribution, and calculate the p-value as normal. If our result is significant, we have evidence to reject our sharp null hypothesis $H_0^s$.
+Our exclusions restriction says that $Z$ has no independent effect on $Y$. The ITT is the relationship between $Z$ and $Y$. But since always-takers and never-takers ignore $Z$ when deciding treatment, $Z$ has no effect of them on $Y$. Thus, we can further simplify:
 
-The benefit of randomisation inference is that it is assumption free- we do not rely on asymptotic properties of estimators, which frequently require large sample sizes.
+$$
+\tau_{ITT} = \tau_{ITT}^c \P(c)
+$$
 
-However, the downside of randomisation inference is that it only tests the sharp null hypothesis $H_0^s$. But this might not be the hypothesis we are actually interested in.
+Remember that the $\tau_{ITT}$ for compliers, $\tau_{ITT}^c = \tau_{ATE}$. So, let us isolate it to get:
+
+$$
+\tau_{LATE} = \frac{\tau_{ITT}}{\P(c)} \ = \ \frac{\E(Y_i | Z_i = 1) - \E(Y_i | Z_i = 0)}{\E(D_i | Z_i = 1) - \E(D_i | Z_i = 0)}
+$$
+
+For estimation, we could our sample equivalents in. Alternatively, we can use the 2SLS estimator.
 
 <br />
 
-## Quasi-Experiments
+## Regression Discontinuity
 
-Randomised experiments are the "gold standard" of causal inference. However, in many social science contexts, we do not have the ability to run randomised trials. For example, if our goal is to study the effect of democracy vs. authoritarianism on economic growth, we cannot really randomly assign countries to be democracies or dictatorships. This is simply not possible.
+Regression discontinuity designs are used when treatment is assigned based on some cutoff. We have some treatment $D_t$. There is some **forcing variable** $X_t$ that perfectly determines $D_t$ at some cutoff point $X_t = c$.
 
-A new set of methods for causal inference has been developed for these observational research settings where treatment assignment is not in control. These methods are often referred to as quasi-experiments, as they aim to "mimick" randomisation through a set of clever assumptions.
+$$
+D_t = \begin{cases}
+1 & \text{if } X_t > c \\
+0 & \text{if } X_t ≤ c
+\end{cases}
+$$
 
-The common methods in this group include:
+The idea is that right below and above the cutoff, individuals $t$ are very similar. Thus, we have quasi-random variation and comparable treatment-control groups at the cutoff which we can use to find the treatment effect at the cutoff point.
 
-1.  **Regression Discontinuity Designs**: these study treatments that are assigned by a cutoff at some certain variable value, for example, getting a scholarship for having a certain SAT score or above, or being able to drive at 16. In theory, units right above and below the cutoff should be very similar to each other, so we can use the units right above the cutoff as treatment units, and units right below the cutoff as control units, and find the causal effects.
-2.  **Differences-in-Differences Designs**: these study treatments when some areas/units get a treatment, and others don't. For example, in many federal countries, some states will pass a new programme that nearby states will not. If we meet a set of assumptions, we can try to compare the differences between the area that got treated, and the area that did not get treated.
-3.  **Instrumental Variables Designs**: We know the issue with causal identification is confounders $X$ affecting both treatment $D$ and outcome $Y$. The idea of an IV design is to find another variable $Z$, that is not affected by confounder $X$, but is associated with $D$. By using $Z$ to predict $D$, the part of $D$ predicted by $Z$ should not be associated with confounder $X$, since $Z$ is not associated with confounder $X$.
-4.  **Selection on Observables**: We might not have control of the treatment assignment - however, we might know how in the real world treatment is assigned. Perhaps people with less income are more likely to be treated. Perhaps older people are more likely to be treated. By accounting for these real-world factors affecting treatment assignment, we can isolate the effect of our treatment.
+There are 2 main assumptions for sharp regression discontinuity:
 
-We will cover each of these designs, how they work, and how we can estimate causal effects with them, in the later chapter on quasi-experiments.
+::: {#def-rdd style="border-style: solid; border-radius: 8px; border-width: 0.5px; padding-top: 5px;   padding-right: 5px; padding-bottom: 5px; padding-left: 5px;"}
+## Regression Discontinuity Assumptions
+
+1.  **Continuity**: the potential outcomes $\pt$ and $\pc$'s averages are continuous at cutoff $X_t = c$. There can be no breaks or jumps in potential outcomes:
+
+$$
+\begin{align}
+& \lim\limits_{\epsilon \rightarrow 0} \E (\pt | X_t = c + \epsilon) = \E (\pt | X_t = c) \\
+& \lim\limits_{\epsilon \rightarrow 0} \E (\pc | X_t = c + \epsilon) = \E (\pc | X_t = c) \\
+\end{align}
+$$
+
+2.  **Perfect Compliance**: The cutoff $X_t = c$ perfectly decides who gets the treatment and who does not get the treatment.
+:::
+
+Our estimand is the **Local Average Treatment Effect (LATE)** at the cutoff point $X_t = c$:
+
+$$
+\tau_{LATE} = \E(\pt - \pc | X_t = c)
+$$
+
+We can identify the LATE with the continuity assumption. We start with the LATE:
+
+$$
+\tau_{LATE} = \E(\pt | X_t = c) - \E(\pc | X_t = c)
+$$
+
+And using the assumption of continuity, we can substitute the expectations at $X_t = c$ with limits. We also know that if a limit exists, then both one-sided limits must be equal:
+
+$$
+\begin{align}
+\tau_{LATE} & = \lim\limits_{\epsilon \rightarrow 0} \E (\pt | X_t = c + \epsilon) - \lim\limits_{\epsilon \rightarrow 0} \E (\pc | X_t = c + \epsilon) \\
+& = \lim\limits_{\epsilon \rightarrow 0^+} \E (\pt | X_t = c + \epsilon) - \lim\limits_{\epsilon \rightarrow 0^-} \E (\pc | X_t = c + \epsilon)
+\end{align}
+$$
+
+And we know we that individuals above the cutoff are assigned to treatment, and individuals below are assigned to control, so we can observe both of the above terms, and get:
+
+$$
+\tau_{LATE} = \lim\limits_{\epsilon \rightarrow 0^+} \E (Y_t | X_t = c + \epsilon) - \lim\limits_{\epsilon \rightarrow 0^-} \E (Y_t | X_t = c + \epsilon)
+$$
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Graphical Identification
+
+The idea of regression discontinuity is shown below. The Red is the potential outcomes $\pt$, and the red is the potential outcomes $\pc$.
+
+![](images/clipboard-3203444067.png){fig-align="center" width="50%"}
+
+Any difference in observed outcomes at the cutoff $X_t = c$ should be the treatment effect $\tau_{LATE}$ at the cutoff.
+:::
+
+To estimate a regression discontinuity, we model of potential outcomes $\pt$ and $\pc$, and find the "discontinuity" at the cutoff.
+
+If we have non-perfect assignment based on a cutoff (some people above the cutoff still don't get treated), we can treat this as a non-compliance problem, and combine a regression discontinuity with an instrumental variables approach to get a fuzzy regression discontinuity.
+
+<br />
+
+## Differences-in-Differences
